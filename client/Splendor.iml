@@ -21,6 +21,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="temurin-17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
