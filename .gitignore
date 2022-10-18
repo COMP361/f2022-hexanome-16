@@ -130,6 +130,11 @@ $RECYCLE.BIN/
 
 ### Intellij ###
 .idea/
+
+### VSCode ###
 .vscode/
+
+### FXGL ###
+system/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,java,vim
