@@ -53,7 +53,7 @@ public class MainApp extends GameApplication {
         spawnBucket();
 
         // creates a timer that runs spawnDroplet() every second
-        run(() -> spawnDroplet(), Duration.seconds(1));
+        run(this::spawnDroplet, Duration.seconds(1));
 
         // loop background music located in /resources/assets/music/
         loopBGM("bgm.mp3");
@@ -90,7 +90,7 @@ public class MainApp extends GameApplication {
 
         Entity bucket = entityBuilder()
                 .type(Type.BUCKET)
-                .at(getAppWidth() / 2, getAppHeight() - 200)
+                .at(getAppWidth() / 2.0, getAppHeight() - 200)
                 .viewWithBBox("bucket.png")
                 .collidable()
                 .buildAndAttach();
