@@ -12,6 +12,24 @@
   <component name="CheckStyle-IDEA-Module" serialisationVersion="2">
     <option name="activeLocationsIds" />
   </component>
+  <component name="FacetManager">
+    <facet type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="JVM 17" allPlatforms="JVM [17]" useProjectSettings="false">
+        <compilerSettings />
+        <compilerArguments>
+          <stringArguments>
+            <stringArg name="jvmTarget" arg="17" />
+            <stringArg name="apiVersion" arg="1.6" />
+            <stringArg name="languageVersion" arg="1.6" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="pluginClasspaths" />
+            <arrayArg name="pluginOptions" />
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -22,5 +40,36 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-core:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:audio:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-io:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:storage:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:util:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-entity:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-scene:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-gameplay:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:lifecycle:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:modular:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-web:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-media:linux:17.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.sandec.jpro:jpro-webapi:2022.1.5" level="project" />
   </component>
 </module>
