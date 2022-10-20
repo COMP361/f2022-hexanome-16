@@ -1,0 +1,3 @@
+[submodule "LobbyService"]
+	path = LobbyService
+	url = https://github.com/kartoffelquadrat/LobbyService.git
