@@ -13,6 +13,7 @@ import com.almasb.fxgl.entity.Entity;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.hexanome16.Config.*;
 // NOTE: this import above is crucial, it pulls in many useful methods
 
 /**
@@ -42,10 +43,10 @@ public class MainApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         // initialize common game / window settings.
-        settings.setTitle("Drop");
-        settings.setVersion("1.0");
-        settings.setWidth(480);
-        settings.setHeight(800);
+        settings.setTitle(APP_TITLE);
+        settings.setVersion(APP_VERSION);
+        settings.setWidth(APP_WIDTH);
+        settings.setHeight(APP_HEIGHT);
     }
 
     @Override
