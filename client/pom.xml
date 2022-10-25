@@ -20,7 +20,7 @@
 
         <javafx.version>17.0.2</javafx.version>
         <fxgl.version>17.2</fxgl.version>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.6.0</kotlin.version>
     </properties>
 
     <pluginRepositories>
@@ -42,6 +42,13 @@
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.9.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -80,6 +87,7 @@
             <version>${jpro.version}</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
 
     <build>
