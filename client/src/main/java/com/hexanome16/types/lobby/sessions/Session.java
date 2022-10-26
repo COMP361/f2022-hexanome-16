@@ -10,7 +10,7 @@ public record Session(String creator, GameParams gameParameters, boolean launche
         return "Session{" +
                 "creator='" + creator + '\'' +
                 ", gameParameters=" + gameParameters +
-                ", launched=" + launched +
+                ", launched=" + (launched ? "yes" : "no") +
                 ", players=" + Arrays.toString(players) +
                 ", savegameid='" + savegameid + '\'' +
                 '}';
