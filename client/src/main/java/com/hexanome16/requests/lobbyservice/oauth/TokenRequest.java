@@ -3,12 +3,12 @@ package com.hexanome16.requests.lobbyservice.oauth;
 import com.google.gson.Gson;
 import com.hexanome16.requests.RequestClient;
 import com.hexanome16.types.lobby.auth.TokensInfo;
+import com.hexanome16.utils.AuthHeader;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -17,15 +17,6 @@ import java.util.concurrent.TimeoutException;
  * This class is responsible for sending the request to Lobby Service to get the OAuth tokens.
  */
 public class TokenRequest {
-    /**
-     * Converts username/password into a Basic Authorization header.
-     *
-     * @return The Basic Authorization header.
-     */
-    private static String getBasicAuthenticationHeader() {
-        String valueToEncode = "bgp-client-name:bgp-client-pw";
-        return "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes());
-    }
 
     /**
      * Sends the request to the Lobby Service to get the OAuth tokens.
@@ -47,7 +38,7 @@ public class TokenRequest {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url.toString()))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", getBasicAuthenticationHeader())
+                    .header("Authorization", AuthHeader.getBasicHeader("bgp-client-name", "bgp-client-pw"))
                     .POST(HttpRequest.BodyPublishers.noBody())
                     .build();
             String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
