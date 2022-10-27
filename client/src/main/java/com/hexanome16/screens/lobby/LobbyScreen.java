@@ -5,7 +5,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.types.lobby.sessions.Session;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.hexanome16.Config.*;
 
-//import static com.almasb.fxgl.dsl.FXGL.loopBGM;
+import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 
 public class LobbyScreen extends GameApplication {
     private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>(new HashMap<>());
@@ -110,8 +109,9 @@ public class LobbyScreen extends GameApplication {
 
     @Override
     protected void initGame() {
+        //loopBGM("bgm.mp3");
         runOnce(this::spawnSessionList, Duration.ZERO);
-        run(this::updateSessionList, Duration.INDEFINITE);
+        run(this::updateSessionList, Duration.seconds(1));
     }
 
     public static void main(String[] args) {
