@@ -6,10 +6,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.types.lobby.sessions.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
@@ -89,6 +86,7 @@ public class LobbyScreen extends GameApplication {
                 };
         actionsColumn.setCellFactory(actionsCellFactory);
 
+        sessionList.setPlaceholder(new Label("No sessions available"));
         sessionList.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
 
         sessionList.getItems().addAll(sessionMap.get().values());
@@ -106,14 +104,11 @@ public class LobbyScreen extends GameApplication {
     protected void initGame() {
         runOnce(() -> {
             //TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
-            sessionMap.set(ListSessionsRequest.execute(0));
-            assert sessionMap.get() != null;
             spawnSessionList();
+            sessionMap.set(ListSessionsRequest.execute(0));
         }, Duration.seconds(15));
         run(() -> {
             sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
-            assert sessionMap.get() != null;
-            spawnSessionList();
         }, Duration.INDEFINITE);
         //spawnBucket();
 
