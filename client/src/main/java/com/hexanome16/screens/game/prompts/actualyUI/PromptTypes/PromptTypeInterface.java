@@ -39,7 +39,7 @@ public interface PromptTypeInterface {
       myMap.put(BUY_CARDS,nullPromptType);
       myMap.put(SEE_OTHER_CARDS,nullPromptType);
       myMap.put(SEE_OWN_CARDS,nullPromptType);
-      myMap.put(CHOOSE_NOBLES, new ChooseNobleAlt());
+      myMap.put(CHOOSE_NOBLES, new ChooseNoble());
       myMap.put(BUY_CARDS_BY_CARDS,nullPromptType);
       myMap.put(ASSOCIATE_BAG_CARD,nullPromptType);
       myMap.put(NULL,nullPromptType);
