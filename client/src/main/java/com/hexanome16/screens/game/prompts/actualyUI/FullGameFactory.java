@@ -1,4 +1,5 @@
-package org.actualyUI;
+package com.hexanome16.screens.game.prompts.actualyUI;
+
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
@@ -9,16 +10,16 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.CostComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.GemComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PrestigePointComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
 import java.util.function.Consumer;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.actualyUI.Components.CostComponent;
-import org.actualyUI.Components.GemComponent;
-import org.actualyUI.Components.PrestigePointComponent;
-import org.actualyUI.Components.PromptComponent;
-import org.actualyUI.PromptTypes.PromptTypeInterface;
 
 public class FullGameFactory implements EntityFactory {
 

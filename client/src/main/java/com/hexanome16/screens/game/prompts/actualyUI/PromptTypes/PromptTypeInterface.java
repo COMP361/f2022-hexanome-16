@@ -1,4 +1,4 @@
-package org.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
 
 import com.almasb.fxgl.entity.Entity;
 import java.util.EnumMap;

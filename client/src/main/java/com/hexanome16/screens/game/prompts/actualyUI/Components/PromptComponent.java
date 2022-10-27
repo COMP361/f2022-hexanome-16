@@ -1,4 +1,4 @@
-package org.actualyUI.Components;
+package com.hexanome16.screens.game.prompts.actualyUI.Components;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
+import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -13,7 +14,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import org.actualyUI.PromptTypes.PromptTypeInterface;
 
 public class PromptComponent extends Component {
   PromptTypeInterface aPromptType;

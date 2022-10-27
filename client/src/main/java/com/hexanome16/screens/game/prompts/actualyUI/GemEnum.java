@@ -1,4 +1,4 @@
-package org.actualyUI;
+package com.hexanome16.screens.game.prompts.actualyUI;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;

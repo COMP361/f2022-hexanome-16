@@ -1,12 +1,12 @@
-package org.actualyUI.Components;
+package com.hexanome16.screens.game.prompts.actualyUI.Components;
 
 import com.almasb.fxgl.entity.component.Component;
+import com.hexanome16.screens.game.prompts.actualyUI.GemEnum;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import org.actualyUI.GemEnum;
 
 public class GemComponent extends Component {
   GemEnum aGem;

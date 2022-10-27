@@ -1,4 +1,4 @@
-package org.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +19,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
-import org.actualyUI.Components.PromptComponent;
 
 public class ChooseNoble implements PromptTypeInterface{
   double aWidth = 400;

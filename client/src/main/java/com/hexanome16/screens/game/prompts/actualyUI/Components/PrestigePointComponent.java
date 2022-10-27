@@ -1,4 +1,4 @@
-package org.actualyUI.Components;
+package com.hexanome16.screens.game.prompts.actualyUI.Components;
 
 import com.almasb.fxgl.entity.component.Component;
 import java.util.concurrent.ThreadLocalRandom;
