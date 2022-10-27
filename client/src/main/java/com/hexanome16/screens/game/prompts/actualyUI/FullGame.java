@@ -14,8 +14,8 @@ public class FullGame extends GameApplication {
   protected void initSettings(GameSettings gameSettings) {
       gameSettings.setVersion("1");
       gameSettings.setTitle("Am struggling real hard rn");
-//      gameSettings.setWidth(1920);
-//      gameSettings.setHeight(1080);
+      gameSettings.setWidth(1920);
+      gameSettings.setHeight(1080);
   }
 
 
