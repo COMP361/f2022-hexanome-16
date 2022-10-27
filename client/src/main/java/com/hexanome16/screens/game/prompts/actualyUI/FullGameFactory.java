@@ -35,7 +35,7 @@ public class FullGameFactory implements EntityFactory {
         .onClick(new Consumer<Entity>() {
           @Override
           public void accept(Entity entity) {
-            FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_NOBLES));
+            FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_CARDS));
           }
         })
         .at(400,300)

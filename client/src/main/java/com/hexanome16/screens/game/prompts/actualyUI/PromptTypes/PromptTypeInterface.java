@@ -3,6 +3,8 @@ package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
 import com.almasb.fxgl.entity.Entity;
 import java.util.EnumMap;
 
+///Interface to implement if you want to add a Prompt
+///need to also add it to enum and add it to the static bloc
 public interface PromptTypeInterface {
 
   public static PromptTypeInterface nullPromptType = new PromptTypeInterface() {
@@ -36,7 +38,7 @@ public interface PromptTypeInterface {
 
     static {
       myMap.put(TOKEN_ACQUIRING,nullPromptType);
-      myMap.put(BUY_CARDS,nullPromptType);
+      myMap.put(BUY_CARDS, new BuyCard());
       myMap.put(SEE_OTHER_CARDS,nullPromptType);
       myMap.put(SEE_OWN_CARDS,nullPromptType);
       myMap.put(CHOOSE_NOBLES, new ChooseNoble());
