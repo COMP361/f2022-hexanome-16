@@ -5,6 +5,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.types.lobby.sessions.Session;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,9 +24,10 @@ import static com.hexanome16.Config.*;
 
 public class LobbyScreen extends GameApplication {
     private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>(new HashMap<>());
+    private TableView<Session> sessionList;
 
     public enum TYPE {
-        SESSION
+        SESSION_LIST
     }
 
     @Override
@@ -38,8 +40,7 @@ public class LobbyScreen extends GameApplication {
     }
 
     private void spawnSessionList() {
-        TableView<Session> sessionList = new TableView<>();
-
+        sessionList = new TableView<>();
         TableColumn<Session, String> creatorColumn = new TableColumn<>("Creator");
         creatorColumn.setCellValueFactory(new PropertyValueFactory<>("creator"));
 
@@ -93,26 +94,25 @@ public class LobbyScreen extends GameApplication {
         sessionList.getItems().addAll(sessionMap.get().values());
 
         Entity sessionTable = entityBuilder()
-                .type(TYPE.SESSION)
+                .type(TYPE.SESSION_LIST)
                 .viewWithBBox(sessionList)
                 .at(50, 50)
-                .buildAndAttach();
+                .build();
 
         getGameWorld().addEntity(sessionTable);
     }
 
-    @Override
-    protected void initGame() {
-        spawnSessionList();
-        runOnce(() -> {
-            sessionMap.set(ListSessionsRequest.execute(0));
-        }, Duration.seconds(0.5));
-        run(() -> {
-            sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
-        }, Duration.INDEFINITE);
+    private void updateSessionList() {
+        sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
+        sessionList.getItems().clear();
+        sessionList.getItems().addAll(sessionMap.get().values());
     }
 
-
+    @Override
+    protected void initGame() {
+        runOnce(this::spawnSessionList, Duration.ZERO);
+        run(this::updateSessionList, Duration.INDEFINITE);
+    }
 
     public static void main(String[] args) {
         launch(args);
