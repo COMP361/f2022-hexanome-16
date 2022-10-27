@@ -1,6 +1,8 @@
-package org.actualyUI.Components;
+package com.hexanome16.screens.game.prompts.actualyUI.Components;
+
 
 import com.almasb.fxgl.entity.component.Component;
+import com.hexanome16.screens.game.prompts.actualyUI.GemEnum;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.geometry.Insets;
@@ -19,7 +21,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import org.actualyUI.GemEnum;
 
 public class CostComponent extends Component {
   Map<GemEnum,Integer>  aCost = new HashMap<>();
