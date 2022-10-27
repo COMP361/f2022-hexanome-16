@@ -4,11 +4,13 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -44,20 +46,15 @@ public class ChooseNoble implements PromptTypeInterface{
 
     //initiate BorderPane
     BorderPane myPrompt = new BorderPane();
-    myPrompt.setTranslateX(topleftX);
-    myPrompt.setTranslateY(topleftY);
-    myPrompt.setPrefWidth(aWidth);
-    myPrompt.setMaxWidth(aWidth);
-    myPrompt.setPrefHeight(aHeight);
-    myPrompt.setMaxHeight(aHeight);
-
+    initiatePane(myPrompt);
 
 
     //initiate elements
     Text promptMessage = new Text();            //Top
     HBox nobles = new HBox();                   //Nobles
     Circle confirmationButton = new Circle();   //Button
-    Font RobotoBold = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/6);
+    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/6);
+    Font RobotoBoldConfirm = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/20);
     Texture noble1 = FXGL.texture("noble1.png");
     Texture noble2 = FXGL.texture("noble2.png");
 
@@ -77,7 +74,7 @@ public class ChooseNoble implements PromptTypeInterface{
     // prompt message//
     HBox myhBox = new HBox();
     promptMessage.setText("Choose One");
-    promptMessage.setFont(RobotoBold);
+    promptMessage.setFont(RobotoBoldPrompt);
     promptMessage.setTextAlignment(TextAlignment.CENTER);
     promptMessage.setWrappingWidth(aWidth);
     myhBox.setAlignment(Pos.CENTER);
@@ -92,14 +89,25 @@ public class ChooseNoble implements PromptTypeInterface{
     confirmationButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if(confirmationButton.getOpacity() == 1) {
         PromptComponent.closePrompt();
-        ////////Handle new Noble///////////
+        ////////Handle new Noble TO BE HANDLED IN THE TEXT CONFIRM TOO///////////
       }
     });
 
     /*Centering circle*/
-    HBox inter1=new HBox(confirmationButton);
+    Text confirm = new Text("Confirm");
+    confirm.setFont(RobotoBoldConfirm);
+    confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      if(confirmationButton.getOpacity() == 1) {
+        PromptComponent.closePrompt();
+        ////////Handle new Noble AGAIN///////////
+      }
+    } );
+    StackPane button = new StackPane(confirmationButton,confirm);
+
+    HBox inter1=new HBox(button);
     inter1.setAlignment(Pos.CENTER);
     inter1.setPrefSize(ConfirmButtonRadii*4,aHeight);
+    inter1.setSpacing(5);
     /*Circle in inter1*/
     myPrompt.setRight(inter1);
 
@@ -166,5 +174,14 @@ public class ChooseNoble implements PromptTypeInterface{
 
     //add elements to view
     entity.getViewComponent().addChild(myPrompt);
+  }
+
+  private void initiatePane(Pane myPrompt) {
+    myPrompt.setTranslateX(topleftX);
+    myPrompt.setTranslateY(topleftY);
+    myPrompt.setPrefWidth(aWidth);
+    myPrompt.setMaxWidth(aWidth);
+    myPrompt.setPrefHeight(aHeight);
+    myPrompt.setMaxHeight(aHeight);
   }
 }
