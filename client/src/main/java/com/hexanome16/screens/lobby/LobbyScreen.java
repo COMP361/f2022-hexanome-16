@@ -3,7 +3,7 @@ package com.hexanome16.screens.lobby;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.scene.Scene;
+import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.types.lobby.sessions.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.Button;
@@ -11,9 +11,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.hexanome16.Config.*;
@@ -21,10 +24,10 @@ import static com.hexanome16.Config.*;
 //import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 
 public class LobbyScreen extends GameApplication {
+    private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>();
+
     public enum TYPE {
-        SESSION,
-        LIST,
-        BUTTON
+        SESSION
     }
 
     @Override
@@ -36,7 +39,7 @@ public class LobbyScreen extends GameApplication {
         settings.setHeight(APP_HEIGHT);
     }
 
-    private void spawnSessionList(Map<String, Session> sessionMap) {
+    private void spawnSessionList() {
         TableView<Session> sessionList = new TableView<>();
 
         TableColumn<Session, String> creatorColumn = new TableColumn<>("Creator");
@@ -60,7 +63,10 @@ public class LobbyScreen extends GameApplication {
                     @Override
                     public TableCell<Session, String> call(final TableColumn<Session, String> param) {
                         return new TableCell<>() {
-                            final Button btn = new Button("Join");
+                            final Button join = new Button("Join");
+                            final Button leave = new Button("Leave");
+                            final Button launch = new Button("Launch");
+                            final Button delete = new Button("Delete");
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -69,11 +75,12 @@ public class LobbyScreen extends GameApplication {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
-                                    btn.setOnAction(event -> {
+                                    join.setOnAction(event -> {
                                         Session session = getTableView().getItems().get(getIndex());
                                         System.out.println(session);
                                     });
-                                    setGraphic(btn);
+                                    HBox buttons = new HBox(join, leave, launch, delete);
+                                    setGraphic(buttons);
                                     setText(null);
                                 }
                             }
@@ -82,12 +89,9 @@ public class LobbyScreen extends GameApplication {
                 };
         actionsColumn.setCellFactory(actionsCellFactory);
 
-        sessionList.getColumns().add(creatorColumn);
-        sessionList.getColumns().add(launchedColumn);
-        sessionList.getColumns().add(playersColumn);
-        sessionList.getColumns().add(actionsColumn);
+        sessionList.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
 
-        sessionList.getItems().addAll(sessionMap.values());
+        sessionList.getItems().addAll(sessionMap.get().values());
 
         Entity sessionTable = entityBuilder()
                 .type(TYPE.SESSION)
@@ -98,17 +102,19 @@ public class LobbyScreen extends GameApplication {
         getGameWorld().addEntity(sessionTable);
     }
 
-    private void spawnSession() {
-        Scene scene = getGameScene();
-        Entity session = entityBuilder()
-                .type(TYPE.SESSION)
-                .at(100, 100)
-                .viewWithBBox("")
-                .buildAndAttach();
-    }
-
     @Override
     protected void initGame() {
+        runOnce(() -> {
+            //TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+            sessionMap.set(ListSessionsRequest.execute(0));
+            assert sessionMap.get() != null;
+            spawnSessionList();
+        }, Duration.seconds(15));
+        run(() -> {
+            sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
+            assert sessionMap.get() != null;
+            spawnSessionList();
+        }, Duration.INDEFINITE);
         //spawnBucket();
 
         // creates a timer that runs spawnDroplet() every second
