@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,7 +22,7 @@ import static com.hexanome16.Config.*;
 //import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 
 public class LobbyScreen extends GameApplication {
-    private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>();
+    private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>(new HashMap<>());
 
     public enum TYPE {
         SESSION
@@ -102,21 +103,13 @@ public class LobbyScreen extends GameApplication {
 
     @Override
     protected void initGame() {
+        spawnSessionList();
         runOnce(() -> {
-            //TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
-            spawnSessionList();
             sessionMap.set(ListSessionsRequest.execute(0));
-        }, Duration.seconds(15));
+        }, Duration.seconds(0.5));
         run(() -> {
             sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
         }, Duration.INDEFINITE);
-        //spawnBucket();
-
-        // creates a timer that runs spawnDroplet() every second
-        //run(this::spawnDroplet, Duration.seconds(1));
-
-        // loop background music located in /resources/assets/music/
-        // loopBGM("bgm.mp3");
     }
 
 
