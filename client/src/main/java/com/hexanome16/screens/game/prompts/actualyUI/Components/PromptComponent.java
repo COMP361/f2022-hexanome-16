@@ -76,7 +76,7 @@ public class PromptComponent extends Component {
     mybutton.setTranslateX(topleftX+aWidth-pButtonWidth);
     mybutton.setTranslateY(topleftY+pFontSize);
     mybutton.addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
-      closePrompt();
+      closePrompts();
       e.consume();
     });
 
@@ -91,7 +91,7 @@ public class PromptComponent extends Component {
       myBBox.setOpacity(0);
     });
     myBBox.addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
-      closePrompt();
+      closePrompts();
       e.consume();
     });
 
@@ -106,7 +106,7 @@ public class PromptComponent extends Component {
 
 
 
-  public static void closePrompt() {
+  public static void closePrompts() {
     FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
   }
 

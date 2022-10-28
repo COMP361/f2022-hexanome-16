@@ -16,7 +16,6 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.PrestigePointCom
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
 import java.util.function.Consumer;
-import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -33,14 +32,12 @@ public class FullGameFactory implements EntityFactory {
         .with(new GemComponent(myColor,80,110))
         .with(new PrestigePointComponent())
         .with(new CostComponent())
-        .scale(new Point2D(2,2))
         .onClick(new Consumer<Entity>() {
           @Override
           public void accept(Entity entity) {
             FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_CARDS));
           }
         })
-        .at(400,300)
         .build();
 
   }
@@ -76,7 +73,7 @@ public class FullGameFactory implements EntityFactory {
 
   @Spawns("ViewReservedSelf")
   public Entity newViewReservedSelf(SpawnData data){
-    Text myText = new Text("Own Reserved Cards");
+    Text myText = new Text("Own Reserved Cards \n+\nBuy Reserved Card");
     myText.setFont(Font.font(30));
 
     return entityBuilder(data)
@@ -92,6 +89,34 @@ public class FullGameFactory implements EntityFactory {
   @Spawns("ViewOtherSelf")
   public Entity newViewOtherSelf(SpawnData data){
     Text myText = new Text("Other Reserved Cards");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GOLD)),(myText)))
+        .at(1300,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_OTHER_RESERVED));
+        })
+        .build();
+  }
+
+  @Spawns("BuyBagCard")
+  public Entity newAssociateBagCard(SpawnData data){
+    Text myText = new Text("Buy Bag Card\n+\nAdding to Bonus");
+    myText.setFont(Font.font(30));
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GREENYELLOW)),(myText)))
+        .at(100,300)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_BAG_CARD));
+        })
+        .build();
+  }
+
+
+  @Spawns("BuyingReserved")
+  public Entity newBuyingReserved(SpawnData data){
+    Text myText = new Text("Buying Reserved Card");
     myText.setFont(Font.font(30));
 
     return entityBuilder(data)

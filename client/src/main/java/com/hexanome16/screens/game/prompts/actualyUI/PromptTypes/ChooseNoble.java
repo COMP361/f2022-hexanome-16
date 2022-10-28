@@ -87,7 +87,7 @@ public class ChooseNoble implements PromptTypeInterface{
     confirmationButton.setOpacity(0.5);
     confirmationButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if(confirmationButton.getOpacity() == 1) {
-        PromptComponent.closePrompt();
+        PromptComponent.closePrompts();
         ////////Handle new Noble TO BE HANDLED IN THE TEXT CONFIRM TOO///////////
       }
     });
@@ -97,7 +97,7 @@ public class ChooseNoble implements PromptTypeInterface{
     confirm.setFont(RobotoBoldConfirm);
     confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if(confirmationButton.getOpacity() == 1) {
-        PromptComponent.closePrompt();
+        PromptComponent.closePrompts();
         ////////Handle new Noble AGAIN///////////
       }
     } );
