@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
 import javafx.scene.Node;
@@ -107,5 +108,9 @@ public class PromptComponent extends Component {
 
   public static void closePrompt() {
     FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
+  }
+
+  public static void openPrompt(PromptTypeInterface.PromptType pPromptType){
+    FXGL.spawn("PromptBox",new SpawnData().put("promptType", pPromptType));
   }
 }
