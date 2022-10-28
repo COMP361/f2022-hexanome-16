@@ -27,8 +27,9 @@ public interface PromptTypeInterface {
   public static enum PromptType {
     TOKEN_ACQUIRING,
     BUY_CARDS,
-    SEE_OTHER_CARDS,
-    SEE_OWN_CARDS,
+    SEE_OTHER_RESERVED,
+    SEE_OWN_RESERVED,
+    SEE_CARDS,
     CHOOSE_NOBLES,
     BUY_CARDS_BY_CARDS,
     ASSOCIATE_BAG_CARD,
@@ -39,8 +40,9 @@ public interface PromptTypeInterface {
     static {
       myMap.put(TOKEN_ACQUIRING,nullPromptType);
       myMap.put(BUY_CARDS, new BuyCard());
-      myMap.put(SEE_OTHER_CARDS,nullPromptType);
-      myMap.put(SEE_OWN_CARDS,nullPromptType);
+      myMap.put(SEE_OTHER_RESERVED,new SeeOtherReserved());
+      myMap.put(SEE_OWN_RESERVED,new SeeOwnReserved());
+      myMap.put(SEE_CARDS,new SeeCards());
       myMap.put(CHOOSE_NOBLES, new ChooseNoble());
       myMap.put(BUY_CARDS_BY_CARDS,nullPromptType);
       myMap.put(ASSOCIATE_BAG_CARD,nullPromptType);

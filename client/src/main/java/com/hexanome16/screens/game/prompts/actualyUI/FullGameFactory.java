@@ -17,9 +17,11 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
 import java.util.function.Consumer;
 import javafx.geometry.Point2D;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class FullGameFactory implements EntityFactory {
 
@@ -43,22 +45,77 @@ public class FullGameFactory implements EntityFactory {
 
   }
 
+  @Spawns("NobleChoice")
+  public Entity newNobleChoice(SpawnData data){
+    Text myText = new Text("Noble choice Prompt");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GREENYELLOW)),(myText)))
+        .at(100,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_NOBLES));
+        })
+        .build();
+  }
+
+  @Spawns("ViewHandColor")
+  public Entity newViewHandColor(SpawnData data){
+    Text myText = new Text("Cards in Hand");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.BLUE)),(myText)))
+        .at(500,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_CARDS));
+        })
+        .build();
+  }
+
+
+  @Spawns("ViewReservedSelf")
+  public Entity newViewReservedSelf(SpawnData data){
+    Text myText = new Text("Own Reserved Cards");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.RED)),(myText)))
+        .at(900,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_OWN_RESERVED));
+        })
+        .build();
+  }
+
+
+  @Spawns("ViewOtherSelf")
+  public Entity newViewOtherSelf(SpawnData data){
+    Text myText = new Text("Other Reserved Cards");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GOLD)),(myText)))
+        .at(1300,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_OTHER_RESERVED));
+        })
+        .build();
+  }
+
+
+
+
   @Spawns("Background")
   public Entity newBackGround(SpawnData data){
-    var bg = new Rectangle(getAppWidth(),getAppHeight(),Color.BLUE.brighter().brighter().brighter());
+    var bg = new Rectangle(getAppWidth(),getAppHeight(),Color.GREY.darker());
     return entityBuilder()
         .view(bg)
         .build();
   }
 
 
-  @Spawns("Scrollbar")
-  public Entity myScrollbar(SpawnData data){
-    ScrollPane myPane = new ScrollPane(new Rectangle(100,500, Color.BLUE));
-    myPane.setHmax(100);
-    myPane.setHmin(100);
-    return entityBuilder().view(myPane).build();
-  }
+
 
 
   @Spawns("PromptBox")

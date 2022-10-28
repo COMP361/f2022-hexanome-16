@@ -28,6 +28,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+
+// depends HEAVILY on initVariables in full game add BankType.elements.toString() +"/"+ CurrencyType.elements.toString()
+// in game inititiation to set default PlayerBank to whatever gems they have by default and set
+// default GameBank to 0 on all currencys, this "GameBank" is supposed to be a local field to the trade
+// Note that This class doesnt really check if price makes sense, hardcoded adding 2 Virtual bonus to turn
+// on Buy button :)
+
 public class BuyCard implements PromptTypeInterface {
 
   public static enum BankType {
@@ -341,7 +348,6 @@ public class BuyCard implements PromptTypeInterface {
     myPrompt.setMaxHeight(aHeight);
   }
 
-
   private void closeBuyPrompt() {
     PromptComponent.closePrompt();
     for (CurrencyType e : CurrencyType.values()){
@@ -353,4 +359,5 @@ public class BuyCard implements PromptTypeInterface {
     }
 
   }
+
 }

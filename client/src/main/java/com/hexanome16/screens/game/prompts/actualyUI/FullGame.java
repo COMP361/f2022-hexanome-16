@@ -27,7 +27,10 @@ public class FullGame extends GameApplication {
     FXGL.getGameWorld().addEntityFactory(new FullGameFactory());
     Entity myBG = FXGL.spawn("Background");
     Entity myCard = FXGL.spawn("Card", new SpawnData().put("Color", GemEnum.RUBY));
-
+    Entity myNobleChoice = FXGL.spawn("NobleChoice");
+    Entity aHandofCards = FXGL.spawn("ViewHandColor");
+    Entity myOwnReservedCards = FXGL.spawn("ViewReservedSelf");
+    Entity OthersReservedCards = FXGL.spawn("ViewOtherSelf");
   }
 
   @Override
