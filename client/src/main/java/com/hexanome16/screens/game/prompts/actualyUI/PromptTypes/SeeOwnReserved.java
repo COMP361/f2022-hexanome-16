@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -61,12 +62,18 @@ public class SeeOwnReserved implements PromptTypeInterface {
       Texture myCard = FXGL.texture("card1.png");
       myCard.setFitWidth(aCardWidth);
       myCard.setFitHeight(aCardHeight);
+      myCard.setOnMouseClicked(e -> {
+        FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
+      });
       ReservedCards.getChildren().add(myCard);
 
 
     myCard = FXGL.texture("card1.png");
     myCard.setFitWidth(aCardWidth);
     myCard.setFitHeight(aCardHeight);
+    myCard.setOnMouseClicked(e -> {
+      FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
+    });
     ReservedCards.getChildren().add(myCard);
 
     ReservedCards.setPrefSize(aWidth,aHeight*0.8);
