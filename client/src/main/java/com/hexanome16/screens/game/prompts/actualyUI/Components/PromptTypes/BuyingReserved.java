@@ -9,7 +9,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardHelper.CardCost;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -36,14 +35,11 @@ public class BuyingReserved implements PromptTypeInterface {
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
 
-  CardCost aCardCost;
+
 
   public BuyingReserved() {
   }
 
-  public BuyingReserved(CardCost pCardCost) {
-    aCardCost = pCardCost;
-  }
 
   @Override
   public double width() {

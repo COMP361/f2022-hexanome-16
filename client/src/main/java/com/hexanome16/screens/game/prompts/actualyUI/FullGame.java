@@ -30,6 +30,7 @@ public class FullGame extends GameApplication {
     Entity OthersReservedCards = FXGL.spawn("ViewOtherSelf");
     Entity AssociateBuyCard = FXGL.spawn("BuyBagCard");
     Entity TakingTokens = FXGL.spawn("TakingTokens");
+    Entity BuyCardByCard = FXGL.spawn("BuyCardByCard");
   }
 
   @Override

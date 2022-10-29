@@ -10,7 +10,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardHelper.CardCost;
+
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -36,14 +36,10 @@ public class BuyingBagCard implements PromptTypeInterface {
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
 
-  CardCost aCardCost;
 
   public BuyingBagCard() {
   }
 
-  public BuyingBagCard(CardCost pCardCost) {
-    aCardCost = pCardCost;
-  }
 
   @Override
   public double width() {
@@ -128,6 +124,7 @@ public class BuyingBagCard implements PromptTypeInterface {
     RESERVE.setWrappingWidth(buttonWidth);
     RESERVE.setTextAlignment(TextAlignment.CENTER);
     RESERVE.setFont(Font.font(buttonHeight * 0.6));
+    getEventBus().addEventHandler(CustomEvent.CLOSING,e -> {closeBagPrompt();});
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
       PromptComponent.closePrompts();
@@ -136,6 +133,8 @@ public class BuyingBagCard implements PromptTypeInterface {
 
     reserve.getChildren().addAll(buttonBox, RESERVE);
   }
+
+
 
   private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
     Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
@@ -305,6 +304,15 @@ public class BuyingBagCard implements PromptTypeInterface {
         FXGL.getWorldProperties().setValue(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
       }
     }
+  }
 
+  private void closeBagPrompt() {
+    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
+      int gemsinBank = FXGL.getWorldProperties().getInt(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString());
+      if (gemsinBank!= 0){
+        FXGL.getWorldProperties().increment(BuyCard.BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
+        FXGL.getWorldProperties().setValue(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+      }
+    }
   }
 }
