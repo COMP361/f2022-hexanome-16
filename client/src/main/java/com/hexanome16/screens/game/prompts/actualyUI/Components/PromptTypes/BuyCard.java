@@ -6,6 +6,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.event.Event;

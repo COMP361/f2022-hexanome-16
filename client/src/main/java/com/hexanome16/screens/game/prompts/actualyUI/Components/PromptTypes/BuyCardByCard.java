@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.entity.Entity;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 
 public class BuyCardByCard implements PromptTypeInterface {
 
