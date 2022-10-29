@@ -48,6 +48,7 @@ public interface PromptTypeInterface {
     BUY_CARDS_BY_CARDS,       // Main
     BUY_BAG_CARD,             // Main
     BUY_RESERVE_NOBLE_CARD,   // Main
+    PAUSE,                    // Main
     BUYING_RESERVED,          // Helper
     TOKEN_ACQUIRING_TWO,      // Helper
     TOKEN_ACQUIRING_THREE,    // Helper
@@ -72,6 +73,7 @@ public interface PromptTypeInterface {
       myMap.put(BUY_BAG_CARD,new BuyingBagCard());
       myMap.put(BUY_RESERVE_NOBLE_CARD,new BuyReservedNobleCard());
       myMap.put(CHOOSE_NOBLE_TO_RESERVE,new ChooseNobleReserve());
+      myMap.put(PAUSE,new Pause());
       myMap.put(NULL,nullPromptType);
     }
 
