@@ -2,7 +2,6 @@ package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
-import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -11,6 +10,7 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -37,9 +37,7 @@ public class BuyCardByCard implements PromptTypeInterface {
   double aScrollCardHeight = aScrollCardWidth * 1.4;
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
-  Rectangle DisablingRectangleOthers = new Rectangle(aScrollCardWidth,aHeight,Color.GREY);
-  StackPane OtherWhole = new StackPane();
-  StackPane Buy = new StackPane();
+
   int CardsChosen = 0;
 
 
@@ -64,6 +62,10 @@ public class BuyCardByCard implements PromptTypeInterface {
     double buttonWidth = 3 * aWidth / 14;
     double buttonSpacing = buttonHeight / 2;
     double elementSpacing = (aWidth - 2*aScrollCardWidth- buttonAreaWidth-buttonWidth)/5;
+
+    Rectangle DisablingRectangleOthers = new Rectangle(aScrollCardWidth,aHeight,Color.GREY);
+    StackPane OtherWhole = new StackPane();
+    StackPane Buy = new StackPane();
 
     HBox myPrompt = new HBox();
     initiatePane(myPrompt);
@@ -114,16 +116,16 @@ public class BuyCardByCard implements PromptTypeInterface {
       VBox myBags = new VBox();
       myBags.setAlignment(Pos.TOP_CENTER);
       BagCardsScroll.setContent(myBags);
-      addBagCard(myBags);
+      addBagCard(myBags, OtherWhole , DisablingRectangleOthers );
 
 
 
       VBox myOthers = new VBox();
       myOthers.setAlignment(Pos.TOP_CENTER);
       OtherCardsScroll.setContent(myOthers);
-      addOtherCard(myOthers, 2);
-      addOtherCard(myOthers,2);
-      addOtherCard(myOthers,0);
+      addOtherCard(myOthers, 2, Buy);
+      addOtherCard(myOthers,2, Buy);
+      addOtherCard(myOthers,0, Buy);
 
 
     // initiate ReserveBuy
@@ -131,7 +133,7 @@ public class BuyCardByCard implements PromptTypeInterface {
     ReserveBuy.setAlignment(Pos.CENTER);
     ReserveBuy.setPrefSize(buttonAreaWidth, aHeight / 5);
     ReserveBuy.setSpacing(buttonSpacing);
-    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight);
+    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight, Buy);
 
 
     // adding to view
@@ -139,7 +141,7 @@ public class BuyCardByCard implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void addOtherCard(VBox OtherCards, int PrestigeAmount) {
+  private void addOtherCard(VBox OtherCards, int PrestigeAmount, Node Buy) {
     StackPane myWholeCard = new StackPane();
     Rectangle BagCard = new Rectangle(aScrollCardWidth,aScrollCardHeight,Color.GREEN.darker());
     Text TextPrestigeAmount = new Text();
@@ -173,7 +175,8 @@ public class BuyCardByCard implements PromptTypeInterface {
 
   }
 
-  private void addBagCard(VBox BagCards) {
+  private void addBagCard(VBox BagCards, StackPane OtherWhole,
+                          Rectangle DisablingRectangleOthers) {
     StackPane myWholeCard = new StackPane();
     Rectangle BagCard = new Rectangle(aScrollCardWidth,aScrollCardHeight,Color.GREEN.darker());
     Circle BagIcon = new Circle(aScrollCardWidth/4,Color.SADDLEBROWN.brighter());
@@ -185,6 +188,7 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     myWholeCard.setOnMouseClicked(e -> {
       X.setOpacity(1);
+      CardsChosen++;
       OtherWhole.getChildren().remove(DisablingRectangleOthers);
     });
 
@@ -193,7 +197,8 @@ public class BuyCardByCard implements PromptTypeInterface {
 
   }
 
-  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight) {
+  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,
+                                  StackPane Buy) {
     StackPane Reserve = new StackPane();
     createReserveButton(Reserve, buttonWidth, buttonHeight);
     createBuyButton(Buy, buttonWidth, buttonHeight);
@@ -209,7 +214,7 @@ public class BuyCardByCard implements PromptTypeInterface {
     RESERVE.setWrappingWidth(buttonWidth);
     RESERVE.setTextAlignment(TextAlignment.CENTER);
     RESERVE.setFont(Font.font(buttonHeight * 0.6));
-    getEventBus().addEventHandler(CustomEvent.CLOSING,e -> {closeBagPrompt();});
+
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
       PromptComponent.closePrompts();
