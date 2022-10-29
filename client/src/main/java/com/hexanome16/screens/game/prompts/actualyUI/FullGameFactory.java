@@ -14,7 +14,7 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.CostComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.GemComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PrestigePointComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.PromptTypeInterface;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import java.util.function.Consumer;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;

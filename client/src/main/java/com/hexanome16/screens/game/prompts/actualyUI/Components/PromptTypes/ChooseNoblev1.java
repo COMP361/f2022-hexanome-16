@@ -7,6 +7,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -17,7 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class ChooseNoblev1 implements PromptTypeInterface{
+public class ChooseNoblev1 implements PromptTypeInterface {
   double aWidth = 400;
   double aHeight = 300;
   double nobleWidth;

@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardHelper.CardCost;
 import javafx.event.Event;
 import javafx.event.EventType;

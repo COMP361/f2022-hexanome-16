@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import javafx.geometry.Pos;

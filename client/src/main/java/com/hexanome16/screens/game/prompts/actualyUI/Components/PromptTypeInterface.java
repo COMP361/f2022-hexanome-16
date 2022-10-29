@@ -1,6 +1,18 @@
-package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components;
 
 import com.almasb.fxgl.entity.Entity;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.AssociateBagCard;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardByCard;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyingBagCard;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyingReserved;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.ChooseNoble;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeCards;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOtherReserved;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOwnReserved;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.TokenAcquiring;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.TokenAcquiringThree;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.TokenAcquiringTwo;
 import java.util.EnumMap;
 
 ///Interface to implement if you want to add a Prompt
