@@ -25,22 +25,26 @@ public interface PromptTypeInterface {
   };
 
   public static enum PromptType {
-    TOKEN_ACQUIRING,
-    BUY_CARDS,
-    SEE_OTHER_RESERVED,
-    SEE_OWN_RESERVED,
-    SEE_CARDS,
-    CHOOSE_NOBLES,
-    BUYING_RESERVED,
-    BUY_CARDS_BY_CARDS,
-    ASSOCIATE_BAG_CARD,
-    BUY_BAG_CARD,
-    NULL;
+    TOKEN_ACQUIRING,          // Main
+    TOKEN_ACQUIRING_TWO,      // Helper
+    TOKEN_ACQUIRING_THREE,    // Helper
+    BUY_CARDS,                // Main
+    SEE_OTHER_RESERVED,       // Main
+    SEE_OWN_RESERVED,         // Main
+    SEE_CARDS,                // Main
+    CHOOSE_NOBLES,            // Main
+    BUYING_RESERVED,          // Helper
+    BUY_CARDS_BY_CARDS,       // Main
+    ASSOCIATE_BAG_CARD,       // Helper
+    BUY_BAG_CARD,             // Main
+    NULL;                     // NullObject
 
     static final EnumMap<PromptType,PromptTypeInterface> myMap = new EnumMap<>(PromptType.class);
 
     static {
-      myMap.put(TOKEN_ACQUIRING,nullPromptType);
+      myMap.put(TOKEN_ACQUIRING,new TokenAcquiring());
+      myMap.put(TOKEN_ACQUIRING_TWO,new TokenAcquiringTwo());
+      myMap.put(TOKEN_ACQUIRING_THREE,new TokenAcquiringThree());
       myMap.put(BUY_CARDS, new BuyCard());
       myMap.put(SEE_OTHER_RESERVED,new SeeOtherReserved());
       myMap.put(SEE_OWN_RESERVED,new SeeOwnReserved());

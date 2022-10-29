@@ -100,6 +100,22 @@ public class FullGameFactory implements EntityFactory {
         .build();
   }
 
+
+
+  @Spawns("BuyingReserved")
+  public Entity newBuyingReserved(SpawnData data){
+    Text myText = new Text("Buying Reserved Card");
+    myText.setFont(Font.font(30));
+
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GOLD)),(myText)))
+        .at(1300,100)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_OTHER_RESERVED));
+        })
+        .build();
+  }
+
   @Spawns("BuyBagCard")
   public Entity newAssociateBagCard(SpawnData data){
     Text myText = new Text("Buy Bag Card\n+\nAdding to Bonus");
@@ -113,17 +129,15 @@ public class FullGameFactory implements EntityFactory {
         .build();
   }
 
-
-  @Spawns("BuyingReserved")
-  public Entity newBuyingReserved(SpawnData data){
-    Text myText = new Text("Buying Reserved Card");
+  @Spawns("TakingTokens")
+  public Entity newTakingTokens(SpawnData data){
+    Text myText = new Text("Taking Tokens");
     myText.setFont(Font.font(30));
-
     return entityBuilder(data)
-        .view(new StackPane((new Rectangle(300,100,Color.GOLD)),(myText)))
-        .at(1300,100)
+        .view(new StackPane((new Rectangle(300,100,Color.YELLOW)),(myText)))
+        .at(500,300)
         .onClick( e -> {
-          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.SEE_OTHER_RESERVED));
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_ACQUIRING));
         })
         .build();
   }
