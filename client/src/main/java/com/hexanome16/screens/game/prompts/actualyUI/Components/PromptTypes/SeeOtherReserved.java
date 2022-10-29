@@ -1,26 +1,22 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Pos;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class SeeOwnReserved implements PromptTypeInterface {
+public class SeeOtherReserved implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
@@ -47,7 +43,7 @@ public class SeeOwnReserved implements PromptTypeInterface {
     HBox ReservedCards = new HBox();
     ReservedCards.setAlignment(Pos.CENTER);
     ReservedCards.setSpacing((aWidth-3*aCardWidth)/4);
-    Text myPromptMessage = new Text("Player Reserved Cards");
+    Text myPromptMessage = new Text("Opponent Reserved Cards");
     myPromptMessage.setFont(Font.font(aHeight/20));
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(aWidth);
@@ -59,22 +55,19 @@ public class SeeOwnReserved implements PromptTypeInterface {
 
 
 
-      Texture myCard = FXGL.texture("card1.png");
-      myCard.setFitWidth(aCardWidth);
-      myCard.setFitHeight(aCardHeight);
-      myCard.setOnMouseClicked(e -> {
-        FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
-      });
-      ReservedCards.getChildren().add(myCard);
-
-
-    myCard = FXGL.texture("card1.png");
+    Texture myCard = FXGL.texture("card1.png");
     myCard.setFitWidth(aCardWidth);
     myCard.setFitHeight(aCardHeight);
-    myCard.setOnMouseClicked(e -> {
-      FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
-    });
     ReservedCards.getChildren().add(myCard);
+
+    StackPane myanonymousCard = new StackPane();
+    Rectangle myOtherCard = new Rectangle(aCardWidth,aCardHeight, Color.BLACK);
+    Text myintoregation = new Text("?");
+    myintoregation.setFont(Font.font(aCardHeight*0.9));
+    myintoregation.setFill(Color.WHITE);
+    myintoregation.setTextAlignment(TextAlignment.CENTER);
+    myanonymousCard.getChildren().addAll(myOtherCard,myintoregation);
+    ReservedCards.getChildren().add(myanonymousCard);
 
     ReservedCards.setPrefSize(aWidth,aHeight*0.8);
 

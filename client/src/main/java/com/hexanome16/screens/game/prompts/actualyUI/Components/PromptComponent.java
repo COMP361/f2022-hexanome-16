@@ -7,7 +7,8 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
-import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.PromptTypeInterface;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.CustomEvent;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.PromptTypeInterface;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -91,6 +92,7 @@ public class PromptComponent extends Component {
       myBBox.setOpacity(0);
     });
     myBBox.addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+      entity.removeFromWorld();
       closePrompts();
       e.consume();
     });
@@ -107,7 +109,9 @@ public class PromptComponent extends Component {
 
 
   public static void closePrompts() {
+
     FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
+    FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.CLOSING));
   }
 
   public static void openPrompt(PromptTypeInterface.PromptType pPromptType){

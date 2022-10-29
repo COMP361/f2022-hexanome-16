@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;

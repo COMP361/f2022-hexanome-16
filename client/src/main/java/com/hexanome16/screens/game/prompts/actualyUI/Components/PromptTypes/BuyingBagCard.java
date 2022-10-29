@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -6,9 +6,10 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.BuyCardHelper.CardCost;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardHelper.CardCost;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -25,8 +26,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class BuyingReserved implements PromptTypeInterface {
-
+public class BuyingBagCard implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
@@ -37,10 +37,10 @@ public class BuyingReserved implements PromptTypeInterface {
 
   CardCost aCardCost;
 
-  public BuyingReserved() {
+  public BuyingBagCard() {
   }
 
-  public BuyingReserved(CardCost pCardCost) {
+  public BuyingBagCard(CardCost pCardCost) {
     aCardCost = pCardCost;
   }
 
@@ -77,7 +77,7 @@ public class BuyingReserved implements PromptTypeInterface {
     playerBank.setPrefSize(BankBoxesWidth, aHeight / 5);
     playerBank.setSpacing((2 * aHeight / 10) / 8);
 
-    Texture myCard = FXGL.texture("card1.png");
+    Texture myCard = FXGL.texture("bagcard.png");
     myCard.setFitWidth(aCardWidth);
     myCard.setFitHeight(aCardHeight);
 
@@ -110,13 +110,31 @@ public class BuyingReserved implements PromptTypeInterface {
   }
 
   private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight) {
+    StackPane Reserve = new StackPane();
     StackPane Buy = new StackPane();
 
+    createReserveButton(Reserve, buttonWidth, buttonHeight);
     createBuyButton(Buy, buttonWidth, buttonHeight);
 
-    reserveBuy.getChildren().addAll(Buy);
+    reserveBuy.getChildren().addAll(Reserve, Buy);
   }
 
+  private void createReserveButton(StackPane reserve, double buttonWidth, double buttonHeight) {
+    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
+    buttonBox.setStrokeWidth(buttonHeight / 20);
+    buttonBox.setStroke(Color.BLACK);
+    Text RESERVE = new Text("RESERVE");
+    RESERVE.setWrappingWidth(buttonWidth);
+    RESERVE.setTextAlignment(TextAlignment.CENTER);
+    RESERVE.setFont(Font.font(buttonHeight * 0.6));
+    reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+
+      PromptComponent.closePrompts();
+      e.consume();
+    });
+
+    reserve.getChildren().addAll(buttonBox, RESERVE);
+  }
 
   private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
     Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
@@ -138,7 +156,7 @@ public class BuyingReserved implements PromptTypeInterface {
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if (buy.getOpacity() == 1) {
-        closeBuyPrompt();
+        OpenBagBonusPrompt();
         e.consume();
       }
     });
@@ -277,8 +295,8 @@ public class BuyingReserved implements PromptTypeInterface {
     myPrompt.setMaxHeight(aHeight);
   }
 
-  private void closeBuyPrompt() {
-    PromptComponent.closePrompts();
+  private void OpenBagBonusPrompt() {
+    FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.ASSOCIATE_BAG_CARD));
     for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
       int gemsinBank = FXGL.getWorldProperties().getInt(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString());
       if (gemsinBank!= 0){
@@ -288,6 +306,4 @@ public class BuyingReserved implements PromptTypeInterface {
     }
 
   }
-
 }
-

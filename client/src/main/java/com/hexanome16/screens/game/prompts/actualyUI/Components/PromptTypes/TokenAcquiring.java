@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -47,14 +47,16 @@ public class TokenAcquiring implements PromptTypeInterface {
     HBox myChoices = new HBox();
     myPrompt.setCenter(myChoices);
     myChoices.setAlignment(Pos.CENTER);
-    myChoices.setPrefSize(aWidth,aHeight);
+    myChoices.setPrefSize(aWidth,aHeight*0.9);
     myChoices.setSpacing(aBottonWidth/6);
 
     StackPane ChooseTwo = new StackPane();
     ChooseTwo.setPrefSize(aBottonWidth,aBottonHeight);
+    ChooseTwo.setMaxSize(aBottonWidth,aBottonHeight);
     Rectangle ChooseTwoButton = new Rectangle(aBottonWidth,aBottonHeight, Color.rgb(249,161,89));
     ChooseTwoButton.setStrokeWidth(aHeight/100);
     ChooseTwoButton.setStroke(Color.BLACK);
+    ChooseTwoButton.setOpacity(0.5);
     Text ChooseTwoMessage = new Text("TAKE 2 TOKENS SAME COLOR");
     ChooseTwoMessage.setFont(Font.font(aBottonHeight*0.25));
     ChooseTwoMessage.setTextAlignment(TextAlignment.CENTER);
@@ -76,6 +78,7 @@ public class TokenAcquiring implements PromptTypeInterface {
 
     StackPane ChooseThree = new StackPane();
     ChooseThree.setPrefSize(aBottonWidth,aBottonHeight);
+    ChooseThree.setMaxSize(aBottonWidth,aBottonHeight);
     Rectangle ChooseThreeButton = new Rectangle(aBottonWidth,aBottonHeight, Color.rgb(249,161,89));
     ChooseThreeButton.setStrokeWidth(aHeight/100);
     ChooseThreeButton.setStroke(Color.BLACK);
