@@ -5,9 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Slider;
+
+/**
+ * UIController for SettingsScreen.fxml
+ */
 public class SettingsScreenUIController implements UIController {
     @FXML
-    public Button doneButton;
+    Button doneButton; //Package private to expose it to the SettingScreen
     @FXML
     private ChoiceBox<String> languageChoiceBox;
     @FXML
@@ -41,7 +45,13 @@ public class SettingsScreenUIController implements UIController {
         resolutionChoiceBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Set initial slider values, add listeners to each one to modify values
+     */
     private void initSliders() {
+        soundSlider.adjustValue(mySound);
+        musicSlider.adjustValue(myMusic);
+        sfxSlider.adjustValue(mySFX);
         soundSlider.valueProperty().addListener((observableValue, number, t1) -> mySound = (int) soundSlider.getValue());
         musicSlider.valueProperty().addListener((observableValue, number, t1) -> myMusic = (int) musicSlider.getValue());
         sfxSlider.valueProperty().addListener((observableValue, number, t1) -> mySFX = (int) sfxSlider.getValue());
