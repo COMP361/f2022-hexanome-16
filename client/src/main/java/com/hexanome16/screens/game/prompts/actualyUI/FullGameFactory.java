@@ -24,23 +24,7 @@ import javafx.scene.text.Text;
 
 public class FullGameFactory implements EntityFactory {
 
-  @Spawns("Card")
-  public Entity newCard(SpawnData data){
 
-    Object myColor = data.get("Color");
-    return FXGL.entityBuilder(data)
-        .with(new GemComponent(myColor,80,110))
-        .with(new PrestigePointComponent())
-        .with(new CostComponent())
-        .onClick(new Consumer<Entity>() {
-          @Override
-          public void accept(Entity entity) {
-            FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_CARDS));
-          }
-        })
-        .build();
-
-  }
 
   @Spawns("NobleChoice")
   public Entity newNobleChoice(SpawnData data){
@@ -142,7 +126,38 @@ public class FullGameFactory implements EntityFactory {
         .build();
   }
 
+  @Spawns("BuyCardByCard")
+  public Entity newBuyCardByCard(SpawnData data){
+    Text myText = new Text("Buying Sacrifice Cards");
+    myText.setFont(Font.font(30));
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.INDIANRED)),(myText)))
+        .at(900,300)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS));
+        })
+        .build();
+  }
 
+
+  @Spawns("Card")
+  public Entity newCard(SpawnData data){
+
+    Object myColor = data.get("Color");
+    return FXGL.entityBuilder(data)
+        .with(new GemComponent(myColor,300,300*1.4))
+        .with(new PrestigePointComponent())
+        .with(new CostComponent())
+        .at(1300, 300)
+        .onClick(new Consumer<Entity>() {
+          @Override
+          public void accept(Entity entity) {
+            FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_CARDS));
+          }
+        })
+        .build();
+
+  }
 
 
   @Spawns("Background")

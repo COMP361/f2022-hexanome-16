@@ -49,6 +49,8 @@ public interface PromptTypeInterface {
     BUY_CARDS_BY_CARDS,       // Main
     ASSOCIATE_BAG_CARD,       // Helper
     BUY_BAG_CARD,             // Main
+    BUY_RESERVE_NOBLE_CARD,   // Main
+    CHOOSE_NOBLE_TO_RESERVE,  // Helper
     NULL;                     // NullObject
 
     static final EnumMap<PromptType,PromptTypeInterface> myMap = new EnumMap<>(PromptType.class);
@@ -66,6 +68,8 @@ public interface PromptTypeInterface {
       myMap.put(BUY_CARDS_BY_CARDS,new BuyCardByCard());
       myMap.put(ASSOCIATE_BAG_CARD,new AssociateBagCard());
       myMap.put(BUY_BAG_CARD,new BuyingBagCard());
+      myMap.put(BUY_RESERVE_NOBLE_CARD,nullPromptType);
+      myMap.put(CHOOSE_NOBLE_TO_RESERVE,nullPromptType);
       myMap.put(NULL,nullPromptType);
     }
 
