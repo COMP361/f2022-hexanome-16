@@ -160,6 +160,20 @@ public class FullGameFactory implements EntityFactory {
   }
 
 
+  @Spawns("BuyNobleReserve")
+  public Entity newBuyNobleReserve(SpawnData data){
+    Text myText = new Text("Buying Noble Reserve Card");
+    myText.setFont(Font.font(30));
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.DIMGREY)),(myText)))
+        .at(100,500)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD));
+        })
+        .build();
+  }
+
+
   @Spawns("Background")
   public Entity newBackGround(SpawnData data){
     var bg = new Rectangle(getAppWidth(),getAppHeight(),Color.GREY.darker());

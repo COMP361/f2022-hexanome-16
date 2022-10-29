@@ -4,9 +4,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.AssociateBagCard;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCardByCard;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyReservedNobleCard;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyingBagCard;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyingReserved;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.ChooseNoble;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.ChooseNobleReserve;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeCards;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOtherReserved;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOwnReserved;
@@ -38,18 +40,18 @@ public interface PromptTypeInterface {
 
   public static enum PromptType {
     TOKEN_ACQUIRING,          // Main
-    TOKEN_ACQUIRING_TWO,      // Helper
-    TOKEN_ACQUIRING_THREE,    // Helper
     BUY_CARDS,                // Main
     SEE_OTHER_RESERVED,       // Main
     SEE_OWN_RESERVED,         // Main
     SEE_CARDS,                // Main
     CHOOSE_NOBLES,            // Main
-    BUYING_RESERVED,          // Helper
     BUY_CARDS_BY_CARDS,       // Main
-    ASSOCIATE_BAG_CARD,       // Helper
     BUY_BAG_CARD,             // Main
     BUY_RESERVE_NOBLE_CARD,   // Main
+    BUYING_RESERVED,          // Helper
+    TOKEN_ACQUIRING_TWO,      // Helper
+    TOKEN_ACQUIRING_THREE,    // Helper
+    ASSOCIATE_BAG_CARD,       // Helper
     CHOOSE_NOBLE_TO_RESERVE,  // Helper
     NULL;                     // NullObject
 
@@ -68,8 +70,8 @@ public interface PromptTypeInterface {
       myMap.put(BUY_CARDS_BY_CARDS,new BuyCardByCard());
       myMap.put(ASSOCIATE_BAG_CARD,new AssociateBagCard());
       myMap.put(BUY_BAG_CARD,new BuyingBagCard());
-      myMap.put(BUY_RESERVE_NOBLE_CARD,nullPromptType);
-      myMap.put(CHOOSE_NOBLE_TO_RESERVE,nullPromptType);
+      myMap.put(BUY_RESERVE_NOBLE_CARD,new BuyReservedNobleCard());
+      myMap.put(CHOOSE_NOBLE_TO_RESERVE,new ChooseNobleReserve());
       myMap.put(NULL,nullPromptType);
     }
 
