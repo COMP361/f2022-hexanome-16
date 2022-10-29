@@ -5,10 +5,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.ComponentListener;
-import com.hexanome16.screens.game.prompts.actualyUI.PromptTypes.BuyCard;
-import java.awt.Color;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
 import java.util.Map;
 
 public class FullGame extends GameApplication {

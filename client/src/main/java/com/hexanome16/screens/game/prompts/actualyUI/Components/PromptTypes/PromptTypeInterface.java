@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import com.almasb.fxgl.entity.Entity;
 import java.util.EnumMap;
@@ -51,7 +51,7 @@ public interface PromptTypeInterface {
       myMap.put(SEE_CARDS,new SeeCards());
       myMap.put(CHOOSE_NOBLES, new ChooseNoble());
       myMap.put(BUYING_RESERVED,new BuyingReserved());
-      myMap.put(BUY_CARDS_BY_CARDS,nullPromptType);
+      myMap.put(BUY_CARDS_BY_CARDS,new BuyCardByCard());
       myMap.put(ASSOCIATE_BAG_CARD,new AssociateBagCard());
       myMap.put(BUY_BAG_CARD,new BuyingBagCard());
       myMap.put(NULL,nullPromptType);

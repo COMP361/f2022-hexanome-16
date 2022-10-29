@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;

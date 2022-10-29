@@ -1,4 +1,4 @@
-package com.hexanome16.screens.game.prompts.actualyUI.PromptTypes;
+package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -20,14 +20,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class TokenAcquiringThree implements PromptTypeInterface {
+public class TokenAcquiringTwo implements PromptTypeInterface {
   double aWidth = getAppWidth()/2;
   double aHeight = getAppHeight()/2;
   double aTokenRadius = aWidth/20;
   double topleftX = (getAppWidth()/2)-(aWidth/2);
   double topleftY = (getAppHeight()/2) - (aHeight/2);
   ArrayList<Node> myNodes = new ArrayList<>();
-  double SelectedTokenTypes = 0;
 
 
   @Override
@@ -78,7 +77,6 @@ public class TokenAcquiringThree implements PromptTypeInterface {
     StackPane button = new StackPane(confirmationButton,confirm);
     button.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if(confirmationButton.getOpacity() == 1) {
-        SelectedTokenTypes =0;
         myNodes = new ArrayList<>();
         PromptComponent.closePrompts();
         ////////Handle new Noble AGAIN///////////
@@ -99,14 +97,7 @@ public class TokenAcquiringThree implements PromptTypeInterface {
     // Bonuses /////////////////////////////////////////////////////////////////////////////////////
     bonuses.setAlignment(Pos.CENTER);
     bonuses.setSpacing(aTokenRadius /4);
-
-    addBonusType(bonuses,confirmationButton, AssociateBagCard.BonusType.RED);
-    addBonusType(bonuses,confirmationButton, AssociateBagCard.BonusType.GREEN);
-    addBonusType(bonuses,confirmationButton, AssociateBagCard.BonusType.WHITE);
     addBonusType(bonuses,confirmationButton, AssociateBagCard.BonusType.BLACK);
-    addBonusType(bonuses,confirmationButton, AssociateBagCard.BonusType.BLUE);
-
-
 
 
     myPrompt.setCenter(bonuses);
@@ -140,16 +131,11 @@ public class TokenAcquiringThree implements PromptTypeInterface {
     });
 
     myBonus.setOnMouseClicked(e -> {
-      if (SelectionRectangle.getOpacity() == 1){
-        SelectionRectangle.setOpacity(0.5);
-        SelectedTokenTypes--;
+      for (Node n : myNodes){
+        n.setOpacity(0.5);
       }
-      else if (SelectedTokenTypes < 3 && (SelectionRectangle.getOpacity()==0.7 || SelectionRectangle.getOpacity()==0.5)) {
       SelectionRectangle.setOpacity(1);
-      SelectedTokenTypes++;
-      }
-      if (SelectedTokenTypes == 3) confirmationButton.setOpacity(1);
-      if (SelectedTokenTypes <3 ) confirmationButton.setOpacity(0.5);
+      confirmationButton.setOpacity(1);
     });
 
     pBonuses.getChildren().add(myBonus);
