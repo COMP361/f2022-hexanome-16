@@ -143,11 +143,15 @@ public class FullGameFactory implements EntityFactory {
   @Spawns("Card")
   public Entity newCard(SpawnData data){
 
+    Text b =new Text("Buy Card");
+    b.setFont(Font.font(30));
+    b.setTranslateY(30);
     Object myColor = data.get("Color");
     return FXGL.entityBuilder(data)
         .with(new GemComponent(myColor,300,300*1.4))
         .with(new PrestigePointComponent())
         .with(new CostComponent())
+        .view(b)
         .at(1300, 300)
         .onClick(new Consumer<Entity>() {
           @Override
@@ -162,7 +166,7 @@ public class FullGameFactory implements EntityFactory {
 
   @Spawns("BuyNobleReserve")
   public Entity newBuyNobleReserve(SpawnData data){
-    Text myText = new Text("Buying Noble Reserve Card");
+    Text myText = new Text("Buy Noble Reserve");
     myText.setFont(Font.font(30));
     return entityBuilder(data)
         .view(new StackPane((new Rectangle(300,100,Color.DIMGREY)),(myText)))
@@ -172,6 +176,21 @@ public class FullGameFactory implements EntityFactory {
         })
         .build();
   }
+
+  @Spawns("Pause")
+  public Entity newPause(SpawnData data){
+    Text myText = new Text("Pause");
+    myText.setFont(Font.font(30));
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.WHITE)),(myText)))
+        .at(500,500)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptTypeInterface.PromptType.PAUSE));
+        })
+        .build();
+  }
+
+
 
 
   @Spawns("Background")

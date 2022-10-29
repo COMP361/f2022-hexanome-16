@@ -32,6 +32,7 @@ public class FullGame extends GameApplication {
     Entity TakingTokens = FXGL.spawn("TakingTokens");
     Entity BuyCardByCard = FXGL.spawn("BuyCardByCard");
     Entity BuyNobleReserve = FXGL.spawn("BuyNobleReserve");
+    Entity Pause = FXGL.spawn("Pause");
   }
 
   @Override
