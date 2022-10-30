@@ -25,8 +25,8 @@ import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 
 public class LobbyScreen extends GameApplication {
     private final AtomicReference<Map<String, Session>> sessionMap = new AtomicReference<>(new HashMap<>());
-    private TableView<Session> activeSessionList;
-    private TableView<Session> inactiveSessionList;
+    private AtomicReference<TableView<Session>> ownSessionList;
+    private AtomicReference<TableView<Session>> otherSessionList;
 
     public enum TYPE {
         SESSION_LIST
@@ -42,7 +42,13 @@ public class LobbyScreen extends GameApplication {
         settings.setManualResizeEnabled(true);
     }
 
-    private void spawnSessionList(Session[] sessions, TableView<Session> sessionList) {
+    private void spawnSessionList(Session[] sessions, boolean areOwn) {
+        TableView<Session> sessionList = new TableView<>();
+        if (areOwn) {
+            ownSessionList.set(sessionList);
+        } else {
+            otherSessionList.set(sessionList);
+        }
         sessionList = new TableView<>();
         sessionList.setStyle("-fx-background-color: #00000000; -fx-text-fill: #ffffff;");
 
@@ -119,10 +125,15 @@ public class LobbyScreen extends GameApplication {
 
     private void updateSessionList() {
         sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
-        sessionList.getItems().clear();
+        Session[] activeSessions = sessionMap.get().values().stream().filter(Session::launched).toArray(Session[]::new);
+        Session[] inactiveSessions = sessionMap.get().values().stream().filter(session -> !session.launched()).toArray(Session[]::new);
+        ownSessionList.get().getItems().clear();
+        otherSessionList.get().getItems().clear();
         if (sessionMap.get() != null) {
-            sessionList.getItems().addAll(sessionMap.get().values());
-            sessionList.setPrefHeight(30 + sessionMap.get().size() * 41);
+            ownSessionList.get().getItems().addAll(activeSessions);
+            otherSessionList.get().getItems().addAll(inactiveSessions);
+            ownSessionList.get().setPrefHeight(30 + activeSessions.length * 41);
+            otherSessionList.get().setPrefHeight(30 + inactiveSessions.length * 41);
         }
     }
 
@@ -157,8 +168,8 @@ public class LobbyScreen extends GameApplication {
         Session[] sessions = sessionMap.get() != null ? sessionMap.get().values().toArray(new Session[0]) : new Session[0];
         Session[] activeSessions = Arrays.stream(sessions).filter(Session::launched).toArray(Session[]::new);
         Session[] inactiveSessions = Arrays.stream(sessions).filter(session -> !session.launched()).toArray(Session[]::new);
-        runOnce(() -> spawnSessionList(activeSessions, activeSessionList), Duration.ZERO);
-        runOnce(() -> spawnSessionList(inactiveSessions, inactiveSessionList), Duration.ZERO);
+        runOnce(() -> spawnSessionList(activeSessions, true), Duration.ZERO);
+        runOnce(() -> spawnSessionList(inactiveSessions, false), Duration.ZERO);
         runOnce(this::spawnHeader, Duration.ZERO);
         run(this::updateSessionList, Duration.seconds(1));
     }
