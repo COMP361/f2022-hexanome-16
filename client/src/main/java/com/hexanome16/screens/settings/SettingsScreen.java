@@ -7,15 +7,24 @@ import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
+/**
+ * Settings UI
+ *
+ * <p>
+ *     To use: {@link #initUI()} <br>
+ *     To clear: {@link #clearUI()}
+ * </p>
+ */
 public class SettingsScreen {
     private static UI uiSingleton;
     private static SettingsScreenUIController uiControllerSingleton;
+    private static boolean isVisible = false;
 
     /**
      * Singleton factory for UI
      *
      * <p>
-     * Creates a static <i>singleton</i> instance of a UI and a MainMenuScreenUIController
+     * Creates a static <i>singleton</i> instance of a UI and a controller
      * </p>
      *
      * @return UI
@@ -40,16 +49,24 @@ public class SettingsScreen {
 
     /**
      * Makes UI appear on screen
+     * @pre: UI isn't already visible (will not do anything otherwise)
      */
     public static void initUI() {
-        getGameScene().setBackgroundColor(Color.rgb(0, 0, 5));
+        if (isVisible) return;
+
         getGameScene().addUI(getUI());
+        isVisible = true;
     }
 
     /**
      * Makes UI disappear from screen
+     * @pre: UI is currently visible (will not do anything otherwise)
      */
     public static void clearUI() {
+        if (!isVisible) return;
+
         getGameScene().removeUI(getUI());
+
+        isVisible = false;
     }
 }

@@ -16,12 +16,13 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class MainMenuScreen {
     private static UI uiSingleton;
     private static MainMenuScreenUIController uiControllerSingleton;
+    private static boolean isVisible = false;
 
     /**
      * Singleton factory for UI
      *
      * <p>
-     * Creates a static <i>singleton</i> instance of a UI and a MainMenuScreenUIController
+     * Creates a static <i>singleton</i> instance of a UI and a controller
      * </p>
      *
      * @return UI
@@ -52,15 +53,24 @@ public class MainMenuScreen {
 
     /**
      * Makes UI appear on screen
+     * @pre: UI isn't already visible (will not do anything otherwise)
      */
     public static void initUI() {
+        if (isVisible) return;
+
         getGameScene().addUI(getUI());
+        isVisible = true;
     }
 
     /**
      * Makes UI disappear from screen
+     * @pre: UI is currently visible (will not do anything otherwise)
      */
     public static void clearUI() {
+        if (!isVisible) return;
+
         getGameScene().removeUI(getUI());
+
+        isVisible = false;
     }
 }
