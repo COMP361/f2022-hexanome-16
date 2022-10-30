@@ -4,9 +4,11 @@ import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
+import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.CustomEvent;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -35,10 +37,30 @@ public class PromptComponent extends Component {
 
   @Override
   public void onAdded() {
+    initiateWorldProperties();
     buildBox(10);
     aPromptType.populatePrompt(entity);
     buildButton(30,15,5);
   }
+
+
+  // This is for Buying stuff
+  private void initiateWorldProperties() {
+    PropertyMap buyMap =FXGL.getWorldProperties();
+
+    String playerbankPrefix = BuyCard.BankType.PLAYER_BANK.toString() +"/";
+    String gameBankPrefix = BuyCard.BankType.GAME_BANK.toString() + "/";
+    int i=0;
+    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
+      String gameBank = gameBankPrefix+(e.toString());
+      String playerBankKeys = playerbankPrefix + (e.toString());
+      i++;
+      buyMap.setValue(playerBankKeys, i);
+      int value = 0;
+      buyMap.setValue(gameBank,value);
+    }
+  }
+
 
   private void buildBox(double pOutterSpace) {
     //initiate elements
@@ -113,7 +135,4 @@ public class PromptComponent extends Component {
     FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.CLOSING));
   }
 
-  public static void openPrompt(PromptTypeInterface.PromptType pPromptType){
-    FXGL.spawn("PromptBox",new SpawnData().put("promptType", pPromptType));
-  }
 }
