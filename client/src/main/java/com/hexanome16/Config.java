@@ -1,7 +1,7 @@
 package com.hexanome16;
 
 public class Config {
-    public static int APP_WIDTH = 1080;
+    public static int APP_WIDTH = 1920;
     public static final int APP_HEIGHT = (int) (APP_WIDTH * 9 / 16.0);
 
     public static final String APP_VERSION = "0.0.1";
