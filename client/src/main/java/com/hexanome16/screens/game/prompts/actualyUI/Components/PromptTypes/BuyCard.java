@@ -352,7 +352,7 @@ public class BuyCard implements PromptTypeInterface {
         FXGL.getWorldProperties().setValue(BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
       }
     }
-
+    FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.BOUGHT));
   }
 
 }

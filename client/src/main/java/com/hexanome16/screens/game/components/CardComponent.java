@@ -8,6 +8,9 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.game.Level;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.CustomEvent;
+import com.hexanome16.screens.game.prompts.actualyUI.OpenPromt;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
@@ -57,7 +60,9 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> trigger());
+    FXGL.getEventBus().addEventHandler(CustomEvent.BOUGHT, e -> {moving = true; direction = Direction.DOWN;});
+    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPromt.openPrompt(
+        PromptTypeInterface.PromptType.BUY_CARDS));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     adding = true;
@@ -210,5 +215,9 @@ public class CardComponent extends Component {
         break;
       }
     }
+  }
+
+  private void buyCard(){
+
   }
 }
