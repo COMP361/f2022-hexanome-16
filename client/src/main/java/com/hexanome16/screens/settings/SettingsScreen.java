@@ -7,25 +7,49 @@ import javafx.scene.paint.Color;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class SettingsScreen extends GameApplication {
-    @Override
-    protected void initSettings(GameSettings gameSettings) {
-        gameSettings.setWidth(1280);
-        gameSettings.setHeight(1024);
-        gameSettings.setTitle("Settings screen");
-        gameSettings.setVersion("0.1");
+public class SettingsScreen {
+    private static UI uiSingleton;
+    private static SettingsScreenUIController uiControllerSingleton;
+
+    /**
+     * Singleton factory for UI
+     *
+     * <p>
+     * Creates a static <i>singleton</i> instance of a UI and a MainMenuScreenUIController
+     * </p>
+     *
+     * @return UI
+     */
+    private static UI getUI() {
+        if (uiSingleton == null) {
+            uiControllerSingleton = new SettingsScreenUIController();
+            uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
+            setupUI();
+        }
+        return uiSingleton;
     }
 
-    @Override
-    protected void initUI() {
-        SettingsScreenUIController uiController = new SettingsScreenUIController();
-        UI ui = getAssetLoader().loadUI("SettingsScreen.fxml", uiController);
-        uiController.doneButton.setOnAction((event) -> getGameController().exit());
-
-        getGameScene().setBackgroundColor(Color.rgb(0,0,5));
-        getGameScene().addUI(ui);
+    /**
+     * Setup uiSingleton with navigation, need to call during uiSingleton creation
+     *
+     * @pre: uiSingleton is created
+     */
+    private static void setupUI() {
+        uiControllerSingleton.doneButton.setOnAction((event) -> getGameController().exit());
     }
-    public static void main(String[] args) {
-        launch(args);
+
+    /**
+     * Makes UI appear on screen
+     */
+    public static void initUI() {
+        getGameScene().setBackgroundColor(Color.rgb(0, 0, 5));
+        getGameScene().addUI(getUI());
+    }
+
+    /**
+     * Makes UI disappear from screen
+     */
+    public static void clearUI() {
+        getGameScene().removeUI(getUI());
     }
 }
