@@ -9,6 +9,7 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.Buyi
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyingReserved;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.ChooseNoble;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.ChooseNobleReserve;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.Pause;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeCards;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOtherReserved;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.SeeOwnReserved;
