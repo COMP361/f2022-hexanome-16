@@ -3,6 +3,7 @@ package com.hexanome16;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
+import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
 import com.hexanome16.screens.game.prompts.actualyUI.OpenPromt;
@@ -23,11 +24,23 @@ public class MainApp extends GameApplication {
   // Or look for PromptTypeInterface
   @Override
   protected void initGame() {
-    FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
+    GameScreen.initGame();
   }
 
+  @Override
+  protected void initUI() {
+    GameScreen.initUI();
+  }
 
+  @Override
+  protected void initGameVars(Map<String, Object> vars) {
+    GameScreen.initGameVars(vars);
+  }
 
+  @Override
+  protected void onUpdate(double tpf) {
+    GameScreen.onUpdate();
+  }
 
   public static void main(String[] args) {
     launch(args);
