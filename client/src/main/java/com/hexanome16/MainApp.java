@@ -1,114 +1,58 @@
 package com.hexanome16;
 
-/*
- * FXGL - JavaFX Game Library. The MIT License (MIT).
- * Copyright (c) AlmasB (almaslvl@gmail.com).
- * See LICENSE for details.
- */
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import javafx.util.Duration;
+import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
+import com.hexanome16.screens.game.prompts.actualyUI.FullGameFactory;
+import com.hexanome16.screens.game.prompts.actualyUI.GemEnum;
+import java.util.Map;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-// NOTE: this import above is crucial, it pulls in many useful methods
-
-/**
- * This is an FXGL version of the libGDX simple game tutorial, which can be found
- * here - <a href="https://github.com/libgdx/libgdx/wiki/A-simple-game">...</a> *<p>
- * The player can move the bucket left and right to catch water droplets.
- * There are no win/lose conditions.
- * <p>
- * Note: for simplicity's sake all the code is kept in this file.
- * In addition, most of typical FXGL API is not used to avoid overwhelming
- * FXGL beginners with a lot of new concepts to learn.
- * <p>
- * Although the code is self-explanatory, some may find the comments useful
- * for following the code.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- */
 public class MainApp extends GameApplication {
+  @Override
+  protected void initSettings(GameSettings gameSettings) {
+      gameSettings.setVersion("1");
+      gameSettings.setTitle("Am struggling real hard rn");
+      gameSettings.setWidth(1920);
+      gameSettings.setHeight(1080);
+  }
 
-    /**
-     * Types of entities in this game.
-     */
-    public enum Type {
-        DROPLET, BUCKET
+
+
+  @Override
+  protected void initGame() {
+    FXGL.getGameWorld().addEntityFactory(new FullGameFactory());
+    Entity myBG = FXGL.spawn("Background");
+    Entity myCard = FXGL.spawn("Card", new SpawnData().put("Color", GemEnum.RUBY));
+    Entity myNobleChoice = FXGL.spawn("NobleChoice");
+    Entity aHandofCards = FXGL.spawn("ViewHandColor");
+    Entity myOwnReservedCards = FXGL.spawn("ViewReservedSelf");
+    Entity OthersReservedCards = FXGL.spawn("ViewOtherSelf");
+    Entity AssociateBuyCard = FXGL.spawn("BuyBagCard");
+    Entity TakingTokens = FXGL.spawn("TakingTokens");
+    Entity BuyCardByCard = FXGL.spawn("BuyCardByCard");
+    Entity BuyNobleReserve = FXGL.spawn("BuyNobleReserve");
+    Entity Pause = FXGL.spawn("Pause");
+  }
+
+  @Override
+  protected void initGameVars(Map<String, Object> vars) {
+    String playerbankPrefix = BuyCard.BankType.PLAYER_BANK.toString() +"/";
+    String gameBankPrefix = BuyCard.BankType.GAME_BANK.toString() + "/";
+    int i=0;
+    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
+      String gameBank = gameBankPrefix+(e.toString());
+      String playerBankKeys = playerbankPrefix + (e.toString());
+      i++;
+      vars.put(playerBankKeys, i);
+      int value = 0;
+      vars.put(gameBank,value);
     }
+  }
 
-    @Override
-    protected void initSettings(GameSettings settings) {
-        // initialize common game / window settings.
-        settings.setTitle("Drop");
-        settings.setVersion("1.0");
-        settings.setWidth(480);
-        settings.setHeight(800);
-    }
-
-    @Override
-    protected void initGame() {
-        spawnBucket();
-
-        // creates a timer that runs spawnDroplet() every second
-        run(this::spawnDroplet, Duration.seconds(1));
-
-        // loop background music located in /resources/assets/music/
-        loopBGM("bgm.mp3");
-    }
-
-    @Override
-    protected void initPhysics() {
-        onCollisionBegin(Type.BUCKET, Type.DROPLET, (bucket, droplet) -> {
-
-            // code in this block is called when there is a collision between Type.BUCKET and Type.DROPLET
-
-            // remove the collided droplet from the game
-            droplet.removeFromWorld();
-
-            // play a sound effect located in /resources/assets/sounds/
-            play("drop.wav");
-        });
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-
-        // for each entity of Type.DROPLET translate (move) it down
-        getGameWorld().getEntitiesByType(Type.DROPLET).forEach(droplet -> droplet.translateY(150 * tpf));
-    }
-
-    private void spawnBucket() {
-        // build an entity with Type.BUCKET
-        // at the position X = getAppWidth() / 2 and Y = getAppHeight() - 200
-        // with a view "bucket.png", which is an image located in /resources/assets/textures/
-        // also create a bounding box from that view
-        // make the entity collidable
-        // finally, complete building and attach to the game world
-
-        Entity bucket = entityBuilder()
-                .type(Type.BUCKET)
-                .at(getAppWidth() / 2.0, getAppHeight() - 200)
-                .viewWithBBox("bucket.png")
-                .collidable()
-                .buildAndAttach();
-
-        // bind bucket's X value to mouse X
-        bucket.xProperty().bind(getInput().mouseXWorldProperty());
-    }
-
-    private void spawnDroplet() {
-        entityBuilder()
-                .type(Type.DROPLET)
-                .at(FXGLMath.random(0, getAppWidth() - 64), 0)
-                .viewWithBBox("droplet.png")
-                .collidable()
-                .buildAndAttach();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+  public static void main(String[] args) {
+    launch(args);
+  }
 }
