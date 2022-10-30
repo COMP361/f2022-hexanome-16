@@ -1,37 +1,66 @@
 package com.hexanome16.screens.mainmenu;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.ui.UI;
+import com.hexanome16.screens.settings.SettingsScreen;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class MainMenuScreen extends GameApplication {
-    @Override
-    protected void initSettings(GameSettings gameSettings) {
-        gameSettings.setWidth(1280);
-        gameSettings.setHeight(1024);
-        gameSettings.setTitle("Settings screen");
-        gameSettings.setVersion("0.1");
+/**
+ * Main Menu UI
+ *
+ * <p>
+ *     To use: {@link #initUI()} <br>
+ *     To clear: {@link #clearUI()}
+ * </p>
+ */
+public class MainMenuScreen {
+    private static UI uiSingleton;
+    private static MainMenuScreenUIController uiControllerSingleton;
+
+    /**
+     * Singleton factory for UI
+     *
+     * <p>
+     * Creates a static <i>singleton</i> instance of a UI and a MainMenuScreenUIController
+     * </p>
+     *
+     * @return UI
+     */
+    private static UI getUI() {
+        if (uiSingleton == null) {
+            uiControllerSingleton = new MainMenuScreenUIController();
+            uiSingleton = getAssetLoader().loadUI("MenuScreen.fxml", uiControllerSingleton);
+            setupUI();
+        }
+        return uiSingleton;
     }
 
-    @Override
-    protected void initUI() {
-        MainMenuScreenUIController uiController = new MainMenuScreenUIController();
-        UI ui = getAssetLoader().loadUI("MenuScreen.fxml", uiController);
-//        CSS css = FXGL.getAssetLoader().loadCSS("MenuScreen.css");
-//        getGameScene().appendCSS(css);
+    /**
+     * Setup uiSingleton with navigation, need to call during uiSingleton creation
+     *
+     * @pre: uiSingleton is created
+     */
+    private static void setupUI() {
+        uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
+            MainMenuScreen.clearUI();
+            SettingsScreen.initUI();
+        });
 
         //TODO: Add lobby screen navigation
 //        uiController.lobbySection.setOnMouseClicked();
-
-//        uiController.settingsSection.setOnMouseClicked(event -> getGameController().gotoMainMenu());
-
-        getGameScene().addUI(ui);
     }
-    public static void main(String[] args) {
-        launch(args);
+
+    /**
+     * Makes UI appear on screen
+     */
+    public static void initUI() {
+        getGameScene().addUI(getUI());
+    }
+
+    /**
+     * Makes UI disappear from screen
+     */
+    public static void clearUI() {
+        getGameScene().removeUI(getUI());
     }
 }
