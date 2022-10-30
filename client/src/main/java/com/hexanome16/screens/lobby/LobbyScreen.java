@@ -36,6 +36,7 @@ public class LobbyScreen extends GameApplication {
         settings.setVersion(APP_VERSION);
         settings.setWidth(APP_WIDTH);
         settings.setHeight(APP_HEIGHT);
+        settings.setManualResizeEnabled(true);
     }
 
     private void spawnSessionList() {
@@ -104,7 +105,10 @@ public class LobbyScreen extends GameApplication {
     private void updateSessionList() {
         sessionMap.set(ListSessionsRequest.execute(sessionMap.hashCode()));
         sessionList.getItems().clear();
-        sessionList.getItems().addAll(sessionMap.get().values());
+        if (sessionMap.get() != null) {
+            sessionList.getItems().addAll(sessionMap.get().values());
+        }
+        sessionList.autosize();
     }
 
     @Override

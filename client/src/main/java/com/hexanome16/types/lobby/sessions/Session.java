@@ -3,8 +3,21 @@ package com.hexanome16.types.lobby.sessions;
 import java.util.Arrays;
 import java.util.Objects;
 
-public record Session(String creator, GameParams gameParameters, boolean launched, String[] players,
-                      String savegameid) {
+public final class Session {
+    private String creator;
+    private GameParams gameParameters;
+    private boolean launched;
+    private String[] players;
+    private String savegameid;
+
+    public Session(String creator, GameParams gameParameters, boolean launched, String[] players,
+                   String savegameid) {
+        this.creator = creator;
+        this.gameParameters = gameParameters;
+        this.launched = launched;
+        this.players = players;
+        this.savegameid = savegameid;
+    }
 
     public String toString() {
         return "Session{" +
@@ -29,5 +42,45 @@ public record Session(String creator, GameParams gameParameters, boolean launche
         int result = Objects.hash(creator(), gameParameters(), launched(), savegameid());
         result = 31 * result + Arrays.hashCode(players());
         return result;
+    }
+
+    public String creator() {
+        return creator;
+    }
+
+    public GameParams gameParameters() {
+        return gameParameters;
+    }
+
+    public boolean launched() {
+        return launched;
+    }
+
+    public String[] players() {
+        return players;
+    }
+
+    public String savegameid() {
+        return savegameid;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setGameParameters(GameParams gameParameters) {
+        this.gameParameters = gameParameters;
+    }
+
+    public void setLaunched(boolean launched) {
+        this.launched = launched;
+    }
+
+    public void setPlayers(String[] players) {
+        this.players = players;
+    }
+
+    public void setSavegameid(String savegameid) {
+        this.savegameid = savegameid;
     }
 }
