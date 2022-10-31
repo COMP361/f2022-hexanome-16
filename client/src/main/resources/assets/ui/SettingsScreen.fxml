@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #292D36;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" prefHeight="400.0" prefWidth="423.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Preferences">
+               <font>
+                  <Font size="50.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </Text>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Resolution" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <ChoiceBox fx:id="resolutionChoiceBox" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Language" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Overall Sound" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <Slider fx:id="soundSlider" majorTickUnit="100.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Music" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <Slider fx:id="musicSlider" majorTickUnit="100.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Sound Effects" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <Slider fx:id="sfxSlider" majorTickUnit="100.0" />
+               </children>
+            </HBox>
+            <Button fx:id="doneButton" mnemonicParsing="false" style="-fx-background-color: #6298EF;" text="Done" textFill="WHITE">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
