@@ -16,7 +16,7 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 public class StartupScreen implements EntityFactory {
     @Spawns("mainscreen")
     public Entity mainScreen(SpawnData data) {
-        var main_screen = FXGL.texture("main_screen.jpg");
+        var main_screen = FXGL.texture("splendor_main_screen.jpg");
         return FXGL.entityBuilder(data)
                 .view(main_screen)
                 .build();
