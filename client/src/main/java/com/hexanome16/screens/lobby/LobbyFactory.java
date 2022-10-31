@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.hexanome16.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.requests.lobbyservice.sessions.*;
 import com.hexanome16.screens.game.GameScreen;
+import com.hexanome16.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.screens.settings.SettingsScreen;
 import com.hexanome16.types.lobby.auth.TokensInfo;
 import com.hexanome16.types.lobby.sessions.Session;
@@ -81,7 +82,7 @@ public class LobbyFactory implements EntityFactory {
         playersColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         TableColumn<Session, String> actionsColumn = new TableColumn<>("Actions");
-        actionsColumn.setCellValueFactory(new PropertyValueFactory<>("actions"));
+        actionsColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper("actions"));
         actionsColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         Callback<TableColumn<Session, String>, TableCell<Session, String>> actionsCellFactory =
@@ -242,6 +243,7 @@ public class LobbyFactory implements EntityFactory {
         button.setStyle("-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px; -fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px; -fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
         button.setOnAction(event -> {
             LobbyScreen.exitLobby();
+            MainMenuScreen.initUI();
         });
         return entityBuilder(data)
                 .type(TYPE.CLOSE_BUTTON)
