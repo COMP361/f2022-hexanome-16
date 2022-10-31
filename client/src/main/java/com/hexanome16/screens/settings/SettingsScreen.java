@@ -36,6 +36,16 @@ public class SettingsScreen {
         return uiSingleton;
     }
 
+    // more sorry
+    private static UI getUI(boolean x) {
+        if (uiSingleton == null) {
+            uiControllerSingleton = new SettingsScreenUIController();
+            uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
+            setupUI(x);
+        }
+        return uiSingleton;
+    }
+
     /**
      * Setup uiSingleton with navigation, need to call during uiSingleton creation
      *
@@ -45,6 +55,13 @@ public class SettingsScreen {
         uiControllerSingleton.doneButton.setOnAction((event) -> {
             SettingsScreen.clearUI();
             MainMenuScreen.initUI();
+        });
+    }
+
+    // final sorry :(
+    private static void setupUI( boolean x) {
+        uiControllerSingleton.doneButton.setOnAction((event) -> {
+            SettingsScreen.clearUI();
         });
     }
 
@@ -59,6 +76,14 @@ public class SettingsScreen {
         isVisible = true;
     }
 
+    // please dont be mad tristan xoxo
+    public static void initUI(boolean x) {
+        if (isVisible) return;
+
+        getGameScene().addUI(getUI(x));
+        isVisible = true;
+    }
+
     /**
      * Makes UI disappear from screen
      * @pre: UI is currently visible (will not do anything otherwise)
@@ -70,4 +95,7 @@ public class SettingsScreen {
 
         isVisible = false;
     }
+
+
+
 }
