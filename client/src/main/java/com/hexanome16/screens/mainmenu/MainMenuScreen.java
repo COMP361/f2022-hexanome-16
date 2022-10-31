@@ -52,6 +52,8 @@ public class MainMenuScreen {
 //        uiController.lobbySection.setOnMouseClicked();
 
         uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
+//            MainMenuScreen.clearUI();
+//            GameScreen.initGame();
         });
     }
 
