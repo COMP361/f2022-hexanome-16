@@ -42,7 +42,7 @@ public class SettingsScreenUIController implements UIController {
 
     private void initResolutionsBox() {
         resolutionChoiceBox.getItems().addAll(resolutions);
-        resolutionChoiceBox.getSelectionModel().selectFirst();
+        resolutionChoiceBox.getSelectionModel().select(3);
     }
 
     /**

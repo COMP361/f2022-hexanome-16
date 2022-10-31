@@ -49,6 +49,9 @@ public class MainMenuScreen {
 
         //TODO: Add lobby screen navigation
 //        uiController.lobbySection.setOnMouseClicked();
+
+        uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
+        });
     }
 
     /**

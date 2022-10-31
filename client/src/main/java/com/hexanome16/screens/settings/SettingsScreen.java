@@ -1,9 +1,7 @@
 package com.hexanome16.screens.settings;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.ui.UI;
-import javafx.scene.paint.Color;
+import com.hexanome16.screens.mainmenu.MainMenuScreen;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -44,7 +42,10 @@ public class SettingsScreen {
      * @pre: uiSingleton is created
      */
     private static void setupUI() {
-        uiControllerSingleton.doneButton.setOnAction((event) -> getGameController().exit());
+        uiControllerSingleton.doneButton.setOnAction((event) -> {
+            SettingsScreen.clearUI();
+            MainMenuScreen.initUI();
+        });
     }
 
     /**
