@@ -83,7 +83,7 @@ public class LoginScreen implements EntityFactory {
     @Spawns("cancelbutton")
     public Entity cancelbutton(SpawnData data) {
         FXGLButton button = createButton("Cancel");
-        button.setOpacity(0.90);
+        button.setOpacity(0.85);
         button.setOnMouseClicked(e -> {
             StartupScreen.backToMainScreen();
         });
