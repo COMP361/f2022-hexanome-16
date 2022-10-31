@@ -28,11 +28,6 @@ public class MainApp extends GameApplication {
   }
 
   @Override
-  protected void initUI() {
-    GameScreen.initUI();
-  }
-
-  @Override
   protected void initGameVars(Map<String, Object> vars) {
     GameScreen.initGameVars(vars);
   }
