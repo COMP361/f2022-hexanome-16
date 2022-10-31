@@ -28,8 +28,6 @@ public class GameScreen {
   private static int[] noble_list = {0, 1, 2, 3, 4};
 
   public static void initGame() {
-    FXGL.getGameWorld().addEntityFactory(new GameFactory());
-    FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
     for (int i = 0; i < level_one_list.length; i++) {
       level_one.push(level_one_list[i]);
     }
