@@ -16,7 +16,7 @@ public class ListSessionsRequest {
         public Map<String, Session> sessions;
     }
 
-    public static Map<String, Session> execute(int hash) {
+    public static Session[] execute(int hash) {
         HttpClient client = RequestClient.getClient();
         try {
             String url = "http://127.0.0.1:4242/api/sessions";
@@ -30,7 +30,11 @@ public class ListSessionsRequest {
                     .build();
             String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body).get();
-            return new Gson().fromJson(response, Response.class).sessions;
+            Map<String, Session> sessions = new Gson().fromJson(response, Response.class).sessions;
+            return sessions.entrySet().stream().map(entry -> {
+                entry.getValue().setId(Long.valueOf(entry.getKey()));
+                return entry.getValue();
+            }).toArray(Session[]::new);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
