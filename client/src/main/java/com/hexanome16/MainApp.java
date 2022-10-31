@@ -33,7 +33,7 @@ public class MainApp extends GameApplication {
     }
 
     private void backToMainScreen() {
-        getGameWorld().addEntityFactory(new MainScreen());
+        getGameWorld().addEntityFactory(new StartupScreen());
         getGameWorld().addEntityFactory(new LoginScreen());
         spawn("mainscreen", 0, 0);
         spawn("diamond", 730, 360);
