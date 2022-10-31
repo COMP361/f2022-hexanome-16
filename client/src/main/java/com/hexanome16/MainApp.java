@@ -28,10 +28,12 @@ public class MainApp extends GameApplication {
   protected void initGame() {
     getGameWorld().addEntityFactory(new GameFactory());
     getGameWorld().addEntityFactory(new PromptPartFactory());
+    getGameWorld().addEntityFactory(new StartupScreen());
+    getGameWorld().addEntityFactory(new LoginScreen());
     getGameWorld().addEntityFactory(new LobbyFactory());
-    backToMainScreen();
-  }
 
+    StartupScreen.backToMainScreen();
+  }
 
   @Override
   protected void onUpdate(double tpf) {
@@ -42,19 +44,9 @@ public class MainApp extends GameApplication {
     launch(args);
   }
 
-
-
   @Override
   protected void initGameVars(Map<String, Object> vars) {
     GameScreen.initGameVars(vars);
   }
 
-
-  private void backToMainScreen() {
-    getGameWorld().addEntityFactory(new StartupScreen());
-    getGameWorld().addEntityFactory(new LoginScreen());
-    spawn("mainscreen", 0, 0);
-    spawn("diamond", 730, 360);
-    spawn("message", 370, 985);
-  }
 }
