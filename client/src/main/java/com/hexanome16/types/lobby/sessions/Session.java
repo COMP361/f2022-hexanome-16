@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public final class Session {
+    private Long id;
     private String creator;
     private GameParams gameParameters;
     private boolean launched;
@@ -64,6 +65,10 @@ public final class Session {
         return savegameid;
     }
 
+    public Long id() {
+        return id;
+    }
+
     public void setCreator(String creator) {
         this.creator = creator;
     }
@@ -82,5 +87,9 @@ public final class Session {
 
     public void setSavegameid(String savegameid) {
         this.savegameid = savegameid;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

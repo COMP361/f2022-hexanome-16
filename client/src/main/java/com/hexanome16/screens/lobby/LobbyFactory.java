@@ -5,12 +5,13 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.hexanome16.requests.lobbyservice.oauth.TokenRequest;
-import com.hexanome16.requests.lobbyservice.sessions.CreateSessionRequest;
-import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
+import com.hexanome16.requests.lobbyservice.sessions.*;
+import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.settings.SettingsScreen;
 import com.hexanome16.types.lobby.auth.TokensInfo;
 import com.hexanome16.types.lobby.sessions.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -18,13 +19,15 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class LobbyFactory implements EntityFactory {
-    private static Map<String, Session> sessionMap = new HashMap<>();
+    private static Session[] sessions = new Session[]{};
     private static TableView<Session> ownSessionList;
     private static TableView<Session> otherSessionList;
 
@@ -42,14 +45,14 @@ public class LobbyFactory implements EntityFactory {
 
     @Spawns("ownSessionList")
     public Entity ownSessionList(SpawnData data) {
-        Session[] sessions = sessionMap.values().stream().filter(session -> session.creator().equals("testuser")).toArray(Session[]::new);
-        return sessionList(data, sessions, true);
+        Session[] activeSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("testuser") || Arrays.asList(session.players()).contains("testuser")).toArray(Session[]::new);
+        return sessionList(data, activeSessions, true);
     }
 
     @Spawns("otherSessionList")
     public Entity otherSessionList(SpawnData data) {
-        Session[] sessions = sessionMap.values().stream().filter(session -> !session.creator().equals("testuser")).toArray(Session[]::new);
-        return sessionList(data, sessions, false);
+        Session[] otherSessions = Arrays.stream(sessions).filter(session -> !(session.creator().equals("testuser") || Arrays.asList(session.players()).contains("testuser"))).toArray(Session[]::new);
+        return sessionList(data, otherSessions, false);
     }
 
     private Entity sessionList(SpawnData data, Session[] sessions, boolean isOwn) {
@@ -86,7 +89,7 @@ public class LobbyFactory implements EntityFactory {
                     @Override
                     public TableCell<Session, String> call(final TableColumn<Session, String> param) {
                         return new TableCell<>() {
-                            final Button join = new Button("Join");
+                            final Button join = new Button(isOwn ? "Continue" : "Join");
                             final Button leave = new Button("Leave");
                             final Button launch = new Button("Launch");
                             final Button delete = new Button("Delete");
@@ -98,13 +101,48 @@ public class LobbyFactory implements EntityFactory {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    final Session session = getTableView().getItems().get(getIndex());
                                     join.setOnAction(event -> {
-                                        Session session = getTableView().getItems().get(getIndex());
-                                        System.out.println(session);
+                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        assert tokensInfo != null;
+                                        JoinSessionRequest.execute(session.id(), "testuser", tokensInfo.access_token());
+                                        if (session.launched()) {
+                                            GameScreen.initGame();
+                                            LobbyScreen.exitLobby();
+                                        }
                                     });
-                                    HBox buttons = new HBox(join, leave, launch, delete);
-                                    buttons.setStyle("-fx-alignment: CENTER; -fx-spacing: 5px; -fx-padding: 5px;");
-                                    setGraphic(buttons);
+                                    leave.setOnAction(event -> {
+                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        assert tokensInfo != null;
+                                        LeaveSessionRequest.execute(session.id(), "testuser", tokensInfo.access_token());
+                                    });
+                                    launch.setOnAction(event -> {
+                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        assert tokensInfo != null;
+                                        LaunchSessionRequest.execute(session.id(), tokensInfo.access_token());
+                                        GameScreen.initGame();
+                                        LobbyScreen.exitLobby();
+                                    });
+                                    delete.setOnAction(event -> {
+                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        assert tokensInfo != null;
+                                        DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
+                                    });
+                                    ArrayList<Button> buttons = new ArrayList<>();
+                                    if (isOwn) {
+                                        buttons.add(session.launched() ? join : launch);
+                                        buttons.add(leave);
+                                        if (!session.launched()) {
+                                            buttons.add(delete);
+                                        }
+                                    } else if (Arrays.asList(session.players()).contains("testuser")) {
+                                        buttons.add(leave);
+                                    } else {
+                                        buttons.add(join);
+                                    }
+                                    HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
+                                    buttonBox.setStyle("-fx-alignment: CENTER; -fx-spacing: 5px; -fx-padding: 5px;");
+                                    setGraphic(buttonBox);
                                     setText(null);
                                 }
                             }
@@ -116,6 +154,7 @@ public class LobbyFactory implements EntityFactory {
         Label placeholder = new Label("No sessions found");
         placeholder.setStyle("-fx-text-fill: #ffffff;");
         sessionTableView.setPlaceholder(placeholder);
+
         sessionTableView.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
         sessionTableView.setPrefSize(1600, 70);
         sessionTableView.resizeColumn(creatorColumn, 320);
@@ -129,18 +168,18 @@ public class LobbyFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(isOwn ? TYPE.OWN_SESSION_LIST : TYPE.OTHER_SESSION_LIST)
                 .viewWithBBox(sessionTableView)
-                .at(160, isOwn ? 300 : 450 + ownSessionList.getHeight())
+                .at(160, isOwn ? 350 : 550 + ownSessionList.getHeight())
                 .build();
     }
 
     public static void updateSessionList() {
-        sessionMap = ListSessionsRequest.execute(sessionMap.hashCode());
+        sessions = ListSessionsRequest.execute(sessions == null ? 0 : Arrays.hashCode(sessions));
         ownSessionList.getItems().clear();
         otherSessionList.getItems().clear();
 
-        if (sessionMap != null) {
-            Session[] ownSessions = sessionMap.values().stream().filter(session -> session.creator().equals("testuser")).toArray(Session[]::new);
-            Session[] otherSessions = sessionMap.values().stream().filter(session -> !session.creator().equals("testuser")).toArray(Session[]::new);
+        if (sessions != null) {
+            Session[] ownSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("testuser")).toArray(Session[]::new);
+            Session[] otherSessions = Arrays.stream(sessions).filter(session -> !session.creator().equals("testuser")).toArray(Session[]::new);
 
             ownSessionList.getItems().addAll(ownSessions);
             otherSessionList.getItems().addAll(otherSessions);
@@ -152,7 +191,7 @@ public class LobbyFactory implements EntityFactory {
     @Spawns("createSessionButton")
     public Entity createSessionButton(SpawnData data) {
         Button button = new Button("Create Session");
-        button.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 20px; -fx-padding: 10px;");
+        button.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-padding: 10px;");
         button.setOnAction(event -> {
             TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
             assert tokensInfo != null;
@@ -167,35 +206,35 @@ public class LobbyFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(TYPE.CREATE_SESSION_BUTTON)
                 .viewWithBBox(button)
-                .at(850, 150)
+                .at(870, 200)
                 .build();
     };
 
     @Spawns("ownHeader")
     public Entity ownHeader(SpawnData data) {
-        Label label = new Label("Own Sessions");
-        label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 20px;");
+        Label label = new Label("Active Sessions");
+        label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
         return entityBuilder(data)
                 .type(TYPE.OWN_HEADER)
                 .viewWithBBox(label)
-                .at(850, 250)
+                .at(870, 300)
                 .build();
     }
 
     @Spawns("otherHeader")
     public Entity otherHeader(SpawnData data) {
         Label label = new Label("Other Sessions");
-        label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 20px;");
+        label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
         return entityBuilder(data)
                 .type(TYPE.OTHER_HEADER)
                 .viewWithBBox(label)
-                .at(850, ownSessionList.getHeight() + 400)
+                .at(880, ownSessionList.getHeight() + 500)
                 .build();
     }
 
     @Spawns("closeButton")
     public Entity closeButton(SpawnData data) {
-        Button button = new Button("Close");
+        Button button = new Button("X");
         button.setStyle("-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px; -fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px; -fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
         button.setOnAction(event -> {
             LobbyScreen.exitLobby();
@@ -221,14 +260,14 @@ public class LobbyFactory implements EntityFactory {
     @Spawns("preferencesButton")
     public Entity preferencesButton(SpawnData data) {
         Button button = new Button("Preferences");
-        button.setStyle("-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px; -fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px; -fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
+        button.setStyle("-fx-background-color: transparent; -fx-text-fill: #61dafb; -fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
         button.setOnAction(event -> {
             SettingsScreen.initUI(true);
         });
         return entityBuilder(data)
                 .type(TYPE.CLOSE_BUTTON)
                 .viewWithBBox(button)
-                .at(100, 100)
+                .at(150, 90)
                 .build();
     }
 
