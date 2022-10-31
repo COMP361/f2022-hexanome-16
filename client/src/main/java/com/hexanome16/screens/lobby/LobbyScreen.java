@@ -1,6 +1,10 @@
 package com.hexanome16.screens.lobby;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.Spawns;
 import com.hexanome16.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.types.lobby.sessions.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -16,7 +20,7 @@ import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class LobbyScreen extends Entity {
+public class LobbyScreen extends GameApplication implements EntityFactory {
     private static Map<String, Session> sessionMap = new HashMap<>();
     private static TableView<Session> ownSessionList;
     private static TableView<Session> otherSessionList;
@@ -81,7 +85,9 @@ public class LobbyScreen extends Entity {
                 };
         actionsColumn.setCellFactory(actionsCellFactory);
 
-        sessionList.setPlaceholder(new Label("No sessions available"));
+        Label placeholder = new Label("No sessions found");
+        placeholder.setStyle("-fx-text-fill: #ffffff;");
+        sessionList.setPlaceholder(placeholder);
         sessionList.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
         sessionList.getItems().addAll(sessions);
         sessionList.setPrefSize(1600, 70);
@@ -100,7 +106,7 @@ public class LobbyScreen extends Entity {
         Entity sessionTable = entityBuilder()
                 .type(TYPE.SESSION_LIST)
                 .viewWithBBox(sessionList)
-                .at(160, 300)
+                .at(160, isOwn ? 300 : 450 + sessionList.getHeight())
                 .build();
 
         getGameWorld().addEntity(sessionTable);
@@ -112,19 +118,23 @@ public class LobbyScreen extends Entity {
         otherSessionList.getItems().clear();
 
         if (sessionMap != null) {
-            Session[] activeSessions = sessionMap.values().stream().filter(Session::launched).toArray(Session[]::new);
-            Session[] inactiveSessions = sessionMap.values().stream().filter(session -> !session.launched()).toArray(Session[]::new);
+            Session[] ownSessions = sessionMap.values().stream().filter(session -> session.creator().equals("testuser")).toArray(Session[]::new);
+            Session[] otherSessions = sessionMap.values().stream().filter(session -> !session.creator().equals("testuser")).toArray(Session[]::new);
 
-            ownSessionList.getItems().addAll(activeSessions);
-            otherSessionList.getItems().addAll(inactiveSessions);
-            ownSessionList.setPrefHeight(30 + activeSessions.length * 41);
-            otherSessionList.setPrefHeight(30 + inactiveSessions.length * 41);
+            ownSessionList.getItems().addAll(ownSessions);
+            otherSessionList.getItems().addAll(otherSessions);
+            ownSessionList.setPrefHeight(30 + ownSessions.length * 41);
+            otherSessionList.setPrefHeight(30 + otherSessions.length * 41);
+
+
         }
     }
 
     private static void spawnHeader() {
-        Label header = new Label("Active Sessions");
-        header.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
+        Label ownHeader = new Label("Your Sessions");
+        ownHeader.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
+        Label otherHeader = new Label("Other Sessions");
+        otherHeader.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
         Button closeButton = new Button("X");
         closeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px; -fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px; -fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
         Entity logoEntity = entityBuilder()
@@ -133,25 +143,44 @@ public class LobbyScreen extends Entity {
                 .scaleOrigin(450, 25)
                 .scale(0.2, 0.2)
                 .build();
-        Entity headerEntity = entityBuilder()
-                .viewWithBBox(header)
-                .at(895, 225)
+        Entity ownHeaderEntity = entityBuilder()
+                .viewWithBBox(ownHeader)
+                .at(850, 225)
+                .build();
+        Entity otherHeaderEntity = entityBuilder()
+                .viewWithBBox(otherHeader)
+                .at(850, ownSessionList.getHeight() + 400)
                 .build();
         Entity closeButtonEntity = entityBuilder()
                 .viewWithBBox(closeButton)
                 .at(1700, 100)
                 .build();
         getGameWorld().addEntity(logoEntity);
-        getGameWorld().addEntity(headerEntity);
+        getGameWorld().addEntity(ownHeaderEntity);
+        getGameWorld().addEntity(otherHeaderEntity);
         getGameWorld().addEntity(closeButtonEntity);
     }
 
-    public static void main(String[] args) {
-        //loopBGM("bgm.mp3");
+    @Override
+    protected void initSettings(GameSettings gameSettings) {
+        gameSettings.setWidth(1920);
+        gameSettings.setHeight(1080);
+        gameSettings.setTitle("Splendor");
+        gameSettings.setVersion("0.1");
+    }
+
+    @Override
+    protected void initGame() {
+        super.initGame();
         getGameScene().setBackgroundColor(Paint.valueOf("#282C34"));
         runOnce(() -> spawnSessionList(new Session[]{}, true), Duration.ZERO);
         runOnce(() -> spawnSessionList(new Session[]{}, false), Duration.ZERO);
         runOnce(LobbyScreen::spawnHeader, Duration.ZERO);
         run(LobbyScreen::updateSessionList, Duration.seconds(1));
+    }
+
+    public static void main(String[] args) {
+        //loopBGM("bgm.mp3");
+        launch(args);
     }
 }
