@@ -2,8 +2,6 @@ package com.hexanome16.screens.mainmenu;
 
 import com.almasb.fxgl.ui.UIController;
 import javafx.animation.ScaleTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
