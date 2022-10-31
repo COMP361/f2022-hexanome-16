@@ -55,6 +55,11 @@ public class BuyCardByCard implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
+
+
+    FXGL.getEventBus().addEventHandler(CustomEvent.CLOSING, e-> {
+      CardsChosen =0;
+    });
     //initializing Hbox
 
     double buttonAreaWidth = aWidth / 4;
@@ -217,7 +222,7 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
-      PromptComponent.closePrompts();
+      closeBagPrompt();
       e.consume();
     });
 
