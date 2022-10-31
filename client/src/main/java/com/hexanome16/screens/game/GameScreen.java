@@ -1,18 +1,13 @@
 package com.hexanome16.screens.game;
-
-import static com.almasb.fxgl.dsl.FXGLForKtKt.addUINode;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getip;
-
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.components.ViewComponent;
+import com.hexanome16.screens.game.components.CardComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
 import java.util.Map;
 import java.util.Stack;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+
 
 public class GameScreen {
   private static Stack<Integer> level_one = new Stack<>();
@@ -52,6 +47,11 @@ public class GameScreen {
     FXGL.spawn("LevelOneDeck");
     FXGL.spawn("LevelTwoDeck");
     FXGL.spawn("LevelThreeDeck");
+    FXGL.spawn("SacrificeCard");
+    FXGL.spawn("NobleReserveCard");
+    FXGL.spawn("BagCard");
+    FXGL.spawn("TokenBank");
+    FXGL.spawn("Setting");
     for (int i = 0; i < 4; i++) {
       addLevelOneCard();
       addLevelTwoCard();
@@ -61,12 +61,6 @@ public class GameScreen {
       //FXGL.getGameWorld().addEntity(gameFactory.newNoble(nobles.pop()));
       FXGL.spawn("Noble", new SpawnData().put("nobleIndex", nobles.pop()));
     }
-  }
-
-  public static void initUI() {
-    //displayQuantity(Level.ONE);
-    //displayQuantity(Level.TWO);
-    //displayQuantity(Level.THREE);
   }
 
   public static void initGameVars(Map<String, Object> vars) {
@@ -100,25 +94,10 @@ public class GameScreen {
     }
   }
 
-  private static void displayQuantity(Level level) {
-    Text quantity = new Text();
-    quantity.setFill(Color.WHITE);
-    quantity.setFont(Font.font(50));
-    quantity.setTranslateX(450);
-    switch (level) {
-      case ONE:
-        quantity.setTranslateY(getAppHeight() - 320);
-        quantity.textProperty().bind(getip("level_one_quantity").asString());
-        break;
-      case TWO:
-        quantity.setTranslateY(getAppHeight() - 525);
-        quantity.textProperty().bind(getip("level_two_quantity").asString());
-        break;
-      case THREE:
-        quantity.setTranslateY(getAppHeight() - 730);
-        quantity.textProperty().bind(getip("level_three_quantity").asString());
-        break;
-    }
-    addUINode(quantity);
+
+  public static void exitGame(){
+    FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
+    FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
   }
+
 }

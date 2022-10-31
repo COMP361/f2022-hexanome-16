@@ -2,6 +2,7 @@ package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -18,7 +19,9 @@ public class Pause implements PromptTypeInterface {
     SETTINGS,EXIT;
 
     public void handleClick() {
-      if (this == EXIT) FXGL.getGameController().exit();
+      if (this == EXIT) {
+        GameScreen.exitGame();
+      }
       /////////////////// TO MODIFY TO ADD OPENING SETTING AND EXITING ///////////////////////////
     }
 
@@ -64,7 +67,7 @@ public class Pause implements PromptTypeInterface {
     Button.setMaxSize(aButtonWidth,aButtonHeight*0.2);
 
     Text ButtonText = new Text(ButtonLabel.toString());
-    ButtonText.setFont(Font.font(aButtonHeight*0.8));
+    ButtonText.setFont(Font.font(aButtonHeight*0.7));
     ButtonText.setWrappingWidth(aButtonWidth*0.9);
     ButtonText.setTextAlignment(TextAlignment.CENTER);
 

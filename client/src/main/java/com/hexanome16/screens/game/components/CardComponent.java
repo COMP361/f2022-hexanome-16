@@ -30,6 +30,7 @@ public class CardComponent extends Component {
 
   private Level level;
 
+
   public CardComponent(Level aLevel, String texture) {
     this.level = aLevel;
     this.texture = texture;
@@ -67,6 +68,17 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     adding = true;
+    switch (level) {
+      case ONE:
+        addToMat(level_one_grid);
+        break;
+      case TWO:
+        addToMat(level_two_grid);
+        break;
+      case THREE:
+        addToMat(level_three_grid);
+        break;
+    }
   }
 
 
