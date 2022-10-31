@@ -55,7 +55,7 @@ public class LobbyFactory implements EntityFactory {
         return sessionList(data, otherSessions, false);
     }
 
-    private Entity sessionList(SpawnData data, Session[] sessions, boolean isOwn) {
+    private Entity sessionList(SpawnData data, Session[] sessionArr, boolean isOwn) {
         TableView<Session> sessionTableView = new TableView<>();
         if (isOwn) {
             ownSessionList = sessionTableView;
@@ -66,23 +66,23 @@ public class LobbyFactory implements EntityFactory {
 
         TableColumn<Session, String> creatorColumn = new TableColumn<>("Creator");
         creatorColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().creator()));
-        creatorColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff;");
+        creatorColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         TableColumn<Session, String> launchedColumn = new TableColumn<>("Launched");
         launchedColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
                 cellData.getValue().launched() ? "Yes" : "No"
         ));
-        launchedColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff;");
+        launchedColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         TableColumn<Session, String> playersColumn = new TableColumn<>("Players");
         playersColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
                 cellData.getValue().players().length + " / " + cellData.getValue().gameParameters().maxSessionPlayers()
         ));
-        playersColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff;");
+        playersColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         TableColumn<Session, String> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellValueFactory(new PropertyValueFactory<>("actions"));
-        actionsColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff;");
+        actionsColumn.setStyle("-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
 
         Callback<TableColumn<Session, String>, TableCell<Session, String>> actionsCellFactory =
                 new Callback<>() {
@@ -111,11 +111,13 @@ public class LobbyFactory implements EntityFactory {
                                             LobbyScreen.exitLobby();
                                         }
                                     });
+                                    join.setStyle("-fx-background-color: #282C34; -fx-text-fill: white; -fx-border-color: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     leave.setOnAction(event -> {
                                         TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
                                         assert tokensInfo != null;
                                         LeaveSessionRequest.execute(session.id(), "testuser", tokensInfo.access_token());
                                     });
+                                    leave.setStyle("-fx-background-color: #282C34; -fx-text-fill: darkcyan; -fx-border-color: darkcyan; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     launch.setOnAction(event -> {
                                         TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
                                         assert tokensInfo != null;
@@ -123,18 +125,17 @@ public class LobbyFactory implements EntityFactory {
                                         GameScreen.initGame();
                                         LobbyScreen.exitLobby();
                                     });
+                                    launch.setStyle("-fx-background-color: #282C34; -fx-text-fill: green; -fx-border-color: green; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     delete.setOnAction(event -> {
                                         TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
                                         assert tokensInfo != null;
                                         DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
                                     });
+                                    delete.setStyle("-fx-background-color: #282C34; -fx-text-fill: red; -fx-border-color: red; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     ArrayList<Button> buttons = new ArrayList<>();
                                     if (isOwn) {
                                         buttons.add(session.launched() ? join : launch);
-                                        buttons.add(leave);
-                                        if (!session.launched()) {
-                                            buttons.add(delete);
-                                        }
+                                        buttons.add(session.launched() ? leave : delete);
                                     } else if (Arrays.asList(session.players()).contains("testuser")) {
                                         buttons.add(leave);
                                     } else {
@@ -152,18 +153,18 @@ public class LobbyFactory implements EntityFactory {
         actionsColumn.setCellFactory(actionsCellFactory);
 
         Label placeholder = new Label("No sessions found");
-        placeholder.setStyle("-fx-text-fill: #ffffff;");
+        placeholder.setStyle("-fx-text-fill: #ffffff; -fx-alignment: CENTER; -fx-font-size: 16px;");
         sessionTableView.setPlaceholder(placeholder);
 
         sessionTableView.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
-        sessionTableView.setPrefSize(1600, 70);
+        sessionTableView.setPrefSize(1600, sessionArr.length == 0 ? 88 : 36 + sessionArr.length * 52);
         sessionTableView.resizeColumn(creatorColumn, 320);
         sessionTableView.resizeColumn(launchedColumn, 318);
         sessionTableView.resizeColumn(playersColumn, 320);
         sessionTableView.resizeColumn(actionsColumn, 320);
         sessionTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        sessionTableView.getItems().addAll(sessions);
+        sessionTableView.getItems().addAll(sessionArr);
 
         return entityBuilder(data)
                 .type(isOwn ? TYPE.OWN_SESSION_LIST : TYPE.OTHER_SESSION_LIST)
@@ -183,8 +184,10 @@ public class LobbyFactory implements EntityFactory {
 
             ownSessionList.getItems().addAll(ownSessions);
             otherSessionList.getItems().addAll(otherSessions);
-            ownSessionList.setPrefHeight(30 + ownSessions.length * 41);
-            otherSessionList.setPrefHeight(30 + otherSessions.length * 41);
+            ownSessionList.setPrefHeight(36 + ownSessions.length * 52);
+            otherSessionList.setPrefHeight(36 + otherSessions.length * 52);
+            getGameWorld().getEntitiesByType(TYPE.OTHER_HEADER).forEach(entity -> entity.setY(400 + ownSessionList.getHeight()));
+            getGameWorld().getEntitiesByType(TYPE.OTHER_SESSION_LIST).forEach(entity -> entity.setY(450 + ownSessionList.getHeight()));
         }
     }
 
@@ -202,6 +205,7 @@ public class LobbyFactory implements EntityFactory {
                     null
             );
             System.out.println(sessionId);
+            ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
         });
         return entityBuilder(data)
                 .type(TYPE.CREATE_SESSION_BUTTON)

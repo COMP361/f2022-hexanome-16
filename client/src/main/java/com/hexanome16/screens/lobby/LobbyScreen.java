@@ -1,7 +1,6 @@
 package com.hexanome16.screens.lobby;
 
 import com.almasb.fxgl.entity.Entity;
-import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
