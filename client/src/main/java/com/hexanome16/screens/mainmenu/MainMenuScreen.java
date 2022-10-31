@@ -1,6 +1,7 @@
 package com.hexanome16.screens.mainmenu;
 
 import com.almasb.fxgl.ui.UI;
+import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.settings.SettingsScreen;
 
 import static com.almasb.fxgl.dsl.FXGL.*;

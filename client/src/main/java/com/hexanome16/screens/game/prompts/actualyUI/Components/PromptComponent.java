@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
@@ -19,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class PromptComponent extends Component {
+
   PromptTypeInterface aPromptType;
   double aWidth;
   double aHeight;
@@ -26,6 +28,16 @@ public class PromptComponent extends Component {
   double topleftX;
   double topleftY;
 
+  Entity aCardEntity;
+
+  public PromptComponent(PromptTypeInterface pPromptType, Entity CardEntity) {
+    aPromptType = pPromptType;
+    aWidth = pPromptType.width();
+    aHeight = pPromptType.height();
+    topleftX = getAppWidth()/2 - (aWidth/2);
+    topleftY = getAppHeight()/2- (aHeight/2);
+    aCardEntity = CardEntity;
+  }
 
   public PromptComponent(PromptTypeInterface pPromptType) {
     aPromptType = pPromptType;
@@ -39,7 +51,12 @@ public class PromptComponent extends Component {
   public void onAdded() {
     initiateWorldProperties();
     buildBox(10);
-    aPromptType.populatePrompt(entity);
+    if (aCardEntity == null) {
+      aPromptType.populatePrompt(entity);
+    }
+    else {
+      ((BuyCard)aPromptType).populatePrompt(entity,aCardEntity);
+    }
     buildButton(30,15,5);
   }
 

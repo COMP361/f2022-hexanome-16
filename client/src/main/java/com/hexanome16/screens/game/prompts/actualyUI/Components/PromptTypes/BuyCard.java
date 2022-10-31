@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.screens.game.components.CardComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import java.util.HashMap;
@@ -101,6 +102,115 @@ public class BuyCard implements PromptTypeInterface {
   public double height() {
     return aHeight;
   }
+
+  public void populatePrompt(Entity entity,Entity cardEntity){
+    //initializing Hbox
+    double BankBoxesWidth = aWidth / 5;
+    double buttonAreaWidth = aWidth / 4;
+    double buttonHeight = aHeight / 8;
+    double buttonWidth = 3 * aWidth / 14;
+    double buttonSpacing = buttonHeight / 2;
+
+    double SurplusWidth = (aWidth - 2 * BankBoxesWidth - buttonAreaWidth - aCardWidth) / 3;
+
+    HBox myPrompt = new HBox();
+    initiatePane(myPrompt);
+    myPrompt.setAlignment(Pos.CENTER);
+    myPrompt.setSpacing(SurplusWidth);
+
+    // initiate elements
+    VBox playerBank = new VBox();
+    playerBank.setAlignment(Pos.CENTER);
+    playerBank.setPrefSize(BankBoxesWidth, aHeight / 5);
+    playerBank.setSpacing((2 * aHeight / 10) / 8);
+
+    Texture myCard = FXGL.texture(cardEntity.getComponent(CardComponent.class).texture);
+    myCard.setFitWidth(aCardWidth);
+    myCard.setFitHeight(aCardHeight);
+
+    VBox GameBank = new VBox();
+    GameBank.setAlignment(Pos.CENTER);
+    GameBank.setPrefSize(BankBoxesWidth, aHeight / 5);
+    GameBank.setSpacing((2 * aHeight / 10) / 8);
+
+    VBox ReserveBuy = new VBox();
+    ReserveBuy.setAlignment(Pos.CENTER);
+    ReserveBuy.setPrefSize(buttonAreaWidth, aHeight / 5);
+    ReserveBuy.setSpacing(buttonSpacing);
+//    ReserveBuy.setBackground(new Background(new BackgroundFill(Color.BLACK,null,null)));
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // initiate Player Bank elements
+    initiateBank(playerBank, BankType.PLAYER_BANK);
+
+
+    // initiate Game Bank elements
+    initiateBank(GameBank, BankType.GAME_BANK);
+
+    // initiate ReserveBuy
+    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight, cardEntity);
+
+
+    // adding to view
+    myPrompt.getChildren().addAll(playerBank, myCard, GameBank, ReserveBuy);
+    entity.getViewComponent().addChild(myPrompt);
+
+
+  }
+
+
+
+  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,Entity cardEntity) {
+    StackPane Reserve = new StackPane();
+    StackPane Buy = new StackPane();
+
+    createReserveButton(Reserve, buttonWidth, buttonHeight);
+    createBuyButton(Buy, buttonWidth, buttonHeight, cardEntity);
+
+    reserveBuy.getChildren().addAll(Reserve, Buy);
+  }
+
+  private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight, Entity cardEntity) {
+    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
+    buttonBox.setStrokeWidth(buttonHeight / 20);
+    buttonBox.setStroke(Color.BLACK);
+    Text RESERVE = new Text("BUY");
+    RESERVE.setWrappingWidth(buttonWidth);
+    RESERVE.setTextAlignment(TextAlignment.CENTER);
+    RESERVE.setFont(Font.font(buttonHeight * 0.6));
+    buy.setOpacity(0.5);
+
+    FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
+      if (FXGL.getWorldProperties().
+          getInt(BankType.GAME_BANK.toString() + "/" + CurrencyType.BONUS_GOLD_CARDS.toString()) >=
+          2) {
+        buy.setOpacity(1);
+      } else buy.setOpacity(0.5);
+    });
+
+    buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      if (buy.getOpacity() == 1) {
+        closeBuyPromptAlt(cardEntity);
+        e.consume();
+      }
+    });
+
+    buy.getChildren().addAll(buttonBox, RESERVE);
+  }
+
+  private void closeBuyPromptAlt(Entity entity) {
+
+    PromptComponent.closePrompts();
+    for (CurrencyType e : CurrencyType.values()){
+      int gemsinBank = FXGL.getWorldProperties().getInt(BankType.GAME_BANK.toString()+"/"+e.toString());
+      if (gemsinBank!= 0){
+        FXGL.getWorldProperties().increment(BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
+        FXGL.getWorldProperties().setValue(BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+      }
+    }
+    FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.BOUGHT, entity));
+  }
+
 
   @Override
   public void populatePrompt(Entity entity) {
@@ -352,7 +462,6 @@ public class BuyCard implements PromptTypeInterface {
         FXGL.getWorldProperties().setValue(BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
       }
     }
-
   }
 
 }
