@@ -64,9 +64,9 @@ public class GameScreen {
   }
 
   public static void initUI() {
-    displayQuantity(Level.ONE);
-    displayQuantity(Level.TWO);
-    displayQuantity(Level.THREE);
+    //displayQuantity(Level.ONE);
+    //displayQuantity(Level.TWO);
+    //displayQuantity(Level.THREE);
   }
 
   public static void initGameVars(Map<String, Object> vars) {
