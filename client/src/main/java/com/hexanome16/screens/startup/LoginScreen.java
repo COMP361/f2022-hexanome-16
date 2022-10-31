@@ -6,15 +6,13 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
+import com.hexanome16.screens.mainmenu.MainMenuScreen;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-
-import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
-import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 public class LoginScreen implements EntityFactory {
     @Spawns("loginscreen")
@@ -98,7 +96,7 @@ public class LoginScreen implements EntityFactory {
     private FXGLButton createButton() {
         FXGLButton button = new FXGLButton("Login");
         button.setOnMouseClicked(e -> {
-            getNotificationService().pushNotification("TODO: connect to menu screen");
+            MainMenuScreen.initUI();
         });
         button.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 30));
         button.setPrefSize(130, 50);
