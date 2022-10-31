@@ -140,7 +140,7 @@ public class AssociateBagCard implements PromptTypeInterface {
     Rectangle Bonus = new Rectangle(aBonusWidth,aBonusHeight,pBonusType.getColor());
     Bonus.setStrokeWidth(aHeight/100);
     Bonus.setStroke(pBonusType.getStrokeColor());
-    Rectangle SelectionRectangle = new Rectangle(aBonusWidth*1.1,aBonusHeight*1.1,Color.WHITE);
+    Rectangle SelectionRectangle = new Rectangle(aBonusWidth*1.2,aBonusHeight*1.2,Color.WHITE);
     SelectionRectangle.setOpacity(0.5);
     myNodes.add(SelectionRectangle);
 

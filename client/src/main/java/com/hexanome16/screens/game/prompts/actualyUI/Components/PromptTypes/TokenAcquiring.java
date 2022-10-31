@@ -85,7 +85,7 @@ public class TokenAcquiring implements PromptTypeInterface {
     ChooseThreeButton.setStroke(Color.BLACK);
     ChooseThreeButton.setOpacity(0.5);
     Text ChooseThreeMessage = new Text("TAKE 3 TOKENS DIFFERENT COLOR");
-    ChooseThreeMessage.setFont(Font.font(aBottonHeight*0.25));
+    ChooseThreeMessage.setFont(Font.font(aBottonHeight*0.20));
     ChooseThreeMessage.setTextAlignment(TextAlignment.CENTER);
     ChooseThree.setOnMouseEntered(e -> {
       ChooseThreeButton.setOpacity(1);
