@@ -32,6 +32,7 @@ public class MainApp extends GameApplication {
   protected void initGame() {
     FXGL.getGameWorld().addEntityFactory(new GameFactory());
     FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
+
     backToMainScreen();
   }
 
