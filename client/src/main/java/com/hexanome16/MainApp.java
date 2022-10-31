@@ -12,13 +12,15 @@ import com.hexanome16.screens.startup.StartupScreen;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.hexanome16.Config.*;
 
 public class MainApp extends GameApplication {
   @Override
   protected void initSettings(GameSettings gameSettings) {
-      gameSettings.setWidth(1920);
-      gameSettings.setHeight(1080);
-      gameSettings.setTitle("Splendor");
+      gameSettings.setWidth(APP_WIDTH);
+      gameSettings.setHeight(APP_HEIGHT);
+      gameSettings.setTitle(APP_TITLE);
+      gameSettings.setVersion(APP_VERSION);
   }
 
   // To Spawn Prompt, OpenPromt.openPrompt(PromptTypeInterface.PromptType.<AN_ENUM_ELEMENT_FROM_PROMPT_TYPE_INTERFACE>);
