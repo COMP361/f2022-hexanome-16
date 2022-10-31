@@ -24,17 +24,15 @@ public class MainApp extends GameApplication {
   // Or look for PromptTypeInterface
   @Override
   protected void initGame() {
-    GameScreen.initGame();
   }
 
   @Override
   protected void initGameVars(Map<String, Object> vars) {
-    GameScreen.initGameVars(vars);
   }
 
   @Override
   protected void onUpdate(double tpf) {
-    GameScreen.onUpdate();
+    
   }
 
   public static void main(String[] args) {
