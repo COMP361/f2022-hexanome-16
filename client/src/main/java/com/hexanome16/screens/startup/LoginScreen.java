@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.hexanome16.screens.mainmenu.MainMenuScreen;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -20,6 +21,7 @@ public class LoginScreen implements EntityFactory {
         Rectangle login_screen = createLogin();
         return FXGL.entityBuilder(data)
                 .view(login_screen)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
@@ -28,6 +30,7 @@ public class LoginScreen implements EntityFactory {
         Text message = createMessage("Login", 96, "#FCD828");
         return FXGL.entityBuilder(data)
                 .view(message)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
@@ -37,6 +40,7 @@ public class LoginScreen implements EntityFactory {
         user.setStrokeWidth(1);
         return FXGL.entityBuilder(data)
                 .view(user)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
@@ -46,6 +50,7 @@ public class LoginScreen implements EntityFactory {
         password.setStrokeWidth(1);
         return FXGL.entityBuilder(data)
                 .view(password)
+                .type(EntityType.LOGIN)
                 .build();
     }
     @Spawns("username")
@@ -53,22 +58,38 @@ public class LoginScreen implements EntityFactory {
         TextField username = new TextField();
         return FXGL.entityBuilder(data)
                 .view(username)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
     @Spawns("password")
     public Entity password(SpawnData data) {
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
         return FXGL.entityBuilder(data)
                 .view(password)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
-    @Spawns("button")
-    public Entity button(SpawnData data) {
-        FXGLButton button = createButton();
+    @Spawns("loginbutton")
+    public Entity loginbutton(SpawnData data) {
+        FXGLButton button = createButton("Login");
         return FXGL.entityBuilder(data)
                 .view(button)
+                .type(EntityType.LOGIN)
+                .build();
+    }
+
+    @Spawns("cancelbutton")
+    public Entity cancelbutton(SpawnData data) {
+        FXGLButton button = createButton("Cancel");
+        button.setOpacity(0.90);
+        button.setOnMouseClicked(e -> {
+            StartupScreen.backToMainScreen();
+        });
+        return FXGL.entityBuilder(data)
+                .view(button)
+                .type(EntityType.LOGIN)
                 .build();
     }
 
@@ -93,8 +114,8 @@ public class LoginScreen implements EntityFactory {
         return message;
     }
 
-    private FXGLButton createButton() {
-        FXGLButton button = new FXGLButton("Login");
+    private FXGLButton createButton(String message) {
+        FXGLButton button = new FXGLButton(message);
         button.setOnMouseClicked(e -> {
             MainMenuScreen.initUI();
         });
@@ -106,6 +127,4 @@ public class LoginScreen implements EntityFactory {
         button.setOpacity(0.95);
         return button;
     }
-
-
 }
