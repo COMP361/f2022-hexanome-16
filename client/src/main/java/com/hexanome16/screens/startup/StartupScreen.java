@@ -1,4 +1,5 @@
 package com.hexanome16.screens.startup;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.entity.*;
@@ -9,10 +10,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-
 
 public class StartupScreen implements EntityFactory {
     @Spawns("mainscreen")
@@ -75,14 +74,11 @@ public class StartupScreen implements EntityFactory {
         getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
         spawn("loginscreen", 630, 320);
         spawn("login", 880, 420);
-
         spawn("usertext", 830, 525);
         spawn("username", 1000, 505);
         spawn("passtext", 830, 575);
         spawn("password", 1000, 550);
-
         spawn("loginbutton", 1020, 635);
         spawn("cancelbutton", 820, 635);
     }
-
 }
