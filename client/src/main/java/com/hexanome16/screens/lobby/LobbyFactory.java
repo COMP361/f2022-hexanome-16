@@ -12,9 +12,7 @@ import com.hexanome16.screens.settings.SettingsScreen;
 import com.hexanome16.types.lobby.auth.TokensInfo;
 import com.hexanome16.types.lobby.sessions.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -22,8 +20,6 @@ import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -46,13 +42,13 @@ public class LobbyFactory implements EntityFactory {
 
     @Spawns("ownSessionList")
     public Entity ownSessionList(SpawnData data) {
-        Session[] activeSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("testuser") || Arrays.asList(session.players()).contains("testuser")).toArray(Session[]::new);
+        Session[] activeSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("linus") || Arrays.asList(session.players()).contains("linus")).toArray(Session[]::new);
         return sessionList(data, activeSessions, true);
     }
 
     @Spawns("otherSessionList")
     public Entity otherSessionList(SpawnData data) {
-        Session[] otherSessions = Arrays.stream(sessions).filter(session -> !(session.creator().equals("testuser") || Arrays.asList(session.players()).contains("testuser"))).toArray(Session[]::new);
+        Session[] otherSessions = Arrays.stream(sessions).filter(session -> !(session.creator().equals("linus") || Arrays.asList(session.players()).contains("linus"))).toArray(Session[]::new);
         return sessionList(data, otherSessions, false);
     }
 
@@ -90,7 +86,7 @@ public class LobbyFactory implements EntityFactory {
                     @Override
                     public TableCell<Session, String> call(final TableColumn<Session, String> param) {
                         return new TableCell<>() {
-                            final Button join = new Button(isOwn ? "Continue" : "Join");
+                            final Button join = new Button("Join");
                             final Button leave = new Button("Leave");
                             final Button launch = new Button("Launch");
                             final Button delete = new Button("Delete");
@@ -104,9 +100,9 @@ public class LobbyFactory implements EntityFactory {
                                 } else {
                                     final Session session = getTableView().getItems().get(getIndex());
                                     join.setOnAction(event -> {
-                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                                         assert tokensInfo != null;
-                                        JoinSessionRequest.execute(session.id(), "testuser", tokensInfo.access_token());
+                                        JoinSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
                                         if (session.launched()) {
                                             GameScreen.initGame();
                                             LobbyScreen.exitLobby();
@@ -114,13 +110,13 @@ public class LobbyFactory implements EntityFactory {
                                     });
                                     join.setStyle("-fx-background-color: #282C34; -fx-text-fill: white; -fx-border-color: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     leave.setOnAction(event -> {
-                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                                         assert tokensInfo != null;
-                                        LeaveSessionRequest.execute(session.id(), "testuser", tokensInfo.access_token());
+                                        LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
                                     });
                                     leave.setStyle("-fx-background-color: #282C34; -fx-text-fill: darkcyan; -fx-border-color: darkcyan; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     launch.setOnAction(event -> {
-                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                                         assert tokensInfo != null;
                                         LaunchSessionRequest.execute(session.id(), tokensInfo.access_token());
                                         GameScreen.initGame();
@@ -128,7 +124,7 @@ public class LobbyFactory implements EntityFactory {
                                     });
                                     launch.setStyle("-fx-background-color: #282C34; -fx-text-fill: green; -fx-border-color: green; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
                                     delete.setOnAction(event -> {
-                                        TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+                                        TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                                         assert tokensInfo != null;
                                         DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
                                     });
@@ -137,7 +133,7 @@ public class LobbyFactory implements EntityFactory {
                                     if (isOwn) {
                                         buttons.add(session.launched() ? join : launch);
                                         buttons.add(session.launched() ? leave : delete);
-                                    } else if (Arrays.asList(session.players()).contains("testuser")) {
+                                    } else if (Arrays.asList(session.players()).contains("linus")) {
                                         buttons.add(leave);
                                     } else {
                                         buttons.add(join);
@@ -180,8 +176,8 @@ public class LobbyFactory implements EntityFactory {
         otherSessionList.getItems().clear();
 
         if (sessions != null) {
-            Session[] ownSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("testuser")).toArray(Session[]::new);
-            Session[] otherSessions = Arrays.stream(sessions).filter(session -> !session.creator().equals("testuser")).toArray(Session[]::new);
+            Session[] ownSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("linus")).toArray(Session[]::new);
+            Session[] otherSessions = Arrays.stream(sessions).filter(session -> !session.creator().equals("linus")).toArray(Session[]::new);
 
             ownSessionList.getItems().addAll(ownSessions);
             otherSessionList.getItems().addAll(otherSessions);
@@ -197,11 +193,11 @@ public class LobbyFactory implements EntityFactory {
         Button button = new Button("Create Session");
         button.setStyle("-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-padding: 10px;");
         button.setOnAction(event -> {
-            TokensInfo tokensInfo = TokenRequest.execute("testuser", "testpass", null);
+            TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
             assert tokensInfo != null;
             String sessionId = CreateSessionRequest.execute(
                     tokensInfo.access_token(),
-                    "testuser",
+                    "linus",
                     "Splendor",
                     null
             );
