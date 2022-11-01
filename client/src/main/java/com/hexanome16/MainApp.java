@@ -5,9 +5,7 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.screens.game.GameFactory;
 import com.hexanome16.screens.game.GameScreen;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.BuyCard;
-import com.hexanome16.screens.game.prompts.actualyUI.OpenPromt;
+import com.hexanome16.screens.game.players.DeckFactory;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
 import com.hexanome16.screens.startup.LoginScreen;
 import com.hexanome16.screens.startup.StartupScreen;
@@ -30,11 +28,13 @@ public class MainApp extends GameApplication {
   protected void initGame() {
     FXGL.getGameWorld().addEntityFactory(new GameFactory());
     FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
+    FXGL.getGameWorld().addEntityFactory(new DeckFactory());
     getGameWorld().addEntityFactory(new StartupScreen());
     getGameWorld().addEntityFactory(new LoginScreen());
 
     StartupScreen.backToMainScreen();
   }
+
 
   @Override
   protected void onUpdate(double tpf) {
