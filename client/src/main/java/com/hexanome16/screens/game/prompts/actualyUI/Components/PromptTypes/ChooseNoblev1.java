@@ -27,7 +27,6 @@ public class ChooseNoblev1 implements PromptTypeInterface {
   double topleftY;
 
 
-
   @Override
   public double width() {
     return aWidth;
@@ -41,17 +40,19 @@ public class ChooseNoblev1 implements PromptTypeInterface {
   @Override
   public void populatePrompt(Entity entity) {
     //initiale key values
-    nobleWidth = aWidth/5;
-    nobleHeight= nobleWidth;
-    topleftX = getAppWidth()/2 - (aWidth/2);
-    topleftY = getAppHeight()/2- (aHeight/2);
+    nobleWidth = aWidth / 5;
+    nobleHeight = nobleWidth;
+    topleftX = getAppWidth() / 2 - (aWidth / 2);
+    topleftY = getAppHeight() / 2 - (aHeight / 2);
 
 
     //initiate elements
-    Node noble1 = new Rectangle(nobleWidth, nobleHeight ,Color.WHITE);
-    Node noble2 = new Rectangle(nobleWidth, nobleHeight ,Color.WHITE);
-    Circle myConfirmButton = new Circle(topleftX+ 8*(aWidth)/10 ,topleftY+5*(aHeight)/6,height()/10,Color.YELLOW);
-    Text PromptText = new Text(topleftX,topleftY+(aHeight)/5,"~Choose a Noble~");
+    Node noble1 = new Rectangle(nobleWidth, nobleHeight, Color.WHITE);
+    Node noble2 = new Rectangle(nobleWidth, nobleHeight, Color.WHITE);
+    Circle myConfirmButton =
+        new Circle(topleftX + 8 * (aWidth) / 10, topleftY + 5 * (aHeight) / 6, height() / 10,
+            Color.YELLOW);
+    Text PromptText = new Text(topleftX, topleftY + (aHeight) / 5, "~Choose a Noble~");
     Texture myNode = FXGL.texture("noble1.png");
 
     myNode.fitHeightProperty().set(100);
@@ -68,13 +69,17 @@ public class ChooseNoblev1 implements PromptTypeInterface {
     //////////////////
     noble1.addEventHandler(MouseEvent.MOUSE_ENTERED,
         mouseEvent -> {
-      if (noble1.getOpacity()!=1) noble1.setOpacity(0.7);
-    }
+          if (noble1.getOpacity() != 1) {
+            noble1.setOpacity(0.7);
+          }
+        }
     );
     noble1.addEventHandler(MouseEvent.MOUSE_EXITED,
         mouseEvent -> {
-      if (noble1.getOpacity()!=1) noble1.setOpacity(0.5);
-    }
+          if (noble1.getOpacity() != 1) {
+            noble1.setOpacity(0.5);
+          }
+        }
     );
     noble1.addEventHandler(MouseEvent.MOUSE_CLICKED,
         mouseEvent -> {
@@ -84,38 +89,42 @@ public class ChooseNoblev1 implements PromptTypeInterface {
         }
     );
     ///////////////////
-    noble2.setTranslateX(topleftX + 3*nobleWidth);
+    noble2.setTranslateX(topleftX + 3 * nobleWidth);
     noble2.setTranslateY(topleftY + nobleHeight);
     noble2.setOpacity(0.5);
     noble2.addEventHandler(MouseEvent.MOUSE_ENTERED,
         mouseEvent -> {
-          if (noble2.getOpacity() != 1) noble2.setOpacity(0.7);
+          if (noble2.getOpacity() != 1) {
+            noble2.setOpacity(0.7);
+          }
         }
     );
 
     noble2.addEventHandler(MouseEvent.MOUSE_EXITED,
         mouseEvent -> {
-          if (noble2.getOpacity() != 1) noble2.setOpacity(0.5);
+          if (noble2.getOpacity() != 1) {
+            noble2.setOpacity(0.5);
+          }
         }
     );
     noble2.addEventHandler(MouseEvent.MOUSE_CLICKED,
         mouseEvent -> {
-      noble2.setOpacity(1);
-      noble1.setOpacity(0.5);
-      myConfirmButton.setOpacity(1);
-    }
+          noble2.setOpacity(1);
+          noble1.setOpacity(0.5);
+          myConfirmButton.setOpacity(1);
+        }
     );
     ////////////////////
     myConfirmButton.setOpacity(0.5);
     myConfirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED,
         mouseEvent -> {
-      if (myConfirmButton.getOpacity() == 1.0){
-        FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(
-            PromptComponent.class));
+          if (myConfirmButton.getOpacity() == 1.0) {
+            FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(
+                PromptComponent.class));
 
-        ///// ADD CHOSEN NOBLE TO HAND /////
-      }
-    }
+            ///// ADD CHOSEN NOBLE TO HAND /////
+          }
+        }
     );
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

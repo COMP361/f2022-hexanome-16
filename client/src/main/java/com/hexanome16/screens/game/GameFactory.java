@@ -1,6 +1,5 @@
 package com.hexanome16.screens.game;
 
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getip;
 
@@ -9,35 +8,28 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.physics.box2d.dynamics.contacts.EdgeAndCircleContact;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.screens.game.components.CardComponent;
 import com.hexanome16.screens.game.components.NobleComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import com.hexanome16.screens.game.prompts.actualyUI.OpenPromt;
 import javafx.geometry.Pos;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
-public class GameFactory implements EntityFactory
-{
-  private String levelOne = "level_one";
-  private String levelTwo = "level_two";
-  private String levelThree = "level_three";
-
+public class GameFactory implements EntityFactory {
   public static final int matCoordsX = 400;
-
   public static final int matCoordsY = 150;
+  private final String levelOne = "level_one";
+  private final String levelTwo = "level_two";
+  private final String levelThree = "level_three";
 
   @Spawns("LevelOneCard")
   public Entity newLevelOneCard(SpawnData data) {
@@ -113,7 +105,7 @@ public class GameFactory implements EntityFactory
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     myNumber.textProperty().bind(getip("level_three_quantity").asString());
-    myStackPane.getChildren().addAll(level3deck,myNumber);
+    myStackPane.getChildren().addAll(level3deck, myNumber);
 
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 155)
@@ -131,7 +123,7 @@ public class GameFactory implements EntityFactory
     myNumber.setFont(Font.font(500));
     myNumber.textProperty().bind(getip("level_two_quantity").asString());
 
-    myStackPane.getChildren().addAll(level2deck,myNumber);
+    myStackPane.getChildren().addAll(level2deck, myNumber);
 
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 360)
@@ -148,7 +140,7 @@ public class GameFactory implements EntityFactory
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     myNumber.textProperty().bind(getip("level_one_quantity").asString());
-    myStackPane.getChildren().addAll(level1deck,myNumber);
+    myStackPane.getChildren().addAll(level1deck, myNumber);
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(myStackPane)
@@ -156,28 +148,12 @@ public class GameFactory implements EntityFactory
         .build();
   }
 
-
-  private enum CircleType{
-    RUBY, EMERALD, SAPPHIRE, DIAMOND, ONYX, GOLD;
-    private Color getColor(){
-      if (this == RUBY){return Color.RED;}
-      else if (this == EMERALD){ return Color.GREEN;}
-      else if (this == SAPPHIRE) { return  Color.BLUE;}
-      else if (this == DIAMOND) {return Color.WHITE;}
-      else if (this == ONYX) {return Color.BLACK;}
-      return Color.GOLD;
-    }
-    public Color getStrokeColor(){
-      if (this == ONYX) return Color.WHITE;
-      return Color.BLACK;
-    }
-  }
   @Spawns("TokenBank")
   public Entity tokenBank(SpawnData data) {
 
     StackPane mytokens = new StackPane();
     //Rectangle myRectangle = new Rectangle(200,150,Color.GREY);
-    Rectangle myRectangle = new Rectangle(266,200,Color.GREY);
+    Rectangle myRectangle = new Rectangle(266, 200, Color.GREY);
     myRectangle.setOpacity(0.5);
     TilePane tokens = new TilePane();
 
@@ -186,7 +162,7 @@ public class GameFactory implements EntityFactory
     tokens.setAlignment(Pos.CENTER);
     tokens.setPrefColumns(3);
     tokens.setPrefRows(2);
-    tokens.setPrefSize(200,150);
+    tokens.setPrefSize(200, 150);
 
     addToken(tokens, "ruby.png", 3);
     addToken(tokens, "emerald.png", 3);
@@ -195,22 +171,22 @@ public class GameFactory implements EntityFactory
     addToken(tokens, "onyx.png", 4);
     addToken(tokens, "gold.png", 4);
 
-    mytokens.getChildren().addAll(myRectangle,tokens);
+    mytokens.getChildren().addAll(myRectangle, tokens);
 
     mytokens.setOnMouseEntered(e -> {
       myRectangle.setOpacity(0.7);
     });
     mytokens.setOnMouseExited(e -> {
-      myRectangle.setOpacity(0.5);
+          myRectangle.setOpacity(0.5);
         }
     );//.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder()
-            .at(getAppWidth()- 280, 10 )
-            .view(mytokens)
-            .onClick(e -> {
-              OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
-            })
-            .build();
+        .at(getAppWidth() - 280, 10)
+        .view(mytokens)
+        .onClick(e -> {
+          OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
+        })
+        .build();
   }
 
   private void addToken(TilePane tokens, String textureName, int amount) {
@@ -240,7 +216,7 @@ public class GameFactory implements EntityFactory
     stackPane.getChildren().add(texture);
     return FXGL.entityBuilder()
         .view(stackPane)
-        .at(10,10)
+        .at(10, 10)
         .scale(0.1, 0.1)
         .onClick(e -> {
           OpenPromt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
@@ -273,6 +249,37 @@ public class GameFactory implements EntityFactory
         .view("background.png")
         .scale(1, 1)
         .build();
+  }
+
+  private enum CircleType {
+    RUBY,
+    EMERALD,
+    SAPPHIRE,
+    DIAMOND,
+    ONYX,
+    GOLD;
+
+    private Color getColor() {
+      if (this == RUBY) {
+        return Color.RED;
+      } else if (this == EMERALD) {
+        return Color.GREEN;
+      } else if (this == SAPPHIRE) {
+        return Color.BLUE;
+      } else if (this == DIAMOND) {
+        return Color.WHITE;
+      } else if (this == ONYX) {
+        return Color.BLACK;
+      }
+      return Color.GOLD;
+    }
+
+    public Color getStrokeColor() {
+      if (this == ONYX) {
+        return Color.WHITE;
+      }
+      return Color.BLACK;
+    }
   }
 
 }

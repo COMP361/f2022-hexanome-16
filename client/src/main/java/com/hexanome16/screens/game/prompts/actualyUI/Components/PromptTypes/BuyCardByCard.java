@@ -41,8 +41,6 @@ public class BuyCardByCard implements PromptTypeInterface {
   int CardsChosen = 0;
 
 
-
-
   @Override
   public double width() {
     return aWidth;
@@ -57,8 +55,8 @@ public class BuyCardByCard implements PromptTypeInterface {
   public void populatePrompt(Entity entity) {
 
 
-    FXGL.getEventBus().addEventHandler(CustomEvent.CLOSING, e-> {
-      CardsChosen =0;
+    FXGL.getEventBus().addEventHandler(CustomEvent.CLOSING, e -> {
+      CardsChosen = 0;
     });
     //initializing Hbox
 
@@ -66,9 +64,9 @@ public class BuyCardByCard implements PromptTypeInterface {
     double buttonHeight = aHeight / 8;
     double buttonWidth = 3 * aWidth / 14;
     double buttonSpacing = buttonHeight / 2;
-    double elementSpacing = (aWidth - 2*aScrollCardWidth- buttonAreaWidth-buttonWidth)/5;
+    double elementSpacing = (aWidth - 2 * aScrollCardWidth - buttonAreaWidth - buttonWidth) / 5;
 
-    Rectangle DisablingRectangleOthers = new Rectangle(aScrollCardWidth,aHeight,Color.GREY);
+    Rectangle DisablingRectangleOthers = new Rectangle(aScrollCardWidth, aHeight, Color.GREY);
     StackPane OtherWhole = new StackPane();
     StackPane Buy = new StackPane();
 
@@ -78,7 +76,6 @@ public class BuyCardByCard implements PromptTypeInterface {
     myPrompt.setSpacing(elementSpacing);
 
 
-
     // initiate elements
     Texture myCard = FXGL.texture("sacrificecard.png");
     myCard.setFitWidth(aMainCardWidth);
@@ -86,11 +83,11 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     BorderPane BagBorderPane = new BorderPane();
     Text BAGCARDS = new Text("BAG CARDS");
-    BAGCARDS.setFont(Font.font(aHeight*0.05));
+    BAGCARDS.setFont(Font.font(aHeight * 0.05));
     BAGCARDS.setWrappingWidth(aScrollCardWidth);
     BAGCARDS.setTextAlignment(TextAlignment.CENTER);
     ScrollPane BagCardsScroll = new ScrollPane();
-    BagCardsScroll.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT,null,null)));
+    BagCardsScroll.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
     BagCardsScroll.setPrefViewportWidth(aScrollCardWidth);
     BagCardsScroll.setPannable(true);
     BagCardsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -102,11 +99,12 @@ public class BuyCardByCard implements PromptTypeInterface {
     DisablingRectangleOthers.setOpacity(0.75);
     BorderPane OtherBorderPane = new BorderPane();
     Text OTHERCARDS = new Text("OTHERS");
-    OTHERCARDS.setFont(Font.font(aHeight*0.05));
+    OTHERCARDS.setFont(Font.font(aHeight * 0.05));
     OTHERCARDS.setWrappingWidth(aScrollCardWidth);
     OTHERCARDS.setTextAlignment(TextAlignment.CENTER);
     ScrollPane OtherCardsScroll = new ScrollPane();
-    OtherCardsScroll.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT,null,null)));
+    OtherCardsScroll.setBackground(
+        new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
     OtherCardsScroll.setPrefViewportWidth(aScrollCardWidth);
     OtherCardsScroll.setPrefViewportHeight(aHeight);
     OtherCardsScroll.setPannable(true);
@@ -114,23 +112,22 @@ public class BuyCardByCard implements PromptTypeInterface {
     OtherCardsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     OtherBorderPane.setTop(OTHERCARDS);
     OtherBorderPane.setCenter(OtherCardsScroll);
-    OtherWhole.getChildren().addAll(OtherBorderPane,DisablingRectangleOthers);
+    OtherWhole.getChildren().addAll(OtherBorderPane, DisablingRectangleOthers);
 
 
     // Fix BagCards
-      VBox myBags = new VBox();
-      myBags.setAlignment(Pos.TOP_CENTER);
-      BagCardsScroll.setContent(myBags);
-      addBagCard(myBags, OtherWhole , DisablingRectangleOthers );
+    VBox myBags = new VBox();
+    myBags.setAlignment(Pos.TOP_CENTER);
+    BagCardsScroll.setContent(myBags);
+    addBagCard(myBags, OtherWhole, DisablingRectangleOthers);
 
 
-
-      VBox myOthers = new VBox();
-      myOthers.setAlignment(Pos.TOP_CENTER);
-      OtherCardsScroll.setContent(myOthers);
-      addOtherCard(myOthers, 2, Buy);
-      addOtherCard(myOthers,2, Buy);
-      addOtherCard(myOthers,0, Buy);
+    VBox myOthers = new VBox();
+    myOthers.setAlignment(Pos.TOP_CENTER);
+    OtherCardsScroll.setContent(myOthers);
+    addOtherCard(myOthers, 2, Buy);
+    addOtherCard(myOthers, 2, Buy);
+    addOtherCard(myOthers, 0, Buy);
 
 
     // initiate ReserveBuy
@@ -142,23 +139,23 @@ public class BuyCardByCard implements PromptTypeInterface {
 
 
     // adding to view
-    myPrompt.getChildren().addAll(BagBorderPane,OtherWhole,myCard, ReserveBuy);
+    myPrompt.getChildren().addAll(BagBorderPane, OtherWhole, myCard, ReserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
 
   private void addOtherCard(VBox OtherCards, int PrestigeAmount, Node Buy) {
     StackPane myWholeCard = new StackPane();
-    Rectangle BagCard = new Rectangle(aScrollCardWidth,aScrollCardHeight,Color.GREEN.darker());
+    Rectangle BagCard = new Rectangle(aScrollCardWidth, aScrollCardHeight, Color.GREEN.darker());
     Text TextPrestigeAmount = new Text();
-    if (PrestigeAmount >0){
+    if (PrestigeAmount > 0) {
       TextPrestigeAmount = new Text(Integer.toString(PrestigeAmount));
     }
     TextPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
-    TextPrestigeAmount.setFont(Font.font(aScrollCardHeight*0.75));
+    TextPrestigeAmount.setFont(Font.font(aScrollCardHeight * 0.75));
     TextPrestigeAmount.setWrappingWidth(aScrollCardWidth);
     Text X = new Text("X");
     X.setTextAlignment(TextAlignment.CENTER);
-    X.setFont(Font.font(aScrollCardHeight*0.75));
+    X.setFont(Font.font(aScrollCardHeight * 0.75));
     X.setFill(Color.DARKRED);
     X.setOpacity(0);
 
@@ -166,16 +163,18 @@ public class BuyCardByCard implements PromptTypeInterface {
       if (X.getOpacity() == 1) {
         X.setOpacity(0);
         CardsChosen--;
-      }
-      else {
+      } else {
         CardsChosen++;
         X.setOpacity(1);
       }
-      if (CardsChosen == 2) Buy.setOpacity(1);
-      else Buy.setOpacity(0.5);
+      if (CardsChosen == 2) {
+        Buy.setOpacity(1);
+      } else {
+        Buy.setOpacity(0.5);
+      }
     });
 
-    myWholeCard.getChildren().addAll(BagCard,TextPrestigeAmount,X);
+    myWholeCard.getChildren().addAll(BagCard, TextPrestigeAmount, X);
     OtherCards.getChildren().add(myWholeCard);
 
   }
@@ -183,11 +182,11 @@ public class BuyCardByCard implements PromptTypeInterface {
   private void addBagCard(VBox BagCards, StackPane OtherWhole,
                           Rectangle DisablingRectangleOthers) {
     StackPane myWholeCard = new StackPane();
-    Rectangle BagCard = new Rectangle(aScrollCardWidth,aScrollCardHeight,Color.GREEN.darker());
-    Circle BagIcon = new Circle(aScrollCardWidth/4,Color.SADDLEBROWN.brighter());
+    Rectangle BagCard = new Rectangle(aScrollCardWidth, aScrollCardHeight, Color.GREEN.darker());
+    Circle BagIcon = new Circle(aScrollCardWidth / 4, Color.SADDLEBROWN.brighter());
     Text X = new Text("X");
     X.setTextAlignment(TextAlignment.CENTER);
-    X.setFont(Font.font(aScrollCardHeight*0.75));
+    X.setFont(Font.font(aScrollCardHeight * 0.75));
     X.setFill(Color.DARKRED);
     X.setOpacity(0);
 
@@ -197,7 +196,7 @@ public class BuyCardByCard implements PromptTypeInterface {
       OtherWhole.getChildren().remove(DisablingRectangleOthers);
     });
 
-    myWholeCard.getChildren().addAll(BagCard,BagIcon,X);
+    myWholeCard.getChildren().addAll(BagCard, BagIcon, X);
     BagCards.getChildren().add(myWholeCard);
 
   }
@@ -241,10 +240,13 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties().
-          getInt(BuyCard.BankType.GAME_BANK.toString() + "/" + BuyCard.CurrencyType.BONUS_GOLD_CARDS.toString()) >=
+          getInt(BuyCard.BankType.GAME_BANK + "/" +
+              BuyCard.CurrencyType.BONUS_GOLD_CARDS) >=
           2) {
         buy.setOpacity(1);
-      } else buy.setOpacity(0.5);
+      } else {
+        buy.setOpacity(0.5);
+      }
     });
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {

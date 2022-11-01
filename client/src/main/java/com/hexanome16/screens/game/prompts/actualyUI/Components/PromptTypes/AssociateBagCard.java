@@ -25,35 +25,13 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class AssociateBagCard implements PromptTypeInterface {
-  public static enum BonusType{
-    RED,GREEN,BLUE,WHITE,BLACK;
-
-    public static EnumMap<BonusType,Color> m = new EnumMap<BonusType, Color>(BonusType.class);
-
-    static {
-      m.put(RED, Color.RED.darker());
-      m.put(GREEN, Color.GREEN.darker());
-      m.put(BLUE, Color.BLUE.darker());
-      m.put(WHITE, Color.WHITE.darker());
-      m.put(BLACK, Color.BLACK);
-    }
-    public Paint getColor(){
-      return m.get(this);
-    }
-    public Paint getStrokeColor(){
-      if (this == BLACK) return Color.GREY;
-      return Color.BLACK;
-    }
-  }
-
-  double aWidth = getAppWidth()/2;
-  double aHeight = getAppHeight()/2;
-  double aBonusWidth = aWidth/8;
-  double aBonusHeight = aBonusWidth*1.39;
-  double topleftX = (getAppWidth()/2)-(aWidth/2);
-  double topleftY = (getAppHeight()/2) - (aHeight/2);
+  double aWidth = getAppWidth() / 2;
+  double aHeight = getAppHeight() / 2;
+  double aBonusWidth = aWidth / 8;
+  double aBonusHeight = aBonusWidth * 1.39;
+  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
+  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
   ArrayList<Node> myNodes = new ArrayList<>();
-
 
   @Override
   public double width() {
@@ -67,7 +45,7 @@ public class AssociateBagCard implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
-    double ConfirmButtonRadii = aHeight/10;
+    double ConfirmButtonRadii = aHeight / 10;
 
     //initiate BorderPane
     BorderPane myPrompt = new BorderPane();
@@ -78,8 +56,9 @@ public class AssociateBagCard implements PromptTypeInterface {
     Text promptMessage = new Text();            //Top
     HBox bonuses = new HBox();                  //Nobles
     Circle confirmationButton = new Circle();   //Button
-    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/6);
-    Font RobotoBoldConfirm = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/20);
+    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 6);
+    Font RobotoBoldConfirm =
+        FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 20);
 
     // prompt message//
     HBox myhBox = new HBox();
@@ -89,31 +68,31 @@ public class AssociateBagCard implements PromptTypeInterface {
     promptMessage.setWrappingWidth(aWidth);
     myhBox.setAlignment(Pos.CENTER);
     myhBox.getChildren().add(promptMessage);
-    myhBox.setPrefSize(aWidth,aHeight/4);
+    myhBox.setPrefSize(aWidth, aHeight / 4);
     myPrompt.setTop(myhBox);
 
     // Confirm button//
     confirmationButton.setRadius(ConfirmButtonRadii);
-    confirmationButton.setFill(Color.rgb(249,161,89));
+    confirmationButton.setFill(Color.rgb(249, 161, 89));
     confirmationButton.setOpacity(0.5);
 
     /*Centering circle*/
     Text confirm = new Text("Confirm");
     confirm.setFont(RobotoBoldConfirm);
-    StackPane button = new StackPane(confirmationButton,confirm);
+    StackPane button = new StackPane(confirmationButton, confirm);
     button.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if(confirmationButton.getOpacity() == 1) {
+      if (confirmationButton.getOpacity() == 1) {
         myNodes = new ArrayList<>();
         PromptComponent.closePrompts();
         ////////Handle new Noble AGAIN///////////
       }
-    } );
+    });
     ////////////////////////////////////////////////////
 
 
-    HBox inter1=new HBox(button);
+    HBox inter1 = new HBox(button);
     inter1.setAlignment(Pos.CENTER);
-    inter1.setPrefSize(ConfirmButtonRadii*4,aHeight);
+    inter1.setPrefSize(ConfirmButtonRadii * 4, aHeight);
     inter1.setSpacing(5);
     /*Circle in inter1*/
     myPrompt.setRight(inter1);
@@ -122,11 +101,11 @@ public class AssociateBagCard implements PromptTypeInterface {
 
     // Bonuses /////////////////////////////////////////////////////////////////////////////////////
     bonuses.setAlignment(Pos.CENTER);
-    bonuses.setSpacing(aBonusWidth/4);
-    addBonusType(bonuses,confirmationButton,BonusType.RED);
-    addBonusType(bonuses,confirmationButton,BonusType.GREEN);
-    addBonusType(bonuses,confirmationButton,BonusType.WHITE);
-    addBonusType(bonuses,confirmationButton,BonusType.BLACK);
+    bonuses.setSpacing(aBonusWidth / 4);
+    addBonusType(bonuses, confirmationButton, BonusType.RED);
+    addBonusType(bonuses, confirmationButton, BonusType.GREEN);
+    addBonusType(bonuses, confirmationButton, BonusType.WHITE);
+    addBonusType(bonuses, confirmationButton, BonusType.BLACK);
 
 
     myPrompt.setCenter(bonuses);
@@ -137,30 +116,31 @@ public class AssociateBagCard implements PromptTypeInterface {
 
   private void addBonusType(HBox pBonuses, Circle confirmationButton, BonusType pBonusType) {
     StackPane myBonus = new StackPane();
-    Rectangle Bonus = new Rectangle(aBonusWidth,aBonusHeight,pBonusType.getColor());
-    Bonus.setStrokeWidth(aHeight/100);
+    Rectangle Bonus = new Rectangle(aBonusWidth, aBonusHeight, pBonusType.getColor());
+    Bonus.setStrokeWidth(aHeight / 100);
     Bonus.setStroke(pBonusType.getStrokeColor());
-    Rectangle SelectionRectangle = new Rectangle(aBonusWidth*1.2,aBonusHeight*1.2,Color.WHITE);
+    Rectangle SelectionRectangle =
+        new Rectangle(aBonusWidth * 1.2, aBonusHeight * 1.2, Color.WHITE);
     SelectionRectangle.setOpacity(0.5);
     myNodes.add(SelectionRectangle);
 
 
-    myBonus.getChildren().addAll(SelectionRectangle,Bonus);
+    myBonus.getChildren().addAll(SelectionRectangle, Bonus);
 
     myBonus.setOnMouseEntered(e -> {
-      if (SelectionRectangle.getOpacity()!=1){
+      if (SelectionRectangle.getOpacity() != 1) {
         SelectionRectangle.setOpacity(0.7);
       }
     });
 
     myBonus.setOnMouseExited(e -> {
-      if (SelectionRectangle.getOpacity()!=1){
+      if (SelectionRectangle.getOpacity() != 1) {
         SelectionRectangle.setOpacity(0.5);
       }
     });
 
     myBonus.setOnMouseClicked(e -> {
-      for (Node n : myNodes){
+      for (Node n : myNodes) {
         n.setOpacity(0.5);
       }
       SelectionRectangle.setOpacity(1);
@@ -177,5 +157,34 @@ public class AssociateBagCard implements PromptTypeInterface {
     myPrompt.setMaxWidth(aWidth);
     myPrompt.setPrefHeight(aHeight);
     myPrompt.setMaxHeight(aHeight);
+  }
+
+  public enum BonusType {
+    RED,
+    GREEN,
+    BLUE,
+    WHITE,
+    BLACK;
+
+    public static EnumMap<BonusType, Color> m = new EnumMap<BonusType, Color>(BonusType.class);
+
+    static {
+      m.put(RED, Color.RED.darker());
+      m.put(GREEN, Color.GREEN.darker());
+      m.put(BLUE, Color.BLUE.darker());
+      m.put(WHITE, Color.WHITE.darker());
+      m.put(BLACK, Color.BLACK);
+    }
+
+    public Paint getColor() {
+      return m.get(this);
+    }
+
+    public Paint getStrokeColor() {
+      if (this == BLACK) {
+        return Color.GREY;
+      }
+      return Color.BLACK;
+    }
   }
 }
