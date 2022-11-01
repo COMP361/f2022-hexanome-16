@@ -16,10 +16,11 @@
  * Use Bash for Linux/macOS or Git Bash for Windows.
  * Copy the `pre-commit` file from the project root to `.git/hooks/` folder.
  * Make sure the file is executable (`chmod +x .git/hooks/pre-commit`).
- * Configure git hook:
-    * git config --add checkstyle.jar $PWD/checkstyle-10.4-all.jar
-    * git config --add checkstyle.checkfile $PWD/google_checks.xml
-    * git config --add java.command <path to java executale> [optional, defaults to assuming it's in your path]
+ * Configure git hook to run on all commits (`git config core.hooksPath .git/hooks`).
+ * Configure git to detect checkstyle jar and config:
+    * `git config --add checkstyle.jar $PWD/checkstyle-10.4-all.jar`
+    * `git config --add checkstyle.checkfile $PWD/google_checks.xml`
+    * `git config --add java.command <path to java executale>` [optional, defaults to assuming it's in your path]
  * You can commit :)
 
 ## The Rules
