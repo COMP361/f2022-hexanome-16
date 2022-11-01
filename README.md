@@ -69,10 +69,9 @@ Board Game Platform (BGP) = Lobby Service + Lobby Service Web UI + Sample Game, 
  > Be careful not to confuse *Lobby Service* and *Board Game Platform*.
 
 ## Authors
-
-Fill e.g. names + link to github profiles in list below.
-
- * ~~Maximilian Schiedermeier - [https://github.com/kartoffelquadrat]~~
- * ...
-
-
+ * [Peini Cheng](https://github.com/PeiniCheng)
+ * [Constantin Buruiana](https://github.com/ConstBur)
+ * [Kimi Zhao](https://github.com/kimikimizz)
+ * [Imad Issafras](https://github.com/UnHappySquid)
+ * [Tristan Leclair-Vani](https://github.com/TristanLeclair)
+ * [Éléa Dufresne](https://github.com/eleadufresne)
