@@ -53,14 +53,14 @@ public class DeckFactory implements EntityFactory {
         Texture icon = FXGL.texture("playericon.png");
         // current player's name TODO make this a variable
         Text playerName = new Text("Placeholder");
-        playerName.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 175));
+        playerName.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 100));
         playerName.setFill(Paint.valueOf("#FFFFFF"));
         playerName.setStrokeWidth(2.);
         playerName.setStroke(Paint.valueOf("#000000"));
         playerName.setStyle("-fx-background-color: ffffff00; ");
         // current player's prestige points TODO make this a variable
         Text prestigePoints = new Text("10");
-        prestigePoints.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 175));
+        prestigePoints.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 100));
         prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
         prestigePoints.setStrokeWidth(2.);
         prestigePoints.setStroke(Paint.valueOf("#000000"));
