@@ -59,6 +59,9 @@ public class LobbyFactory implements EntityFactory {
     }
 
     private Entity sessionList(SpawnData data, Session[] sessionArr, boolean isOwn) {
+        if (sessionArr == null) {
+            sessionArr = new Session[]{};
+        }
         TableView<Session> sessionTableView = new TableView<>();
         if (isOwn) {
             ownSessionList = sessionTableView;
@@ -181,17 +184,19 @@ public class LobbyFactory implements EntityFactory {
         ownSessionList.getItems().clear();
         otherSessionList.getItems().clear();
 
-        if (sessions != null) {
-            Session[] ownSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("linus")).toArray(Session[]::new);
-            Session[] otherSessions = Arrays.stream(sessions).filter(session -> !session.creator().equals("linus")).toArray(Session[]::new);
-
-            ownSessionList.getItems().addAll(ownSessions);
-            otherSessionList.getItems().addAll(otherSessions);
-            ownSessionList.setPrefHeight(36 + ownSessions.length * 56);
-            otherSessionList.setPrefHeight(36 + otherSessions.length * 56);
-            getGameWorld().getEntitiesByType(TYPE.OTHER_HEADER).forEach(entity -> entity.setY(400 + ownSessionList.getHeight()));
-            getGameWorld().getEntitiesByType(TYPE.OTHER_SESSION_LIST).forEach(entity -> entity.setY(450 + ownSessionList.getHeight()));
+        if (sessions == null) {
+            sessions = new Session[]{};
         }
+
+        Session[] ownSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("linus")).toArray(Session[]::new);
+        Session[] otherSessions = Arrays.stream(sessions).filter(session -> !session.creator().equals("linus")).toArray(Session[]::new);
+
+        ownSessionList.getItems().addAll(ownSessions);
+        otherSessionList.getItems().addAll(otherSessions);
+        ownSessionList.setPrefHeight(36 + ownSessions.length * 56);
+        otherSessionList.setPrefHeight(36 + otherSessions.length * 56);
+        getGameWorld().getEntitiesByType(TYPE.OTHER_HEADER).forEach(entity -> entity.setY(400 + ownSessionList.getHeight()));
+        getGameWorld().getEntitiesByType(TYPE.OTHER_SESSION_LIST).forEach(entity -> entity.setY(450 + ownSessionList.getHeight()));
     }
 
     @Spawns("createSessionButton")
