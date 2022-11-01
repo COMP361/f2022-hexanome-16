@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.screens.game.components.CardComponent;
+import com.hexanome16.screens.game.components.NobleComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
 import java.util.Map;
 import java.util.Stack;
@@ -94,6 +95,11 @@ public class GameScreen {
 
 
   public static void exitGame(){
+    level_one.clear();
+    level_two.clear();
+    level_three.clear();
+    CardComponent.reset();
+    NobleComponent.reset();
     FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
     FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
   }
