@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.hexanome16.requests.RequestClient;
 import com.hexanome16.types.lobby.auth.TokensInfo;
 import com.hexanome16.utils.AuthHeader;
+import com.hexanome16.utils.StringConverter;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -43,7 +44,10 @@ public class TokenRequest {
                     .build();
             String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
-            return new Gson().fromJson(response, TokensInfo.class);
+            TokensInfo tokensInfo = new Gson().fromJson(response, TokensInfo.class);
+            tokensInfo.setAccess_token(StringConverter.escape(tokensInfo.access_token()));
+            tokensInfo.setRefresh_token(StringConverter.escape(tokensInfo.refresh_token()));
+            return tokensInfo;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
             return null;

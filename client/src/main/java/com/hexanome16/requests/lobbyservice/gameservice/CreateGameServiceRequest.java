@@ -21,8 +21,8 @@ public class CreateGameServiceRequest {
         public Payload() {
             location = "http://127.0.0.1:4243/SplendorService";
             name = "Splendor";
-            maxSessionPlayers = 2;
-            minSessionPlayers = 4;
+            maxSessionPlayers = 4;
+            minSessionPlayers = 2;
             displayName = "Splendor";
             webSupport = "true";
         }
