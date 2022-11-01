@@ -5,8 +5,8 @@
 ## Setup CheckStyle in IntelliJ
  * Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
  * Go to `Settings > Tools > CheckStyle`, select latest CheckStyle version, set Scope to `Only Java sources (including tests)` and click `Apply`.
- * In the same window, add our custom configuration (google_checks.xml) by clicking the `+` button and selecting the file from the project root.
- * In the same window, add a third-party check jar (checkstyle-10.4-all.jar) by clicking the `+` button and selecting the file from the project root.
+ * In the same window, add our custom configuration (google_checks.xml) by clicking the `+` button and selecting the file.
+ * In the same window, add a third-party check jar (checkstyle-10.4-all.jar) by clicking the `+` button and selecting the file.
  * Click Ok to save settings.
  * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
  * Fix all the errors and warnings that appear :)
@@ -24,7 +24,7 @@
  * Do not delete or rename the [reports](reports), [client](client), [server](server) or [docs](docs) directories.  
 See [Static Content](#static-content)
  * Don't clutter your repo, update your [```.gitignore```](.gitignore) file, depending on your client language / technology.
-    * Don't commit binaries. (Images, jar files, class files, etc...)
+    * Don't commit binaries. (jar files, class files, etc...)
     * Don't commit buffer files. (Vim buffer files, IDE meta files etc...)
  * Place your documentation in [```docs```](docs) on `master` branch.
  * Commit frequently, commit fine grained.
