@@ -32,7 +32,8 @@ public class TokenRequest {
         try {
             StringBuilder url = new StringBuilder("http://localhost:4242/oauth/token?");
             if (refresh_token == null || refresh_token.isBlank()) {
-                url.append("grant_type=password&username=").append(username).append("&password=").append(password);
+                url.append("grant_type=password&username=").append(StringConverter.escape(username))
+                        .append("&password=").append(StringConverter.escape(password));
             } else {
                 url.append("grant_type=refresh_token&refresh_token=").append(refresh_token);
             }
