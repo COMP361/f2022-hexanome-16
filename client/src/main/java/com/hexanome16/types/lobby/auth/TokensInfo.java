@@ -1,5 +1,7 @@
 package com.hexanome16.types.lobby.auth;
 
+import com.hexanome16.utils.StringConverter;
+
 import java.util.Objects;
 
 /**
@@ -16,8 +18,8 @@ public final class TokensInfo {
      *
      */
     public TokensInfo(String access_token, String refresh_token, String token_type, int expires_in, String scope) {
-        this.access_token = access_token;
-        this.refresh_token = refresh_token;
+        this.access_token = StringConverter.escape(access_token);
+        this.refresh_token = StringConverter.escape(refresh_token);
         this.token_type = token_type;
         this.expires_in = expires_in;
         this.scope = scope;
@@ -55,11 +57,11 @@ public final class TokensInfo {
     }
 
     public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+        this.access_token = StringConverter.escape(access_token);
     }
 
     public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+        this.refresh_token = StringConverter.escape(refresh_token);
     }
 
     public void setToken_type(String token_type) {

@@ -20,10 +20,10 @@ public class LobbyScreen {
         spawn("ownHeader");
         spawn("otherHeader");
         runOnce(() -> {
-            TokensInfo tokensInfo = TokenRequest.execute("xox", "abc123_ABC123", null);
+            TokensInfo tokensInfo = TokenRequest.execute("testservice", "testpass", null);
             assert tokensInfo != null;
             CreateGameServiceRequest.execute(tokensInfo.access_token());
-        }, Duration.seconds(10));
+        }, Duration.ZERO);
         run(LobbyFactory::updateSessionList, Duration.seconds(1));
     }
 
