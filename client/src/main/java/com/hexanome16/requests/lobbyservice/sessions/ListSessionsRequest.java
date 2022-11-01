@@ -10,7 +10,16 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * This class provides methods to list sessions in Lobby Service.
+ */
 public class ListSessionsRequest {
+  /**
+   * Sends a request to list sessions in Lobby Service.
+   *
+   * @param hash A hashcode used for long polling (to see if there are changes to the list).
+   * @return An array of sessions in Lobby Service.
+   */
   public static Session[] execute(int hash) {
     HttpClient client = RequestClient.getClient();
     try {

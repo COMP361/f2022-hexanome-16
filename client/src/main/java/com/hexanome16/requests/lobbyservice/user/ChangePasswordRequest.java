@@ -10,14 +10,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * This class provides methods to change the password of the user.
+ */
 public class ChangePasswordRequest {
-  public static void execute(String access_token, String user, String oldPassword,
+  /**
+   * Sends a request to change the password of the user.
+   *
+   * @param accessToken The access token of the user.
+   * @param user The user for whom to change the password.
+   * @param oldPassword The old password of the user.
+   * @param newPassword The new password of the user.
+   */
+  public static void execute(String accessToken, String user, String oldPassword,
                              String newPassword) {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(
-              "http://127.0.0.1:4242/api/users/" + user + "?access_token=" + access_token))
+              "http://127.0.0.1:4242/api/users/" + user + "?access_token=" + accessToken))
           .header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(
               new Gson().toJson(new Payload(oldPassword, newPassword))))

@@ -32,12 +32,18 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 
+/**
+ * This class is used to create the entities of the lobby screen.
+ */
 public class LobbyFactory implements EntityFactory {
   private static Session[] sessions = new Session[] {};
   private static TableView<Session> ownSessionList;
   private static TableView<Session> otherSessionList;
 
-    public static void updateSessionList() {
+  /**
+   * This method updates the list of sessions shown in the lobby screen.
+   */
+  public static void updateSessionList() {
     sessions = ListSessionsRequest.execute(sessions == null ? 0 : Arrays.hashCode(sessions));
     ownSessionList.getItems().clear();
     otherSessionList.getItems().clear();
@@ -57,31 +63,43 @@ public class LobbyFactory implements EntityFactory {
     otherSessionList.getItems().addAll(otherSessions);
     ownSessionList.setPrefHeight(36 + ownSessions.length * 56);
     otherSessionList.setPrefHeight(36 + otherSessions.length * 56);
-    getGameWorld().getEntitiesByType(TYPE.OTHER_HEADER)
+    getGameWorld().getEntitiesByType(Type.OTHER_HEADER)
         .forEach(entity -> entity.setY(400 + ownSessionList.getHeight()));
-    getGameWorld().getEntitiesByType(TYPE.OTHER_SESSION_LIST)
+    getGameWorld().getEntitiesByType(Type.OTHER_SESSION_LIST)
         .forEach(entity -> entity.setY(450 + ownSessionList.getHeight()));
   }
 
-    @Spawns("ownSessionList")
+  /**
+   * This method adds the table with sessions where the user is playing to the lobby screen.
+   *
+   * @param data The data to spawn the entity.
+   * @return Session table.
+   */
+  @Spawns("ownSessionList")
   public Entity ownSessionList(SpawnData data) {
     if (sessions == null) {
       sessions = new Session[] {};
     }
     Session[] activeSessions = Arrays.stream(sessions).filter(
-        session -> session.creator().equals("linus") ||
-            Arrays.asList(session.players()).contains("linus")).toArray(Session[]::new);
+        session -> session.creator().equals("linus")
+            || Arrays.asList(session.players()).contains("linus")).toArray(Session[]::new);
     return sessionList(data, activeSessions, true);
   }
 
-    @Spawns("otherSessionList")
+  /**
+   * This method adds the table with sessions that the user hasn't joined to the lobby screen.
+   *
+   * @param data The data to spawn the entity.
+   * @return Session table.
+   */
+  @Spawns("otherSessionList")
   public Entity otherSessionList(SpawnData data) {
     if (sessions == null) {
       sessions = new Session[] {};
     }
     Session[] otherSessions = Arrays.stream(sessions).filter(
-        session -> !(session.creator().equals("linus") ||
-            Arrays.asList(session.players()).contains("linus"))).toArray(Session[]::new);
+        session -> !(session.creator().equals("linus")
+            || Arrays.asList(session.players()).contains("linus"))).toArray(Session[]::new);
     return sessionList(data, otherSessions, false);
   }
 
@@ -97,31 +115,31 @@ public class LobbyFactory implements EntityFactory {
     }
     sessionTableView.setStyle("-fx-background-color: #00000000; -fx-text-fill: #ffffff;");
 
+    String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
+        + "-fx-text-fill: #ffffff; -fx-font-size: 16px;";
+
     TableColumn<Session, String> creatorColumn = new TableColumn<>("Creator");
     creatorColumn.setCellValueFactory(
         cellData -> new ReadOnlyStringWrapper(cellData.getValue().creator()));
-    creatorColumn.setStyle(
-        "-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
+    creatorColumn.setStyle(columnStyle);
 
     TableColumn<Session, String> launchedColumn = new TableColumn<>("Launched");
     launchedColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
         cellData.getValue().launched() ? "Yes" : "No"
     ));
-    launchedColumn.setStyle(
-        "-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
+    launchedColumn.setStyle(columnStyle);
 
     TableColumn<Session, String> playersColumn = new TableColumn<>("Players");
     playersColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-        cellData.getValue().players().length + " / " +
-            cellData.getValue().gameParameters().maxSessionPlayers()
+        cellData.getValue().players().length
+            + " / "
+            + cellData.getValue().gameParameters().maxSessionPlayers()
     ));
-    playersColumn.setStyle(
-        "-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
+    playersColumn.setStyle(columnStyle);
 
     TableColumn<Session, String> actionsColumn = new TableColumn<>("Actions");
     actionsColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper("actions"));
-    actionsColumn.setStyle(
-        "-fx-alignment: CENTER; -fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-font-size: 16px;");
+    actionsColumn.setStyle(columnStyle);
 
     Callback<TableColumn<Session, String>, TableCell<Session, String>> actionsCellFactory =
         new Callback<>() {
@@ -138,7 +156,6 @@ public class LobbyFactory implements EntityFactory {
                 super.updateItem(item, empty);
                 if (empty) {
                   setGraphic(null);
-                  setText(null);
                 } else {
                   final Session session = getTableView().getItems().get(getIndex());
                   join.setOnAction(event -> {
@@ -150,15 +167,15 @@ public class LobbyFactory implements EntityFactory {
                       LobbyScreen.exitLobby();
                     }
                   });
-                  join.setStyle(
-                      "-fx-background-color: #282C34; -fx-text-fill: white; -fx-border-color: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                  String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
+                      + "-fx-border-radius: 5px; -fx-background-radius: 5px;";
+                  join.setStyle("-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle);
                   leave.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
                     LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
                   });
-                  leave.setStyle(
-                      "-fx-background-color: #282C34; -fx-text-fill: darkcyan; -fx-border-color: darkcyan; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                  leave.setStyle("-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle);
                   launch.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
@@ -166,15 +183,13 @@ public class LobbyFactory implements EntityFactory {
                     GameScreen.initGame();
                     LobbyScreen.exitLobby();
                   });
-                  launch.setStyle(
-                      "-fx-background-color: #282C34; -fx-text-fill: green; -fx-border-color: green; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                  launch.setStyle("-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle);
                   delete.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
                     DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
                   });
-                  delete.setStyle(
-                      "-fx-background-color: #282C34; -fx-text-fill: red; -fx-border-color: red; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                  delete.setStyle("-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle);
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isOwn) {
                     buttons.add(session.launched() ? join : launch);
@@ -187,8 +202,8 @@ public class LobbyFactory implements EntityFactory {
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
                   buttonBox.setStyle("-fx-alignment: CENTER; -fx-spacing: 5px; -fx-padding: 5px;");
                   setGraphic(buttonBox);
-                  setText(null);
                 }
+                setText(null);
               }
             };
           }
@@ -199,9 +214,11 @@ public class LobbyFactory implements EntityFactory {
     placeholder.setStyle("-fx-text-fill: #ffffff; -fx-alignment: CENTER; -fx-font-size: 16px;");
     sessionTableView.setPlaceholder(placeholder);
 
-    sessionTableView.getColumns()
-        .addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
-    sessionTableView.setPrefSize(1600, sessionArr.length == 0 ? 91 : 36 + sessionArr.length * 56);
+    sessionTableView.getColumns().add(creatorColumn);
+    sessionTableView.getColumns().add(launchedColumn);
+    sessionTableView.getColumns().add(playersColumn);
+    sessionTableView.getColumns().add(actionsColumn);
+
     sessionTableView.resizeColumn(creatorColumn, 320);
     sessionTableView.resizeColumn(launchedColumn, 318);
     sessionTableView.resizeColumn(playersColumn, 320);
@@ -209,15 +226,22 @@ public class LobbyFactory implements EntityFactory {
     sessionTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
     sessionTableView.getItems().addAll(sessionArr);
+    sessionTableView.setPrefSize(1600, sessionArr.length == 0 ? 91 : 36 + sessionArr.length * 56);
 
     return entityBuilder(data)
-        .type(isOwn ? TYPE.OWN_SESSION_LIST : TYPE.OTHER_SESSION_LIST)
+        .type(isOwn ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
         .viewWithBBox(sessionTableView)
         .at(160, isOwn ? 350 : 550 + ownSessionList.getHeight())
         .build();
   }
 
-    @Spawns("createSessionButton")
+  /**
+   * Adds a button that allows to create a new session in Lobby Service.
+   *
+   * @param data The data of the entity.
+   * @return Create Session button.
+   */
+  @Spawns("createSessionButton")
   public Entity createSessionButton(SpawnData data) {
     Button button = new Button("Create Session");
     button.setStyle(
@@ -231,58 +255,84 @@ public class LobbyFactory implements EntityFactory {
           "Splendor",
           null
       );
-      System.out.println(sessionId);
       ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
-        .type(TYPE.CREATE_SESSION_BUTTON)
+        .type(Type.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
         .at(870, 200)
         .build();
   }
 
-    @Spawns("ownHeader")
+  /**
+   * Adds a header above the table of active sessions.
+   *
+   * @param data The data of the entity.
+   * @return Header for the table of active sessions.
+   */
+  @Spawns("ownHeader")
   public Entity ownHeader(SpawnData data) {
     Label label = new Label("Active Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(TYPE.OWN_HEADER)
+        .type(Type.OWN_HEADER)
         .viewWithBBox(label)
         .at(870, 300)
         .build();
   }
 
-    @Spawns("otherHeader")
+  /**
+   * Adds a header above the table of other players' sessions.
+   *
+   * @param data The data of the entity.
+   * @return Header for the table of other players' sessions.
+   */
+  @Spawns("otherHeader")
   public Entity otherHeader(SpawnData data) {
     Label label = new Label("Other Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(TYPE.OTHER_HEADER)
+        .type(Type.OTHER_HEADER)
         .viewWithBBox(label)
         .at(880, ownSessionList.getHeight() + 500)
         .build();
   }
 
-    @Spawns("closeButton")
+  /**
+   * Adds a button that allows to exit the lobby screen.
+   *
+   * @param data The data of the entity.
+   * @return Exit Lobby button.
+   */
+  @Spawns("closeButton")
   public Entity closeButton(SpawnData data) {
     Button button = new Button("X");
     button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px; -fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px; -fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
+        "-fx-background-color: transparent; -fx-text-fill: #ffffff;"
+            + "-fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px;"
+            + "-fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px;"
+            + "-fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
     button.setOnAction(event -> {
       LobbyScreen.exitLobby();
       MainMenuScreen.initUI();
     });
     return entityBuilder(data)
-        .type(TYPE.CLOSE_BUTTON)
+        .type(Type.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(1700, 100)
         .build();
   }
 
-    @Spawns("logo")
+  /**
+   * Adds the Splendor logo to the lobby screen.
+   *
+   * @param data The data of the entity.
+   * @return Splendor logo.
+   */
+  @Spawns("logo")
   public Entity logo(SpawnData data) {
     return entityBuilder(data)
-        .type(TYPE.LOGO)
+        .type(Type.LOGO)
         .viewWithBBox("splendor.png")
         .at(450, 25)
         .scaleOrigin(450, 25)
@@ -290,39 +340,55 @@ public class LobbyFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("preferencesButton")
+  /**
+   * Adds a button that redirects to the Preferences screen.
+   *
+   * @param data The data of the entity.
+   * @return Preferences button.
+   */
+  @Spawns("preferencesButton")
   public Entity preferencesButton(SpawnData data) {
     Button button = new Button("Preferences");
     button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #61dafb; -fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
+        "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
+        + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> {
       SettingsScreen.initUI(true);
     });
     return entityBuilder(data)
-        .type(TYPE.CLOSE_BUTTON)
+        .type(Type.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(150, 90)
         .build();
   }
 
-    @Spawns("background")
+  /**
+   * Adds the background color to the lobby screen.
+   *
+   * @param data The data of the entity.
+   * @return Background with color.
+   */
+  @Spawns("background")
   public Entity background(SpawnData data) {
     return entityBuilder(data)
-        .type(TYPE.BACKGROUND)
+        .type(Type.BACKGROUND)
         .viewWithBBox(new Rectangle(1920, 1080, Paint.valueOf("#282C34")))
         .at(0, 0)
         .build();
   }
 
-    public enum TYPE {
-        OWN_SESSION_LIST,
-        OTHER_SESSION_LIST,
-        CREATE_SESSION_BUTTON,
-        CLOSE_BUTTON,
-        PREFERENCES_BUTTON,
-        LOGO,
-        OWN_HEADER,
-        OTHER_HEADER,
-        BACKGROUND
+  /**
+   * Enum of possible entities in the lobby screen.
+   */
+  public enum Type {
+    OWN_SESSION_LIST,
+    OTHER_SESSION_LIST,
+    CREATE_SESSION_BUTTON,
+    CLOSE_BUTTON,
+    PREFERENCES_BUTTON,
+    LOGO,
+    OWN_HEADER,
+    OTHER_HEADER,
+    BACKGROUND
   }
 }
