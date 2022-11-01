@@ -25,6 +25,9 @@ public class CreateSessionRequest {
     }
 
     public static String execute(String access_token, String creator, String game, String savegame) {
+        if (savegame == null) {
+            savegame = "";
+        }
         HttpClient client = RequestClient.getClient();
         try {
             HttpRequest request = HttpRequest.newBuilder()
