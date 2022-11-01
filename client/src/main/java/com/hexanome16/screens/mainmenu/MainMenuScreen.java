@@ -45,8 +45,8 @@ public class MainMenuScreen {
      */
     private static void setupUI() {
         uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
-            MainMenuScreen.clearUI();
-            SettingsScreen.initUI();
+            //MainMenuScreen.clearUI();
+            SettingsScreen.initUI(true);
         });
 
         uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
