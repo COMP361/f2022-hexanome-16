@@ -69,6 +69,7 @@ public class DeckFactory implements EntityFactory {
         BorderPane pane = new BorderPane();
         BorderPane.setAlignment(prestigePoints, Pos.TOP_RIGHT);
         BorderPane.setAlignment(playerName, Pos.CENTER);
+        pane.setTop(prestigePoints);
         pane.setBottom(playerName);
         pane.setCenter(icon);
         // build the entity
