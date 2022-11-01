@@ -3,6 +3,7 @@ package com.hexanome16.screens.game.components;
 import static com.hexanome16.screens.game.GameFactory.matCoordsX;
 import static com.hexanome16.screens.game.GameFactory.matCoordsY;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
@@ -37,5 +38,9 @@ public class NobleComponent extends Component {
   private void restore() {
     position.setScaleX(0.15);
     position.setScaleY(0.15);
+  }
+
+  public static void reset(){
+    grid = new boolean[5];
   }
 }
