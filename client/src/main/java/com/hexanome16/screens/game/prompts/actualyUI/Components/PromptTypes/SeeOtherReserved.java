@@ -21,7 +21,7 @@ public class SeeOtherReserved implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
-  double aCardWidth = aWidth/4;
+  double aCardWidth = aWidth / 4;
   double aCardHeight = aCardWidth * 1.39;
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
@@ -43,9 +43,9 @@ public class SeeOtherReserved implements PromptTypeInterface {
     myBorderPane.setTranslateY(topleftY);
     HBox ReservedCards = new HBox();
     ReservedCards.setAlignment(Pos.CENTER);
-    ReservedCards.setSpacing((aWidth-3*aCardWidth)/4);
+    ReservedCards.setSpacing((aWidth - 3 * aCardWidth) / 4);
     Text myPromptMessage = new Text("Opponent Reserved Cards");
-    myPromptMessage.setFont(Font.font(aHeight/20));
+    myPromptMessage.setFont(Font.font(aHeight / 20));
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(aWidth);
     myBorderPane.setTop(myPromptMessage);
@@ -54,23 +54,21 @@ public class SeeOtherReserved implements PromptTypeInterface {
 //    myScrollPane.setTranslateY(topleftY);
 
 
-
-
     Texture myCard = FXGL.texture("card1.png");
     myCard.setFitWidth(aCardWidth);
     myCard.setFitHeight(aCardHeight);
     ReservedCards.getChildren().add(myCard);
 
     StackPane myanonymousCard = new StackPane();
-    Rectangle myOtherCard = new Rectangle(aCardWidth,aCardHeight, Color.BLACK);
+    Rectangle myOtherCard = new Rectangle(aCardWidth, aCardHeight, Color.BLACK);
     Text myintoregation = new Text("?");
-    myintoregation.setFont(Font.font(aCardHeight*0.9));
+    myintoregation.setFont(Font.font(aCardHeight * 0.9));
     myintoregation.setFill(Color.WHITE);
     myintoregation.setTextAlignment(TextAlignment.CENTER);
-    myanonymousCard.getChildren().addAll(myOtherCard,myintoregation);
+    myanonymousCard.getChildren().addAll(myOtherCard, myintoregation);
     ReservedCards.getChildren().add(myanonymousCard);
 
-    ReservedCards.setPrefSize(aWidth,aHeight*0.8);
+    ReservedCards.setPrefSize(aWidth, aHeight * 0.8);
 
 
     entity.getViewComponent().addChild(myBorderPane);

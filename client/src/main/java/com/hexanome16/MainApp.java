@@ -1,5 +1,11 @@
 package com.hexanome16;
 
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.hexanome16.Config.APP_HEIGHT;
+import static com.hexanome16.Config.APP_TITLE;
+import static com.hexanome16.Config.APP_VERSION;
+import static com.hexanome16.Config.APP_WIDTH;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
@@ -10,19 +16,19 @@ import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
 import com.hexanome16.screens.lobby.LobbyFactory;
 import com.hexanome16.screens.startup.LoginScreen;
 import com.hexanome16.screens.startup.StartupScreen;
-
 import java.util.Map;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-import static com.hexanome16.Config.*;
-
 public class MainApp extends GameApplication {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
   @Override
   protected void initSettings(GameSettings gameSettings) {
-      gameSettings.setWidth(APP_WIDTH);
-      gameSettings.setHeight(APP_HEIGHT);
-      gameSettings.setTitle(APP_TITLE);
-      gameSettings.setVersion(APP_VERSION);
+    gameSettings.setWidth(APP_WIDTH);
+    gameSettings.setHeight(APP_HEIGHT);
+    gameSettings.setTitle(APP_TITLE);
+    gameSettings.setVersion(APP_VERSION);
   }
 
   // To Spawn Prompt, OpenPromt.openPrompt(PromptTypeInterface.PromptType.<AN_ENUM_ELEMENT_FROM_PROMPT_TYPE_INTERFACE>);
@@ -40,14 +46,9 @@ public class MainApp extends GameApplication {
     StartupScreen.backToMainScreen();
   }
 
-
   @Override
   protected void onUpdate(double tpf) {
     GameScreen.onUpdate();
-  }
-
-  public static void main(String[] args) {
-    launch(args);
   }
 
   @Override

@@ -22,7 +22,7 @@ import java.util.EnumMap;
 ///need to also add it to enum and add it to the static bloc
 public interface PromptTypeInterface {
 
-  public static PromptTypeInterface nullPromptType = new PromptTypeInterface() {
+  PromptTypeInterface nullPromptType = new PromptTypeInterface() {
 
     @Override
     public double width() {
@@ -39,7 +39,13 @@ public interface PromptTypeInterface {
     }
   };
 
-  public static enum PromptType {
+  double width();
+
+  double height();
+
+  void populatePrompt(Entity entity);
+
+  enum PromptType {
     TOKEN_ACQUIRING,          // Main
     BUY_CARDS,                // Main
     SEE_OTHER_RESERVED,       // Main
@@ -57,32 +63,29 @@ public interface PromptTypeInterface {
     CHOOSE_NOBLE_TO_RESERVE,  // Helper
     NULL;                     // NullObject
 
-    static final EnumMap<PromptType,PromptTypeInterface> myMap = new EnumMap<>(PromptType.class);
+    static final EnumMap<PromptType, PromptTypeInterface> myMap = new EnumMap<>(PromptType.class);
 
     static {
-      myMap.put(TOKEN_ACQUIRING,new TokenAcquiring());
-      myMap.put(TOKEN_ACQUIRING_TWO,new TokenAcquiringTwo());
-      myMap.put(TOKEN_ACQUIRING_THREE,new TokenAcquiringThree());
+      myMap.put(TOKEN_ACQUIRING, new TokenAcquiring());
+      myMap.put(TOKEN_ACQUIRING_TWO, new TokenAcquiringTwo());
+      myMap.put(TOKEN_ACQUIRING_THREE, new TokenAcquiringThree());
       myMap.put(BUY_CARDS, new BuyCard());
-      myMap.put(SEE_OTHER_RESERVED,new SeeOtherReserved());
-      myMap.put(SEE_OWN_RESERVED,new SeeOwnReserved());
-      myMap.put(SEE_CARDS,new SeeCards());
+      myMap.put(SEE_OTHER_RESERVED, new SeeOtherReserved());
+      myMap.put(SEE_OWN_RESERVED, new SeeOwnReserved());
+      myMap.put(SEE_CARDS, new SeeCards());
       myMap.put(CHOOSE_NOBLES, new ChooseNoble());
-      myMap.put(BUYING_RESERVED,new BuyingReserved());
-      myMap.put(BUY_CARDS_BY_CARDS,new BuyCardByCard());
-      myMap.put(ASSOCIATE_BAG_CARD,new AssociateBagCard());
-      myMap.put(BUY_BAG_CARD,new BuyingBagCard());
-      myMap.put(BUY_RESERVE_NOBLE_CARD,new BuyReservedNobleCard());
-      myMap.put(CHOOSE_NOBLE_TO_RESERVE,new ChooseNobleReserve());
-      myMap.put(PAUSE,new Pause());
-      myMap.put(NULL,nullPromptType);
+      myMap.put(BUYING_RESERVED, new BuyingReserved());
+      myMap.put(BUY_CARDS_BY_CARDS, new BuyCardByCard());
+      myMap.put(ASSOCIATE_BAG_CARD, new AssociateBagCard());
+      myMap.put(BUY_BAG_CARD, new BuyingBagCard());
+      myMap.put(BUY_RESERVE_NOBLE_CARD, new BuyReservedNobleCard());
+      myMap.put(CHOOSE_NOBLE_TO_RESERVE, new ChooseNobleReserve());
+      myMap.put(PAUSE, new Pause());
+      myMap.put(NULL, nullPromptType);
     }
 
-    public PromptTypeInterface getAssociatedClass(){
+    public PromptTypeInterface getAssociatedClass() {
       return myMap.get(this);
     }
   }
-  double width();
-  double height();
-  void populatePrompt(Entity entity);
 }

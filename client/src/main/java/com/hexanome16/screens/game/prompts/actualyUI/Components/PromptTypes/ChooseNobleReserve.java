@@ -26,12 +26,12 @@ import javafx.scene.text.TextAlignment;
 public class ChooseNobleReserve implements PromptTypeInterface {
 
 
-  double aWidth = getAppWidth()/2;
-  double aHeight = getAppHeight()/2;
-  double aNobleWidth = aWidth/5;
+  double aWidth = getAppWidth() / 2;
+  double aHeight = getAppHeight() / 2;
+  double aNobleWidth = aWidth / 5;
   double aBonusHeight = aNobleWidth;
-  double topleftX = (getAppWidth()/2)-(aWidth/2);
-  double topleftY = (getAppHeight()/2) - (aHeight/2);
+  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
+  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
   ArrayList<Node> myNodes = new ArrayList<>();
 
 
@@ -47,7 +47,7 @@ public class ChooseNobleReserve implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
-    double ConfirmButtonRadii = aHeight/10;
+    double ConfirmButtonRadii = aHeight / 10;
 
     //initiate BorderPane
     BorderPane myPrompt = new BorderPane();
@@ -58,8 +58,9 @@ public class ChooseNobleReserve implements PromptTypeInterface {
     Text promptMessage = new Text();            //Top
     HBox bonuses = new HBox();                  //Nobles
     Circle confirmationButton = new Circle();   //Button
-    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/6);
-    Font RobotoBoldConfirm = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/20);
+    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 6);
+    Font RobotoBoldConfirm =
+        FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 20);
 
     // prompt message//
     HBox myhBox = new HBox();
@@ -69,31 +70,31 @@ public class ChooseNobleReserve implements PromptTypeInterface {
     promptMessage.setWrappingWidth(aWidth);
     myhBox.setAlignment(Pos.CENTER);
     myhBox.getChildren().add(promptMessage);
-    myhBox.setPrefSize(aWidth,aHeight/4);
+    myhBox.setPrefSize(aWidth, aHeight / 4);
     myPrompt.setTop(myhBox);
 
     // Confirm button//
     confirmationButton.setRadius(ConfirmButtonRadii);
-    confirmationButton.setFill(Color.rgb(249,161,89));
+    confirmationButton.setFill(Color.rgb(249, 161, 89));
     confirmationButton.setOpacity(0.5);
 
     /*Centering circle*/
     Text confirm = new Text("Confirm");
     confirm.setFont(RobotoBoldConfirm);
-    StackPane button = new StackPane(confirmationButton,confirm);
+    StackPane button = new StackPane(confirmationButton, confirm);
     button.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if(confirmationButton.getOpacity() == 1) {
+      if (confirmationButton.getOpacity() == 1) {
         myNodes = new ArrayList<>();
         PromptComponent.closePrompts();
         ////////Handle new Noble AGAIN///////////
       }
-    } );
+    });
     ////////////////////////////////////////////////////
 
 
-    HBox inter1=new HBox(button);
+    HBox inter1 = new HBox(button);
     inter1.setAlignment(Pos.CENTER);
-    inter1.setPrefSize(ConfirmButtonRadii*4,aHeight);
+    inter1.setPrefSize(ConfirmButtonRadii * 4, aHeight);
     inter1.setSpacing(5);
     /*Circle in inter1*/
     myPrompt.setRight(inter1);
@@ -102,9 +103,9 @@ public class ChooseNobleReserve implements PromptTypeInterface {
 
     // Bonuses /////////////////////////////////////////////////////////////////////////////////////
     bonuses.setAlignment(Pos.CENTER);
-    bonuses.setSpacing(aNobleWidth /4);
-    addNoble(bonuses,confirmationButton, "noble1.png");
-    addNoble(bonuses,confirmationButton, "noble2.png");
+    bonuses.setSpacing(aNobleWidth / 4);
+    addNoble(bonuses, confirmationButton, "noble1.png");
+    addNoble(bonuses, confirmationButton, "noble2.png");
 
     myPrompt.setCenter(bonuses);
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,27 +121,28 @@ public class ChooseNobleReserve implements PromptTypeInterface {
     Noble.setFitWidth(aNobleWidth);
     Noble.setFitHeight(aBonusHeight);
 
-    Rectangle SelectionRectangle = new Rectangle(aNobleWidth *1.1,aBonusHeight*1.1,Color.WHITE);
+    Rectangle SelectionRectangle =
+        new Rectangle(aNobleWidth * 1.1, aBonusHeight * 1.1, Color.WHITE);
     SelectionRectangle.setOpacity(0.5);
     myNodes.add(SelectionRectangle);
 
 
-    myBonus.getChildren().addAll(SelectionRectangle,Noble);
+    myBonus.getChildren().addAll(SelectionRectangle, Noble);
 
     myBonus.setOnMouseEntered(e -> {
-      if (SelectionRectangle.getOpacity()!=1){
+      if (SelectionRectangle.getOpacity() != 1) {
         SelectionRectangle.setOpacity(0.7);
       }
     });
 
     myBonus.setOnMouseExited(e -> {
-      if (SelectionRectangle.getOpacity()!=1){
+      if (SelectionRectangle.getOpacity() != 1) {
         SelectionRectangle.setOpacity(0.5);
       }
     });
 
     myBonus.setOnMouseClicked(e -> {
-      for (Node n : myNodes){
+      for (Node n : myNodes) {
         n.setOpacity(0.5);
       }
       SelectionRectangle.setOpacity(1);

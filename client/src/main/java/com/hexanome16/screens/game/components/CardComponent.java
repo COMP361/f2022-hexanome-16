@@ -8,13 +8,16 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.game.Level;
-import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes.CustomEvent;
 import com.hexanome16.screens.game.prompts.actualyUI.OpenPromt;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
 public class CardComponent extends Component {
+  private static boolean[] level_one_grid = new boolean[4];
+  private static boolean[] level_two_grid = new boolean[4];
+  private static boolean[] level_three_grid = new boolean[4];
+  private final Level level;
+  public String texture;
   private ViewComponent view;
   private TransformComponent position;
   private boolean moving = false;
@@ -22,13 +25,6 @@ public class CardComponent extends Component {
   private boolean adding = false;
   private int gridX;
   private boolean purchased = false;
-  private static boolean[] level_one_grid = new boolean[4];
-  private static boolean[] level_two_grid = new boolean[4];
-  private static boolean[] level_three_grid = new boolean[4];
-
-  public String texture;
-
-  private Level level;
 
 
   public CardComponent(Level aLevel, String texture) {
@@ -36,14 +32,16 @@ public class CardComponent extends Component {
     this.texture = texture;
   }
 
-  enum Direction {
-    DOWN, RIGHT, LEFT, UP
+  public static void reset() {
+    level_one_grid = new boolean[4];
+    level_two_grid = new boolean[4];
+    level_three_grid = new boolean[4];
   }
 
   @Override
   public void onUpdate(double tpf) {
     if (moving) {
-     // moving(direction);
+      // moving(direction);
       entity.getTransformComponent().translateY(10);
 
     } else if (adding) {
@@ -55,14 +53,15 @@ public class CardComponent extends Component {
         adding = false;
       }
     } else {
-      return;
     }
   }
 
   @Override
   public void onAdded() {
     FXGL.getEventBus().addEventHandler(CustomEvent.BOUGHT, e -> {
-      if (e.e == entity){buyCard();}
+      if (e.e == entity) {
+        buyCard();
+      }
     });
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPromt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
@@ -147,7 +146,7 @@ public class CardComponent extends Component {
     }
   }
 
-  private void buyCard(){
+  private void buyCard() {
     moving = true;
     direction = Direction.DOWN;
     purchased = false;
@@ -167,9 +166,10 @@ public class CardComponent extends Component {
     }
   }
 
-  public static void reset(){
-    level_one_grid = new boolean[4];
-    level_two_grid = new boolean[4];
-    level_three_grid = new boolean[4];
+  enum Direction {
+    DOWN,
+    RIGHT,
+    LEFT,
+    UP
   }
 }
