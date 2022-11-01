@@ -59,6 +59,9 @@ public class LobbyFactory implements EntityFactory {
     }
 
     private Entity sessionList(SpawnData data, Session[] sessionArr, boolean isOwn) {
+        if (sessionArr == null) {
+            sessionArr = new Session[]{};
+        }
         TableView<Session> sessionTableView = new TableView<>();
         if (isOwn) {
             ownSessionList = sessionTableView;
