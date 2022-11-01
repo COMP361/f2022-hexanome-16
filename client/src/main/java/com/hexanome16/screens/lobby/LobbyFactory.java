@@ -160,7 +160,7 @@ public class LobbyFactory implements EntityFactory {
         sessionTableView.setPlaceholder(placeholder);
 
         sessionTableView.getColumns().addAll(creatorColumn, launchedColumn, playersColumn, actionsColumn);
-        sessionTableView.setPrefSize(1600, sessionArr.length == 0 ? 88 : 36 + sessionArr.length * 52);
+        sessionTableView.setPrefSize(1600, sessionArr.length == 0 ? 91 : 36 + sessionArr.length * 56);
         sessionTableView.resizeColumn(creatorColumn, 320);
         sessionTableView.resizeColumn(launchedColumn, 318);
         sessionTableView.resizeColumn(playersColumn, 320);
@@ -187,8 +187,8 @@ public class LobbyFactory implements EntityFactory {
 
             ownSessionList.getItems().addAll(ownSessions);
             otherSessionList.getItems().addAll(otherSessions);
-            ownSessionList.setPrefHeight(36 + ownSessions.length * 52);
-            otherSessionList.setPrefHeight(36 + otherSessions.length * 52);
+            ownSessionList.setPrefHeight(36 + ownSessions.length * 56);
+            otherSessionList.setPrefHeight(36 + otherSessions.length * 56);
             getGameWorld().getEntitiesByType(TYPE.OTHER_HEADER).forEach(entity -> entity.setY(400 + ownSessionList.getHeight()));
             getGameWorld().getEntitiesByType(TYPE.OTHER_SESSION_LIST).forEach(entity -> entity.setY(450 + ownSessionList.getHeight()));
         }
