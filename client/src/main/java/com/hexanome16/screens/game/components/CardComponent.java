@@ -166,4 +166,10 @@ public class CardComponent extends Component {
         break;
     }
   }
+
+  public static void reset(){
+    level_one_grid = new boolean[4];
+    level_two_grid = new boolean[4];
+    level_three_grid = new boolean[4];
+  }
 }
