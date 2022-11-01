@@ -42,12 +42,18 @@ public class LobbyFactory implements EntityFactory {
 
     @Spawns("ownSessionList")
     public Entity ownSessionList(SpawnData data) {
+        if (sessions == null) {
+            sessions = new Session[]{};
+        }
         Session[] activeSessions = Arrays.stream(sessions).filter(session -> session.creator().equals("linus") || Arrays.asList(session.players()).contains("linus")).toArray(Session[]::new);
         return sessionList(data, activeSessions, true);
     }
 
     @Spawns("otherSessionList")
     public Entity otherSessionList(SpawnData data) {
+        if (sessions == null) {
+            sessions = new Session[]{};
+        }
         Session[] otherSessions = Arrays.stream(sessions).filter(session -> !(session.creator().equals("linus") || Arrays.asList(session.players()).contains("linus"))).toArray(Session[]::new);
         return sessionList(data, otherSessions, false);
     }
