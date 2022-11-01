@@ -2,6 +2,7 @@ package com.hexanome16.screens.mainmenu;
 
 import com.almasb.fxgl.ui.UI;
 import com.hexanome16.screens.game.GameScreen;
+import com.hexanome16.screens.lobby.LobbyScreen;
 import com.hexanome16.screens.settings.SettingsScreen;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -44,13 +45,13 @@ public class MainMenuScreen {
      */
     private static void setupUI() {
         uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
-            MainMenuScreen.clearUI();
-            SettingsScreen.initUI();
+            //MainMenuScreen.clearUI();
+            SettingsScreen.initUI(true);
         });
-
-        //TODO: Add lobby screen navigation
-//        uiController.lobbySection.setOnMouseClicked();
-        
+        uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
+            MainMenuScreen.clearUI();
+            LobbyScreen.initLobby();
+        });
     }
 
     /**

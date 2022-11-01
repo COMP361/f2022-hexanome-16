@@ -20,7 +20,7 @@
 
         <javafx.version>17.0.2</javafx.version>
         <fxgl.version>17.2</fxgl.version>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.6.0</kotlin.version>
     </properties>
 
     <pluginRepositories>
@@ -80,6 +80,13 @@
             <version>${jpro.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
+        </dependency>
+
     </dependencies>
 
     <build>
