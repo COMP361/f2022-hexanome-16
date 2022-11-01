@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+FILES=$(git diff-index --name-only --cached HEAD 2>&1 | grep -E '\.java$' | uniq)
+BASEDIR=$(mvn --quiet -Dexec.executable='echo' -Dexec.args='${basedir}' exec:exec --non-recursive)
+
+if [[ -n $FILES && -n $BASEDIR ]]
+then
+  files=()
+  for file in $FILES
+  do
+    rooted=$BASEDIR/$file # set the absolute path to the changed files, "rooted"
+    files+=( $rooted ) # add each rooted file to the files array
+  done
+  staged=${files[@]}   # expand the files array for use by Checkstyle
+
+  # call checkstyle via maven exec.
+  mvn --quiet \
+  -Dorg.slf4j.simpleLogger.log.org.codehaus.mojo.exec.ExecMojo=OFF \
+  -Dexec.executable="java" \
+  -Dexec.args="-cp %classpath com.puppycrawl.tools.checkstyle.Main -c google_checks.xml $staged 2>&1" \
+  exec:exec
+
+else
+  echo "No java files found for checkstyle."
+  exit 0
+fi
