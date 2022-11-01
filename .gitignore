@@ -18,7 +18,7 @@ target/
 .mtj.tmp/
 
 # Package Files #
-*.jar
+!checkstyle*.jar
 *.war
 *.nar
 *.ear
