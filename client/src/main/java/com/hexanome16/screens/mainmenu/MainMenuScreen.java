@@ -48,15 +48,9 @@ public class MainMenuScreen {
             //MainMenuScreen.clearUI();
             SettingsScreen.initUI(true);
         });
-
         uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
             MainMenuScreen.clearUI();
             LobbyScreen.initLobby();
-        });
-
-        uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
-//            MainMenuScreen.clearUI();
-//            GameScreen.initGame();
         });
     }
 

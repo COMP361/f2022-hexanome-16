@@ -21,9 +21,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
@@ -172,8 +174,10 @@ public class GameFactory implements EntityFactory
   }
   @Spawns("TokenBank")
   public Entity tokenBank(SpawnData data) {
+
     StackPane mytokens = new StackPane();
-    Rectangle myRectangle = new Rectangle(200,150,Color.GREY);
+    //Rectangle myRectangle = new Rectangle(200,150,Color.GREY);
+    Rectangle myRectangle = new Rectangle(266,200,Color.GREY);
     myRectangle.setOpacity(0.5);
     TilePane tokens = new TilePane();
 
@@ -184,41 +188,48 @@ public class GameFactory implements EntityFactory
     tokens.setPrefRows(2);
     tokens.setPrefSize(200,150);
 
-    addCircle(tokens, CircleType.RUBY, 3);
-    addCircle(tokens, CircleType.EMERALD, 3);
-    addCircle(tokens, CircleType.SAPPHIRE, 2);
-    addCircle(tokens, CircleType.DIAMOND, 3);
-    addCircle(tokens, CircleType.ONYX, 4);
-    addCircle(tokens, CircleType.GOLD, 4);
-
+    addToken(tokens, "ruby.png", 3);
+    addToken(tokens, "emerald.png", 3);
+    addToken(tokens, "sapphire.png", 2);
+    addToken(tokens, "diamond.png", 3);
+    addToken(tokens, "onyx.png", 4);
+    addToken(tokens, "gold.png", 4);
 
     mytokens.getChildren().addAll(myRectangle,tokens);
+
     mytokens.setOnMouseEntered(e -> {
       myRectangle.setOpacity(0.7);
     });
     mytokens.setOnMouseExited(e -> {
       myRectangle.setOpacity(0.5);
         }
-    );
+    );//.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder()
-        .at(getAppWidth()- 210, 10 )
-        .view(mytokens)
-        .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
-        })
-        .build();
+            .at(getAppWidth()- 280, 10 )
+            .view(mytokens)
+            .onClick(e -> {
+              OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
+            })
+            .build();
   }
 
-  private void addCircle(TilePane tokens, CircleType circletype, int amount) {
-    StackPane myToken = new StackPane();
-    Circle circle = new Circle(25);
-    circle.setFill(circletype.getColor());
-    circle.setStrokeWidth(5);
-    circle.setStroke(circletype.getStrokeColor());
+  private void addToken(TilePane tokens, String textureName, int amount) {
+    // token (image)
+    Texture token = FXGL.texture(textureName);
+    token.setFitHeight(75);
+    token.setFitWidth(75);
+    // multiplicity (text)
     Text number = new Text(Integer.toString(amount));
-    number.setFont(Font.font(35));
-    number.setFill(circletype.getStrokeColor());
-    myToken.getChildren().addAll(circle,number);
+    number.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 50));
+    number.setFill(Paint.valueOf("#FFFFFF"));
+    number.setStrokeWidth(2.);
+    number.setStroke(Paint.valueOf("#000000"));
+    number.setStyle("-fx-background-color: ffffff00; ");
+    // pane
+    StackPane myToken = new StackPane();
+    StackPane.setAlignment(token, Pos.CENTER);
+    StackPane.setAlignment(number, Pos.TOP_RIGHT);
+    myToken.getChildren().addAll(token, number);
     tokens.getChildren().add(myToken);
   }
 
