@@ -20,7 +20,7 @@ public class LobbyScreen {
         spawn("ownHeader");
         spawn("otherHeader");
         runOnce(() -> {
-            TokensInfo tokensInfo = TokenRequest.execute("testservice", "testpass", null);
+            TokensInfo tokensInfo = TokenRequest.execute("xox", "laaPhie*aiN0", null);
             assert tokensInfo != null;
             CreateGameServiceRequest.execute(tokensInfo.access_token());
         }, Duration.ZERO);
