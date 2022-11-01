@@ -9,19 +9,14 @@
  * In the same window, add a third-party check jar (checkstyle-10.4-all.jar) by clicking the `+` button and selecting the file from the project root.
  * Click Ok to save settings.
  * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
- * Fix all the errors and warnings that appear.
- * You can commit :)
+ * Fix all the errors and warnings that appear :)
 
 ## Setup Git CheckStyle hook
- * Use Bash for Linux/macOS or Git Bash for Windows.
- * Copy the `pre-commit` file from the project root to `.git/hooks/` folder.
- * Make sure the file is executable (`chmod +x .git/hooks/pre-commit`).
- * Configure git hook to run on all commits (`git config core.hooksPath .git/hooks`).
- * Configure git to detect checkstyle jar and config:
-    * `git config --add checkstyle.jar $PWD/checkstyle-10.4-all.jar`
-    * `git config --add checkstyle.checkfile $PWD/google_checks.xml`
-    * `git config --add java.command <path to java executale>` [optional, defaults to assuming it's in your path]
- * You can commit :)
+ * Install Maven globally on your computer ([instructions](https://maven.apache.org/install.html)).
+ * Using IntelliJ "Run Anything" (can be opened with double Ctrl), run "mvn -Phusky install" to install the git hook.
+ * Commit hook is added :)
+ * When you commit, the hook will run CheckStyle and prevent you from committing if there are any errors or warnings.
+ * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
 
 ## The Rules
 
