@@ -9,11 +9,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * This class provides methods to get details about a user in Lobby Service.
+ */
 public class GetUserRequest {
-  public static User execute(String player, String access_token) {
+  /**
+   * Sends a request to get details about a user in Lobby Service.
+   *
+   * @param player The username of the user to get details about.
+   * @param accessToken The access token of the user.
+   * @return The user details.
+   */
+  public static User execute(String player, String accessToken) {
     HttpClient client = RequestClient.getClient();
     try {
-      String url = "http://127.0.0.1:4242/api/users/" + player + "?access_token=" + access_token;
+      String url = "http://127.0.0.1:4242/api/users/" + player + "?access_token=" + accessToken;
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(url))
           .header("Content-Type", "application/json")

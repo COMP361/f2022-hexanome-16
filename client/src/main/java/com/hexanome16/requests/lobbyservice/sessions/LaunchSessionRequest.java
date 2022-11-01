@@ -7,12 +7,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * This class provides methods to launch a session in Lobby Service.
+ */
 public class LaunchSessionRequest {
-    public static void execute(long sessionId, String access_token) {
+  /**
+   * Sends a request to launch a session in Lobby Service.
+   *
+   * @param sessionId The id of the session to launch.
+   * @param accessToken The access token of the user (must be admin or creator of the session).
+   */
+  public static void execute(long sessionId, String accessToken) {
     HttpClient client = RequestClient.getClient();
     try {
       String url =
-          "http://127.0.0.1:4242/api/sessions/" + sessionId + "?access_token=" + access_token;
+          "http://127.0.0.1:4242/api/sessions/" + sessionId + "?access_token=" + accessToken;
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(url))
           .POST(HttpRequest.BodyPublishers.noBody())

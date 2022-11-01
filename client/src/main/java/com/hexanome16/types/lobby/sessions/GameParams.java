@@ -2,6 +2,9 @@ package com.hexanome16.types.lobby.sessions;
 
 import java.util.Objects;
 
+/**
+ * This class contains information about session game parameters in Lobby Service.
+ */
 public final class GameParams {
   private String location;
   private int maxSessionPlayers;
@@ -10,6 +13,16 @@ public final class GameParams {
   private String displayName;
   private String webSupport;
 
+  /**
+   * Constructor.
+   *
+   * @param location The location of the game service.
+   * @param maxSessionPlayers The maximum number of players in a session.
+   * @param minSessionPlayers The minimum number of players in a session.
+   * @param name The name of the game service in Lobby Service.
+   * @param displayName The display name of the game service in Lobby Service.
+   * @param webSupport Whether the game service supports web.
+   */
   public GameParams(String location, int maxSessionPlayers, int minSessionPlayers, String name,
                     String displayName,
                     String webSupport) {
@@ -23,14 +36,13 @@ public final class GameParams {
 
   @Override
   public String toString() {
-    return "GameParams{" +
-        "location='" + location + '\'' +
-        ", maxSessionPlayers=" + maxSessionPlayers +
-        ", minSessionPlayers=" + minSessionPlayers +
-        ", name='" + name + '\'' +
-        ", displayName='" + displayName + '\'' +
-        ", webSupport='" + webSupport + '\'' +
-        '}';
+    return "GameParams{"
+        + "location='" + location + '\''
+        + ", maxSessionPlayers=" + maxSessionPlayers
+        + ", minSessionPlayers=" + minSessionPlayers
+        + ", name='" + name + '\''
+        + ", displayName='" + displayName + '\''
+        + ", webSupport='" + webSupport + '\'' + '}';
   }
 
   @Override
@@ -42,9 +54,11 @@ public final class GameParams {
       return false;
     }
     GameParams that = (GameParams) o;
-    return maxSessionPlayers() == that.maxSessionPlayers() &&
-        minSessionPlayers() == that.minSessionPlayers() && location().equals(that.location()) &&
-        name().equals(that.name()) && webSupport().equals(that.webSupport());
+    return maxSessionPlayers() == that.maxSessionPlayers()
+        && minSessionPlayers() == that.minSessionPlayers()
+        && location().equals(that.location())
+        && name().equals(that.name())
+        && webSupport().equals(that.webSupport());
   }
 
   @Override

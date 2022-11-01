@@ -11,7 +11,13 @@ import com.hexanome16.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.types.lobby.auth.TokensInfo;
 import javafx.util.Duration;
 
+/**
+ * This class controls the entities of the lobby screen.
+ */
 public class LobbyScreen {
+  /**
+   * Spawns all related elements onto the lobby screen.
+   */
   public static void initLobby() {
     spawn("background");
     spawn("ownSessionList");
@@ -30,21 +36,24 @@ public class LobbyScreen {
     run(LobbyFactory::updateSessionList, Duration.seconds(1));
   }
 
+  /**
+   * Removes all related elements from the lobby screen.
+   */
   public static void exitLobby() {
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.BACKGROUND).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.OWN_SESSION_LIST)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.BACKGROUND).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.OWN_SESSION_LIST)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.OTHER_SESSION_LIST)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.OTHER_SESSION_LIST)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.CREATE_SESSION_BUTTON)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.CREATE_SESSION_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.CLOSE_BUTTON)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.CLOSE_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.PREFERENCES_BUTTON)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.PREFERENCES_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.LOGO).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.OWN_HEADER).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.TYPE.OTHER_HEADER)
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.LOGO).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.OWN_HEADER).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(LobbyFactory.Type.OTHER_HEADER)
         .forEach(Entity::removeFromWorld);
   }
 }

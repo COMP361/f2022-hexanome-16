@@ -3,67 +3,76 @@ package com.hexanome16.types.lobby.auth;
 import com.hexanome16.utils.StringConverter;
 import java.util.Objects;
 
+/**
+ * This class contains information about OAuth user tokens.
+ */
 public final class TokensInfo {
-  private String access_token;
-  private String refresh_token;
-  private String token_type;
-  private int expires_in;
+  private String accessToken;
+  private String refreshToken;
+  private String tokenType;
+  private int expiresIn;
   private String scope;
 
-  public TokensInfo(String access_token, String refresh_token, String token_type, int expires_in,
+  /**
+   * Constructor.
+   *
+   * @param accessToken The access token.
+   * @param refreshToken The refresh token.
+   * @param tokenType The token type (should be "bearer").
+   * @param expiresIn The number of seconds before the access token expires.
+   * @param scope The scope of the access token.
+   */
+  public TokensInfo(String accessToken, String refreshToken, String tokenType, int expiresIn,
                     String scope) {
-    this.access_token = StringConverter.escape(access_token);
-    this.refresh_token = StringConverter.escape(refresh_token);
-    this.token_type = token_type;
-    this.expires_in = expires_in;
+    this.accessToken = StringConverter.escape(accessToken);
+    this.refreshToken = StringConverter.escape(refreshToken);
+    this.tokenType = tokenType;
+    this.expiresIn = expiresIn;
     this.scope = scope;
   }
 
   @Override
   public String toString() {
-    return "TokensInfo{" +
-        "access_token='" + access_token + '\'' +
-        ", refresh_token='" + refresh_token + '\'' +
-        ", token_type='" + token_type + '\'' +
-        ", expires_in=" + expires_in +
-        ", scope='" + scope + '\'' +
-        '}';
+    return "TokensInfo{" + "access_token='" + accessToken
+        + '\'' + ", refresh_token='" + refreshToken + '\''
+        + ", token_type='" + tokenType + '\'' + ", expires_in="
+        + expiresIn + ", scope='" + scope + '\'' + '}';
   }
 
   public String access_token() {
-    return access_token;
+    return accessToken;
   }
 
   public String refresh_token() {
-    return refresh_token;
+    return refreshToken;
   }
 
   public String token_type() {
-    return token_type;
+    return tokenType;
   }
 
   public int expires_in() {
-    return expires_in;
+    return expiresIn;
   }
 
   public String scope() {
     return scope;
   }
 
-  public void setAccess_token(String access_token) {
-    this.access_token = StringConverter.escape(access_token);
+  public void setAccessToken(String accessToken) {
+    this.accessToken = StringConverter.escape(accessToken);
   }
 
-  public void setRefresh_token(String refresh_token) {
-    this.refresh_token = StringConverter.escape(refresh_token);
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = StringConverter.escape(refreshToken);
   }
 
-  public void setToken_type(String token_type) {
-    this.token_type = token_type;
+  public void setTokenType(String tokenType) {
+    this.tokenType = tokenType;
   }
 
-  public void setExpires_in(int expires_in) {
-    this.expires_in = expires_in;
+  public void setExpiresIn(int expiresIn) {
+    this.expiresIn = expiresIn;
   }
 
   public void setScope(String scope) {
@@ -79,16 +88,16 @@ public final class TokensInfo {
       return false;
     }
     var that = (TokensInfo) obj;
-    return Objects.equals(this.access_token, that.access_token) &&
-        Objects.equals(this.refresh_token, that.refresh_token) &&
-        Objects.equals(this.token_type, that.token_type) &&
-        this.expires_in == that.expires_in &&
-        Objects.equals(this.scope, that.scope);
+    return Objects.equals(this.accessToken, that.accessToken)
+        && Objects.equals(this.refreshToken, that.refreshToken)
+        && Objects.equals(this.tokenType, that.tokenType)
+        && this.expiresIn == that.expiresIn
+        && Objects.equals(this.scope, that.scope);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(access_token, refresh_token, token_type, expires_in, scope);
+    return Objects.hash(accessToken, refreshToken, tokenType, expiresIn, scope);
   }
 
 }
