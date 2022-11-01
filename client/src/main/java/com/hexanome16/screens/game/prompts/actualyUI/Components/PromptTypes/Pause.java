@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.screens.game.GameScreen;
 import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.screens.lobby.LobbyScreen;
 import com.hexanome16.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.screens.settings.SettingsScreen;
 import javafx.geometry.Pos;
@@ -23,6 +24,7 @@ public class Pause implements PromptTypeInterface {
     public void handleClick() {
       if (this == EXIT) {
         GameScreen.exitGame();
+        LobbyScreen.initLobby();
       } else {
         SettingsScreen.initUI(true);
       }
