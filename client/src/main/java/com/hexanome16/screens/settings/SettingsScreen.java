@@ -61,7 +61,7 @@ public class SettingsScreen {
     // final sorry :(
     private static void setupUI( boolean x) {
         uiControllerSingleton.doneButton.setOnAction((event) -> {
-            SettingsScreen.clearUI();
+            SettingsScreen.clearUI(x);
         });
     }
 
@@ -92,6 +92,15 @@ public class SettingsScreen {
         if (!isVisible) return;
 
         getGameScene().removeUI(getUI());
+
+        isVisible = false;
+    }
+
+    //sorry
+    public static void clearUI(boolean x) {
+        if (!isVisible) return;
+
+        getGameScene().removeUI(getUI(x));
 
         isVisible = false;
     }
