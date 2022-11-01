@@ -58,8 +58,16 @@ public class DeckFactory implements EntityFactory {
         playerName.setStrokeWidth(2.);
         playerName.setStroke(Paint.valueOf("#000000"));
         playerName.setStyle("-fx-background-color: ffffff00; ");
+        // current player's prestige points TODO make this a variable
+        Text prestigePoints = new Text("10");
+        prestigePoints.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 175));
+        prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
+        prestigePoints.setStrokeWidth(2.);
+        prestigePoints.setStroke(Paint.valueOf("#000000"));
+        prestigePoints.setStyle("-fx-background-color: ffffff00; ");
         // pane
         BorderPane pane = new BorderPane();
+        BorderPane.setAlignment(prestigePoints, Pos.TOP_RIGHT);
         BorderPane.setAlignment(playerName, Pos.CENTER);
         pane.setBottom(playerName);
         pane.setCenter(icon);
