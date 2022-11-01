@@ -49,7 +49,7 @@ public class SeeCards implements PromptTypeInterface {
     myBorderPane.setTop(myPromptMessage);
     myBorderPane.setCenter(myScrollPane);
     //    myScrollPane.setTranslateX(topleftX);
-//    myScrollPane.setTranslateY(topleftY);
+    //    myScrollPane.setTranslateY(topleftY);
 
     myScrollPane.setPrefViewportWidth(aWidth);
     myScrollPane.setPrefViewportHeight(aHeight-20); // 20 is height of X button
@@ -62,15 +62,14 @@ public class SeeCards implements PromptTypeInterface {
     TilePane myCards = new TilePane();
     myScrollPane.setContent(myCards);
 
-
-    for (int i =0; i<10;i++){
+    // add cards to player's hand
+    for (int i =0; i<2;i++){
       Texture myCard = FXGL.texture("card1.png");
       myCard.setFitWidth(aCardWidth);
       myCard.setFitHeight(aCardHeight);
       myCards.getChildren().add(myCard);
     }
     myCards.setPrefWidth(aWidth);
-
 
     entity.getViewComponent().addChild(myBorderPane);
   }

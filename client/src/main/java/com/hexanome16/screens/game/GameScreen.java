@@ -4,11 +4,11 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.screens.game.components.CardComponent;
+import com.hexanome16.screens.game.players.PlayerDecks;
 import com.hexanome16.screens.game.components.NobleComponent;
 import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
 import java.util.Map;
 import java.util.Stack;
-
 
 public class GameScreen {
   private static Stack<Integer> level_one = new Stack<>();
@@ -60,6 +60,8 @@ public class GameScreen {
       //FXGL.getGameWorld().addEntity(gameFactory.newNoble(nobles.pop()));
       FXGL.spawn("Noble", new SpawnData().put("nobleIndex", nobles.pop()));
     }
+    // spawn the player's hands
+    PlayerDecks.generateAll();
   }
 
   public static void initGameVars(Map<String, Object> vars) {
