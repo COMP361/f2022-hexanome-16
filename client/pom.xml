@@ -13,6 +13,11 @@
         <source.version>17</source.version>
 
         <!-- plugins -->
+        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
+        <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
+        <node.lts.version>v16.16.0</node.lts.version>
+        <checkstyle.version>10.3.4</checkstyle.version>
+
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jfx.maven.version>0.0.5</jfx.maven.version>
@@ -42,6 +47,12 @@
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
         </dependency>
 
         <dependency>
@@ -98,6 +109,40 @@
                 <configuration>
                     <release>${source.version}</release>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <!-- the checkstyle plugin can be configured here       -->
+                    <configLocation>${project.basedir}/google_checks.xml</configLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -158,5 +203,50 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>husky</id>
+            <build>
+                <plugins>
+                    <!-- this is known as a "profile build"                     -->
+                    <plugin>
+                        <!-- `version` is provided by `pluginManagement`          -->
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>${node.lts.version}</nodeVersion>
+                                    <!-- npm will be extracted from the node distro     -->
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>husky install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <!-- a run script is provided in the package.json   -->
+                                    <arguments>run husky:install</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

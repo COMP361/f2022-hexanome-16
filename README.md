@@ -2,15 +2,30 @@
 
  > See also [my video instuctions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
+## Setup CheckStyle in IntelliJ
+ * Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
+ * Go to `Settings > Tools > CheckStyle`, select latest CheckStyle version, set Scope to `Only Java sources (including tests)` and click `Apply`.
+ * In the same window, add our custom configuration (google_checks.xml) by clicking the `+` button and selecting the file.
+ * Click Ok to save settings.
+ * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
+ * Fix all the errors and warnings that appear :)
+
+## Setup Git CheckStyle hook
+ * Install Maven globally on your computer ([instructions](https://maven.apache.org/install.html)).
+ * Using IntelliJ "Run Anything" (can be opened with double Ctrl), run "mvn -Phusky install" to install the git hook.
+ * Commit hook is added :)
+ * When you commit, the hook will run CheckStyle and prevent you from committing if there are any errors or warnings.
+ * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
+
 ## The Rules
 
  * Feel free to edit/replace this file.
  * Do not delete or rename the [reports](reports), [client](client), [server](server) or [docs](docs) directories.  
 See [Static Content](#static-content)
  * Don't clutter your repo, update your [```.gitignore```](.gitignore) file, depending on your client language / technology.
-    * Don't commit binaries. (Images, jar files, class files, etc...)
+    * Don't commit binaries. (jar files, class files, etc...)
     * Don't commit buffer files. (Vim buffer files, IDE meta files etc...)
- * Place your documentation in [```docs```](docs) on [master](branch).
+ * Place your documentation in [```docs```](docs) on `master` branch.
  * Commit frequently, commit fine grained.
  * Use branches
  * **Don't push on master!**
@@ -53,10 +68,9 @@ Board Game Platform (BGP) = Lobby Service + Lobby Service Web UI + Sample Game, 
  > Be careful not to confuse *Lobby Service* and *Board Game Platform*.
 
 ## Authors
-
-Fill e.g. names + link to github profiles in list below.
-
- * ~~Maximilian Schiedermeier - [https://github.com/kartoffelquadrat]~~
- * ...
-
-
+ * [Peini Cheng](https://github.com/PeiniCheng)
+ * [Constantin Buruiana](https://github.com/ConstBur)
+ * [Kimi Zhao](https://github.com/kimikimizz)
+ * [Imad Issafras](https://github.com/UnHappySquid)
+ * [Tristan Leclair-Vani](https://github.com/TristanLeclair)
+ * [Éléa Dufresne](https://github.com/eleadufresne)
