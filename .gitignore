@@ -18,7 +18,7 @@ target/
 .mtj.tmp/
 
 # Package Files #
-*.jar
+!checkstyle*.jar
 *.war
 *.nar
 *.ear
@@ -137,5 +137,8 @@ $RECYCLE.BIN/
 
 ### FXGL ###
 system/
+
+## Husky ##
+node_modules/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,java,vim
