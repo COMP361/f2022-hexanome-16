@@ -19,7 +19,7 @@ public class SeeOwnReserved implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
-  double aCardWidth = aWidth/4;
+  double aCardWidth = aWidth / 4;
   double aCardHeight = aCardWidth * 1.39;
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
@@ -41,9 +41,9 @@ public class SeeOwnReserved implements PromptTypeInterface {
     myBorderPane.setTranslateY(topleftY);
     HBox ReservedCards = new HBox();
     ReservedCards.setAlignment(Pos.CENTER);
-    ReservedCards.setSpacing((aWidth-3*aCardWidth)/4);
+    ReservedCards.setSpacing((aWidth - 3 * aCardWidth) / 4);
     Text myPromptMessage = new Text("Player Reserved Cards");
-    myPromptMessage.setFont(Font.font(aHeight/20));
+    myPromptMessage.setFont(Font.font(aHeight / 20));
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(aWidth);
     myBorderPane.setTop(myPromptMessage);
@@ -52,26 +52,24 @@ public class SeeOwnReserved implements PromptTypeInterface {
 //    myScrollPane.setTranslateY(topleftY);
 
 
-
-
-      Texture myCard = FXGL.texture("card1.png");
-      myCard.setFitWidth(aCardWidth);
-      myCard.setFitHeight(aCardHeight);
-      myCard.setOnMouseClicked(e -> {
-        FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
-      });
-      ReservedCards.getChildren().add(myCard);
+    Texture myCard = FXGL.texture("card1.png");
+    myCard.setFitWidth(aCardWidth);
+    myCard.setFitHeight(aCardHeight);
+    myCard.setOnMouseClicked(e -> {
+      FXGL.spawn("PromptBox", new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
+    });
+    ReservedCards.getChildren().add(myCard);
 
 
     myCard = FXGL.texture("card1.png");
     myCard.setFitWidth(aCardWidth);
     myCard.setFitHeight(aCardHeight);
     myCard.setOnMouseClicked(e -> {
-      FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
+      FXGL.spawn("PromptBox", new SpawnData().put("promptType", PromptType.BUYING_RESERVED));
     });
     ReservedCards.getChildren().add(myCard);
 
-    ReservedCards.setPrefSize(aWidth,aHeight*0.8);
+    ReservedCards.setPrefSize(aWidth, aHeight * 0.8);
 
 
     entity.getViewComponent().addChild(myBorderPane);

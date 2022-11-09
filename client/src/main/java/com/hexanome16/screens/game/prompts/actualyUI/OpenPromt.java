@@ -7,11 +7,11 @@ import com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypeInterf
 
 public class OpenPromt {
 
-  public static void openPrompt(PromptTypeInterface.PromptType pPromptType){
-    FXGL.spawn("PromptBox",new SpawnData().put("promptType", pPromptType));
+  public static void openPrompt(PromptTypeInterface.PromptType pPromptType) {
+    FXGL.spawn("PromptBox", new SpawnData().put("promptType", pPromptType));
   }
 
-  public static void openPrompt(Entity entity){
-    FXGL.spawn("PromptBox",new SpawnData().put("entity", entity));
+  public static void openPrompt(Entity entity) {
+    FXGL.spawn("PromptBox", new SpawnData().put("entity", entity));
   }
 }

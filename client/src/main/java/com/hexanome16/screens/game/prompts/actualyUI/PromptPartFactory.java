@@ -15,18 +15,20 @@ public class PromptPartFactory implements EntityFactory {
 
 
   @Spawns("PromptBox")
-  public Entity newPromptbox(SpawnData data){
+  public Entity newPromptbox(SpawnData data) {
     if (data.getData().containsKey("entity")) {
       PromptTypeInterface.PromptType promptType = PromptTypeInterface.PromptType.BUY_CARDS;
       PromptTypeInterface myPromptType = promptType.getAssociatedClass();
       Entity entity = data.get("entity");
       return entityBuilder(data)
-          .with(new PromptComponent(myPromptType,entity))
+          .with(new PromptComponent(myPromptType, entity))
           .build();
     }
     PromptTypeInterface.PromptType promptType = PromptTypeInterface.PromptType.NULL;
 
-    if (data.getData().containsKey("promptType"))  promptType= data.get("promptType");
+    if (data.getData().containsKey("promptType")) {
+      promptType = data.get("promptType");
+    }
 
     PromptTypeInterface myPromptType = promptType.getAssociatedClass();
 

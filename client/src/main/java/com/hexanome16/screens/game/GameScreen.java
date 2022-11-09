@@ -1,32 +1,32 @@
 package com.hexanome16.screens.game;
+
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.screens.game.components.CardComponent;
-import com.hexanome16.screens.game.players.PlayerDecks;
 import com.hexanome16.screens.game.components.NobleComponent;
-import com.hexanome16.screens.game.prompts.actualyUI.PromptPartFactory;
+import com.hexanome16.screens.game.players.PlayerDecks;
 import java.util.Map;
 import java.util.Stack;
 
 public class GameScreen {
-  private static Stack<Integer> level_one = new Stack<>();
-  private static Stack<Integer> level_two = new Stack<>();
-  private static Stack<Integer> level_three = new Stack<>();
+  private static final Stack<Integer> level_one = new Stack<>();
+  private static final Stack<Integer> level_two = new Stack<>();
+  private static final Stack<Integer> level_three = new Stack<>();
 
-  private static Stack<Integer> nobles = new Stack<>();
+  private static final Stack<Integer> nobles = new Stack<>();
 
   //for demo use only: lists of cards returned by the server
-  private static int[] level_one_list =
+  private static final int[] level_one_list =
       {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
           26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39};
-  private static int[] level_two_list =
+  private static final int[] level_two_list =
       {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
           26, 27, 28, 29};
-  private static int[] level_three_list =
+  private static final int[] level_three_list =
       {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-  private static int[] noble_list = {0, 1, 2, 3, 4};
+  private static final int[] noble_list = {0, 1, 2, 3, 4};
 
   public static void initGame() {
     for (int i = 0; i < level_one_list.length; i++) {
@@ -96,14 +96,16 @@ public class GameScreen {
   }
 
 
-  public static void exitGame(){
+  public static void exitGame() {
     level_one.clear();
     level_two.clear();
     level_three.clear();
     CardComponent.reset();
     NobleComponent.reset();
-    FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
-    FXGL.getGameWorld().removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
+    FXGL.getGameWorld()
+        .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
+    FXGL.getGameWorld()
+        .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
   }
 
 }

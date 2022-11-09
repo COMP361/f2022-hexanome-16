@@ -1,6 +1,8 @@
 package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -36,50 +38,6 @@ import javafx.scene.text.TextAlignment;
 
 public class BuyCard implements PromptTypeInterface {
 
-  public static enum BankType {
-    PLAYER_BANK, GAME_BANK;
-
-    public BankType other() {
-      if (this == PLAYER_BANK) {
-        return GAME_BANK;
-      } else return PLAYER_BANK;
-    }
-  }
-
-  public static enum CurrencyType {
-    RED_TOKENS, GREEN_TOKENS, BLUE_TOKENS, WHITE_TOKENS, BLACK_TOKENS, GOLD_TOKENS,
-    BONUS_GOLD_CARDS;
-    static Map<CurrencyType, Color> Colortype = new HashMap<>();
-
-    static {
-      Colortype.put(RED_TOKENS, Color.DARKRED);
-      Colortype.put(GREEN_TOKENS, Color.DARKGREEN);
-      Colortype.put(BLUE_TOKENS, Color.DARKBLUE);
-      Colortype.put(WHITE_TOKENS, Color.WHITE.darker());
-      Colortype.put(BLACK_TOKENS, Color.BLACK);
-      Colortype.put(GOLD_TOKENS, Color.GOLD.darker());
-      Colortype.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
-    }
-
-    public Paint getColor() {
-      return Colortype.get(this);
-    }
-
-    public Paint getStrokeColor() {
-      if (this == BLACK_TOKENS) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
-    }
-
-    public Paint getTextColor() {
-      if (this == BLACK_TOKENS) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
-    }
-  }
-
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
   double aCardHeight = aHeight * 0.7;
@@ -87,11 +45,8 @@ public class BuyCard implements PromptTypeInterface {
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
 
-
-
   public BuyCard() {
   }
-
 
   @Override
   public double width() {
@@ -103,7 +58,7 @@ public class BuyCard implements PromptTypeInterface {
     return aHeight;
   }
 
-  public void populatePrompt(Entity entity,Entity cardEntity){
+  public void populatePrompt(Entity entity, Entity cardEntity) {
     //initializing Hbox
     double BankBoxesWidth = aWidth / 5;
     double buttonAreaWidth = aWidth / 4;
@@ -158,9 +113,8 @@ public class BuyCard implements PromptTypeInterface {
 
   }
 
-
-
-  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,Entity cardEntity) {
+  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,
+                                  Entity cardEntity) {
     StackPane Reserve = new StackPane();
     StackPane Buy = new StackPane();
 
@@ -170,7 +124,8 @@ public class BuyCard implements PromptTypeInterface {
     reserveBuy.getChildren().addAll(Reserve, Buy);
   }
 
-  private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight, Entity cardEntity) {
+  private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight,
+                               Entity cardEntity) {
     Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
     buttonBox.setStrokeWidth(buttonHeight / 20);
     buttonBox.setStroke(Color.BLACK);
@@ -182,10 +137,12 @@ public class BuyCard implements PromptTypeInterface {
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties().
-          getInt(BankType.GAME_BANK.toString() + "/" + CurrencyType.BONUS_GOLD_CARDS.toString()) >=
+          getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS) >=
           2) {
         buy.setOpacity(1);
-      } else buy.setOpacity(0.5);
+      } else {
+        buy.setOpacity(0.5);
+      }
     });
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -201,16 +158,17 @@ public class BuyCard implements PromptTypeInterface {
   private void closeBuyPromptAlt(Entity entity) {
 
     PromptComponent.closePrompts();
-    for (CurrencyType e : CurrencyType.values()){
-      int gemsinBank = FXGL.getWorldProperties().getInt(BankType.GAME_BANK.toString()+"/"+e.toString());
-      if (gemsinBank!= 0){
-        FXGL.getWorldProperties().increment(BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
-        FXGL.getWorldProperties().setValue(BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+    for (CurrencyType e : CurrencyType.values()) {
+      int gemsinBank =
+          FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
+      if (gemsinBank != 0) {
+        FXGL.getWorldProperties()
+            .increment(BankType.PLAYER_BANK + "/" + e, gemsinBank);
+        FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
       }
     }
     FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.BOUGHT, entity));
   }
-
 
   @Override
   public void populatePrompt(Entity entity) {
@@ -306,10 +264,12 @@ public class BuyCard implements PromptTypeInterface {
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties().
-          getInt(BankType.GAME_BANK.toString() + "/" + CurrencyType.BONUS_GOLD_CARDS.toString()) >=
+          getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS) >=
           2) {
         buy.setOpacity(1);
-      } else buy.setOpacity(0.5);
+      } else {
+        buy.setOpacity(0.5);
+      }
     });
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -359,7 +319,7 @@ public class BuyCard implements PromptTypeInterface {
     Text bonusAmount = new Text();
     bonusAmount.textProperty().bind(
         FXGL.getWorldProperties().
-            intProperty(banktype.toString() + "/" + CurrencyType.BONUS_GOLD_CARDS.toString())
+            intProperty(banktype + "/" + CurrencyType.BONUS_GOLD_CARDS)
             .asString());
 
     if (bonusAmount.getText().equals("0")) {
@@ -393,7 +353,7 @@ public class BuyCard implements PromptTypeInterface {
     Text tokensAmount = new Text();
     tokensAmount.textProperty().bind(
         FXGL.getWorldProperties().
-            intProperty(tokenOwner.toString() + "/" + tokenType.toString())
+            intProperty(tokenOwner.toString() + "/" + tokenType)
             .asString());
     if (tokensAmount.getText().equals("0")) {
       tokensCircle.setOpacity(0.5);
@@ -436,7 +396,7 @@ public class BuyCard implements PromptTypeInterface {
       FXGL.getWorldProperties()
           .increment(tokenOwner.other().toString() + "/" + tokensType.toString(), +1);
       FXGL.getWorldProperties()
-          .increment(tokenOwner.toString() + "/" + tokensType.toString(), -1);
+          .increment(tokenOwner + "/" + tokensType, -1);
 //      mapOfInterest.put(tokensType,amountLeft-1);
 //      OtherMap.put(tokensType,OtherMap.get(tokensType)+1);
       getEventBus().fireEvent(new Event(EventType.ROOT));
@@ -455,12 +415,66 @@ public class BuyCard implements PromptTypeInterface {
 
   private void closeBuyPrompt() {
     PromptComponent.closePrompts();
-    for (CurrencyType e : CurrencyType.values()){
-      int gemsinBank = FXGL.getWorldProperties().getInt(BankType.GAME_BANK.toString()+"/"+e.toString());
-      if (gemsinBank!= 0){
-        FXGL.getWorldProperties().increment(BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
-        FXGL.getWorldProperties().setValue(BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+    for (CurrencyType e : CurrencyType.values()) {
+      int gemsinBank =
+          FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
+      if (gemsinBank != 0) {
+        FXGL.getWorldProperties()
+            .increment(BankType.PLAYER_BANK + "/" + e, gemsinBank);
+        FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
       }
+    }
+  }
+
+  public enum BankType {
+    PLAYER_BANK,
+    GAME_BANK;
+
+    public BankType other() {
+      if (this == PLAYER_BANK) {
+        return GAME_BANK;
+      } else {
+        return PLAYER_BANK;
+      }
+    }
+  }
+
+  public enum CurrencyType {
+    RED_TOKENS,
+    GREEN_TOKENS,
+    BLUE_TOKENS,
+    WHITE_TOKENS,
+    BLACK_TOKENS,
+    GOLD_TOKENS,
+    BONUS_GOLD_CARDS;
+    static Map<CurrencyType, Color> Colortype = new HashMap<>();
+
+    static {
+      Colortype.put(RED_TOKENS, Color.DARKRED);
+      Colortype.put(GREEN_TOKENS, Color.DARKGREEN);
+      Colortype.put(BLUE_TOKENS, Color.DARKBLUE);
+      Colortype.put(WHITE_TOKENS, Color.WHITE.darker());
+      Colortype.put(BLACK_TOKENS, Color.BLACK);
+      Colortype.put(GOLD_TOKENS, Color.GOLD.darker());
+      Colortype.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
+    }
+
+    public Paint getColor() {
+      return Colortype.get(this);
+    }
+
+    public Paint getStrokeColor() {
+      if (this == BLACK_TOKENS) {
+        return Color.WHITE;
+      }
+      return Color.BLACK;
+    }
+
+    public Paint getTextColor() {
+      if (this == BLACK_TOKENS) {
+        return Color.WHITE;
+      }
+      return Color.BLACK;
     }
   }
 
