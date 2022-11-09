@@ -21,7 +21,7 @@ public class SeeCards implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
-  double aCardWidth = aWidth/4;
+  double aCardWidth = aWidth / 4;
   double aCardHeight = aCardWidth * 1.39;
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
@@ -52,18 +52,18 @@ public class SeeCards implements PromptTypeInterface {
     //    myScrollPane.setTranslateY(topleftY);
 
     myScrollPane.setPrefViewportWidth(aWidth);
-    myScrollPane.setPrefViewportHeight(aHeight-20); // 20 is height of X button
+    myScrollPane.setPrefViewportHeight(aHeight - 20); // 20 is height of X button
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     myScrollPane.setPannable(true);
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     myScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    myScrollPane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT,null,null)));
+    myScrollPane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
 
     TilePane myCards = new TilePane();
     myScrollPane.setContent(myCards);
 
     // add cards to player's hand
-    for (int i =0; i<2;i++){
+    for (int i = 0; i < 2; i++) {
       Texture myCard = FXGL.texture("card1.png");
       myCard.setFitWidth(aCardWidth);
       myCard.setFitHeight(aCardHeight);

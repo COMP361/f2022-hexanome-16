@@ -1,5 +1,8 @@
 package com.hexanome16.screens.game.prompts.actualyUI.Components.PromptTypes;
 
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
@@ -19,15 +22,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-
 public class ChooseNoble implements PromptTypeInterface {
-  double aWidth = getAppWidth()/2;
-  double aHeight = getAppHeight()/2;
-  double aNobleWidth = aWidth/4;
+  double aWidth = getAppWidth() / 2;
+  double aHeight = getAppHeight() / 2;
+  double aNobleWidth = aWidth / 4;
   double aNobleHeight = aNobleWidth;
-  double topleftX = (getAppWidth()/2)-(aWidth/2);
-  double topleftY = (getAppHeight()/2) - (aHeight/2);
+  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
+  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
 
 
   @Override
@@ -42,7 +43,7 @@ public class ChooseNoble implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
-    double ConfirmButtonRadii = aHeight/10;
+    double ConfirmButtonRadii = aHeight / 10;
 
     //initiate BorderPane
     BorderPane myPrompt = new BorderPane();
@@ -53,8 +54,9 @@ public class ChooseNoble implements PromptTypeInterface {
     Text promptMessage = new Text();            //Top
     HBox nobles = new HBox();                   //Nobles
     Circle confirmationButton = new Circle();   //Button
-    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/6);
-    Font RobotoBoldConfirm = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight/20);
+    Font RobotoBoldPrompt = FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 6);
+    Font RobotoBoldConfirm =
+        FXGL.getAssetLoader().loadFont("Roboto-Bold.ttf").newFont(aHeight / 20);
     Texture noble1 = FXGL.texture("noble1.png");
     Texture noble2 = FXGL.texture("noble2.png");
 
@@ -79,15 +81,15 @@ public class ChooseNoble implements PromptTypeInterface {
     promptMessage.setWrappingWidth(aWidth);
     myhBox.setAlignment(Pos.CENTER);
     myhBox.getChildren().add(promptMessage);
-    myhBox.setPrefSize(aWidth,aHeight/4);
+    myhBox.setPrefSize(aWidth, aHeight / 4);
     myPrompt.setTop(myhBox);
 
     // Confirm button//
     confirmationButton.setRadius(ConfirmButtonRadii);
-    confirmationButton.setFill(Color.rgb(249,161,89));
+    confirmationButton.setFill(Color.rgb(249, 161, 89));
     confirmationButton.setOpacity(0.5);
     confirmationButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if(confirmationButton.getOpacity() == 1) {
+      if (confirmationButton.getOpacity() == 1) {
         PromptComponent.closePrompts();
         ////////Handle new Noble TO BE HANDLED IN THE TEXT CONFIRM TOO///////////
       }
@@ -97,16 +99,16 @@ public class ChooseNoble implements PromptTypeInterface {
     Text confirm = new Text("Confirm");
     confirm.setFont(RobotoBoldConfirm);
     confirm.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if(confirmationButton.getOpacity() == 1) {
+      if (confirmationButton.getOpacity() == 1) {
         PromptComponent.closePrompts();
         ////////Handle new Noble AGAIN///////////
       }
-    } );
-    StackPane button = new StackPane(confirmationButton,confirm);
+    });
+    StackPane button = new StackPane(confirmationButton, confirm);
 
-    HBox inter1=new HBox(button);
+    HBox inter1 = new HBox(button);
     inter1.setAlignment(Pos.CENTER);
-    inter1.setPrefSize(ConfirmButtonRadii*4,aHeight);
+    inter1.setPrefSize(ConfirmButtonRadii * 4, aHeight);
     inter1.setSpacing(5);
     /*Circle in inter1*/
     myPrompt.setRight(inter1);
@@ -114,59 +116,74 @@ public class ChooseNoble implements PromptTypeInterface {
 
     // Nobles /////////
     /*initiate Rectangles*/
-    Node firstNobleRelated = new Rectangle(1.1*aNobleWidth,1.1*aNobleHeight,Color.WHITE);
-    Node secondNobleRelated = new Rectangle(1.1*aNobleWidth,1.1*aNobleHeight,Color.WHITE);
+    Node firstNobleRelated = new Rectangle(1.1 * aNobleWidth, 1.1 * aNobleHeight, Color.WHITE);
+    Node secondNobleRelated = new Rectangle(1.1 * aNobleWidth, 1.1 * aNobleHeight, Color.WHITE);
     /**/
 
     /*change rectangles*/
     firstNobleRelated.setOpacity(0.5);
     firstNobleRelated.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-        if (firstNobleRelated.getOpacity() != 1) firstNobleRelated.setOpacity(0.7);
+      if (firstNobleRelated.getOpacity() != 1) {
+        firstNobleRelated.setOpacity(0.7);
+      }
     });
     firstNobleRelated.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-      if (firstNobleRelated.getOpacity() != 1) firstNobleRelated.setOpacity(0.5);
+      if (firstNobleRelated.getOpacity() != 1) {
+        firstNobleRelated.setOpacity(0.5);
+      }
     });
     secondNobleRelated.setOpacity(0.5);
     secondNobleRelated.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-      if (secondNobleRelated.getOpacity() != 1) secondNobleRelated.setOpacity(0.7);
+      if (secondNobleRelated.getOpacity() != 1) {
+        secondNobleRelated.setOpacity(0.7);
+      }
     });
     secondNobleRelated.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-      if (secondNobleRelated.getOpacity() != 1) secondNobleRelated.setOpacity(0.5);
+      if (secondNobleRelated.getOpacity() != 1) {
+        secondNobleRelated.setOpacity(0.5);
+      }
     });
 
     //Change nobles//
-    noble1.addEventHandler(MouseEvent.MOUSE_ENTERED,e -> {
-      if (firstNobleRelated.getOpacity() != 1) firstNobleRelated.setOpacity(0.7);
+    noble1.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+      if (firstNobleRelated.getOpacity() != 1) {
+        firstNobleRelated.setOpacity(0.7);
+      }
     });
-    noble1.addEventHandler(MouseEvent.MOUSE_EXITED,e -> {
-      if (firstNobleRelated.getOpacity() != 1) firstNobleRelated.setOpacity(0.5);
+    noble1.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+      if (firstNobleRelated.getOpacity() != 1) {
+        firstNobleRelated.setOpacity(0.5);
+      }
     });
-    noble1.addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+    noble1.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       secondNobleRelated.setOpacity(0.5);
       firstNobleRelated.setOpacity(1);
       confirmationButton.setOpacity(1);
     });
 
-    noble2.addEventHandler(MouseEvent.MOUSE_ENTERED,e -> {
-      if (secondNobleRelated.getOpacity() != 1) secondNobleRelated.setOpacity(0.7);
+    noble2.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+      if (secondNobleRelated.getOpacity() != 1) {
+        secondNobleRelated.setOpacity(0.7);
+      }
     });
     noble2.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-      if (secondNobleRelated.getOpacity() != 1) secondNobleRelated.setOpacity(0.5);
+      if (secondNobleRelated.getOpacity() != 1) {
+        secondNobleRelated.setOpacity(0.5);
+      }
     });
-    noble2.addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+    noble2.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       firstNobleRelated.setOpacity(0.5);
       secondNobleRelated.setOpacity(1);
       confirmationButton.setOpacity(1);
     });
 
 
-
-    StackPane firstnoble= new StackPane(firstNobleRelated,noble1);
-    StackPane secondnoble = new StackPane(secondNobleRelated,noble2);
-    nobles.getChildren().addAll(firstnoble,secondnoble);
+    StackPane firstnoble = new StackPane(firstNobleRelated, noble1);
+    StackPane secondnoble = new StackPane(secondNobleRelated, noble2);
+    nobles.getChildren().addAll(firstnoble, secondnoble);
     nobles.setAlignment(Pos.CENTER);
-    nobles.setPrefSize(3*aHeight/4,3*aWidth/4);
-    nobles.setSpacing(aNobleWidth/4);
+    nobles.setPrefSize(3 * aHeight / 4, 3 * aWidth / 4);
+    nobles.setSpacing(aNobleWidth / 4);
     myPrompt.setCenter(nobles);
 
 

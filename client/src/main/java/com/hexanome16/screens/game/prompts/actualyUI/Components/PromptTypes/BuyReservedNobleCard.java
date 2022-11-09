@@ -26,7 +26,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class BuyReservedNobleCard implements PromptTypeInterface{
+public class BuyReservedNobleCard implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
@@ -123,7 +123,9 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
     RESERVE.setWrappingWidth(buttonWidth);
     RESERVE.setTextAlignment(TextAlignment.CENTER);
     RESERVE.setFont(Font.font(buttonHeight * 0.6));
-    getEventBus().addEventHandler(CustomEvent.CLOSING,e -> {closeBagPrompt();});
+    getEventBus().addEventHandler(CustomEvent.CLOSING, e -> {
+      closeBagPrompt();
+    });
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
       PromptComponent.closePrompts();
@@ -132,7 +134,6 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
 
     reserve.getChildren().addAll(buttonBox, RESERVE);
   }
-
 
 
   private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
@@ -147,10 +148,13 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties().
-          getInt(BuyCard.BankType.GAME_BANK.toString() + "/" + BuyCard.CurrencyType.BONUS_GOLD_CARDS.toString()) >=
+          getInt(BuyCard.BankType.GAME_BANK + "/" +
+              BuyCard.CurrencyType.BONUS_GOLD_CARDS) >=
           2) {
         buy.setOpacity(1);
-      } else buy.setOpacity(0.5);
+      } else {
+        buy.setOpacity(0.5);
+      }
     });
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -200,7 +204,8 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
     Text bonusAmount = new Text();
     bonusAmount.textProperty().bind(
         FXGL.getWorldProperties().
-            intProperty(banktype.toString() + "/" + BuyCard.CurrencyType.BONUS_GOLD_CARDS.toString())
+            intProperty(
+                banktype + "/" + BuyCard.CurrencyType.BONUS_GOLD_CARDS)
             .asString());
 
     if (bonusAmount.getText().equals("0")) {
@@ -234,7 +239,7 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
     Text tokensAmount = new Text();
     tokensAmount.textProperty().bind(
         FXGL.getWorldProperties().
-            intProperty(tokenOwner.toString() + "/" + tokenType.toString())
+            intProperty(tokenOwner.toString() + "/" + tokenType)
             .asString());
     if (tokensAmount.getText().equals("0")) {
       tokensCircle.setOpacity(0.5);
@@ -277,7 +282,7 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
       FXGL.getWorldProperties()
           .increment(tokenOwner.other().toString() + "/" + tokensType.toString(), +1);
       FXGL.getWorldProperties()
-          .increment(tokenOwner.toString() + "/" + tokensType.toString(), -1);
+          .increment(tokenOwner + "/" + tokensType, -1);
 //      mapOfInterest.put(tokensType,amountLeft-1);
 //      OtherMap.put(tokensType,OtherMap.get(tokensType)+1);
       getEventBus().fireEvent(new Event(EventType.ROOT));
@@ -295,22 +300,28 @@ public class BuyReservedNobleCard implements PromptTypeInterface{
   }
 
   private void OpenBagBonusPrompt() {
-    FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.CHOOSE_NOBLE_TO_RESERVE));
-    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
-      int gemsinBank = FXGL.getWorldProperties().getInt(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString());
-      if (gemsinBank!= 0){
-        FXGL.getWorldProperties().increment(BuyCard.BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
-        FXGL.getWorldProperties().setValue(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+    FXGL.spawn("PromptBox", new SpawnData().put("promptType", PromptType.CHOOSE_NOBLE_TO_RESERVE));
+    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()) {
+      int gemsinBank = FXGL.getWorldProperties()
+          .getInt(BuyCard.BankType.GAME_BANK + "/" + e.toString());
+      if (gemsinBank != 0) {
+        FXGL.getWorldProperties()
+            .increment(BuyCard.BankType.PLAYER_BANK + "/" + e, gemsinBank);
+        FXGL.getWorldProperties()
+            .setValue(BuyCard.BankType.GAME_BANK + "/" + e, 0);
       }
     }
   }
 
   private void closeBagPrompt() {
-    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()){
-      int gemsinBank = FXGL.getWorldProperties().getInt(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString());
-      if (gemsinBank!= 0){
-        FXGL.getWorldProperties().increment(BuyCard.BankType.PLAYER_BANK.toString()+"/"+e.toString(), gemsinBank);
-        FXGL.getWorldProperties().setValue(BuyCard.BankType.GAME_BANK.toString()+"/"+e.toString(), 0);
+    for (BuyCard.CurrencyType e : BuyCard.CurrencyType.values()) {
+      int gemsinBank = FXGL.getWorldProperties()
+          .getInt(BuyCard.BankType.GAME_BANK + "/" + e.toString());
+      if (gemsinBank != 0) {
+        FXGL.getWorldProperties()
+            .increment(BuyCard.BankType.PLAYER_BANK + "/" + e, gemsinBank);
+        FXGL.getWorldProperties()
+            .setValue(BuyCard.BankType.GAME_BANK + "/" + e, 0);
       }
     }
   }

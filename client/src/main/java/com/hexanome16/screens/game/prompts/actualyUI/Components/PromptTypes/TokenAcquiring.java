@@ -18,12 +18,13 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class TokenAcquiring implements PromptTypeInterface {
-  double aWidth = getAppWidth()/2;
-  double aHeight = getAppHeight()/2;
-  double aBottonWidth = aWidth/3;
-  double aBottonHeight = aBottonWidth/4;
-  double topleftX = (getAppWidth()/2)-(aWidth/2);
-  double topleftY = (getAppHeight()/2) - (aHeight/2);
+  double aWidth = getAppWidth() / 2;
+  double aHeight = getAppHeight() / 2;
+  double aBottonWidth = aWidth / 3;
+  double aBottonHeight = aBottonWidth / 4;
+  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
+  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
+
   @Override
   public double width() {
     return aWidth;
@@ -40,7 +41,7 @@ public class TokenAcquiring implements PromptTypeInterface {
     Text myPromptMessage = new Text("Taking Tokens");
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(aWidth);
-    myPromptMessage.setFont(Font.font(aHeight/10));
+    myPromptMessage.setFont(Font.font(aHeight / 10));
     myPrompt.setTop(myPromptMessage);
     myPrompt.setTranslateX(topleftX);
     myPrompt.setTranslateY(topleftY);
@@ -48,18 +49,18 @@ public class TokenAcquiring implements PromptTypeInterface {
     HBox myChoices = new HBox();
     myPrompt.setCenter(myChoices);
     myChoices.setAlignment(Pos.CENTER);
-    myChoices.setPrefSize(aWidth,aHeight*0.9);
-    myChoices.setSpacing(aBottonWidth/6);
+    myChoices.setPrefSize(aWidth, aHeight * 0.9);
+    myChoices.setSpacing(aBottonWidth / 6);
 
     StackPane ChooseTwo = new StackPane();
-    ChooseTwo.setPrefSize(aBottonWidth,aBottonHeight);
-    ChooseTwo.setMaxSize(aBottonWidth,aBottonHeight);
-    Rectangle ChooseTwoButton = new Rectangle(aBottonWidth,aBottonHeight, Color.rgb(249,161,89));
-    ChooseTwoButton.setStrokeWidth(aHeight/100);
+    ChooseTwo.setPrefSize(aBottonWidth, aBottonHeight);
+    ChooseTwo.setMaxSize(aBottonWidth, aBottonHeight);
+    Rectangle ChooseTwoButton = new Rectangle(aBottonWidth, aBottonHeight, Color.rgb(249, 161, 89));
+    ChooseTwoButton.setStrokeWidth(aHeight / 100);
     ChooseTwoButton.setStroke(Color.BLACK);
     ChooseTwoButton.setOpacity(0.5);
     Text ChooseTwoMessage = new Text("TAKE 2 TOKENS SAME COLOR");
-    ChooseTwoMessage.setFont(Font.font(aBottonHeight*0.25));
+    ChooseTwoMessage.setFont(Font.font(aBottonHeight * 0.25));
     ChooseTwoMessage.setTextAlignment(TextAlignment.CENTER);
     ChooseTwo.setOnMouseEntered(e -> {
       ChooseTwoButton.setOpacity(1);
@@ -68,24 +69,25 @@ public class TokenAcquiring implements PromptTypeInterface {
       ChooseTwoButton.setOpacity(0.5);
     });
     ChooseTwo.setOnMouseClicked(e -> {
-      FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.TOKEN_ACQUIRING_TWO));
+      FXGL.spawn("PromptBox", new SpawnData().put("promptType", PromptType.TOKEN_ACQUIRING_TWO));
     });
 
-    ChooseTwo.getChildren().addAll(ChooseTwoButton,ChooseTwoMessage);
+    ChooseTwo.getChildren().addAll(ChooseTwoButton, ChooseTwoMessage);
 
     Text OR = new Text("OR");
     OR.setTextAlignment(TextAlignment.CENTER);
-    OR.setFont( Font.font(aBottonHeight));
+    OR.setFont(Font.font(aBottonHeight));
 
     StackPane ChooseThree = new StackPane();
-    ChooseThree.setPrefSize(aBottonWidth,aBottonHeight);
-    ChooseThree.setMaxSize(aBottonWidth,aBottonHeight);
-    Rectangle ChooseThreeButton = new Rectangle(aBottonWidth,aBottonHeight, Color.rgb(249,161,89));
-    ChooseThreeButton.setStrokeWidth(aHeight/100);
+    ChooseThree.setPrefSize(aBottonWidth, aBottonHeight);
+    ChooseThree.setMaxSize(aBottonWidth, aBottonHeight);
+    Rectangle ChooseThreeButton =
+        new Rectangle(aBottonWidth, aBottonHeight, Color.rgb(249, 161, 89));
+    ChooseThreeButton.setStrokeWidth(aHeight / 100);
     ChooseThreeButton.setStroke(Color.BLACK);
     ChooseThreeButton.setOpacity(0.5);
     Text ChooseThreeMessage = new Text("TAKE 3 TOKENS DIFFERENT COLOR");
-    ChooseThreeMessage.setFont(Font.font(aBottonHeight*0.20));
+    ChooseThreeMessage.setFont(Font.font(aBottonHeight * 0.20));
     ChooseThreeMessage.setTextAlignment(TextAlignment.CENTER);
     ChooseThree.setOnMouseEntered(e -> {
       ChooseThreeButton.setOpacity(1);
@@ -93,13 +95,13 @@ public class TokenAcquiring implements PromptTypeInterface {
     ChooseThree.setOnMouseExited(e -> {
       ChooseThreeButton.setOpacity(0.5);
     });
-    ChooseThree.setOnMouseClicked(e->{
-      FXGL.spawn("PromptBox",new SpawnData().put("promptType", PromptType.TOKEN_ACQUIRING_THREE));
+    ChooseThree.setOnMouseClicked(e -> {
+      FXGL.spawn("PromptBox", new SpawnData().put("promptType", PromptType.TOKEN_ACQUIRING_THREE));
     });
 
-    ChooseThree.getChildren().addAll(ChooseThreeButton,ChooseThreeMessage);
+    ChooseThree.getChildren().addAll(ChooseThreeButton, ChooseThreeMessage);
 
-    myChoices.getChildren().addAll(ChooseTwo,OR,ChooseThree);
+    myChoices.getChildren().addAll(ChooseTwo, OR, ChooseThree);
 
     entity.getViewComponent().addChild(myPrompt);
   }
