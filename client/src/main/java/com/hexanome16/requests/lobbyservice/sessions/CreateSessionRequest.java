@@ -10,15 +10,27 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * This class provides methods to create a session in Lobby Service.
+ */
 public class CreateSessionRequest {
-  public static String execute(String access_token, String creator, String game, String savegame) {
+  /**
+   * Sends a request to create a session in Lobby Service.
+   *
+   * @param accessToken The access token of the user.
+   * @param creator The creator of the session.
+   * @param game The game service associated with the session.
+   * @param savegame The savegame associated with the session (can be empty).
+   * @return The id of the created session.
+   */
+  public static String execute(String accessToken, String creator, String game, String savegame) {
     if (savegame == null) {
       savegame = "";
     }
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create("http://127.0.0.1:4242/api/sessions?access_token=" + access_token))
+          .uri(URI.create("http://127.0.0.1:4242/api/sessions?access_token=" + accessToken))
           .header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(
               new Gson().toJson(new Payload(creator, game, savegame))))

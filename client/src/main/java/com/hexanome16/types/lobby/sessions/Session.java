@@ -3,6 +3,9 @@ package com.hexanome16.types.lobby.sessions;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * This class contains information about a session in Lobby Service.
+ */
 public final class Session {
   private Long id;
   private String creator;
@@ -11,6 +14,15 @@ public final class Session {
   private String[] players;
   private String savegameid;
 
+  /**
+   * Constructor.
+   *
+   * @param creator The creator of the session.
+   * @param gameParameters The game parameters of the session.
+   * @param launched Whether the session is launched.
+   * @param players The players in the session.
+   * @param savegameid The savegame id of the session (can be empty).
+   */
   public Session(String creator, GameParams gameParameters, boolean launched, String[] players,
                  String savegameid) {
     this.creator = creator;
@@ -20,14 +32,14 @@ public final class Session {
     this.savegameid = savegameid;
   }
 
+  @Override
   public String toString() {
-    return "Session{" +
-        "creator='" + creator + '\'' +
-        ", gameParameters=" + gameParameters +
-        ", launched=" + (launched ? "yes" : "no") +
-        ", players=" + Arrays.toString(players) +
-        ", savegameid='" + savegameid + '\'' +
-        '}';
+    return "Session{"
+        + "creator='" + creator + '\''
+        + ", gameParameters=" + gameParameters
+        + ", launched=" + (launched ? "yes" : "no")
+        + ", players=" + Arrays.toString(players)
+        + ", savegameid='" + savegameid + '\'' + '}';
   }
 
   @Override
@@ -39,10 +51,10 @@ public final class Session {
       return false;
     }
     Session session = (Session) o;
-    return launched() == session.launched() && creator().equals(session.creator()) &&
-        gameParameters().equals(session.gameParameters()) &&
-        Arrays.equals(players(), session.players()) &&
-        Objects.equals(savegameid(), session.savegameid());
+    return launched() == session.launched() && creator().equals(session.creator())
+        && gameParameters().equals(session.gameParameters())
+        && Arrays.equals(players(), session.players())
+        && Objects.equals(savegameid(), session.savegameid());
   }
 
   @Override

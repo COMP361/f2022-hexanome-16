@@ -10,13 +10,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * This class provides methods to change the colour of the user.
+ */
 public class ChangeColourRequest {
-  public static void execute(String access_token, String user, String colour) {
+  /**
+   * Sends a request to change the colour of the user.
+   *
+   * @param accessToken The access token of the user.
+   * @param user The user for whom to change the colour.
+   * @param colour The new colour of the user.
+   */
+  public static void execute(String accessToken, String user, String colour) {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(
-              "http://127.0.0.1:4242/api/users/" + user + "/colour?access_token=" + access_token))
+              "http://127.0.0.1:4242/api/users/" + user + "/colour?access_token=" + accessToken))
           .header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload(colour))))
           .build();
