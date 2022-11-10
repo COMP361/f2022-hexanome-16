@@ -13,17 +13,28 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * This class provides methods to log in the user and get the associated OAuth tokens.
+ */
 public class TokenRequest {
-
-  public static TokensInfo execute(String username, String password, String refresh_token) {
+  /**
+   * Sends a request to log in the user.
+   * Either username + password combo or refreshToken must be provided.
+   *
+   * @param username The username of the user.
+   * @param password The password of the user.
+   * @param refreshToken The refresh token of the user.
+   * @return Object containing info about the tokens.
+   */
+  public static TokensInfo execute(String username, String password, String refreshToken) {
     HttpClient client = RequestClient.getClient();
     try {
       StringBuilder url = new StringBuilder("http://localhost:4242/oauth/token?");
-      if (refresh_token == null || refresh_token.isBlank()) {
+      if (refreshToken == null || refreshToken.isBlank()) {
         url.append("grant_type=password&username=").append(StringConverter.escape(username))
             .append("&password=").append(StringConverter.escape(password));
       } else {
-        url.append("grant_type=refresh_token&refresh_token=").append(refresh_token);
+        url.append("grant_type=refresh_token&refresh_token=").append(refreshToken);
       }
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(url.toString()))
@@ -34,8 +45,8 @@ public class TokenRequest {
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
       TokensInfo tokensInfo = new Gson().fromJson(response, TokensInfo.class);
-      tokensInfo.setAccess_token(StringConverter.escape(tokensInfo.access_token()));
-      tokensInfo.setRefresh_token(StringConverter.escape(tokensInfo.refresh_token()));
+      tokensInfo.setAccessToken(StringConverter.escape(tokensInfo.access_token()));
+      tokensInfo.setRefreshToken(StringConverter.escape(tokensInfo.refresh_token()));
       return tokensInfo;
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       e.printStackTrace();

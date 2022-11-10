@@ -8,9 +8,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class provides methods to get the role of the user.
+ */
 public class RoleRequest {
-  public static String execute(String access_token) {
-    String url = "http://localhost:4242/oauth/role?access_token=" + access_token;
+  /**
+   * Sends a request to get the role of the user.
+   *
+   * @param accessToken The access token of the user.
+   * @return The role of the user (ROLE_ADMIN, ROLE_PLAYER, ROLE_SERVICE).
+   */
+  public static String execute(String accessToken) {
+    String url = "http://localhost:4242/oauth/role?access_token=" + accessToken;
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
