@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.hexanome16.server.models","l":"Greeting"},{"p":"com.hexanome16.server.controllers","l":"HelloWorldController"},{"p":"com.hexanome16.server","l":"ServerApplication"}];updateSearchResults();
