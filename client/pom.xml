@@ -166,7 +166,7 @@
                     <JVMArgs>
                         <!-- <JVMArg>your-args</JVMArg> -->
                     </JVMArgs>
-                    <mainClassName>com.hexanome16.MainApp</mainClassName>
+                    <mainClassName>com.hexanome16.client.MainApp</mainClassName>
                     <openingPath>/</openingPath>
                 </configuration>
             </plugin>
@@ -212,7 +212,8 @@
                 <configuration>
                     <source>17</source>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    <reportOutputDirectory>${project.basedir}/../docs
+                    <reportOutputDirectory>
+                        ${project.reporting.outputDirectory}/../../../docs
                     </reportOutputDirectory>
                     <destDir>client</destDir>
                 </configuration>
@@ -240,7 +241,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${jfx.maven.version}</version>
                 <configuration>
-                    <mainClass>drop.main/com.hexanome16.Splendor.mainApp</mainClass>
+                    <mainClass>com.hexanome16.client.MainApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
