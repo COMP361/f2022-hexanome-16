@@ -1,0 +1,4 @@
+FROM mysql/mysql-server:5.7 AS database
+MAINTAINER maximilian schiedermeier
+ENV MYSQL_ROOT_PASSWORD=OojeeWood1ae
+COPY LobbyService/ls-db-setup.sql /docker-entrypoint-initdb.d/
