@@ -5,6 +5,6 @@ package com.hexanome16.client.utils;
  */
 public class StringConverter {
   public static String escape(String str) {
-    return str.replace("+", "%2B").replace("*", "%2A");
+    return str == null ? "" : str.replace("+", "%2B").replace("*", "%2A");
   }
 }
