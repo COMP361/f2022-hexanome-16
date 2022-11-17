@@ -17,6 +17,7 @@ import javafx.util.Duration;
  */
 public class MainMenuScreenUiController implements UIController {
 
+  // TODO: Check EDStem for answer in SNAKE_CASE
   private final float EXPAND_SIZE = 1.1f;
   private final float NORMAL_SIZE = 1f;
   @FXML
