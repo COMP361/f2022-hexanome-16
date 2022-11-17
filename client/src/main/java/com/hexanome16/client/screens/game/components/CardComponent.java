@@ -12,6 +12,9 @@ import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTyp
 import com.hexanome16.client.screens.game.prompts.actualyUI.OpenPromt;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * FXGL component for development cards on board.
+ */
 public class CardComponent extends Component {
   private static boolean[] level_one_grid = new boolean[4];
   private static boolean[] level_two_grid = new boolean[4];
@@ -27,11 +30,14 @@ public class CardComponent extends Component {
   private boolean purchased = false;
 
 
-  public CardComponent(Level aLevel, String texture) {
-    this.level = aLevel;
+  public CardComponent(Level level, String texture) {
+    this.level = level;
     this.texture = texture;
   }
 
+  /**
+   * Reset the deck when exiting the game, might need to be deleted in the future.
+   */
   public static void reset() {
     level_one_grid = new boolean[4];
     level_two_grid = new boolean[4];
@@ -52,7 +58,6 @@ public class CardComponent extends Component {
       } else {
         adding = false;
       }
-    } else {
     }
   }
 
@@ -68,6 +73,7 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     adding = true;
     switch (level) {
+      default:
       case ONE:
         addToMat(level_one_grid);
         break;
@@ -91,8 +97,9 @@ public class CardComponent extends Component {
     position.setScaleY(0.15);
   }
 
-  private void moving(Direction aDirection) {
-    switch (aDirection) {
+  private void moving(Direction direction) {
+    switch (direction) {
+      default:
       case UP:
         double diffUp = position.getY() - 50;
 
@@ -136,11 +143,11 @@ public class CardComponent extends Component {
     }
   }
 
-  private void addToMat(boolean[] aGrid) {
-    for (int i = 0; i < aGrid.length; i++) {
-      if (!aGrid[i]) {
+  private void addToMat(boolean[] grid) {
+    for (int i = 0; i < grid.length; i++) {
+      if (!grid[i]) {
         gridX = i;
-        aGrid[i] = true;
+        grid[i] = true;
         break;
       }
     }
@@ -151,6 +158,7 @@ public class CardComponent extends Component {
     direction = Direction.DOWN;
     purchased = false;
     switch (level) {
+      default:
       case ONE:
         level_one_grid[gridX] = false;
         GameScreen.addLevelOneCard();
