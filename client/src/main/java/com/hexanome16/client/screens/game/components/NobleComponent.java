@@ -8,6 +8,9 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * FXGL component for noble tiles on board.
+ */
 public class NobleComponent extends Component {
   private static boolean[] grid = new boolean[5];
   private TransformComponent position;
