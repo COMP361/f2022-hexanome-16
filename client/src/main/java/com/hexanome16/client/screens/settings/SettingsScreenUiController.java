@@ -6,8 +6,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Slider;
 
-public class SettingsScreenUIController implements UIController {
+/**
+ * UI Controller for local settings screen.
+ *
+ * <p>
+ * Only for fxml purposes, functionality is mostly in {@link SettingsScreen}
+ * </p>
+ */
+public class SettingsScreenUiController implements UIController {
   private final String[] languages = {"English", "French", "Spanish"};
+  @SuppressWarnings("checkstyle:Indentation")
+  // For some reason it won't indent to 4 when I reformat
   private final String[] resolutions =
       {"1280 x 1024", "1366 x 768", "1600 x 900", "1920 x 1080", "1920 x 1200", "2560 x 1440"};
   @FXML
@@ -22,7 +31,9 @@ public class SettingsScreenUIController implements UIController {
   private Slider sfxSlider;
   @FXML
   private Slider soundSlider;
-  private int myMusic = 100, mySFX = 100, mySound = 100;
+  private int myMusic = 100;
+  private int mySfx = 100;
+  private int mySound = 100;
 
   @Override
   public void init() {
@@ -44,12 +55,12 @@ public class SettingsScreenUIController implements UIController {
   private void initSliders() {
     soundSlider.adjustValue(mySound);
     musicSlider.adjustValue(myMusic);
-    sfxSlider.adjustValue(mySFX);
+    sfxSlider.adjustValue(mySfx);
     soundSlider.valueProperty()
         .addListener((observableValue, number, t1) -> mySound = (int) soundSlider.getValue());
     musicSlider.valueProperty()
         .addListener((observableValue, number, t1) -> myMusic = (int) musicSlider.getValue());
     sfxSlider.valueProperty()
-        .addListener((observableValue, number, t1) -> mySFX = (int) sfxSlider.getValue());
+        .addListener((observableValue, number, t1) -> mySfx = (int) sfxSlider.getValue());
   }
 }
