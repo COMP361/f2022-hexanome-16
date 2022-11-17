@@ -1,4 +1,4 @@
-package com.hexanome16.client.lobby.user;
+package com.hexanome16.client.types.user;
 
 import java.util.Objects;
 

@@ -2,7 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.user;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.lobby.user.User;
+import com.hexanome16.client.types.user.User;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

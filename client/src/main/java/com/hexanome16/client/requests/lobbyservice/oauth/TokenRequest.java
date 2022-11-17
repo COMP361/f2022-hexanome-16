@@ -2,7 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.oauth;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.lobby.auth.TokensInfo;
+import com.hexanome16.client.types.auth.TokensInfo;
 import com.hexanome16.client.utils.AuthHeader;
 import com.hexanome16.client.utils.StringConverter;
 import java.net.URI;
