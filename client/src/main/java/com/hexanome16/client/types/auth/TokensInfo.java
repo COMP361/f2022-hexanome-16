@@ -1,4 +1,4 @@
-package com.hexanome16.client.lobby.auth;
+package com.hexanome16.client.types.auth;
 
 import com.hexanome16.client.utils.StringConverter;
 import java.util.Objects;

@@ -8,7 +8,7 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.client.requests.lobbyservice.gameservice.CreateGameServiceRequest;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
-import com.hexanome16.client.lobby.auth.TokensInfo;
+import com.hexanome16.client.types.auth.TokensInfo;
 import javafx.util.Duration;
 
 /**
