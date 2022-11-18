@@ -3,6 +3,7 @@ package com.hexanome16.client.screens.rulebook;
 import static com.almasb.fxgl.dsl.FXGL.getAssetLoader;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 
+import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.ui.UI;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 
@@ -43,6 +44,8 @@ public class RulebookScreen {
       return;
     }
 
+    CSS css = getAssetLoader().loadCSS("rulebook/test.css");
+    getGameScene().appendCSS(css);
     getGameScene().addUI(getUi());
     isVisible = true;
   }
@@ -56,6 +59,7 @@ public class RulebookScreen {
     }
 
     getGameScene().removeUI(getUi());
+    getGameScene().clearCSS();
 
     isVisible = false;
   }
