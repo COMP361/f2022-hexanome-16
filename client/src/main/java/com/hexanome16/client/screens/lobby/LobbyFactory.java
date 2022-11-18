@@ -324,7 +324,7 @@ public class LobbyFactory implements EntityFactory {
             + "-fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
     button.setOnAction(event -> {
       LobbyScreen.exitLobby();
-      MainMenuScreen.initUI();
+      MainMenuScreen.initUi();
     });
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
@@ -363,7 +363,7 @@ public class LobbyFactory implements EntityFactory {
         "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
         + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> {
-      SettingsScreen.initUI(true);
+      SettingsScreen.initUi(true);
     });
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
