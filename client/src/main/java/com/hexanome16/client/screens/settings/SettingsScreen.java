@@ -6,80 +6,98 @@ import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import com.almasb.fxgl.ui.UI;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 
+/**
+ * UI Screen for local client settings.
+ */
 public class SettingsScreen {
   private static UI uiSingleton;
-  private static SettingsScreenUIController uiControllerSingleton;
+  private static SettingsScreenUiController uiControllerSingleton;
   private static boolean isVisible = false;
 
-  private static UI getUI() {
+  /**
+   * Retrieve UI singleton of the settings screen.
+   *
+   * @return a UI singleton
+   */
+  private static UI getUi() {
     if (uiSingleton == null) {
-      uiControllerSingleton = new SettingsScreenUIController();
+      uiControllerSingleton = new SettingsScreenUiController();
       uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-      setupUI();
+      setupUi();
     }
     return uiSingleton;
   }
 
   // more sorry
-  private static UI getUI(boolean x) {
+  private static UI getUi(boolean x) {
     if (uiSingleton == null) {
-      uiControllerSingleton = new SettingsScreenUIController();
+      uiControllerSingleton = new SettingsScreenUiController();
       uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-      setupUI(x);
+      setupUi(x);
     }
     return uiSingleton;
   }
 
-  private static void setupUI() {
+  private static void setupUi() {
     uiControllerSingleton.doneButton.setOnAction((event) -> {
-      SettingsScreen.clearUI();
-      MainMenuScreen.initUI();
+      SettingsScreen.clearUi();
+      MainMenuScreen.initUi();
     });
   }
 
   // final sorry :(
-  private static void setupUI(boolean x) {
-    uiControllerSingleton.doneButton.setOnAction((event) -> {
-      SettingsScreen.clearUI(x);
-    });
+  private static void setupUi(boolean x) {
+    uiControllerSingleton.doneButton.setOnAction((event) -> SettingsScreen.clearUi(x));
   }
 
-  public static void initUI() {
+  /**
+   * Adds UI layer on top of game screen.
+   */
+  public static void initUi() {
     if (isVisible) {
       return;
     }
 
-    getGameScene().addUI(getUI());
+    getGameScene().addUI(getUi());
     isVisible = true;
   }
 
   // please dont be mad tristan xoxo
-  public static void initUI(boolean x) {
+  /**
+   * Adds UI layer on top of game screen.
+   */
+  public static void initUi(boolean x) {
     if (isVisible) {
       return;
     }
 
-    getGameScene().addUI(getUI(x));
+    getGameScene().addUI(getUi(x));
     isVisible = true;
   }
 
-  public static void clearUI() {
+  /**
+   * Removes UI layer on top of game screen.
+   */
+  public static void clearUi() {
     if (!isVisible) {
       return;
     }
 
-    getGameScene().removeUI(getUI());
+    getGameScene().removeUI(getUi());
 
     isVisible = false;
   }
 
   //sorry
-  public static void clearUI(boolean x) {
+  /**
+   * Removes UI layer on top of game screen.
+   */
+  public static void clearUi(boolean x) {
     if (!isVisible) {
       return;
     }
 
-    getGameScene().removeUI(getUI(x));
+    getGameScene().removeUI(getUi(x));
 
     isVisible = false;
   }
