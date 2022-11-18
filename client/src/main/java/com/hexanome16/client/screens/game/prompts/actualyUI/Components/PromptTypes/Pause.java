@@ -87,7 +87,7 @@ public class Pause implements PromptTypeInterface {
         GameScreen.exitGame();
         LobbyScreen.initLobby();
       } else {
-        SettingsScreen.initUI(true);
+        SettingsScreen.initUi(true);
       }
       /////////////////// TO MODIFY TO ADD OPENING SETTING AND EXITING ///////////////////////////
     }
