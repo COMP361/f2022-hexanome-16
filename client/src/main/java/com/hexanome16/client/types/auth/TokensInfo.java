@@ -1,15 +1,19 @@
 package com.hexanome16.client.types.auth;
 
-import com.hexanome16.client.utils.StringConverter;
+import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
  * This class contains information about OAuth user tokens.
  */
 public final class TokensInfo {
+  @SerializedName("access_token")
   private String accessToken;
+  @SerializedName("refresh_token")
   private String refreshToken;
+  @SerializedName("token_type")
   private String tokenType;
+  @SerializedName("expires_in")
   private int expiresIn;
   private String scope;
 
@@ -24,8 +28,8 @@ public final class TokensInfo {
    */
   public TokensInfo(String accessToken, String refreshToken, String tokenType, int expiresIn,
                     String scope) {
-    this.accessToken = StringConverter.escape(accessToken);
-    this.refreshToken = StringConverter.escape(refreshToken);
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
     this.tokenType = tokenType;
     this.expiresIn = expiresIn;
     this.scope = scope;
@@ -39,19 +43,19 @@ public final class TokensInfo {
         + expiresIn + ", scope='" + scope + '\'' + '}';
   }
 
-  public String access_token() {
+  public String accessToken() {
     return accessToken;
   }
 
-  public String refresh_token() {
+  public String refreshToken() {
     return refreshToken;
   }
 
-  public String token_type() {
+  public String tokenType() {
     return tokenType;
   }
 
-  public int expires_in() {
+  public int expiresIn() {
     return expiresIn;
   }
 
@@ -60,11 +64,11 @@ public final class TokensInfo {
   }
 
   public void setAccessToken(String accessToken) {
-    this.accessToken = StringConverter.escape(accessToken);
+    this.accessToken = accessToken;
   }
 
   public void setRefreshToken(String refreshToken) {
-    this.refreshToken = StringConverter.escape(refreshToken);
+    this.refreshToken = refreshToken;
   }
 
   public void setTokenType(String tokenType) {
