@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 
 import com.almasb.fxgl.ui.UI;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
+import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 
 /**
@@ -32,6 +33,10 @@ public class MainMenuScreen {
     uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
       MainMenuScreen.clearUi();
       LobbyScreen.initLobby();
+    });
+    uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
+      MainMenuScreen.clearUi();
+      RulebookScreen.initUi();
     });
   }
 
