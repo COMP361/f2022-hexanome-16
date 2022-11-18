@@ -8,10 +8,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-public class MainMenuScreenUIController implements UIController {
+/**
+ * UI Controller for Main Menu Screen.
+ *
+ * <p>
+ * Only for fxml purposes, functionality is mostly in {@link MainMenuScreen}
+ * </p>
+ */
+public class MainMenuScreenUiController implements UIController {
 
-  private final float EXPAND_SIZE = 1.1f;
-  private final float NORMAL_SIZE = 1f;
+  private static final float EXPAND_SIZE = 1.1f;
+  private static final float NORMAL_SIZE = 1f;
   @FXML
   VBox lobbySection;
   @FXML

@@ -118,7 +118,7 @@ public class LoginScreen implements EntityFactory {
   private FXGLButton createButton(String message) {
     FXGLButton button = new FXGLButton(message);
     button.setOnMouseClicked(e -> {
-      MainMenuScreen.initUI();
+      MainMenuScreen.initUi();
     });
     button.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 30));
     button.setPrefSize(130, 50);
