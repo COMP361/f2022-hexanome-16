@@ -8,13 +8,12 @@ import static com.hexanome16.client.Config.APP_WIDTH;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.GameFactory;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.prompts.actualyUI.PromptPartFactory;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
-import com.hexanome16.client.screens.startup.LoginScreen;
+import com.hexanome16.client.screens.startup.StartupScreenFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import java.util.Map;
 
@@ -36,11 +35,10 @@ public class MainApp extends GameApplication {
   // Or look for PromptTypeInterface
   @Override
   protected void initGame() {
-    FXGL.getGameWorld().addEntityFactory(new GameFactory());
-    FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
-    FXGL.getGameWorld().addEntityFactory(new DeckFactory());
-    getGameWorld().addEntityFactory(new StartupScreen());
-    getGameWorld().addEntityFactory(new LoginScreen());
+    getGameWorld().addEntityFactory(new GameFactory());
+    getGameWorld().addEntityFactory(new PromptPartFactory());
+    getGameWorld().addEntityFactory(new DeckFactory());
+    getGameWorld().addEntityFactory(new StartupScreenFactory());
     getGameWorld().addEntityFactory(new LobbyFactory());
 
     StartupScreen.backToMainScreen();
