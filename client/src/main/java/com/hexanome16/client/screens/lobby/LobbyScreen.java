@@ -31,7 +31,7 @@ public class LobbyScreen {
     runOnce(() -> {
       TokensInfo tokensInfo = TokenRequest.execute("xox", "laaPhie*aiN0", null);
       assert tokensInfo != null;
-      CreateGameServiceRequest.execute(tokensInfo.access_token());
+      CreateGameServiceRequest.execute(tokensInfo.accessToken());
     }, Duration.ZERO);
     run(LobbyFactory::updateSessionList, Duration.seconds(1));
   }

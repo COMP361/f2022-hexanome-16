@@ -2,7 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.user;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import java.net.URI;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -18,16 +18,19 @@ public class ChangeColourRequest {
    * Sends a request to change the colour of the user.
    *
    * @param accessToken The access token of the user.
-   * @param user The user for whom to change the colour.
-   * @param colour The new colour of the user.
+   * @param user        The user for whom to change the colour.
+   * @param colour      The new colour of the user.
    */
   public static void execute(String accessToken, String user, String colour) {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(
-              "http://127.0.0.1:4242/api/users/" + user + "/colour?access_token=" + accessToken))
-          .header("Content-Type", "application/json")
+          .uri(UrlUtils.createUri(
+              "/api/users/" + user + "/colour",
+              "access_token=" + accessToken,
+              null,
+              true
+          )).header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload(colour))))
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

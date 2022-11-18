@@ -161,7 +161,7 @@ public class LobbyFactory implements EntityFactory {
                   join.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    JoinSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
+                    JoinSessionRequest.execute(session.id(), "linus", tokensInfo.accessToken());
                     if (session.launched()) {
                       GameScreen.initGame();
                       LobbyScreen.exitLobby();
@@ -175,7 +175,7 @@ public class LobbyFactory implements EntityFactory {
                   leave.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
+                    LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.accessToken());
                   });
                   leave.setStyle(
                       "-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle
@@ -183,7 +183,7 @@ public class LobbyFactory implements EntityFactory {
                   launch.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    LaunchSessionRequest.execute(session.id(), tokensInfo.access_token());
+                    LaunchSessionRequest.execute(session.id(), tokensInfo.accessToken());
                     GameScreen.initGame();
                     LobbyScreen.exitLobby();
                   });
@@ -193,7 +193,7 @@ public class LobbyFactory implements EntityFactory {
                   delete.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
+                    DeleteSessionRequest.execute(session.id(), tokensInfo.accessToken());
                   });
                   delete.setStyle(
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
@@ -260,11 +260,12 @@ public class LobbyFactory implements EntityFactory {
       TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
       assert tokensInfo != null;
       String sessionId = CreateSessionRequest.execute(
-          tokensInfo.access_token(),
+          tokensInfo.accessToken(),
           "linus",
           "Splendor",
           null
       );
+      System.out.println("Created session with id: " + sessionId);
       ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
