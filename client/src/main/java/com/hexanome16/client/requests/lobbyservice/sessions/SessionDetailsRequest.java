@@ -2,8 +2,8 @@ package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.lobby.sessions.Session;
-import java.net.URI;
+import com.hexanome16.client.types.sessions.Session;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -23,13 +23,13 @@ public class SessionDetailsRequest {
   public static Session execute(long sessionId, int hash) {
     HttpClient client = RequestClient.getClient();
     try {
-      String url = "http://127.0.0.1:4242/api/sessions/" + sessionId;
-      if (hash > 0) {
-        url += "?hash=" + hash;
-      }
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .header("Content-Type", "application/json")
+          .uri(UrlUtils.createUri(
+              "/api/sessions" + sessionId,
+              hash > 0 ? "hash=" + hash : null,
+              null,
+              true
+          )).header("Content-Type", "application/json")
           .GET()
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

@@ -2,8 +2,8 @@ package com.hexanome16.client.requests.lobbyservice.user;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.lobby.user.User;
-import java.net.URI;
+import com.hexanome16.client.types.user.User;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -16,17 +16,20 @@ public class GetUserRequest {
   /**
    * Sends a request to get details about a user in Lobby Service.
    *
-   * @param player The username of the user to get details about.
+   * @param user        The username of the user to get details about.
    * @param accessToken The access token of the user.
    * @return The user details.
    */
-  public static User execute(String player, String accessToken) {
+  public static User execute(String user, String accessToken) {
     HttpClient client = RequestClient.getClient();
     try {
-      String url = "http://127.0.0.1:4242/api/users/" + player + "?access_token=" + accessToken;
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .header("Content-Type", "application/json")
+          .uri(UrlUtils.createUri(
+              "/api/users/" + user,
+              "access_token=" + accessToken,
+              null,
+              true
+          )).header("Content-Type", "application/json")
           .header("Accept", "application/json")
           .GET()
           .build();
