@@ -1,4 +1,4 @@
-package com.hexanome16.client.lobby.sessions;
+package com.hexanome16.client.types.sessions;
 
 import java.util.Objects;
 

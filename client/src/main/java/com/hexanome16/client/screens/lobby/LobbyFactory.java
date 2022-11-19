@@ -17,8 +17,8 @@ import com.hexanome16.client.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
-import com.hexanome16.client.lobby.auth.TokensInfo;
-import com.hexanome16.client.lobby.sessions.Session;
+import com.hexanome16.client.types.auth.TokensInfo;
+import com.hexanome16.client.types.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -161,7 +161,7 @@ public class LobbyFactory implements EntityFactory {
                   join.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    JoinSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
+                    JoinSessionRequest.execute(session.id(), "linus", tokensInfo.accessToken());
                     if (session.launched()) {
                       GameScreen.initGame();
                       LobbyScreen.exitLobby();
@@ -169,27 +169,35 @@ public class LobbyFactory implements EntityFactory {
                   });
                   String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
                       + "-fx-border-radius: 5px; -fx-background-radius: 5px;";
-                  join.setStyle("-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle);
+                  join.setStyle(
+                      "-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle
+                  );
                   leave.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.access_token());
+                    LeaveSessionRequest.execute(session.id(), "linus", tokensInfo.accessToken());
                   });
-                  leave.setStyle("-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle);
+                  leave.setStyle(
+                      "-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle
+                  );
                   launch.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    LaunchSessionRequest.execute(session.id(), tokensInfo.access_token());
+                    LaunchSessionRequest.execute(session.id(), tokensInfo.accessToken());
                     GameScreen.initGame();
                     LobbyScreen.exitLobby();
                   });
-                  launch.setStyle("-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle);
+                  launch.setStyle(
+                      "-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle
+                  );
                   delete.setOnAction(event -> {
                     TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
                     assert tokensInfo != null;
-                    DeleteSessionRequest.execute(session.id(), tokensInfo.access_token());
+                    DeleteSessionRequest.execute(session.id(), tokensInfo.accessToken());
                   });
-                  delete.setStyle("-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle);
+                  delete.setStyle(
+                      "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
+                  );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isOwn) {
                     buttons.add(session.launched() ? join : launch);
@@ -245,16 +253,19 @@ public class LobbyFactory implements EntityFactory {
   public Entity createSessionButton(SpawnData data) {
     Button button = new Button("Create Session");
     button.setStyle(
-        "-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-padding: 10px;");
+        "-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; "
+        + "-fx-padding: 10px;"
+    );
     button.setOnAction(event -> {
       TokensInfo tokensInfo = TokenRequest.execute("linus", "abc123_ABC123", null);
       assert tokensInfo != null;
       String sessionId = CreateSessionRequest.execute(
-          tokensInfo.access_token(),
+          tokensInfo.accessToken(),
           "linus",
           "Splendor",
           null
       );
+      System.out.println("Created session with id: " + sessionId);
       ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
