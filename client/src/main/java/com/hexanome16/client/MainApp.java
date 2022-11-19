@@ -13,10 +13,13 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.prompts.actualyUI.PromptPartFactory;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
-import com.hexanome16.client.screens.startup.StartupScreenFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
+import com.hexanome16.client.screens.startup.StartupScreenFactory;
 import java.util.Map;
 
+/**
+ * The Splendor GameApplication.
+ */
 public class MainApp extends GameApplication {
   public static void main(String[] args) {
     launch(args);
