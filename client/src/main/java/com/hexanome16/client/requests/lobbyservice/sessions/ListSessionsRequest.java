@@ -26,9 +26,7 @@ public class ListSessionsRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/api/sessions",
-              hash > 0 ? "hash=" + hash : null,
-              null,
-              true
+              hash > 0 ? "hash=" + hash : null
           )).header("Content-Type", "application/json")
           .GET()
           .build();

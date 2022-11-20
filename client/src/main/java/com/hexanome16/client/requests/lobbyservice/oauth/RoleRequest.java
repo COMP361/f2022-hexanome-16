@@ -24,9 +24,7 @@ public class RoleRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/oauth/role",
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + accessToken
           )).GET()
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

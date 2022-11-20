@@ -39,9 +39,7 @@ public class TokenRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/oauth/token",
-              params.toString(),
-              null,
-              true
+              params.toString()
           )).header("Content-Type", "application/json")
           .header("Authorization", AuthHeader.getBasicHeader("bgp-client-name", "bgp-client-pw"))
           .POST(HttpRequest.BodyPublishers.noBody())

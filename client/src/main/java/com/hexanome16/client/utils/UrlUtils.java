@@ -8,6 +8,10 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Utility class for performing operations on URLs.
@@ -16,11 +20,6 @@ public class UrlUtils {
   private static final PropertyMap LS_PROPERTIES = FXGL.getAssetLoader().load(
       AssetType.PROPERTY_MAP,
       "properties/lobby-service-" + System.getenv("PROFILE_ID") + ".properties"
-  );
-
-  private static final PropertyMap SERVER_PROPERTIES = FXGL.getAssetLoader().load(
-      AssetType.PROPERTY_MAP,
-      "properties/server-" + System.getenv("PROFILE_ID") + ".properties"
   );
 
   private UrlUtils() {
@@ -59,28 +58,28 @@ public class UrlUtils {
   }
 
   /**
-   * Creates a URI from the passed parameters depending on the active Maven profile.
+   * Creates a URI with encoding based on the passed parameters.
    *
    * @param path        The path to use for the URI.
    * @param query       The query parameters to use for the URI.
-   * @param fragment    The fragment to use for the URI.
+   * @param props       Other parts to use for the URI (Lobby Service's are used by default).
    * @return The URI.
    */
-  public static URI createUri(String path, String query, String fragment,
-                              boolean isLobbyService) {
-    final PropertyMap properties = isLobbyService ? LS_PROPERTIES : SERVER_PROPERTIES;
+  public static URI createUri(String path, String query, String... props) {
     try {
-      URI uri = new URI(
-          properties.getString("server.protocol"),
-          null,
-          properties.getString("server.host"),
-          properties.getInt("server.port"),
-          path,
-          encodeUriComponent(query),
-          encodeUriComponent(fragment)
+      HashMap<String, String> propsMap = Arrays.stream(props).map(s -> s.split("=")).collect(
+          HashMap::new,
+          (m, a) -> m.put(a[0], a[1]),
+          HashMap::putAll
       );
-      System.out.println("URI: " + uri);
-      return uri;
+      String protocol = propsMap.getOrDefault(
+          "protocol", LS_PROPERTIES.getString("server.protocol")
+      );
+      String host = propsMap.getOrDefault("host", LS_PROPERTIES.getString("server.host"));
+      Integer port = Integer.valueOf(propsMap.getOrDefault("port",
+          String.valueOf(LS_PROPERTIES.getInt("server.port"))));
+      String uri = protocol + "://" + host + ":" + port + path + "?" + encodeUriComponent(query);
+      return new URI(uri);
     } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;
