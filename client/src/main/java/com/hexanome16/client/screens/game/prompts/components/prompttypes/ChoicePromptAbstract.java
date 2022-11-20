@@ -103,7 +103,9 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
 
 
     // Choice  /////////////////////////////////////////////////////////////////////////////////////
-    Node centerNode = promptChoice();
+    double maxWidthChoice = (width() * 6 / 10);
+    double maxHeightChoice = (height() * 3 / 4);
+    Node centerNode = promptChoice(maxWidthChoice, maxHeightChoice);
     myPrompt.setCenter(centerNode);
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -111,12 +113,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  /**
-   * To override if there is a need to do something when prompt opens.
-   */
-  protected void promptOpens(){}
-
-  // Helper
+  // Helpers
   private void initiatePane(Pane myPrompt) {
     myPrompt.setTranslateX(atTopLeftX);
     myPrompt.setTranslateY(atTopLeftY);
@@ -126,8 +123,29 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     myPrompt.setMaxHeight(atHeight);
   }
 
+  /**
+   * Builds a Node which will be the center of the prompt, preferably of width 6/10 atWidth
+   * and height 3/4 atHeight.
+   *
+   * @return a Node in which the choice will happen.
+   */
+  protected Node promptChoice(double choiceWidth, double choiceHeight) {
+    // initialize and set up bonuses layout
+    HBox choicesLayout = new HBox();                  //Token Types : Center
+    choicesLayout.setAlignment(Pos.CENTER);
+    choicesLayout.setPrefSize(choiceWidth, choiceHeight);
+    choicesLayout.setMaxWidth(choiceWidth);
+    addToLayout(choicesLayout);
+    return choicesLayout;
+  }
+
   // ^^^^^^^^^^^^^    BASIC SETUP   ^^^^^^^^^^^^^^^
   // VVVVVVVVVVVVV ABSTRACT METHODS VVVVVVVVVVVVVVV
+
+  /**
+   * To override if there is a need to do something when prompt opens.
+   */
+  protected void promptOpens(){}
 
   /**
    * Gets the Prompt Text.
@@ -162,10 +180,11 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   protected abstract void handleConfirmation();
 
   /**
-   * Builds a Node which will be the center of the prompt, preferably of width 6/10 atWidth
-   * and height 3/4 atHeight.
+   * Modifies choicesLayout to contain the desired choices and their behaviour, is also
+   * responsible for the spacing between the choices.
    *
-   * @return a Node in which the choice will happen.
+   * @param choicesLayout The layout Node, an HBox
    */
-  protected abstract Node promptChoice();
+  protected abstract void addToLayout(HBox choicesLayout);
+
 }

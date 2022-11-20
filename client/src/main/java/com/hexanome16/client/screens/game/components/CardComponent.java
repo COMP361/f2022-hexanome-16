@@ -8,8 +8,8 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.Level;
-import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.scene.input.MouseEvent;
 
 /**

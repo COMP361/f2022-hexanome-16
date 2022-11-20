@@ -5,7 +5,6 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusTy
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePromptAbstract;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -15,8 +14,8 @@ import javafx.scene.shape.Circle;
 /**
  * Abstract class representing the basics of token Acquiring, used for code reuse.
  */
-public abstract class TokenAcquiringAbstract extends ChoicePromptAbstract {
-
+public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
+  protected BonusType chosenBonus;
   double atTokenRadius = width() / 20;
   ArrayList<BonusType> atAvailableBonuses = new ArrayList<>();
   ArrayList<Node> atMyNodes = new ArrayList<>();
@@ -27,25 +26,15 @@ public abstract class TokenAcquiringAbstract extends ChoicePromptAbstract {
   }
 
 
-
-
   @Override
-  protected Node promptChoice() {
-    // initialize and set up bonuses layout
-    HBox bonuses = new HBox();                  //Token Types : Center
-    bonuses.setAlignment(Pos.CENTER);
-    bonuses.setSpacing(atTokenRadius / 4);
-    bonuses.setPrefSize((width() * 6 / 10), (height() * 3 / 4));
-    bonuses.setMaxWidth((width() * 6 / 10));
-
+  protected void addToLayout(HBox paLayout) {
+    paLayout.setSpacing(atTokenRadius / 4.);
     // add choices to the layout
     for (BonusType t : atAvailableBonuses) {
       ArrayList<Node> bonusNodesList = makeBonusType(t);
       Node bonusType = addToBonusType(bonusNodesList, t);
-      bonuses.getChildren().add(bonusType);
+      paLayout.getChildren().add(bonusType);
     }
-
-    return bonuses;
   }
 
   private ArrayList<Node> makeBonusType(BonusType bonusType) {
@@ -84,7 +73,32 @@ public abstract class TokenAcquiringAbstract extends ChoicePromptAbstract {
    *                  the actual bonusCircle.
    * @return a Modified version of the first element from the input
    */
-  protected abstract Node addToBonusType(ArrayList<Node> bonusNode, BonusType bonusType);
+  protected Node addToBonusType(ArrayList<Node> bonusNode, BonusType bonusType) {
+
+    // gets back what we need to do this operation
+    StackPane wholeButton = (StackPane) bonusNode.get(0);
+    Circle selectionCircle = (Circle) bonusNode.get(1);
+
+    // adds the desired behaviour
+    wholeButton.setOnMouseClicked(e -> {
+      for (Node n : atMyNodes) {
+        n.setOpacity(0.5);
+      }
+      selectionCircle.setOpacity(1);
+      chosenBonus = bonusType;
+      atConfirmCircle.setOpacity(1);
+    });
+
+    // return the node with the added behaviour
+    return wholeButton;
+  }
+
+  @Override
+  protected void handlePromptForceQuit() {
+    atMyNodes = new ArrayList<>();
+    atAvailableBonuses = new ArrayList<>();
+    chosenBonus = null;
+  }
 
   /**
    * Getter function, gets all valid bonuses that can be chosen for the prompt.

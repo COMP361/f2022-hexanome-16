@@ -11,7 +11,7 @@ import javafx.scene.shape.Circle;
 /**
  * Class responsible for populating Acquiring 2 tokens prompt.
  */
-public class TokenAcquiringThree extends TokenAcquiringAbstract {
+public class TokenAcquiringThree extends BonusChoiceAbstract {
 
   ArrayList<BonusType> atAvailableBonuses = new ArrayList<>();
   ArrayList<BonusType> selectedTokenTypes = new ArrayList<>();
