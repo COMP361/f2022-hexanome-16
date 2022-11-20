@@ -1,4 +1,4 @@
-package com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -8,8 +8,9 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.event.Event;
@@ -36,7 +37,7 @@ import javafx.scene.text.TextAlignment;
 // Note that This class doesnt really check if price makes sense, hardcoded adding 2 Virtual bonus to turn
 // on Buy button :)
 
-public class BuyCard implements PromptTypeInterface {
+public class BuyCardPrompt implements PromptTypeInterface {
 
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
@@ -45,7 +46,7 @@ public class BuyCard implements PromptTypeInterface {
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
 
-  public BuyCard() {
+  public BuyCardPrompt() {
   }
 
   @Override
@@ -167,7 +168,7 @@ public class BuyCard implements PromptTypeInterface {
         FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
       }
     }
-    FXGL.getEventBus().fireEvent(new CustomEvent(CustomEvent.BOUGHT, entity));
+    FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, entity));
   }
 
   @Override

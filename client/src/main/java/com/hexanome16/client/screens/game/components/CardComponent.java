@@ -8,8 +8,8 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.Level;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes.CustomEvent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.OpenPromt;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -63,12 +63,12 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-    FXGL.getEventBus().addEventHandler(CustomEvent.BOUGHT, e -> {
-      if (e.e == entity) {
+    FXGL.getEventBus().addEventHandler(SplendorEvents.BOUGHT, e -> {
+      if (e.eventEntity == entity) {
         buyCard();
       }
     });
-    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPromt.openPrompt(entity));
+    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     adding = true;
