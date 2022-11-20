@@ -25,7 +25,7 @@ import javafx.scene.text.TextAlignment;
  * Classes that extend this class need to assign values to
  * atPromptText and atPromptTextFontSize.
  */
-public abstract class ChoicePrompt implements PromptTypeInterface {
+public abstract class ChoicePromptAbstract implements PromptTypeInterface {
 
   protected final double atWidth = getAppWidth() / 2.;
   protected final double atHeight = getAppHeight() / 2.;
@@ -49,6 +49,7 @@ public abstract class ChoicePrompt implements PromptTypeInterface {
   @Override
   public void populatePrompt(Entity entity) {
 
+    promptOpens();
     // This is just to reinitialize myChoices when the prompt is closed
     // (These objects are unique, and so they don't get destroyed when the prompt closes)
     FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
@@ -109,6 +110,11 @@ public abstract class ChoicePrompt implements PromptTypeInterface {
     //add elements to view
     entity.getViewComponent().addChild(myPrompt);
   }
+
+  /**
+   * To override if there is a need to do something when prompt opens.
+   */
+  protected void promptOpens(){}
 
   // Helper
   private void initiatePane(Pane myPrompt) {

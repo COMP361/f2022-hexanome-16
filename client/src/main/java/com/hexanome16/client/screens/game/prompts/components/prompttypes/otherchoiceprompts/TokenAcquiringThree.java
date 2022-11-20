@@ -1,95 +1,88 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePrompt;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 /**
  * Class responsible for populating Acquiring 2 tokens prompt.
  */
-public class TokenAcquiringThree extends ChoicePrompt {
+public class TokenAcquiringThree extends TokenAcquiringAbstract {
 
-  double atTokenRadius = width() / 20;
+  ArrayList<BonusType> atAvailableBonuses = new ArrayList<>();
+  ArrayList<BonusType> selectedTokenTypes = new ArrayList<>();
   ArrayList<Node> myNodes = new ArrayList<>();
-  double SelectedTokenTypes = 0;
+
+  // to modify
+  @Override
+  protected ArrayList<BonusType> getAvailableBonuses() {
+    // for now this is forcing the list to have all types
+    return new ArrayList<>(List.of(BonusType.values()));
+  }
 
   @Override
   protected String promptText() {
-    return null;
+    return "Choose 3 Token Types";
   }
 
   @Override
   protected double promptTextSize() {
-    return 0;
+    return height() / 6;
   }
 
   @Override
   protected void handlePromptForceQuit() {
-
+    // resets the field that should be empty.
+    myNodes = new ArrayList<>();
+    selectedTokenTypes = new ArrayList<>();
+    atAvailableBonuses = new ArrayList<>();
   }
 
   @Override
   protected boolean canConfirm() {
-    return false;
+    return atConfirmCircle.getOpacity() == 1. && selectedTokenTypes.size() == 3;
   }
 
   @Override
   protected void handleConfirmation() {
-
+    // this is where you handle what to do with their choice, refer to selectedTokenTypes
+    PromptComponent.closePrompts();
   }
+
 
   @Override
-  protected Node promptChoice() {
-    return null;
+  protected Node addToBonusType(ArrayList<Node> bonusNode, BonusType bonusType) {
+    // gets back what we need to do this operation
+    StackPane wholeButton = (StackPane) bonusNode.get(0);
+    Circle selectionCircle = (Circle) bonusNode.get(1);
+
+    // adds the desired behaviour
+    wholeButton.setOnMouseClicked(e -> {
+      if (selectionCircle.getOpacity() == 1) {
+
+        selectionCircle.setOpacity(0.5);
+        selectedTokenTypes.remove(bonusType);
+
+      } else if (selectedTokenTypes.size() < 3) {
+
+        selectionCircle.setOpacity(1);
+        selectedTokenTypes.add(bonusType);
+
+      }
+      if (selectedTokenTypes.size() == 3) {
+        atConfirmCircle.setOpacity(1);
+      }
+      if (selectedTokenTypes.size() < 3) {
+        atConfirmCircle.setOpacity(0.5);
+      }
+    });
+
+    // return the node with the added behaviour
+    return wholeButton;
   }
 
-  private Node makeBonusType(BonusType pBonusType) {
-    StackPane myBonus = new StackPane();
-    Circle Bonus = new Circle(atTokenRadius, pBonusType.getColor());
-    Bonus.setStrokeWidth(aHeight / 100);
-    Bonus.setStroke(pBonusType.getStrokeColor());
-    Circle SelectionRectangle = new Circle(atTokenRadius * 1.4, Color.WHITE);
-    SelectionRectangle.setOpacity(0.5);
-    myNodes.add(SelectionRectangle);
-
-
-    myBonus.getChildren().addAll(SelectionRectangle, Bonus);
-
-    myBonus.setOnMouseEntered(e -> {
-      if (SelectionRectangle.getOpacity() != 1) {
-        SelectionRectangle.setOpacity(0.7);
-      }
-    });
-
-    myBonus.setOnMouseExited(e -> {
-      if (SelectionRectangle.getOpacity() != 1) {
-        SelectionRectangle.setOpacity(0.5);
-      }
-    });
-
-    myBonus.setOnMouseClicked(e -> {
-      if (SelectionRectangle.getOpacity() == 1) {
-        SelectionRectangle.setOpacity(0.5);
-        SelectedTokenTypes--;
-      } else if (SelectedTokenTypes < 3 &&
-          (SelectionRectangle.getOpacity() == 0.7 || SelectionRectangle.getOpacity() == 0.5)) {
-        SelectionRectangle.setOpacity(1);
-        SelectedTokenTypes++;
-      }
-      if (SelectedTokenTypes == 3) {
-        confirmationButton.setOpacity(1);
-      }
-      if (SelectedTokenTypes < 3) {
-        confirmationButton.setOpacity(0.5);
-      }
-    });
-
-    pBonuses.getChildren().add(myBonus);
-  }
 }
