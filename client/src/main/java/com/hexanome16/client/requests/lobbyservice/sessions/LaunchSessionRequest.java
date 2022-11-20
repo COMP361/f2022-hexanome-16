@@ -23,9 +23,7 @@ public class LaunchSessionRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/api/sessions/" + sessionId,
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + accessToken
           )).POST(HttpRequest.BodyPublishers.noBody())
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();

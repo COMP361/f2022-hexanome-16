@@ -26,9 +26,7 @@ public class GetUserRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/api/users/" + user,
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + accessToken
           )).header("Content-Type", "application/json")
           .header("Accept", "application/json")
           .GET()

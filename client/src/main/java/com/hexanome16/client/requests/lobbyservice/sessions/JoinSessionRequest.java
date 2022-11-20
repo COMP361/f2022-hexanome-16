@@ -24,9 +24,7 @@ public class JoinSessionRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/api/sessions/" + sessionId + "/players/" + player,
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + accessToken
           )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();

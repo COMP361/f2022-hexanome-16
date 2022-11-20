@@ -23,9 +23,7 @@ public class CreateGameServiceRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createUri(
               "/api/gameservices/Splendor",
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + accessToken
           )).header("Content-Type", "application/json")
           .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload())))
           .build();
