@@ -17,7 +17,7 @@ public class StartupScreen {
     getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.LOGIN));
     getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.STARTUP));
     // TODO: Vbox all components of the startup screens
-    spawn("mainscreen", 0, 0);
+    spawn("mainScreen", 0, 0);
     spawn("diamond", 730, 360);
     spawn("message", 370, 985);
   }

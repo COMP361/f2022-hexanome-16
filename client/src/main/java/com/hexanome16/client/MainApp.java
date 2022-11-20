@@ -33,7 +33,7 @@ public class MainApp extends GameApplication {
     gameSettings.setVersion(APP_VERSION);
   }
 
-  // To Spawn Prompt, OpenPromt.openPrompt(PromptTypeInterface.PromptType.<AN_ENUM_ELEMENT_FROM_PROMPT_TYPE_INTERFACE>);
+  // To Spawn Prompt, OpenPrompt.openPrompt(PromptTypeInterface.PromptType.<AN_ENUM_ELEMENT_FROM_PROMPT_TYPE_INTERFACE>);
   // see all possible prompt types in the PromptTypeInterface, inside the inner enum in src/main/java/com/hexanome16/screens/game/prompts/actualyUI/Components/PromptTypes
   // Or look for PromptTypeInterface
   @Override

@@ -28,7 +28,7 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the image of the full startup screen.
    */
-  @Spawns("mainscreen")
+  @Spawns("mainScreen")
   public Entity mainScreen(SpawnData data) {
     var mainScreen = FXGL.texture("splendor_main_screen.jpg");
     return FXGL.entityBuilder(data)
