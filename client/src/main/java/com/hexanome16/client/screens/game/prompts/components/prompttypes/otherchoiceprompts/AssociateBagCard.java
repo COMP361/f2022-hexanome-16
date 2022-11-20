@@ -13,7 +13,7 @@ public class AssociateBagCard extends BonusChoiceAbstract {
 
   @Override
   protected String promptText() {
-    return "Add bag to : ";
+    return "Choose bag content";
   }
 
   @Override
