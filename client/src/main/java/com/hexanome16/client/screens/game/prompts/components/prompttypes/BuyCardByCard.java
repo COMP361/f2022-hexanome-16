@@ -1,4 +1,4 @@
-package com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -6,8 +6,9 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -55,7 +56,7 @@ public class BuyCardByCard implements PromptTypeInterface {
   public void populatePrompt(Entity entity) {
 
 
-    FXGL.getEventBus().addEventHandler(CustomEvent.CLOSING, e -> {
+    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
       CardsChosen = 0;
     });
     //initializing Hbox
@@ -240,8 +241,8 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties().
-          getInt(BuyCard.BankType.GAME_BANK + "/" +
-              BuyCard.CurrencyType.BONUS_GOLD_CARDS) >=
+          getInt(BuyCardPrompt.BankType.GAME_BANK + "/" +
+              BuyCardPrompt.CurrencyType.BONUS_GOLD_CARDS) >=
           2) {
         buy.setOpacity(1);
       } else {

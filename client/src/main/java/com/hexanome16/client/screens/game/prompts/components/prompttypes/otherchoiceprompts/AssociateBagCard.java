@@ -1,13 +1,15 @@
-package com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -16,19 +18,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class TokenAcquiringTwo implements PromptTypeInterface {
+public class AssociateBagCard implements PromptTypeInterface {
   double aWidth = getAppWidth() / 2;
   double aHeight = getAppHeight() / 2;
-  double aTokenRadius = aWidth / 20;
+  double aBonusWidth = aWidth / 8;
+  double aBonusHeight = aBonusWidth * 1.39;
   double topleftX = (getAppWidth() / 2) - (aWidth / 2);
   double topleftY = (getAppHeight() / 2) - (aHeight / 2);
   ArrayList<Node> myNodes = new ArrayList<>();
-
 
   @Override
   public double width() {
@@ -59,7 +63,7 @@ public class TokenAcquiringTwo implements PromptTypeInterface {
 
     // prompt message//
     HBox myhBox = new HBox();
-    promptMessage.setText("Choose A Token Type");
+    promptMessage.setText("Choose A Bonus Type");
     promptMessage.setFont(RobotoBoldPrompt);
     promptMessage.setTextAlignment(TextAlignment.CENTER);
     promptMessage.setWrappingWidth(aWidth);
@@ -98,8 +102,11 @@ public class TokenAcquiringTwo implements PromptTypeInterface {
 
     // Bonuses /////////////////////////////////////////////////////////////////////////////////////
     bonuses.setAlignment(Pos.CENTER);
-    bonuses.setSpacing(aTokenRadius / 4);
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.BLACK);
+    bonuses.setSpacing(aBonusWidth / 4);
+    addBonusType(bonuses, confirmationButton, BonusType.RED);
+    addBonusType(bonuses, confirmationButton, BonusType.GREEN);
+    addBonusType(bonuses, confirmationButton, BonusType.WHITE);
+    addBonusType(bonuses, confirmationButton, BonusType.BLACK);
 
 
     myPrompt.setCenter(bonuses);
@@ -108,13 +115,13 @@ public class TokenAcquiringTwo implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void addBonusType(HBox pBonuses, Circle confirmationButton,
-                            AssociateBagCard.BonusType pBonusType) {
+  private void addBonusType(HBox pBonuses, Circle confirmationButton, BonusType pBonusType) {
     StackPane myBonus = new StackPane();
-    Circle Bonus = new Circle(aTokenRadius, pBonusType.getColor());
+    Rectangle Bonus = new Rectangle(aBonusWidth, aBonusHeight, pBonusType.getColor());
     Bonus.setStrokeWidth(aHeight / 100);
     Bonus.setStroke(pBonusType.getStrokeColor());
-    Circle SelectionRectangle = new Circle(aTokenRadius * 1.4, Color.WHITE);
+    Rectangle SelectionRectangle =
+        new Rectangle(aBonusWidth * 1.2, aBonusHeight * 1.2, Color.WHITE);
     SelectionRectangle.setOpacity(0.5);
     myNodes.add(SelectionRectangle);
 
@@ -152,4 +159,6 @@ public class TokenAcquiringTwo implements PromptTypeInterface {
     myPrompt.setPrefHeight(aHeight);
     myPrompt.setMaxHeight(aHeight);
   }
+
+
 }

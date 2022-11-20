@@ -1,4 +1,4 @@
-package com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -6,8 +6,10 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import java.util.ArrayList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -81,7 +83,7 @@ public class TokenAcquiringThree implements PromptTypeInterface {
     confirm.setFont(RobotoBoldConfirm);
     StackPane button = new StackPane(confirmationButton, confirm);
 
-    getEventBus().addEventHandler(CustomEvent.CLOSING, e -> {
+    getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
       SelectedTokenTypes = 0;
       myNodes = new ArrayList<>();
     });
@@ -110,11 +112,11 @@ public class TokenAcquiringThree implements PromptTypeInterface {
     bonuses.setAlignment(Pos.CENTER);
     bonuses.setSpacing(aTokenRadius / 4);
 
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.RED);
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.GREEN);
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.WHITE);
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.BLACK);
-    addBonusType(bonuses, confirmationButton, AssociateBagCard.BonusType.BLUE);
+    addBonusType(bonuses, confirmationButton, BonusType.RED);
+    addBonusType(bonuses, confirmationButton, BonusType.GREEN);
+    addBonusType(bonuses, confirmationButton, BonusType.WHITE);
+    addBonusType(bonuses, confirmationButton, BonusType.BLACK);
+    addBonusType(bonuses, confirmationButton, BonusType.BLUE);
 
 
     myPrompt.setCenter(bonuses);
@@ -124,7 +126,7 @@ public class TokenAcquiringThree implements PromptTypeInterface {
   }
 
   private void addBonusType(HBox pBonuses, Circle confirmationButton,
-                            AssociateBagCard.BonusType pBonusType) {
+                            BonusType pBonusType) {
     StackPane myBonus = new StackPane();
     Circle Bonus = new Circle(aTokenRadius, pBonusType.getColor());
     Bonus.setStrokeWidth(aHeight / 100);

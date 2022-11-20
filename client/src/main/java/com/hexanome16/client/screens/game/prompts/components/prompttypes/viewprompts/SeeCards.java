@@ -1,4 +1,4 @@
-package com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypes;
+package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -6,7 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;

@@ -12,12 +12,15 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.GameFactory;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.players.DeckFactory;
-import com.hexanome16.client.screens.game.prompts.actualyUI.PromptPartFactory;
+import com.hexanome16.client.screens.game.prompts.PromptFactory;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
 import com.hexanome16.client.screens.startup.LoginScreen;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import java.util.Map;
 
+/**
+ * FXGL Game Application, Game's entry point.
+ */
 public class MainApp extends GameApplication {
   public static void main(String[] args) {
     launch(args);
@@ -31,13 +34,10 @@ public class MainApp extends GameApplication {
     gameSettings.setVersion(APP_VERSION);
   }
 
-  // To Spawn Prompt, OpenPromt.openPrompt(PromptTypeInterface.PromptType.<AN_ENUM_ELEMENT_FROM_PROMPT_TYPE_INTERFACE>);
-  // see all possible prompt types in the PromptTypeInterface, inside the inner enum in src/main/java/com/hexanome16/screens/game/prompts/actualyUI/Components/PromptTypes
-  // Or look for PromptTypeInterface
   @Override
   protected void initGame() {
     FXGL.getGameWorld().addEntityFactory(new GameFactory());
-    FXGL.getGameWorld().addEntityFactory(new PromptPartFactory());
+    FXGL.getGameWorld().addEntityFactory(new PromptFactory());
     FXGL.getGameWorld().addEntityFactory(new DeckFactory());
     getGameWorld().addEntityFactory(new StartupScreen());
     getGameWorld().addEntityFactory(new LoginScreen());
