@@ -11,6 +11,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -25,6 +26,9 @@ import javafx.scene.text.Text;
  * startup screen and the login screen.
  */
 public class StartupScreenFactory implements EntityFactory {
+  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+      .loadFont("BrushScriptMT.ttf");
+
   /**
    * Returns the image of the full startup screen.
    */
@@ -195,7 +199,7 @@ public class StartupScreenFactory implements EntityFactory {
 
   private Text createMessage(String text, double size, String color) {
     Text message = new Text(text);
-    message.setFont(Font.font("Brush Script MT", FontWeight.BOLD, size));
+    message.setFont(CURSIVE_FONT_FACTORY.newFont(size));
     message.setFill(Paint.valueOf(color));
     message.setStrokeWidth(2.);
     message.setStroke(Paint.valueOf("#936D35"));
@@ -208,7 +212,7 @@ public class StartupScreenFactory implements EntityFactory {
     button.setOnMouseClicked(e -> {
       MainMenuScreen.initUi();
     });
-    button.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 30));
+    button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);
     button.setStyle("-fx-background-color: #603232;"
             + "-fx-background-radius: 25px;"
