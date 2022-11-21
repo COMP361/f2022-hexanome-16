@@ -2,7 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.oauth;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import java.net.URI;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -19,12 +19,15 @@ public class RoleRequest {
    * @return The role of the user (ROLE_ADMIN, ROLE_PLAYER, ROLE_SERVICE).
    */
   public static String execute(String accessToken) {
-    String url = "http://localhost:4242/oauth/role?access_token=" + accessToken;
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .GET()
+          .uri(UrlUtils.createUri(
+              "/oauth/role",
+              "access_token=" + accessToken,
+              null,
+              true
+          )).GET()
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);

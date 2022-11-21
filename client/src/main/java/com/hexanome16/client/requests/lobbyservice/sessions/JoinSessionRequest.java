@@ -1,7 +1,7 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
-import java.net.URI;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -14,17 +14,20 @@ public class JoinSessionRequest {
   /**
    * Sends a request to join a session in Lobby Service.
    *
-   * @param sessionId The id of the session to join.
-   * @param player The user to add to the session.
+   * @param sessionId   The id of the session to join.
+   * @param player      The user to add to the session.
    * @param accessToken The access token of the user.
    */
   public static void execute(long sessionId, String player, String accessToken) {
     HttpClient client = RequestClient.getClient();
     try {
-      String url = "http://127.0.0.1:4242/api/sessions/" + sessionId + "/players/" + player + "?access_token=" + accessToken;
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .PUT(HttpRequest.BodyPublishers.noBody())
+          .uri(UrlUtils.createUri(
+              "/api/sessions/" + sessionId + "/players/" + player,
+              "access_token=" + accessToken,
+              null,
+              true
+          )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();
     } catch (ExecutionException | InterruptedException e) {
