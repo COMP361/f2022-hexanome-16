@@ -9,7 +9,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class provides methods to list sessions in Lobby Service.
@@ -27,27 +30,37 @@ public class ListSessionsRequest {
    */
   public static Session[] execute(int hash) {
     HttpClient client = RequestClient.getClient();
-    try {
-      URI uri = UrlUtils.createLobbyServiceUri(
-          "/api/sessions",
-          hash != 0 ? "hash=" + hash : null
-      );
-      System.out.println(uri);
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(uri).header("Content-Type", "application/json")
-          .GET()
-          .build();
-      String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::body).get();
-      Map<String, Session> sessions = new Gson().fromJson(response, Response.class).sessions;
-      return sessions.entrySet().stream().map(entry -> {
-        entry.getValue().setId(Long.valueOf(entry.getKey()));
-        return entry.getValue();
-      }).toArray(Session[]::new);
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-      return null;
+    URI uri = UrlUtils.createLobbyServiceUri(
+        "/api/sessions",
+        hash != 0 ? "hash=" + hash : null
+    );
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(uri).header("Content-Type", "application/json")
+        .GET()
+        .build();
+    String response = null;
+    AtomicInteger returnCode = new AtomicInteger(408);
+    while (returnCode.get() == 408) {
+      try {
+        Thread.sleep(10);
+        CompletableFuture<HttpResponse<String>> res =
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        response = res.thenApply(HttpResponse::statusCode)
+            .thenCombine(res.thenApply(HttpResponse::body), (statusCode, body) -> {
+              if (statusCode == 200) {
+                returnCode.set(200);
+              }
+              return body;
+            }).get();
+      } catch (InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+      }
     }
+    Map<String, Session> sessions = new Gson().fromJson(response, Response.class).sessions;
+    return sessions.entrySet().stream().map(entry -> {
+      entry.getValue().setId(Long.valueOf(entry.getKey()));
+      return entry.getValue();
+    }).toArray(Session[]::new);
   }
 
   private static class Response {
