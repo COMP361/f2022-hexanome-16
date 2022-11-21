@@ -2,7 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.gameservice;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import java.net.URI;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -18,12 +18,15 @@ public class CreateGameServiceRequest {
    * @param accessToken The access token of the user (needs Service role).
    */
   public static void execute(String accessToken) {
-    String url = "http://localhost:4242/api/gameservices/Splendor?access_token=" + accessToken;
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .header("Content-Type", "application/json")
+          .uri(UrlUtils.createUri(
+              "/api/gameservices/Splendor",
+              "access_token=" + accessToken,
+              null,
+              true
+          )).header("Content-Type", "application/json")
           .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload())))
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -59,12 +62,12 @@ public class CreateGameServiceRequest {
     /**
      * Creates the payload with the given params.
      *
-     * @param location The location of the game service.
-     * @param name The name of the game service.
+     * @param location          The location of the game service.
+     * @param name              The name of the game service.
      * @param maxSessionPlayers The maximum number of players in a session.
      * @param minSessionPlayers The minimum number of players in a session.
-     * @param displayName The display name of the game service.
-     * @param webSupport Whether the game service supports web.
+     * @param displayName       The display name of the game service.
+     * @param webSupport        Whether the game service supports web.
      */
     public Payload(String location, String name, Integer maxSessionPlayers,
                    Integer minSessionPlayers, String displayName, String webSupport) {
