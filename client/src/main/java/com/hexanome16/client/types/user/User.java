@@ -8,22 +8,22 @@ import java.util.Objects;
 public final class User {
   private final String name;
   private final String password;
-  private final String preferredColour;
   private final String role;
+  private String preferredColour;
 
   /**
    * Constructor.
    *
-   * @param name The name of the user.
-   * @param password The password of the user.
+   * @param name            The name of the user.
+   * @param password        The password of the user.
    * @param preferredColour The preferred colour of the user.
-   * @param role The role of the user.
-  */
-  public User(String name, String password, String preferredColour, String role) {
+   * @param role            The role of the user.
+   */
+  public User(String name, String password, String role, String preferredColour) {
     this.name = name;
     this.password = password;
-    this.preferredColour = preferredColour;
     this.role = role;
+    this.preferredColour = preferredColour;
   }
 
   @Override
@@ -35,20 +35,24 @@ public final class User {
         + ", role='" + role + '\'' + '}';
   }
 
-  public String name() {
+  public String getName() {
     return name;
   }
 
-  public String password() {
+  public String getPassword() {
     return password;
   }
 
-  public String preferredColour() {
+  public String getRole() {
+    return role;
+  }
+
+  public String getPreferredColour() {
     return preferredColour;
   }
 
-  public String role() {
-    return role;
+  public void setPreferredColour(String preferredColour) {
+    this.preferredColour = preferredColour;
   }
 
   @Override

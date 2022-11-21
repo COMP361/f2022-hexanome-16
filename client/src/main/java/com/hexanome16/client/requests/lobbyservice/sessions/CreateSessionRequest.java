@@ -14,6 +14,10 @@ import java.util.concurrent.TimeoutException;
  * This class provides methods to create a session in Lobby Service.
  */
 public class CreateSessionRequest {
+  private CreateSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to create a session in Lobby Service.
    *
@@ -30,7 +34,7 @@ public class CreateSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions",
               "access_token=" + accessToken
           )).header("Content-Type", "application/json")

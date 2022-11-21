@@ -6,15 +6,18 @@ import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.TimerAction;
 import com.hexanome16.client.requests.lobbyservice.gameservice.CreateGameServiceRequest;
-import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
-import com.hexanome16.client.types.auth.TokensInfo;
+import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import javafx.util.Duration;
 
 /**
  * This class controls the entities of the lobby screen.
  */
 public class LobbyScreen {
+  private static TimerAction timerAction;
+
   /**
    * Spawns all related elements onto the lobby screen.
    */
@@ -29,11 +32,10 @@ public class LobbyScreen {
     spawn("ownHeader");
     spawn("otherHeader");
     runOnce(() -> {
-      TokensInfo tokensInfo = TokenRequest.execute("xox", "laaPhie*aiN0", null);
-      assert tokensInfo != null;
-      CreateGameServiceRequest.execute(tokensInfo.accessToken());
+      AuthRequest.execute("xox", "laaPhie*aiN0");
+      CreateGameServiceRequest.execute(AuthUtils.getAuth().getAccessToken());
     }, Duration.ZERO);
-    run(LobbyFactory::updateSessionList, Duration.seconds(1));
+    timerAction = run(LobbyFactory::updateSessionList, Duration.seconds(1));
   }
 
   /**
@@ -55,5 +57,6 @@ public class LobbyScreen {
     getGameWorld().getEntitiesByType(LobbyFactory.Type.OWN_HEADER).forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(LobbyFactory.Type.OTHER_HEADER)
         .forEach(Entity::removeFromWorld);
+    timerAction.expire();
   }
 }

@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit;
  * This class provides methods to get the role of the user.
  */
 public class RoleRequest {
+  private RoleRequest() {
+    super();
+  }
+
   /**
    * Sends a request to get the role of the user.
    *
@@ -22,7 +26,7 @@ public class RoleRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/oauth/role",
               "access_token=" + accessToken
           )).GET()
@@ -34,10 +38,6 @@ public class RoleRequest {
       e.printStackTrace();
       return null;
     }
-  }
-
-  public static void main(String[] args) {
-    System.out.println(RoleRequest.execute("CtOq1Zt62iOclaikOcXU7zdfuV8="));
   }
 
   private static class Response {

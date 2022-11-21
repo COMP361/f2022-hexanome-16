@@ -16,12 +16,12 @@ public final class GameParams {
   /**
    * Constructor.
    *
-   * @param location The location of the game service.
+   * @param location          The location of the game service.
    * @param maxSessionPlayers The maximum number of players in a session.
    * @param minSessionPlayers The minimum number of players in a session.
-   * @param name The name of the game service in Lobby Service.
-   * @param displayName The display name of the game service in Lobby Service.
-   * @param webSupport Whether the game service supports web.
+   * @param name              The name of the game service in Lobby Service.
+   * @param displayName       The display name of the game service in Lobby Service.
+   * @param webSupport        Whether the game service supports web.
    */
   public GameParams(String location, int maxSessionPlayers, int minSessionPlayers, String name,
                     String displayName,
@@ -54,39 +54,41 @@ public final class GameParams {
       return false;
     }
     GameParams that = (GameParams) o;
-    return maxSessionPlayers() == that.maxSessionPlayers()
-        && minSessionPlayers() == that.minSessionPlayers()
-        && location().equals(that.location())
-        && name().equals(that.name())
-        && webSupport().equals(that.webSupport());
+    return getMaxSessionPlayers() == that.getMaxSessionPlayers()
+        && getMinSessionPlayers() == that.getMinSessionPlayers()
+        && getLocation().equals(that.getLocation())
+        && getName().equals(that.getName())
+        && getDisplayName().equals(that.getDisplayName())
+        && getWebSupport().equals(that.getWebSupport());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(location(), maxSessionPlayers(), minSessionPlayers(), name(), webSupport());
+    return Objects.hash(getLocation(), getMaxSessionPlayers(), getMinSessionPlayers(), getName(),
+        getDisplayName(), getWebSupport());
   }
 
-  public String location() {
+  public String getLocation() {
     return location;
   }
 
-  public int maxSessionPlayers() {
+  public int getMaxSessionPlayers() {
     return maxSessionPlayers;
   }
 
-  public int minSessionPlayers() {
+  public int getMinSessionPlayers() {
     return minSessionPlayers;
   }
 
-  public String name() {
+  public String getName() {
     return name;
   }
 
-  public String displayName() {
+  public String getDisplayName() {
     return displayName;
   }
 
-  public String webSupport() {
+  public String getWebSupport() {
     return webSupport;
   }
 

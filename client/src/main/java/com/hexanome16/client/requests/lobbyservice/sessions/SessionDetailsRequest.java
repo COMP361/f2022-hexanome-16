@@ -13,6 +13,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to get details about a session in Lobby Service.
  */
 public class SessionDetailsRequest {
+  private SessionDetailsRequest() {
+    super();
+  }
+
   /**
    * Sends a request to get details about a session in Lobby Service.
    *
@@ -24,9 +28,9 @@ public class SessionDetailsRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions" + sessionId,
-              hash > 0 ? "hash=" + hash : null
+              hash != 0 ? "hash=" + hash : null
           )).header("Content-Type", "application/json")
           .GET()
           .build();

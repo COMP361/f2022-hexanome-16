@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.UrlUtils;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -14,6 +15,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to list sessions in Lobby Service.
  */
 public class ListSessionsRequest {
+  private ListSessionsRequest() {
+    super();
+  }
+
   /**
    * Sends a request to list sessions in Lobby Service.
    *
@@ -23,11 +28,13 @@ public class ListSessionsRequest {
   public static Session[] execute(int hash) {
     HttpClient client = RequestClient.getClient();
     try {
+      URI uri = UrlUtils.createLobbyServiceUri(
+          "/api/sessions",
+          hash != 0 ? "hash=" + hash : null
+      );
+      System.out.println(uri);
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
-              "/api/sessions",
-              hash > 0 ? "hash=" + hash : null
-          )).header("Content-Type", "application/json")
+          .uri(uri).header("Content-Type", "application/json")
           .GET()
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

@@ -11,6 +11,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to leave a session in Lobby Service.
  */
 public class LeaveSessionRequest {
+  private LeaveSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to leave a session in Lobby Service.
    *
@@ -22,7 +26,7 @@ public class LeaveSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId + "/players/" + player,
               "access_token=" + accessToken
           )).DELETE()
