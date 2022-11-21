@@ -9,10 +9,11 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.actualyUI.OpenPromt;
+import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -20,7 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
@@ -33,6 +33,9 @@ public class GameFactory implements EntityFactory {
   private final String levelOne = "level_one";
   private final String levelTwo = "level_two";
   private final String levelThree = "level_three";
+
+  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+          .loadFont("BrushScriptMT.ttf");
 
   /**
    * Adds a level-one card from the level-one deck to the game board.
@@ -95,7 +98,7 @@ public class GameFactory implements EntityFactory {
         .view("sacrificecard.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS);
         })
         .build();
   }
@@ -113,7 +116,7 @@ public class GameFactory implements EntityFactory {
         .view("noblereserve.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD);
         })
         .build();
   }
@@ -131,7 +134,7 @@ public class GameFactory implements EntityFactory {
         .view("bagcard.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD);
         })
         .build();
   }
@@ -244,7 +247,7 @@ public class GameFactory implements EntityFactory {
         .at(getAppWidth() - 280, 10)
         .view(mytokens)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
         })
         .build();
   }
@@ -256,7 +259,7 @@ public class GameFactory implements EntityFactory {
     token.setFitWidth(75);
     // multiplicity (text)
     Text number = new Text(Integer.toString(amount));
-    number.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 50));
+    number.setFont(CURSIVE_FONT_FACTORY.newFont(50));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#000000"));
@@ -285,7 +288,7 @@ public class GameFactory implements EntityFactory {
         .at(10, 10)
         .scale(0.1, 0.1)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
         })
         .build();
   }
