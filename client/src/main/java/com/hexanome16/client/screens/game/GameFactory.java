@@ -11,8 +11,8 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.actualyUI.OpenPromt;
+import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -95,7 +95,7 @@ public class GameFactory implements EntityFactory {
         .view("sacrificecard.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS);
         })
         .build();
   }
@@ -113,7 +113,7 @@ public class GameFactory implements EntityFactory {
         .view("noblereserve.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD);
         })
         .build();
   }
@@ -131,7 +131,7 @@ public class GameFactory implements EntityFactory {
         .view("bagcard.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD);
         })
         .build();
   }
@@ -244,7 +244,7 @@ public class GameFactory implements EntityFactory {
         .at(getAppWidth() - 280, 10)
         .view(mytokens)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
         })
         .build();
   }
@@ -285,7 +285,7 @@ public class GameFactory implements EntityFactory {
         .at(10, 10)
         .scale(0.1, 0.1)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
         })
         .build();
   }
