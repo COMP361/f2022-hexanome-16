@@ -1,6 +1,5 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts;
 
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
@@ -8,9 +7,9 @@ import com.hexanome16.client.screens.game.prompts.components.events.SplendorEven
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 
 /**
- * A class responsible for populating Buy bag card prompt.
+ * A class responsible for populating Buy reserved noble card prompt.
  */
-public class BuyingBagCard extends BuyCardPrompt {
+public class BuyReserveNobleCard extends BuyCardPrompt {
 
 
   /**
@@ -24,7 +23,7 @@ public class BuyingBagCard extends BuyCardPrompt {
       return;
     }
 
-    cardImage = FXGL.texture("bagcard.png");
+    cardImage = FXGL.texture("noblereserve.png");
   }
 
   /**
@@ -36,7 +35,7 @@ public class BuyingBagCard extends BuyCardPrompt {
     if (atCardEntity != null) {
       FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, atCardEntity));
     }
-    OpenPrompt.openPrompt(PromptType.ASSOCIATE_BAG_CARD);
+    OpenPrompt.openPrompt(PromptType.CHOOSE_NOBLE_TO_RESERVE);
   }
 
 }

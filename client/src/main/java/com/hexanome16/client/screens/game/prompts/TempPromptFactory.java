@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.hexanome16.client.screens.game.Level;
+import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -13,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.hexanome16.client.screens.game.GameFactory.matCoordsX;
+import static com.hexanome16.client.screens.game.GameFactory.matCoordsY;
 
 public class TempPromptFactory implements EntityFactory {
 
@@ -29,6 +33,9 @@ public class TempPromptFactory implements EntityFactory {
         })
         .build();
   }
+
+
+
 
   @Spawns("ViewHandColor")
   public Entity newViewHandColor(SpawnData data){
@@ -171,6 +178,35 @@ public class TempPromptFactory implements EntityFactory {
   }
 
 
+
+  @Spawns("PeiniCard")
+  public Entity newPeiniCard(SpawnData data){
+    Text myText = new Text("PeiniCard");
+    myText.setFont(Font.font(30));
+    return entityBuilder(data)
+        .view(new StackPane((new Rectangle(300,100,Color.GREY)),(myText)))
+        .at(900,500)
+        .onClick( e -> {
+          FXGL.spawn("PromptBox",new SpawnData().put("entity", FXGL.spawn("someRandomCard")));
+        })
+        .build();
+  }
+
+
+
+  @Spawns("someRandomCard")
+  public Entity someRandomCard(SpawnData data){
+    Text myText = new Text("someRandomCard");
+    myText.setFont(Font.font(30));
+
+    String levelTwo  = "level_two";
+    return FXGL.entityBuilder()
+        .at(matCoordsX + 10, matCoordsY + 360)
+        .view(levelTwo + data.getData().get("cardIndex") + ".png")
+        .scale(0.15, 0.15)
+        .with(new CardComponent(Level.TWO, levelTwo + 1 + ".png"))
+        .build();
+  }
 
 
   @Spawns("Background")

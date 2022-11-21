@@ -5,7 +5,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCard
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReservedNobleCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReserveNobleCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
@@ -148,7 +148,7 @@ public interface PromptTypeInterface {
       myMap.put(BUY_CARDS_BY_CARDS, new BuyCardByCard());
       myMap.put(ASSOCIATE_BAG_CARD, new AssociateBagCard());
       myMap.put(BUY_BAG_CARD, new BuyingBagCard());
-      myMap.put(BUY_RESERVE_NOBLE_CARD, new BuyReservedNobleCard());
+      myMap.put(BUY_RESERVE_NOBLE_CARD, new BuyReserveNobleCard());
       myMap.put(CHOOSE_NOBLE_TO_RESERVE, new ChooseNobleReserve());
       myMap.put(PAUSE, new Pause());
       myMap.put(NULL, nullPromptType);

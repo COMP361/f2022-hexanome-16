@@ -7,11 +7,16 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -30,355 +35,333 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-
-// depends HEAVILY on initVariables in full game add BankType.elements.toString() +"/"+ CurrencyType.elements.toString()
-// in game inititiation to set default PlayerBank to whatever gems they have by default and set
-// default GameBank to 0 on all currencys, this "GameBank" is supposed to be a local field to the trade
-// Note that This class doesnt really check if price makes sense, hardcoded adding 2 Virtual bonus to turn
-// on Buy button :)
-
+/**
+ * A class responsible for populating Buy card prompt.
+ */
 public class BuyCardPrompt implements PromptTypeInterface {
 
-  double aWidth = getAppWidth() / 2;
-  double aHeight = getAppHeight() / 2;
-  double aCardHeight = aHeight * 0.7;
-  double aCardWidth = aCardHeight * 0.72;
-  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
-  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
+  double atWidth = getAppWidth() / 2.;
+  double atHeight = getAppHeight() / 2.;
+  double atCardHeight = atHeight * 0.7;
+  double atCardWidth = atCardHeight * 0.72;
+  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  double atBankBoxesWidth = atWidth / 5;
+  double atButtonAreaWidth = atWidth / 4;
+  double atButtonHeight = atHeight / 8;
+  double atButtonWidth = 3 * atWidth / 14;
+  double atButtonSpacing = atButtonHeight / 2;
+  double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
 
-  public BuyCardPrompt() {
+  // make true if card is reserved
+  protected boolean cardIsReserved;
+  // image
+  protected Texture cardImage;
+  // card
+  protected static Entity atCardEntity;
+
+  /**
+   * An enum of the possible bank types in a card purchase.
+   */
+  public enum BankType {
+    PLAYER_BANK,
+    GAME_BANK;
+
+    /**
+     * Gets the other element of this type.
+     *
+     * @return The BankType object other than this.
+     */
+    public BankType other() {
+      if (this == PLAYER_BANK) {
+        return GAME_BANK;
+      } else {
+        return PLAYER_BANK;
+      }
+    }
+  }
+
+  /**
+   * An enum of the possible currency types in a card purchase.
+   */
+  public enum CurrencyType {
+    RED_TOKENS,
+    GREEN_TOKENS,
+    BLUE_TOKENS,
+    WHITE_TOKENS,
+    BLACK_TOKENS,
+    GOLD_TOKENS,
+    BONUS_GOLD_CARDS;
+    static final Map<CurrencyType, Color> colorType = new HashMap<>();
+
+    static {
+      colorType.put(RED_TOKENS, Color.DARKRED);
+      colorType.put(GREEN_TOKENS, Color.DARKGREEN);
+      colorType.put(BLUE_TOKENS, Color.DARKBLUE);
+      colorType.put(WHITE_TOKENS, Color.WHITE.darker());
+      colorType.put(BLACK_TOKENS, Color.BLACK);
+      colorType.put(GOLD_TOKENS, Color.GOLD.darker());
+      colorType.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
+    }
+
+    /**
+     * Gets the color of the CurrencyType.
+     *
+     * @return the color of the implied argument.
+     */
+    public Paint getColor() {
+      return colorType.get(this);
+    }
+
+    /**
+     * Gets a color that pops over the color of the CurrencyType, for the stroke.
+     *
+     * @return A color that would be suitable for the stroke over a CurrencyType.s
+     */
+    public Paint getStrokeColor() {
+      return this.getTextColor();
+    }
+
+    /**
+     * Gets a color that pops over the color of the CurrencyType, for the Text.
+     *
+     * @return A color that would be suitable for the Text over a currencyType.
+     */
+    public Paint getTextColor() {
+      if (this == BLACK_TOKENS) {
+        return Color.WHITE;
+      }
+      return Color.BLACK;
+    }
+  }
+
+  /**
+   * An enum of the possible button types in a card purchase.
+   */
+  public enum ButtonType {
+    RESERVE, BUY;
+
+    /**
+     * Adds behaviour to the node t, supposed to be a button.
+     *
+     * @param buyCardPrompt Object that allows access to instance method cardBought.
+     * @param t             the Node we want to add button like behaviour to.
+     */
+    public void setBehaviour(BuyCardPrompt buyCardPrompt, Node t) {
+      if (this == RESERVE) {
+        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+          // add behaviour here
+          closeBuyPrompt();
+          cardReservation();
+          e.consume();
+        });
+      } else if (this == BUY) {
+        t.setOpacity(0.5);
+
+        FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
+          if (canBuy()) {
+            t.setOpacity(1);
+          } else {
+            t.setOpacity(0.5);
+          }
+        });
+
+        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+          if (t.getOpacity() == 1) {
+            closeBuyPrompt();
+            buyCardPrompt.cardBought();
+            e.consume();
+          }
+        });
+      }
+    }
+
+
+    private static boolean canBuy() {
+      // hardCoded for now
+      return FXGL.getWorldProperties()
+          .getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS)
+          >= 2;
+    }
   }
 
   @Override
   public double width() {
-    return aWidth;
+    return atWidth;
   }
 
   @Override
   public double height() {
-    return aHeight;
+    return atHeight;
   }
 
+  /**
+   * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
+   *
+   * @param entity Prompt entity.
+   * @param cardEntity card entity.
+   */
   public void populatePrompt(Entity entity, Entity cardEntity) {
-    //initializing Hbox
-    double BankBoxesWidth = aWidth / 5;
-    double buttonAreaWidth = aWidth / 4;
-    double buttonHeight = aHeight / 8;
-    double buttonWidth = 3 * aWidth / 14;
-    double buttonSpacing = buttonHeight / 2;
-
-    double SurplusWidth = (aWidth - 2 * BankBoxesWidth - buttonAreaWidth - aCardWidth) / 3;
-
-    HBox myPrompt = new HBox();
-    initiatePane(myPrompt);
-    myPrompt.setAlignment(Pos.CENTER);
-    myPrompt.setSpacing(SurplusWidth);
-
-    // initiate elements
-    VBox playerBank = new VBox();
-    playerBank.setAlignment(Pos.CENTER);
-    playerBank.setPrefSize(BankBoxesWidth, aHeight / 5);
-    playerBank.setSpacing((2 * aHeight / 10) / 8);
-
-    Texture myCard = FXGL.texture(cardEntity.getComponent(CardComponent.class).texture);
-    myCard.setFitWidth(aCardWidth);
-    myCard.setFitHeight(aCardHeight);
-
-    VBox GameBank = new VBox();
-    GameBank.setAlignment(Pos.CENTER);
-    GameBank.setPrefSize(BankBoxesWidth, aHeight / 5);
-    GameBank.setSpacing((2 * aHeight / 10) / 8);
-
-    VBox ReserveBuy = new VBox();
-    ReserveBuy.setAlignment(Pos.CENTER);
-    ReserveBuy.setPrefSize(buttonAreaWidth, aHeight / 5);
-    ReserveBuy.setSpacing(buttonSpacing);
-//    ReserveBuy.setBackground(new Background(new BackgroundFill(Color.BLACK,null,null)));
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // initiate Player Bank elements
-    initiateBank(playerBank, BankType.PLAYER_BANK);
-
-
-    // initiate Game Bank elements
-    initiateBank(GameBank, BankType.GAME_BANK);
-
-    // initiate ReserveBuy
-    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight, cardEntity);
-
-
-    // adding to view
-    myPrompt.getChildren().addAll(playerBank, myCard, GameBank, ReserveBuy);
-    entity.getViewComponent().addChild(myPrompt);
-
-
-  }
-
-  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,
-                                  Entity cardEntity) {
-    StackPane Reserve = new StackPane();
-    StackPane Buy = new StackPane();
-
-    createReserveButton(Reserve, buttonWidth, buttonHeight);
-    createBuyButton(Buy, buttonWidth, buttonHeight, cardEntity);
-
-    reserveBuy.getChildren().addAll(Reserve, Buy);
-  }
-
-  private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight,
-                               Entity cardEntity) {
-    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
-    buttonBox.setStrokeWidth(buttonHeight / 20);
-    buttonBox.setStroke(Color.BLACK);
-    Text RESERVE = new Text("BUY");
-    RESERVE.setWrappingWidth(buttonWidth);
-    RESERVE.setTextAlignment(TextAlignment.CENTER);
-    RESERVE.setFont(Font.font(buttonHeight * 0.6));
-    buy.setOpacity(0.5);
-
-    FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
-      if (FXGL.getWorldProperties().
-          getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS) >=
-          2) {
-        buy.setOpacity(1);
-      } else {
-        buy.setOpacity(0.5);
-      }
-    });
-
-    buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if (buy.getOpacity() == 1) {
-        closeBuyPromptAlt(cardEntity);
-        e.consume();
-      }
-    });
-
-    buy.getChildren().addAll(buttonBox, RESERVE);
-  }
-
-  private void closeBuyPromptAlt(Entity entity) {
-
-    PromptComponent.closePrompts();
-    for (CurrencyType e : CurrencyType.values()) {
-      int gemsinBank =
-          FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
-      if (gemsinBank != 0) {
-        FXGL.getWorldProperties()
-            .increment(BankType.PLAYER_BANK + "/" + e, gemsinBank);
-        FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
-      }
-    }
-    FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, entity));
+    atCardEntity = cardEntity;
+    populatePrompt(entity);
   }
 
   @Override
   public void populatePrompt(Entity entity) {
-    //initializing Hbox
-    double BankBoxesWidth = aWidth / 5;
 
-    double buttonAreaWidth = aWidth / 4;
-    double buttonHeight = aHeight / 8;
-    double buttonWidth = 3 * aWidth / 14;
-    double buttonSpacing = buttonHeight / 2;
+    // initiate playerBank
+    VBox playerBank = new VBox();
+    playerBank.setAlignment(Pos.CENTER);
+    playerBank.setPrefSize(atBankBoxesWidth, atHeight / 5);
+    playerBank.setSpacing((2 * atHeight / 10) / 8);
 
-    double SurplusWidth = (aWidth - 2 * BankBoxesWidth - buttonAreaWidth - aCardWidth) / 3;
+    // initiate Card to buy layout
+    setCardImage();
+    cardImage.setFitWidth(atCardWidth);
+    cardImage.setFitHeight(atCardHeight);
 
+    // initiate gameBank layout
+    VBox gameBank = new VBox();
+    gameBank.setAlignment(Pos.CENTER);
+    gameBank.setPrefSize(atBankBoxesWidth, atHeight / 5);
+    gameBank.setSpacing((2 * atHeight / 10) / 8);
+
+    // initiate Reserve/Buy buttons layout
+    VBox reserveBuy = new VBox();
+    reserveBuy.setAlignment(Pos.CENTER);
+    reserveBuy.setPrefSize(atButtonAreaWidth, atHeight / 5);
+    reserveBuy.setSpacing(atButtonSpacing);
+
+    //initializing Prompt Layout
     HBox myPrompt = new HBox();
     initiatePane(myPrompt);
     myPrompt.setAlignment(Pos.CENTER);
-    myPrompt.setSpacing(SurplusWidth);
-
-    // initiate elements
-    VBox playerBank = new VBox();
-    playerBank.setAlignment(Pos.CENTER);
-    playerBank.setPrefSize(BankBoxesWidth, aHeight / 5);
-    playerBank.setSpacing((2 * aHeight / 10) / 8);
-
-    Texture myCard = FXGL.texture("card1.png");
-    myCard.setFitWidth(aCardWidth);
-    myCard.setFitHeight(aCardHeight);
-
-    VBox GameBank = new VBox();
-    GameBank.setAlignment(Pos.CENTER);
-    GameBank.setPrefSize(BankBoxesWidth, aHeight / 5);
-    GameBank.setSpacing((2 * aHeight / 10) / 8);
-
-    VBox ReserveBuy = new VBox();
-    ReserveBuy.setAlignment(Pos.CENTER);
-    ReserveBuy.setPrefSize(buttonAreaWidth, aHeight / 5);
-    ReserveBuy.setSpacing(buttonSpacing);
-//    ReserveBuy.setBackground(new Background(new BackgroundFill(Color.BLACK,null,null)));
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    myPrompt.setSpacing(atSurplusWidth);
 
     // initiate Player Bank elements
-    initiateBank(playerBank, BankType.PLAYER_BANK);
-
+    for (Node n : createBank(BankType.PLAYER_BANK)) {
+      playerBank.getChildren().add(n);
+    }
 
     // initiate Game Bank elements
-    initiateBank(GameBank, BankType.GAME_BANK);
+    for (Node n : createBank(BankType.GAME_BANK)) {
+      gameBank.getChildren().add(n);
+    }
 
     // initiate ReserveBuy
-    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight);
-
+    setCardIsReserved();
+    reserveBuy.getChildren().addAll(createReserveBuy(atButtonWidth, atButtonHeight));
 
     // adding to view
-    myPrompt.getChildren().addAll(playerBank, myCard, GameBank, ReserveBuy);
+    myPrompt.getChildren().addAll(playerBank, cardImage, gameBank, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight) {
-    StackPane Reserve = new StackPane();
-    StackPane Buy = new StackPane();
+  private Collection<StackPane> createBank(BankType banktype) {
 
-    createReserveButton(Reserve, buttonWidth, buttonHeight);
-    createBuyButton(Buy, buttonWidth, buttonHeight);
+    // all tokens stack pane
+    EnumMap<CurrencyType, StackPane> tokens =
+        new EnumMap<CurrencyType, StackPane>(CurrencyType.class);
 
-    reserveBuy.getChildren().addAll(Reserve, Buy);
-  }
+    // all tokens initialize and set up will need to modify gold cards tho
+    for (CurrencyType t : CurrencyType.values()) {
+      StackPane myToken = new StackPane();
+      Collection<Node> myList = makeTokenNode(t, banktype);
+      myToken.getChildren().addAll(myList);
 
-  private void createReserveButton(StackPane reserve, double buttonWidth, double buttonHeight) {
-    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
-    buttonBox.setStrokeWidth(buttonHeight / 20);
-    buttonBox.setStroke(Color.BLACK);
-    Text RESERVE = new Text("RESERVE");
-    RESERVE.setWrappingWidth(buttonWidth);
-    RESERVE.setTextAlignment(TextAlignment.CENTER);
-    RESERVE.setFont(Font.font(buttonHeight * 0.6));
-    reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      tokens.put(t, myToken);
 
-      closeBuyPrompt();
-      e.consume();
-    });
+      myToken.setOnMouseClicked(e -> {
+        mouseClickToken(e, t, myToken.getChildren().get(0), banktype);
+      });
+    }
 
-    reserve.getChildren().addAll(buttonBox, RESERVE);
-  }
-
-  private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
-    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
-    buttonBox.setStrokeWidth(buttonHeight / 20);
-    buttonBox.setStroke(Color.BLACK);
-    Text RESERVE = new Text("BUY");
-    RESERVE.setWrappingWidth(buttonWidth);
-    RESERVE.setTextAlignment(TextAlignment.CENTER);
-    RESERVE.setFont(Font.font(buttonHeight * 0.6));
-    buy.setOpacity(0.5);
-
-    FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
-      if (FXGL.getWorldProperties().
-          getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS) >=
-          2) {
-        buy.setOpacity(1);
-      } else {
-        buy.setOpacity(0.5);
-      }
-    });
-
-    buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-      if (buy.getOpacity() == 1) {
-        closeBuyPrompt();
-        e.consume();
-      }
-    });
-
-    buy.getChildren().addAll(buttonBox, RESERVE);
-  }
-
-  private void initiateBank(VBox Bank, BankType banktype) {
-    StackPane redTokens = new StackPane();
-    StackPane greenTokens = new StackPane();
-    StackPane blueTokens = new StackPane();
-    StackPane whiteTokens = new StackPane();
-    StackPane blackTokens = new StackPane();
-    StackPane goldenTokens = new StackPane();
-    StackPane bonusTokens = new StackPane();
-//    Map<CurrencyType,Integer> MapOfInterest = InteractionTokens.get(banktype);
-//    Map<CurrencyType,Integer> OtherMap = InteractionTokens.get(banktype.other());
-
-
-    // redTokens
-    makeTokenNode(redTokens, CurrencyType.RED_TOKENS, banktype);
-
-    // greenTokens
-    makeTokenNode(greenTokens, CurrencyType.GREEN_TOKENS, banktype);
-
-    // blueTokens
-    makeTokenNode(blueTokens, CurrencyType.BLUE_TOKENS, banktype);
-
-    // whiteTokens
-    makeTokenNode(whiteTokens, CurrencyType.WHITE_TOKENS, banktype);
-
-    // blackTokens
-    makeTokenNode(blackTokens, CurrencyType.BLACK_TOKENS, banktype);
-
-    // goldTokens
-    makeTokenNode(goldenTokens, CurrencyType.GOLD_TOKENS, banktype);
-
-
-    // bonus gold cards
-    Rectangle bonusCard = new Rectangle((aHeight / 10) * 0.72, aHeight / 10,
+    // bonus gold cards Fixing
+    // bonus gold card Rectangle
+    Rectangle bonusCard = new Rectangle((atHeight / 10) * 0.72, atHeight / 10,
         CurrencyType.BONUS_GOLD_CARDS.getColor());
-    Text bonusAmount = new Text();
-    bonusAmount.textProperty().bind(
-        FXGL.getWorldProperties().
-            intProperty(banktype + "/" + CurrencyType.BONUS_GOLD_CARDS)
-            .asString());
-
-    if (bonusAmount.getText().equals("0")) {
+    StackPane bonusTokens = tokens.get(CurrencyType.BONUS_GOLD_CARDS);
+    bonusTokens.getChildren().set(0, bonusCard);
+    Text bonusGoldText = ((Text) bonusTokens.getChildren().get(1));
+    // Initial opacity of rectangle
+    if (bonusGoldText.getText().equals("0")) {
       bonusCard.setOpacity(0.5);
     }
-    bonusCard.setStrokeWidth(aHeight / 120);
+
+    // fix up Card so that it looks better
+    bonusCard.setStrokeWidth(atHeight / 120);
     bonusCard.setStroke(CurrencyType.BONUS_GOLD_CARDS.getStrokeColor());
 
-    bonusAmount.setFont(Font.font(aHeight / 20));
-    bonusAmount.setFill(CurrencyType.BONUS_GOLD_CARDS.getTextColor());
-    bonusTokens.getChildren().addAll(bonusCard, bonusAmount);
-    bonusTokens.setOnMouseClicked(e -> {
-      mouseClickToken(e, CurrencyType.BONUS_GOLD_CARDS, bonusCard, banktype);
-    });
-    bonusAmount.setOnMouseClicked(e -> {
-      mouseClickToken(e, CurrencyType.BONUS_GOLD_CARDS, bonusCard, banktype);
-    });
-    bonusAmount.textProperty().addListener((observable, oldValue, newValue) -> {
+    bonusGoldText.textProperty().addListener((observable, oldValue, newValue) -> {
       handleTextChange(oldValue, newValue, bonusCard);
     });
 
-    // adding all of it to the bank
-    Bank.getChildren().addAll(redTokens, greenTokens, blueTokens,
-        whiteTokens, blackTokens, goldenTokens, bonusTokens);
+    // return bank nodes
+    return tokens.values();
   }
 
-  private void makeTokenNode(StackPane tokenStackPane, CurrencyType tokenType,
-                             BankType tokenOwner) {
-    Circle tokensCircle = new Circle(aHeight / 20, tokenType.getColor());
+  protected Collection<StackPane> createReserveBuy(double buttonWidth, double buttonHeight) {
 
+    // buttons container, will contain all the button that we create
+    EnumMap<ButtonType, StackPane> buttons = new EnumMap<ButtonType, StackPane>(ButtonType.class);
+
+    // creates a button for each button type
+    for (ButtonType t : ButtonType.values()) {
+      // if the card is reserved then ignore reserved button
+      if (t == ButtonType.RESERVE && cardIsReserved) {
+        continue;
+      }
+      StackPane button = new StackPane();
+      buttons.put(t, button);
+      button.getChildren().setAll(createButton(t, buttonWidth, buttonHeight));
+      t.setBehaviour(this, button);
+    }
+
+    return buttons.values();
+  }
+
+  private Collection<Node> createButton(ButtonType buttonType,
+                                        double buttonWidth, double buttonHeight) {
+
+    // make box
+    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Config.SECONDARY_COLOR);
+    buttonBox.setStrokeWidth(buttonHeight / 20);
+    buttonBox.setStroke(Color.BLACK);
+
+    // make Text
+    Text buttonText = new Text(buttonType.toString());
+    buttonText.setWrappingWidth(buttonWidth);
+    buttonText.setTextAlignment(TextAlignment.CENTER);
+    buttonText.setFont(Font.font(buttonHeight * 0.6));
+
+    // return them
+    return new ArrayList<>(List.of(buttonBox, buttonText));
+  }
+
+  private Collection<Node> makeTokenNode(CurrencyType tokenType, BankType tokenOwner) {
+
+    // text that appears over the circle
     Text tokensAmount = new Text();
     tokensAmount.textProperty().bind(
-        FXGL.getWorldProperties().
-            intProperty(tokenOwner.toString() + "/" + tokenType)
+        FXGL.getWorldProperties()
+                .intProperty(tokenOwner.toString() + "/" + tokenType)
             .asString());
+    tokensAmount.setFill(tokenType.getTextColor());
+    tokensAmount.setFont(Font.font(atHeight / 20));
+
+    // initialize circle
+    Circle tokensCircle = new Circle(atHeight / 20, tokenType.getColor());
     if (tokensAmount.getText().equals("0")) {
       tokensCircle.setOpacity(0.5);
     }
-
-    tokensAmount.setFill(tokenType.getTextColor());
-    tokensCircle.setStrokeWidth(aHeight / 120);
+    tokensCircle.setStrokeWidth(atHeight / 120);
     tokensCircle.setStroke(tokenType.getStrokeColor());
-    tokensCircle.setOnMouseClicked(e -> {
-      mouseClickToken(e, tokenType, tokensCircle, tokenOwner
-      );
-    });
-
-    tokensAmount.setOnMouseClicked(e -> {
-      mouseClickToken(e, tokenType, tokensCircle, tokenOwner
-      );
-    });
-    tokensAmount.setFont(Font.font(aHeight / 20));
 
     tokensAmount.textProperty().addListener((observable, oldValue, newValue) -> {
       handleTextChange(oldValue, newValue, tokensCircle);
     });
 
-    tokenStackPane.getChildren().addAll(tokensCircle, tokensAmount);
+    return new ArrayList<Node>(List.of(tokensCircle, tokensAmount));
   }
 
   private void handleTextChange(String oldValue, String newValue, Node tokenNode) {
@@ -392,29 +375,28 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
   private void mouseClickToken(MouseEvent e, CurrencyType tokensType, Node tokenNode,
                                BankType tokenOwner) {
-//    int amountLeft= mapOfInterest.get(tokensType);
     if (tokenNode.getOpacity() == 1) {
       FXGL.getWorldProperties()
           .increment(tokenOwner.other().toString() + "/" + tokensType.toString(), +1);
       FXGL.getWorldProperties()
           .increment(tokenOwner + "/" + tokensType, -1);
-//      mapOfInterest.put(tokensType,amountLeft-1);
-//      OtherMap.put(tokensType,OtherMap.get(tokensType)+1);
       getEventBus().fireEvent(new Event(EventType.ROOT));
     }
     e.consume();
   }
 
   private void initiatePane(Pane myPrompt) {
-    myPrompt.setTranslateX(topleftX);
-    myPrompt.setTranslateY(topleftY);
-    myPrompt.setPrefWidth(aWidth);
-    myPrompt.setMaxWidth(aWidth);
-    myPrompt.setPrefHeight(aHeight);
-    myPrompt.setMaxHeight(aHeight);
+    myPrompt.setTranslateX(atTopLeftX);
+    myPrompt.setTranslateY(atTopLeftY);
+    myPrompt.setPrefWidth(atWidth);
+    myPrompt.setMaxWidth(atWidth);
+    myPrompt.setPrefHeight(atHeight);
+    myPrompt.setMaxHeight(atHeight);
   }
 
-  private void closeBuyPrompt() {
+  // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
+
+  protected static void closeBuyPrompt() {
     PromptComponent.closePrompts();
     for (CurrencyType e : CurrencyType.values()) {
       int gemsinBank =
@@ -427,56 +409,45 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
   }
 
-  public enum BankType {
-    PLAYER_BANK,
-    GAME_BANK;
 
-    public BankType other() {
-      if (this == PLAYER_BANK) {
-        return GAME_BANK;
-      } else {
-        return PLAYER_BANK;
-      }
+  // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Do something if someone reserves a card.
+   */
+  protected static void cardReservation() {
+  }
+
+  /**
+   * Need to override to have a different image.
+   */
+  protected void setCardImage() {
+    // if we have a card entity we are inspecting
+    if (atCardEntity != null) {
+      cardImage = FXGL.texture(atCardEntity.getComponent(CardComponent.class).texture);
+      return;
+    }
+
+    cardImage = FXGL.texture("card1.png");
+  }
+
+  /**
+   * Need to override to not have a ReserveButton, set cardIsReserved to true to do so.
+   */
+  protected void setCardIsReserved() {
+    cardIsReserved = false;
+  }
+
+  /**
+   * To Override if there is behaviour after someone presses on Confirm, is done after
+   * closeBuyPrompt().
+   */
+  protected void cardBought() {
+    if (atCardEntity != null) {
+      FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, atCardEntity));
     }
   }
 
-  public enum CurrencyType {
-    RED_TOKENS,
-    GREEN_TOKENS,
-    BLUE_TOKENS,
-    WHITE_TOKENS,
-    BLACK_TOKENS,
-    GOLD_TOKENS,
-    BONUS_GOLD_CARDS;
-    static Map<CurrencyType, Color> Colortype = new HashMap<>();
 
-    static {
-      Colortype.put(RED_TOKENS, Color.DARKRED);
-      Colortype.put(GREEN_TOKENS, Color.DARKGREEN);
-      Colortype.put(BLUE_TOKENS, Color.DARKBLUE);
-      Colortype.put(WHITE_TOKENS, Color.WHITE.darker());
-      Colortype.put(BLACK_TOKENS, Color.BLACK);
-      Colortype.put(GOLD_TOKENS, Color.GOLD.darker());
-      Colortype.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
-    }
-
-    public Paint getColor() {
-      return Colortype.get(this);
-    }
-
-    public Paint getStrokeColor() {
-      if (this == BLACK_TOKENS) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
-    }
-
-    public Paint getTextColor() {
-      if (this == BLACK_TOKENS) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
-    }
-  }
 
 }

@@ -28,49 +28,46 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * A class responsible for populating Buy sacrifice card prompt.
+ */
 public class BuyCardByCard implements PromptTypeInterface {
 
-  double aWidth = getAppWidth() / 2;
-  double aHeight = getAppHeight() / 2;
-  double aMainCardHeight = aHeight * 0.7;
-  double aMainCardWidth = aMainCardHeight * 0.72;
-  double aScrollCardWidth = aMainCardHeight * 0.4;
-  double aScrollCardHeight = aScrollCardWidth * 1.4;
-  double topleftX = (getAppWidth() / 2) - (aWidth / 2);
-  double topleftY = (getAppHeight() / 2) - (aHeight / 2);
+  double atWidth = getAppWidth() / 2.;
+  double atHeight = getAppHeight() / 2.;
+  double atMainCardHeight = atHeight * 0.7;
+  double atMainCardWidth = atMainCardHeight * 0.72;
+  double atScrollCardWidth = atMainCardHeight * 0.4;
+  double atScrollCardHeight = atScrollCardWidth * 1.4;
+  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  double buttonAreaWidth = atWidth / 4;
+  double buttonHeight = atHeight / 8;
+  double buttonWidth = 3 * atWidth / 14;
+  double buttonSpacing = buttonHeight / 2;
+  double elementSpacing = (atWidth - 2 * atScrollCardWidth - buttonAreaWidth - buttonWidth) / 5;
 
-  int CardsChosen = 0;
+  int cardsChosen = 0;
 
 
   @Override
   public double width() {
-    return aWidth;
+    return atWidth;
   }
 
   @Override
   public double height() {
-    return aHeight;
+    return atHeight;
   }
 
   @Override
   public void populatePrompt(Entity entity) {
 
-
     FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
-      CardsChosen = 0;
+      cardsChosen = 0;
     });
+
     //initializing Hbox
-
-    double buttonAreaWidth = aWidth / 4;
-    double buttonHeight = aHeight / 8;
-    double buttonWidth = 3 * aWidth / 14;
-    double buttonSpacing = buttonHeight / 2;
-    double elementSpacing = (aWidth - 2 * aScrollCardWidth - buttonAreaWidth - buttonWidth) / 5;
-
-    Rectangle DisablingRectangleOthers = new Rectangle(aScrollCardWidth, aHeight, Color.GREY);
-    StackPane OtherWhole = new StackPane();
-    StackPane Buy = new StackPane();
-
     HBox myPrompt = new HBox();
     initiatePane(myPrompt);
     myPrompt.setAlignment(Pos.CENTER);
@@ -79,146 +76,154 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     // initiate elements
     Texture myCard = FXGL.texture("sacrificecard.png");
-    myCard.setFitWidth(aMainCardWidth);
-    myCard.setFitHeight(aMainCardHeight);
+    myCard.setFitWidth(atMainCardWidth);
+    myCard.setFitHeight(atMainCardHeight);
 
-    BorderPane BagBorderPane = new BorderPane();
-    Text BAGCARDS = new Text("BAG CARDS");
-    BAGCARDS.setFont(Font.font(aHeight * 0.05));
-    BAGCARDS.setWrappingWidth(aScrollCardWidth);
-    BAGCARDS.setTextAlignment(TextAlignment.CENTER);
-    ScrollPane BagCardsScroll = new ScrollPane();
-    BagCardsScroll.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
-    BagCardsScroll.setPrefViewportWidth(aScrollCardWidth);
-    BagCardsScroll.setPannable(true);
-    BagCardsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    BagCardsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    BagBorderPane.setTop(BAGCARDS);
-    BagBorderPane.setCenter(BagCardsScroll);
+    Text bagCardsText = new Text("BAG CARDS");
+    bagCardsText.setFont(Font.font(atHeight * 0.05));
+    bagCardsText.setWrappingWidth(atScrollCardWidth);
+    bagCardsText.setTextAlignment(TextAlignment.CENTER);
 
+    ScrollPane bagCardsScroll = new ScrollPane();
+    bagCardsScroll.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+    bagCardsScroll.setPrefViewportWidth(atScrollCardWidth);
+    bagCardsScroll.setPannable(true);
+    bagCardsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    bagCardsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-    DisablingRectangleOthers.setOpacity(0.75);
-    BorderPane OtherBorderPane = new BorderPane();
-    Text OTHERCARDS = new Text("OTHERS");
-    OTHERCARDS.setFont(Font.font(aHeight * 0.05));
-    OTHERCARDS.setWrappingWidth(aScrollCardWidth);
-    OTHERCARDS.setTextAlignment(TextAlignment.CENTER);
-    ScrollPane OtherCardsScroll = new ScrollPane();
-    OtherCardsScroll.setBackground(
+    BorderPane bagBorderPane = new BorderPane();
+    bagBorderPane.setTop(bagCardsText);
+    bagBorderPane.setCenter(bagCardsScroll);
+
+    Rectangle disablingRectangleOthers = new Rectangle(atScrollCardWidth, atHeight, Color.GREY);
+    disablingRectangleOthers.setOpacity(0.75);
+
+    Text otherCards = new Text("OTHERS");
+    otherCards.setFont(Font.font(atHeight * 0.05));
+    otherCards.setWrappingWidth(atScrollCardWidth);
+    otherCards.setTextAlignment(TextAlignment.CENTER);
+
+    ScrollPane otherCardsScroll = new ScrollPane();
+    otherCardsScroll.setBackground(
         new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
-    OtherCardsScroll.setPrefViewportWidth(aScrollCardWidth);
-    OtherCardsScroll.setPrefViewportHeight(aHeight);
-    OtherCardsScroll.setPannable(true);
-    OtherCardsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    OtherCardsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    OtherBorderPane.setTop(OTHERCARDS);
-    OtherBorderPane.setCenter(OtherCardsScroll);
-    OtherWhole.getChildren().addAll(OtherBorderPane, DisablingRectangleOthers);
+    otherCardsScroll.setPrefViewportWidth(atScrollCardWidth);
+    otherCardsScroll.setPrefViewportHeight(atHeight);
+    otherCardsScroll.setPannable(true);
+    otherCardsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    otherCardsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    BorderPane otherBorderPane = new BorderPane();
+    otherBorderPane.setTop(otherCards);
+    otherBorderPane.setCenter(otherCardsScroll);
+
+    StackPane otherWhole = new StackPane();
+    otherWhole.getChildren().addAll(otherBorderPane, disablingRectangleOthers);
 
 
     // Fix BagCards
     VBox myBags = new VBox();
     myBags.setAlignment(Pos.TOP_CENTER);
-    BagCardsScroll.setContent(myBags);
-    addBagCard(myBags, OtherWhole, DisablingRectangleOthers);
+    bagCardsScroll.setContent(myBags);
+    addBagCard(myBags, otherWhole, disablingRectangleOthers);
 
 
     VBox myOthers = new VBox();
     myOthers.setAlignment(Pos.TOP_CENTER);
-    OtherCardsScroll.setContent(myOthers);
-    addOtherCard(myOthers, 2, Buy);
-    addOtherCard(myOthers, 2, Buy);
-    addOtherCard(myOthers, 0, Buy);
+    otherCardsScroll.setContent(myOthers);
+    StackPane buy = new StackPane();
+    addOtherCard(myOthers, 2, buy);
+    addOtherCard(myOthers, 2, buy);
+    addOtherCard(myOthers, 0, buy);
 
 
     // initiate ReserveBuy
-    VBox ReserveBuy = new VBox();
-    ReserveBuy.setAlignment(Pos.CENTER);
-    ReserveBuy.setPrefSize(buttonAreaWidth, aHeight / 5);
-    ReserveBuy.setSpacing(buttonSpacing);
-    initiateReserveBuy(ReserveBuy, buttonWidth, buttonHeight, Buy);
+    VBox reserveBuy = new VBox();
+    reserveBuy.setAlignment(Pos.CENTER);
+    reserveBuy.setPrefSize(buttonAreaWidth, atHeight / 5);
+    reserveBuy.setSpacing(buttonSpacing);
+    initiateReserveBuy(reserveBuy, buttonWidth, buttonHeight, buy);
 
 
     // adding to view
-    myPrompt.getChildren().addAll(BagBorderPane, OtherWhole, myCard, ReserveBuy);
+    myPrompt.getChildren().addAll(bagBorderPane, otherWhole, myCard, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void addOtherCard(VBox OtherCards, int PrestigeAmount, Node Buy) {
-    StackPane myWholeCard = new StackPane();
-    Rectangle BagCard = new Rectangle(aScrollCardWidth, aScrollCardHeight, Color.GREEN.darker());
-    Text TextPrestigeAmount = new Text();
-    if (PrestigeAmount > 0) {
-      TextPrestigeAmount = new Text(Integer.toString(PrestigeAmount));
+  private void addOtherCard(VBox otherCards, int prestigeAmount, Node buy) {
+    Text textPrestigeAmount = new Text();
+    if (prestigeAmount > 0) {
+      textPrestigeAmount = new Text(Integer.toString(prestigeAmount));
     }
-    TextPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
-    TextPrestigeAmount.setFont(Font.font(aScrollCardHeight * 0.75));
-    TextPrestigeAmount.setWrappingWidth(aScrollCardWidth);
-    Text X = new Text("X");
-    X.setTextAlignment(TextAlignment.CENTER);
-    X.setFont(Font.font(aScrollCardHeight * 0.75));
-    X.setFill(Color.DARKRED);
-    X.setOpacity(0);
+    textPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
+    textPrestigeAmount.setFont(Font.font(atScrollCardHeight * 0.75));
+    textPrestigeAmount.setWrappingWidth(atScrollCardWidth);
+    Text x = new Text("X");
+    x.setTextAlignment(TextAlignment.CENTER);
+    x.setFont(Font.font(atScrollCardHeight * 0.75));
+    x.setFill(Color.DARKRED);
+    x.setOpacity(0);
 
+    StackPane myWholeCard = new StackPane();
     myWholeCard.setOnMouseClicked(e -> {
-      if (X.getOpacity() == 1) {
-        X.setOpacity(0);
-        CardsChosen--;
+      if (x.getOpacity() == 1) {
+        x.setOpacity(0);
+        cardsChosen--;
       } else {
-        CardsChosen++;
-        X.setOpacity(1);
+        cardsChosen++;
+        x.setOpacity(1);
       }
-      if (CardsChosen == 2) {
-        Buy.setOpacity(1);
+      if (cardsChosen == 2) {
+        buy.setOpacity(1);
       } else {
-        Buy.setOpacity(0.5);
+        buy.setOpacity(0.5);
       }
     });
 
-    myWholeCard.getChildren().addAll(BagCard, TextPrestigeAmount, X);
-    OtherCards.getChildren().add(myWholeCard);
+    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
+    myWholeCard.getChildren().addAll(bagCard, textPrestigeAmount, x);
+    otherCards.getChildren().add(myWholeCard);
 
   }
 
-  private void addBagCard(VBox BagCards, StackPane OtherWhole,
-                          Rectangle DisablingRectangleOthers) {
+  private void addBagCard(VBox bagCards, StackPane otherWhole,
+                          Rectangle disablingRectangleOthers) {
+    Text x = new Text("X");
+    x.setTextAlignment(TextAlignment.CENTER);
+    x.setFont(Font.font(atScrollCardHeight * 0.75));
+    x.setFill(Color.DARKRED);
+    x.setOpacity(0);
+
     StackPane myWholeCard = new StackPane();
-    Rectangle BagCard = new Rectangle(aScrollCardWidth, aScrollCardHeight, Color.GREEN.darker());
-    Circle BagIcon = new Circle(aScrollCardWidth / 4, Color.SADDLEBROWN.brighter());
-    Text X = new Text("X");
-    X.setTextAlignment(TextAlignment.CENTER);
-    X.setFont(Font.font(aScrollCardHeight * 0.75));
-    X.setFill(Color.DARKRED);
-    X.setOpacity(0);
-
     myWholeCard.setOnMouseClicked(e -> {
-      X.setOpacity(1);
-      CardsChosen++;
-      OtherWhole.getChildren().remove(DisablingRectangleOthers);
+      x.setOpacity(1);
+      cardsChosen++;
+      otherWhole.getChildren().remove(disablingRectangleOthers);
     });
+    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
+    Circle bagIcon = new Circle(atScrollCardWidth / 4, Color.SADDLEBROWN.brighter());
+    myWholeCard.getChildren().addAll(bagCard, bagIcon, x);
 
-    myWholeCard.getChildren().addAll(BagCard, BagIcon, X);
-    BagCards.getChildren().add(myWholeCard);
+    bagCards.getChildren().add(myWholeCard);
 
   }
 
   private void initiateReserveBuy(VBox reserveBuy, double buttonWidth, double buttonHeight,
-                                  StackPane Buy) {
-    StackPane Reserve = new StackPane();
-    createReserveButton(Reserve, buttonWidth, buttonHeight);
-    createBuyButton(Buy, buttonWidth, buttonHeight);
+                                  StackPane buy) {
+    StackPane reserve = new StackPane();
+    createReserveButton(reserve, buttonWidth, buttonHeight);
+    createBuyButton(buy, buttonWidth, buttonHeight);
 
-    reserveBuy.getChildren().addAll(Reserve, Buy);
+    reserveBuy.getChildren().addAll(reserve, buy);
   }
 
   private void createReserveButton(StackPane reserve, double buttonWidth, double buttonHeight) {
     Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
     buttonBox.setStrokeWidth(buttonHeight / 20);
     buttonBox.setStroke(Color.BLACK);
-    Text RESERVE = new Text("RESERVE");
-    RESERVE.setWrappingWidth(buttonWidth);
-    RESERVE.setTextAlignment(TextAlignment.CENTER);
-    RESERVE.setFont(Font.font(buttonHeight * 0.6));
+    Text reserveText = new Text("RESERVE");
+    reserveText.setWrappingWidth(buttonWidth);
+    reserveText.setTextAlignment(TextAlignment.CENTER);
+    reserveText.setFont(Font.font(buttonHeight * 0.6));
 
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
@@ -226,24 +231,24 @@ public class BuyCardByCard implements PromptTypeInterface {
       e.consume();
     });
 
-    reserve.getChildren().addAll(buttonBox, RESERVE);
+    reserve.getChildren().addAll(buttonBox, reserveText);
   }
 
   private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
     Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
     buttonBox.setStrokeWidth(buttonHeight / 20);
     buttonBox.setStroke(Color.BLACK);
-    Text RESERVE = new Text("BUY");
-    RESERVE.setWrappingWidth(buttonWidth);
-    RESERVE.setTextAlignment(TextAlignment.CENTER);
-    RESERVE.setFont(Font.font(buttonHeight * 0.6));
+    Text reserve = new Text("BUY");
+    reserve.setWrappingWidth(buttonWidth);
+    reserve.setTextAlignment(TextAlignment.CENTER);
+    reserve.setFont(Font.font(buttonHeight * 0.6));
     buy.setOpacity(0.5);
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
-      if (FXGL.getWorldProperties().
-          getInt(BuyCardPrompt.BankType.GAME_BANK + "/" +
-              BuyCardPrompt.CurrencyType.BONUS_GOLD_CARDS) >=
-          2) {
+      if (FXGL.getWorldProperties()
+              .getInt(BuyCardPrompt.BankType.GAME_BANK
+                  + "/" + BuyCardPrompt.CurrencyType.BONUS_GOLD_CARDS)
+          >= 2) {
         buy.setOpacity(1);
       } else {
         buy.setOpacity(0.5);
@@ -257,20 +262,20 @@ public class BuyCardByCard implements PromptTypeInterface {
       }
     });
 
-    buy.getChildren().addAll(buttonBox, RESERVE);
+    buy.getChildren().addAll(buttonBox, reserve);
   }
 
   private void initiatePane(Pane myPrompt) {
-    myPrompt.setTranslateX(topleftX);
-    myPrompt.setTranslateY(topleftY);
-    myPrompt.setPrefWidth(aWidth);
-    myPrompt.setMaxWidth(aWidth);
-    myPrompt.setPrefHeight(aHeight);
-    myPrompt.setMaxHeight(aHeight);
+    myPrompt.setTranslateX(atTopLeftX);
+    myPrompt.setTranslateY(atTopLeftY);
+    myPrompt.setPrefWidth(atWidth);
+    myPrompt.setMaxWidth(atWidth);
+    myPrompt.setPrefHeight(atHeight);
+    myPrompt.setMaxHeight(atHeight);
   }
 
   private void closeBagPrompt() {
-    CardsChosen = 0;
+    cardsChosen = 0;
     PromptComponent.closePrompts();
   }
 }

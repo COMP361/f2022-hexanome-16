@@ -11,6 +11,12 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.client.screens.game.GameFactory;
+import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.players.DeckFactory;
+import com.hexanome16.client.screens.lobby.LobbyFactory;
+import com.hexanome16.client.screens.startup.LoginScreen;
+import com.hexanome16.client.screens.startup.StartupScreen;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
 public class TempMain extends GameApplication {
@@ -37,6 +43,8 @@ public class TempMain extends GameApplication {
     Entity BuyCard = FXGL.spawn("BuyCard");
     Entity BuyNobleReserve = FXGL.spawn("BuyNobleReserve");
     Entity Pause = FXGL.spawn("Pause");
+    Entity PeiniCard = FXGL.spawn("PeiniCard");
+
   }
 
   public static void main(String[] args) {

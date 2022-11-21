@@ -46,19 +46,22 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
-
+    // Fetch info for prompt
     promptOpened();
 
-    Text myPromptMessage = new Text("Opponent Reserved Cards");
-    myPromptMessage.setFont(Font.font(atHeight / 20));
+    // Prompt Message
+    Text myPromptMessage = new Text(promptText());
+    myPromptMessage.setFont(Font.font(atHeight / 10));
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
 
+    // Prompt Choice Layout
     HBox myReservedCards = new HBox();
     myReservedCards.setAlignment(Pos.CENTER);
     myReservedCards.setSpacing((atWidth - 3 * atCardWidth) / 4);
     myReservedCards.setPrefSize(atWidth, atHeight * 0.8);
 
+    // make and add Visible cards to prompt choice layout
     for (Texture t : viewAbleCards) {
       t.setFitWidth(atCardWidth);
       t.setFitHeight(atCardHeight);
@@ -66,20 +69,24 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
       myReservedCards.getChildren().add(t);
     }
 
+    // make and add hidden cards to prompt choice layout
     for (int i = 0; i < hiddenCards; i++) {
       Node myAnonymousCard = makeAnonymousCard();
       myReservedCards.getChildren().add(myAnonymousCard);
     }
 
+    // Overall Prompt layout
     BorderPane myBorderPane = new BorderPane();
     myBorderPane.setTranslateX(atTopLeftX);
     myBorderPane.setTranslateY(atTopLeftY);
     myBorderPane.setTop(myPromptMessage);
     myBorderPane.setCenter(myReservedCards);
 
+    // add prompt layout to view
     entity.getViewComponent().addChild(myBorderPane);
   }
 
+  // for making hidden cards
   private Node makeAnonymousCard() {
     Text myInterrogation = new Text("?");
     myInterrogation.setFont(Font.font(atCardHeight * 0.9));
@@ -99,6 +106,8 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
    * hiddenCards + (number of textures in viewAbleCards) is greater than 3.
    */
   protected abstract void promptOpened();
+
+  protected abstract String promptText();
 
   /**
    * Adds behaviour to object t, specifically made for see Own reserved.
