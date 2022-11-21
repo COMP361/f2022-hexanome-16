@@ -1,7 +1,6 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts;
 
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import java.util.ArrayList;
@@ -17,6 +16,11 @@ public class SeeOwnReserved extends SeeReservedAbstract {
     hiddenCards = 0;
     viewAbleCards = new ArrayList<>(
         List.of(FXGL.texture("card1.png"), FXGL.texture("card1.png")));
+  }
+
+  @Override
+  protected String promptText() {
+    return "Own reserved cards";
   }
 
   @Override

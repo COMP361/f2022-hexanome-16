@@ -17,6 +17,11 @@ public class SeeOtherReserved extends SeeReservedAbstract {
   }
 
   @Override
+  protected String promptText() {
+    return "Others reserved cards";
+  }
+
+  @Override
   protected void promptOpened() {
     // hardCoded for now
     assert (hiddenCards + viewAbleCards.size()) < 3;
