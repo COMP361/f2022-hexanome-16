@@ -44,7 +44,7 @@ public class RulebookScreen {
       return;
     }
 
-    CSS css = getAssetLoader().loadCSS("rulebook/test.css");
+    CSS css = getAssetLoader().loadCSS("rulebook/styles.css");
     getGameScene().appendCSS(css);
     getGameScene().addUI(getUi());
     isVisible = true;
