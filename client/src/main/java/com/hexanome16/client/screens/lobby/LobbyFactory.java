@@ -40,28 +40,34 @@ public class LobbyFactory implements EntityFactory {
   private static Session[] sessions = new Session[] {};
   private static TableView<Session> ownSessionList;
   private static TableView<Session> otherSessionList;
+  private static int prevHashCode = 0;
 
   /**
    * This method updates the list of sessions shown in the lobby screen.
    */
   public static void updateSessionList() {
-    sessions = ListSessionsRequest.execute(Arrays.hashCode(sessions));
+    int hashCode = Arrays.hashCode(sessions);
+    if (prevHashCode != hashCode) {
+      prevHashCode = hashCode;
+      sessions = ListSessionsRequest.execute(hashCode);
+      System.out.println("Updating session list");
 
-    if (sessions == null) {
-      sessions = new Session[] {};
+      if (sessions == null) {
+        sessions = new Session[] {};
+      }
+
+      Session[] ownSessions =
+          Arrays.stream(sessions)
+              .filter(session -> session.getCreator().equals(AuthUtils.getPlayer().getName()))
+              .toArray(Session[]::new);
+      Session[] otherSessions =
+          Arrays.stream(sessions)
+              .filter(session -> !session.getCreator().equals(AuthUtils.getPlayer().getName()))
+              .toArray(Session[]::new);
+
+      ownSessionList.setItems(FXCollections.observableArrayList(ownSessions));
+      otherSessionList.setItems(FXCollections.observableArrayList(otherSessions));
     }
-
-    Session[] ownSessions =
-        Arrays.stream(sessions)
-            .filter(session -> session.getCreator().equals(AuthUtils.getPlayer().getName()))
-            .toArray(Session[]::new);
-    Session[] otherSessions =
-        Arrays.stream(sessions)
-            .filter(session -> !session.getCreator().equals(AuthUtils.getPlayer().getName()))
-            .toArray(Session[]::new);
-
-    ownSessionList.setItems(FXCollections.observableArrayList(ownSessions));
-    otherSessionList.setItems(FXCollections.observableArrayList(otherSessions));
   }
 
   /**
