@@ -11,6 +11,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to join a session in Lobby Service.
  */
 public class JoinSessionRequest {
+  private JoinSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to join a session in Lobby Service.
    *
@@ -22,7 +26,7 @@ public class JoinSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId + "/players/" + player,
               "access_token=" + accessToken
           )).PUT(HttpRequest.BodyPublishers.noBody())

@@ -8,10 +8,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Utility class for performing operations on URLs.
@@ -20,6 +16,11 @@ public class UrlUtils {
   private static final PropertyMap LS_PROPERTIES = FXGL.getAssetLoader().load(
       AssetType.PROPERTY_MAP,
       "properties/lobby-service-" + System.getenv("PROFILE_ID") + ".properties"
+  );
+
+  private static final PropertyMap SERVER_PROPERTIES = FXGL.getAssetLoader().load(
+      AssetType.PROPERTY_MAP,
+      "properties/server-" + System.getenv("PROFILE_ID") + ".properties"
   );
 
   private UrlUtils() {
@@ -57,29 +58,50 @@ public class UrlUtils {
         .replaceAll("%3D", "=");
   }
 
+  //TODO: Add ability to set custom URLs for LS/Game Server.
+
   /**
-   * Creates a URI with encoding based on the passed parameters.
+   * Creates a Lobby Service URI based on the passed parameters.
    *
-   * @param path        The path to use for the URI.
-   * @param query       The query parameters to use for the URI.
-   * @param props       Other parts to use for the URI (Lobby Service's are used by default).
-   * @return The URI.
+   * @param path  The path to use for the URI.
+   * @param query The query parameters to use for the URI.
+   * @return The Lobby Service URI.
    */
-  public static URI createUri(String path, String query, String... props) {
+  public static URI createLobbyServiceUri(String path, String query) {
     try {
-      HashMap<String, String> propsMap = Arrays.stream(props).map(s -> s.split("=")).collect(
-          HashMap::new,
-          (m, a) -> m.put(a[0], a[1]),
-          HashMap::putAll
+      return new URI(
+          LS_PROPERTIES.getString("server.protocol"),
+          null,
+          LS_PROPERTIES.getString("server.host"),
+          LS_PROPERTIES.getInt("server.port"),
+          path,
+          encodeUriComponent(query),
+          null
       );
-      String protocol = propsMap.getOrDefault(
-          "protocol", LS_PROPERTIES.getString("server.protocol")
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  /**
+   * Creates a game server URI based on the passed parameters.
+   *
+   * @param path  The path to use for the URI.
+   * @param query The query parameters to use for the URI.
+   * @return The game server URI.
+   */
+  public static URI createGameServerUri(String path, String query) {
+    try {
+      return new URI(
+          SERVER_PROPERTIES.getString("server.protocol"),
+          null,
+          SERVER_PROPERTIES.getString("server.host"),
+          SERVER_PROPERTIES.getInt("server.port"),
+          path,
+          encodeUriComponent(query),
+          null
       );
-      String host = propsMap.getOrDefault("host", LS_PROPERTIES.getString("server.host"));
-      Integer port = Integer.valueOf(propsMap.getOrDefault("port",
-          String.valueOf(LS_PROPERTIES.getInt("server.port"))));
-      String uri = protocol + "://" + host + ":" + port + path + "?" + encodeUriComponent(query);
-      return new URI(uri);
     } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;

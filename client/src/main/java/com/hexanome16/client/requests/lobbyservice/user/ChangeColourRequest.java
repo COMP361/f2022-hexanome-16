@@ -2,6 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.user;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +15,10 @@ import java.util.concurrent.TimeoutException;
  * This class provides methods to change the colour of the user.
  */
 public class ChangeColourRequest {
+  private ChangeColourRequest() {
+    super();
+  }
+
   /**
    * Sends a request to change the colour of the user.
    *
@@ -25,7 +30,7 @@ public class ChangeColourRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/users/" + user + "/colour",
               "access_token=" + accessToken
           )).header("Content-Type", "application/json")
@@ -33,6 +38,7 @@ public class ChangeColourRequest {
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
+      AuthUtils.getPlayer().setPreferredColour(colour);
     } catch (ExecutionException | InterruptedException | TimeoutException e) {
       e.printStackTrace();
     }

@@ -43,23 +43,23 @@ public final class TokensInfo {
         + expiresIn + ", scope='" + scope + '\'' + '}';
   }
 
-  public String accessToken() {
+  public String getAccessToken() {
     return accessToken;
   }
 
-  public String refreshToken() {
+  public String getRefreshToken() {
     return refreshToken;
   }
 
-  public String tokenType() {
+  public String getTokenType() {
     return tokenType;
   }
 
-  public int expiresIn() {
+  public int getExpiresIn() {
     return expiresIn;
   }
 
-  public String scope() {
+  public String getScope() {
     return scope;
   }
 

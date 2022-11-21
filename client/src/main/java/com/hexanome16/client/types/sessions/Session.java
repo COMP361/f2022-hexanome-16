@@ -51,40 +51,40 @@ public final class Session {
       return false;
     }
     Session session = (Session) o;
-    return launched() == session.launched() && creator().equals(session.creator())
-        && gameParameters().equals(session.gameParameters())
-        && Arrays.equals(players(), session.players())
-        && Objects.equals(savegameid(), session.savegameid());
+    return getLaunched() == session.getLaunched() && getCreator().equals(session.getCreator())
+        && getGameParameters().equals(session.getGameParameters())
+        && Arrays.equals(getPlayers(), session.getPlayers())
+        && Objects.equals(getSaveGameId(), session.getSaveGameId());
   }
 
   @Override
   public int hashCode() {
-    int result = Objects.hash(creator(), gameParameters(), launched(), savegameid());
-    result = 31 * result + Arrays.hashCode(players());
+    int result = Objects.hash(getCreator(), getGameParameters(), getLaunched(), getSaveGameId());
+    result = 31 * result + Arrays.hashCode(getPlayers());
     return result;
   }
 
-  public String creator() {
+  public String getCreator() {
     return creator;
   }
 
-  public GameParams gameParameters() {
+  public GameParams getGameParameters() {
     return gameParameters;
   }
 
-  public boolean launched() {
+  public boolean getLaunched() {
     return launched;
   }
 
-  public String[] players() {
+  public String[] getPlayers() {
     return players;
   }
 
-  public String savegameid() {
+  public String getSaveGameId() {
     return savegameid;
   }
 
-  public Long id() {
+  public Long getId() {
     return id;
   }
 
@@ -104,7 +104,7 @@ public final class Session {
     this.players = players;
   }
 
-  public void setSavegameid(String savegameid) {
+  public void setSaveGameId(String savegameid) {
     this.savegameid = savegameid;
   }
 

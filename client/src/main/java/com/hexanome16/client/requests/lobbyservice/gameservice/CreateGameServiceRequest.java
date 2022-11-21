@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit;
  * This class provides methods to create a game service in Lobby Service.
  */
 public class CreateGameServiceRequest {
+  private CreateGameServiceRequest() {
+    super();
+  }
+
   /**
    * Sends a request to create a game service in Lobby Service.
    *
@@ -21,7 +25,7 @@ public class CreateGameServiceRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/gameservices/Splendor",
               "access_token=" + accessToken
           )).header("Content-Type", "application/json")

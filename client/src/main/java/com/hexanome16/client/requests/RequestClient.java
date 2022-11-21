@@ -10,7 +10,7 @@ public class RequestClient {
 
   private static final HttpClient client = HttpClient.newBuilder()
       .version(HttpClient.Version.HTTP_1_1)
-      .connectTimeout(Duration.ofSeconds(10))
+      .connectTimeout(Duration.ofDays(1))
       .build();
 
   private RequestClient() {

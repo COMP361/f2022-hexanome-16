@@ -14,6 +14,10 @@ import java.util.concurrent.TimeoutException;
  * This class provides methods to change the password of the user.
  */
 public class ChangePasswordRequest {
+  private ChangePasswordRequest() {
+    super();
+  }
+
   /**
    * Sends a request to change the password of the user.
    *
@@ -27,7 +31,7 @@ public class ChangePasswordRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/users/" + user,
               "access_token=" + accessToken
           )).header("Content-Type", "application/json")

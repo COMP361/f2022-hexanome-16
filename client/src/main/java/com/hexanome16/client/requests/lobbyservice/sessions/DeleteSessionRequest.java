@@ -11,6 +11,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to delete a session in Lobby Service.
  */
 public class DeleteSessionRequest {
+  private DeleteSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to delete a session in Lobby Service.
    *
@@ -21,7 +25,7 @@ public class DeleteSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId,
               "access_token=" + accessToken
           )).DELETE()
