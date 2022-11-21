@@ -11,14 +11,14 @@ import com.almasb.fxgl.app.GameSettings;
 import com.hexanome16.client.screens.game.GameFactory;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.players.DeckFactory;
-import com.hexanome16.client.screens.game.prompts.actualyUI.PromptPartFactory;
+import com.hexanome16.client.screens.game.prompts.PromptFactory;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import com.hexanome16.client.screens.startup.StartupScreenFactory;
 import java.util.Map;
 
 /**
- * The Splendor GameApplication.
+ * FXGL Game Application, Game's entry point.
  */
 public class MainApp extends GameApplication {
   public static void main(String[] args) {
@@ -39,7 +39,7 @@ public class MainApp extends GameApplication {
   @Override
   protected void initGame() {
     getGameWorld().addEntityFactory(new GameFactory());
-    getGameWorld().addEntityFactory(new PromptPartFactory());
+    getGameWorld().addEntityFactory(new PromptFactory());
     getGameWorld().addEntityFactory(new DeckFactory());
     getGameWorld().addEntityFactory(new StartupScreenFactory());
     getGameWorld().addEntityFactory(new LobbyFactory());
