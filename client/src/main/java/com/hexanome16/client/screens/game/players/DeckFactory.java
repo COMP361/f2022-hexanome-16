@@ -6,8 +6,8 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
-import com.hexanome16.client.screens.game.prompts.actualyUI.Components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.actualyUI.OpenPromt;
+import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -71,7 +71,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.2, 0.2)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -85,7 +85,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -99,7 +99,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -113,7 +113,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -127,7 +127,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -141,7 +141,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -155,7 +155,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.25, 0.25)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -169,7 +169,7 @@ public class DeckFactory implements EntityFactory {
         .view(pane)
         .scale(0.2, 0.2)
         .onClick(e -> {
-          OpenPromt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
