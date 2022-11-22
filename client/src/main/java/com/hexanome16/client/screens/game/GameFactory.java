@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
@@ -20,7 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
@@ -33,6 +33,9 @@ public class GameFactory implements EntityFactory {
   private final String levelOne = "level_one";
   private final String levelTwo = "level_two";
   private final String levelThree = "level_three";
+
+  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+          .loadFont("BrushScriptMT.ttf");
 
   /**
    * Adds a level-one card from the level-one deck to the game board.
@@ -256,7 +259,7 @@ public class GameFactory implements EntityFactory {
     token.setFitWidth(75);
     // multiplicity (text)
     Text number = new Text(Integer.toString(amount));
-    number.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 50));
+    number.setFont(CURSIVE_FONT_FACTORY.newFont(50));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#000000"));
