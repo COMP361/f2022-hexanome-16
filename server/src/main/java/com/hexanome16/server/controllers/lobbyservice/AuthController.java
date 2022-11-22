@@ -8,12 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * TODO.
  */
-@Service
+@RestController
 public class AuthController {
   private final RestTemplate restTemplate;
 
@@ -21,7 +23,7 @@ public class AuthController {
     this.restTemplate = restTemplateBuilder.build();
   }
 
-  private TokensInfo login(String username, String password, String refreshToken) {
+  private ResponseEntity<TokensInfo> login(String username, String password, String refreshToken) {
     StringBuilder params = new StringBuilder();
     if (refreshToken == null || refreshToken.isBlank()) {
       params.append("grant_type=password&username=").append(username)
@@ -38,18 +40,20 @@ public class AuthController {
     ResponseEntity<TokensInfo> response =
         restTemplate.postForEntity(url, headers, TokensInfo.class);
     if (response.getStatusCode().is2xxSuccessful()) {
-      return response.getBody();
+      return response;
     } else {
       return null;
     }
   }
 
-  public TokensInfo login(String username, String password) {
+  @ResponseBody
+  public ResponseEntity<TokensInfo> login(String username, String password) {
     assert username != null && !username.isBlank() && password != null && !password.isBlank();
     return login(username, password, null);
   }
 
-  public TokensInfo refresh(String refreshToken) {
+  @ResponseBody
+  public ResponseEntity<TokensInfo> refresh(String refreshToken) {
     return login(null, null, refreshToken);
   }
 }

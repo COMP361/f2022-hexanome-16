@@ -3,36 +3,43 @@ package com.hexanome16.server.controllers.lobbyservice;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.util.Collections;
+import java.util.Objects;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * TODO.
  */
-@Service
+@RestController
 public class GameServiceController {
   private final RestTemplate restTemplate;
 
+  private final AuthController authController;
+
   public GameServiceController(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder.build();
+    this.authController = new AuthController(restTemplateBuilder);
   }
 
   /**
    * TODO.
    */
+  @ResponseBody
   @EventListener(ApplicationReadyEvent.class)
   public void createGameService() {
-    TokensInfo tokensInfo =
-        new AuthController(new RestTemplateBuilder()).login("xox", "laaPhie*aiN0");
+    ResponseEntity<TokensInfo> tokensInfo =
+        authController.login("xox", "laaPhie*aiN0");
     String url = UrlUtils.createLobbyServiceUri("/api/gameservices/{name}",
-        "access_token=" + tokensInfo.getAccessToken());
+        "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

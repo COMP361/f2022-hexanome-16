@@ -54,8 +54,7 @@ public class UrlUtils {
     return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8)
         .replaceAll(" ", "%20")
         .replaceAll("%25", "%")
-        .replaceAll("%26", "&")
-        .replaceAll("%3D", "=");
+        .replaceAll("%26", "&");
   }
 
   //TODO: Add ability to set custom URLs for LS/Game Server.
