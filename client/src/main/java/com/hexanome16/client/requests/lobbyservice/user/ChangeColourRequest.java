@@ -2,6 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.user;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
@@ -32,14 +33,19 @@ public class ChangeColourRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/users/" + user + "/colour",
-              "access_token=" + accessToken
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
           )).header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload(colour))))
           .build();
-      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
-      AuthUtils.getPlayer().setPreferredColour(colour);
-    } catch (ExecutionException | InterruptedException | TimeoutException e) {
+      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+          .thenApply(HttpResponse::statusCode).get();
+      if (statusCode == 200) {
+        AuthUtils.getPlayer().setPreferredColour(colour);
+      } else if (statusCode == 401) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+        execute(AuthUtils.getAuth().getAccessToken(), user, colour);
+      }
+    } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }
   }

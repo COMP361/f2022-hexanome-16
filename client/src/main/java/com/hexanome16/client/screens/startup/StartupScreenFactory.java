@@ -1,9 +1,9 @@
 package com.hexanome16.client.screens.startup;
 
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.hexanome16.client.Config.APP_HEIGHT;
-import static com.hexanome16.client.Config.APP_WIDTH;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -12,13 +12,13 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
+import com.hexanome16.client.utils.AuthUtils;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 /**
@@ -29,6 +29,9 @@ public class StartupScreenFactory implements EntityFactory {
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
       .loadFont("BrushScriptMT.ttf");
 
+  private static String username = "";
+  private static String password = "";
+
   /**
    * Returns the image of the full startup screen.
    */
@@ -36,9 +39,9 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity mainScreen(SpawnData data) {
     var mainScreen = FXGL.texture("splendor_main_screen.jpg");
     return FXGL.entityBuilder(data)
-            .view(mainScreen)
-            .type(EntityType.STARTUP)
-            .build();
+        .view(mainScreen)
+        .type(EntityType.STARTUP)
+        .build();
   }
 
   /**
@@ -48,9 +51,9 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity diamond(SpawnData data) {
     FXGLButton button = createButton();
     return FXGL.entityBuilder(data)
-            .view(button)
-            .type(EntityType.STARTUP)
-            .build();
+        .view(button)
+        .type(EntityType.STARTUP)
+        .build();
   }
 
   /**
@@ -58,12 +61,14 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("message")
   public Entity text(SpawnData data) {
-    Text message = createMessage("Click diamond to enter the game!", 115, "#FCD828");
+    String text =
+        (String) data.getData().getOrDefault("message", "Click diamond to enter the game!");
+    Text message = createMessage(text, 115, "#FCD828");
     return FXGL.entityBuilder(data)
-            .view(message)
-            .type(EntityType.STARTUP)
-            .type(EntityType.MESSAGE)
-            .build();
+        .view(message)
+        .type(EntityType.STARTUP)
+        .type(EntityType.MESSAGE)
+        .build();
   }
 
   /**
@@ -121,9 +126,12 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("username")
   public Entity username(SpawnData data) {
-    TextField username = new TextField();
+    TextField usernameField = new TextField();
+    usernameField.setOnKeyTyped(e -> {
+      username = usernameField.getText();
+    });
     return FXGL.entityBuilder(data)
-        .view(username)
+        .view(usernameField)
         .type(EntityType.LOGIN)
         .build();
   }
@@ -133,9 +141,12 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("password")
   public Entity password(SpawnData data) {
-    PasswordField password = new PasswordField();
+    PasswordField passwordField = new PasswordField();
+    passwordField.setOnKeyTyped(e -> {
+      password = passwordField.getText();
+    });
     return FXGL.entityBuilder(data)
-        .view(password)
+        .view(passwordField)
         .type(EntityType.LOGIN)
         .build();
   }
@@ -146,6 +157,17 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("loginbutton")
   public Entity loginbutton(SpawnData data) {
     FXGLButton button = createButton("Login");
+    button.setOnMouseClicked(e -> {
+      getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
+      AuthRequest.execute(username, password);
+      if (AuthUtils.getAuth() == null) {
+        spawn("message",
+            new SpawnData(getAppWidth() / 3.0 - 200, getAppHeight() - 200)
+                .put("message", "Invalid username or password"));
+      } else {
+        MainMenuScreen.initUi();
+      }
+    });
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -175,14 +197,14 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("blankspace")
   public Entity blackspace(SpawnData data) {
     FXGLButton button = createButton();
-    button.setPrefSize(APP_WIDTH, APP_HEIGHT);
+    button.setPrefSize(getAppWidth(), getAppHeight());
     button.setOnMouseClicked(e -> {
       StartupScreen.backToMainScreen();
     });
     return FXGL.entityBuilder(data)
-            .view(button)
-            .type(EntityType.LOGIN)
-            .build();
+        .view(button)
+        .type(EntityType.LOGIN)
+        .build();
   }
 
   // TODO: replace all magic numbers
@@ -215,8 +237,8 @@ public class StartupScreenFactory implements EntityFactory {
     button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);
     button.setStyle("-fx-background-color: #603232;"
-            + "-fx-background-radius: 25px;"
-            + "-fx-text-fill: #fff;");
+        + "-fx-background-radius: 25px;"
+        + "-fx-text-fill: #fff;");
     button.setOpacity(0.95);
     return button;
   }
