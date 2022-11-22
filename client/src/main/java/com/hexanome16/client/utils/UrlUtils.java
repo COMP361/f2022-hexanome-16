@@ -52,8 +52,8 @@ public class UrlUtils {
    */
   public static String encodeUriComponent(String s) {
     return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8)
-        .replaceAll("%25", "%")
         .replaceAll(" ", "%20")
+        .replaceAll("%25", "%")
         .replaceAll("%26", "&")
         .replaceAll("%3D", "=");
   }
@@ -75,7 +75,7 @@ public class UrlUtils {
           LS_PROPERTIES.getString("server.host"),
           LS_PROPERTIES.getInt("server.port"),
           path == null || path.isBlank() ? null : path,
-          query == null || query.isBlank() ? null : encodeUriComponent(query),
+          query == null || query.isBlank() ? null : query,
           null
       );
     } catch (URISyntaxException e) {
@@ -99,7 +99,7 @@ public class UrlUtils {
           SERVER_PROPERTIES.getString("server.host"),
           SERVER_PROPERTIES.getInt("server.port"),
           path == null || path.isBlank() ? null : path,
-          query == null || query.isBlank() ? null : encodeUriComponent(query),
+          query == null || query.isBlank() ? null : query,
           null
       );
     } catch (URISyntaxException e) {

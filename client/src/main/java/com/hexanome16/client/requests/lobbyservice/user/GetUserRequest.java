@@ -30,7 +30,7 @@ public class GetUserRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/users/" + user,
-              "access_token=" + accessToken
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
           )).header("Content-Type", "application/json")
           .header("Accept", "application/json")
           .GET()
@@ -38,6 +38,9 @@ public class GetUserRequest {
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get();
       AuthUtils.setPlayer(new Gson().fromJson(response, User.class));
+      if (AuthUtils.getPlayer().getName() == null) {
+        AuthUtils.setPlayer(null);
+      }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
       AuthUtils.setPlayer(null);

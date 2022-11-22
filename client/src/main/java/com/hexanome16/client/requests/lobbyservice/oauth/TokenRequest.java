@@ -35,7 +35,8 @@ public class TokenRequest {
         params.append("grant_type=password&username=").append(username)
             .append("&password=").append(password);
       } else {
-        params.append("grant_type=refresh_token&refresh_token=").append(refreshToken);
+        params.append("grant_type=refresh_token&refresh_token=")
+            .append(UrlUtils.encodeUriComponent(refreshToken));
       }
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
@@ -48,6 +49,9 @@ public class TokenRequest {
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
       AuthUtils.setAuth(new Gson().fromJson(response, TokensInfo.class));
+      if (AuthUtils.getAuth().getAccessToken() == null) {
+        AuthUtils.setAuth(null);
+      }
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       e.printStackTrace();
       AuthUtils.setAuth(null);

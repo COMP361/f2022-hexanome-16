@@ -1,6 +1,8 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -28,10 +30,16 @@ public class LeaveSessionRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId + "/players/" + player,
-              "access_token=" + accessToken
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
           )).DELETE()
           .build();
-      client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();
+      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+          .thenApply(HttpResponse::statusCode)
+          .get();
+      if (statusCode == 401) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+        execute(sessionId, player, AuthUtils.getAuth().getAccessToken());
+      }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }

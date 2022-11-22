@@ -1,6 +1,7 @@
 package com.hexanome16.client.screens.mainmenu;
 
 import com.almasb.fxgl.ui.UIController;
+import com.hexanome16.client.utils.AuthUtils;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -69,6 +70,13 @@ public class MainMenuScreenUiController implements UIController {
   @FXML
   void shrinkSettings(MouseEvent event) {
     resize(settingsSection, NORMAL_SIZE);
+  }
+
+  @FXML
+  void logout(MouseEvent event) {
+    AuthUtils.setPlayer(null);
+    AuthUtils.setAuth(null);
+    MainMenuScreen.clearUi();
   }
 
   private void resize(Node n, float size) {
