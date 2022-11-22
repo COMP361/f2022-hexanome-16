@@ -74,8 +74,8 @@ public class UrlUtils {
           null,
           LS_PROPERTIES.getString("server.host"),
           LS_PROPERTIES.getInt("server.port"),
-          path,
-          encodeUriComponent(query),
+          path == null || path.isBlank() ? null : path,
+          query == null || query.isBlank() ? null : encodeUriComponent(query),
           null
       );
     } catch (URISyntaxException e) {
@@ -98,8 +98,8 @@ public class UrlUtils {
           null,
           SERVER_PROPERTIES.getString("server.host"),
           SERVER_PROPERTIES.getInt("server.port"),
-          path,
-          encodeUriComponent(query),
+          path == null || path.isBlank() ? null : path,
+          query == null || query.isBlank() ? null : encodeUriComponent(query),
           null
       );
     } catch (URISyntaxException e) {

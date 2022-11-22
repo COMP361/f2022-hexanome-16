@@ -21,8 +21,10 @@ import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -32,6 +34,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+import javafx.util.Pair;
 
 /**
  * This class is used to create the entities of the lobby screen.
@@ -40,34 +43,60 @@ public class LobbyFactory implements EntityFactory {
   private static Session[] sessions = new Session[] {};
   private static TableView<Session> ownSessionList;
   private static TableView<Session> otherSessionList;
-  private static int prevHashCode = 0;
+  private static String hashCode = "";
+  private static Thread fetchSessionsThread;
+  private static boolean shouldFetch = true;
 
   /**
    * This method updates the list of sessions shown in the lobby screen.
    */
   public static void updateSessionList() {
-    int hashCode = Arrays.hashCode(sessions);
-    if (prevHashCode != hashCode) {
-      prevHashCode = hashCode;
-      sessions = ListSessionsRequest.execute(hashCode);
-      System.out.println("Updating session list");
+    ownSessionList.getItems().clear();
+    otherSessionList.getItems().clear();
 
-      if (sessions == null) {
-        sessions = new Session[] {};
+    if (AuthUtils.getPlayer() != null) {
+      for (Session session : sessions) {
+        if (Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())) {
+          ownSessionList.getItems().add(session);
+        } else {
+          otherSessionList.getItems().add(session);
+        }
       }
-
-      Session[] ownSessions =
-          Arrays.stream(sessions)
-              .filter(session -> session.getCreator().equals(AuthUtils.getPlayer().getName()))
-              .toArray(Session[]::new);
-      Session[] otherSessions =
-          Arrays.stream(sessions)
-              .filter(session -> !session.getCreator().equals(AuthUtils.getPlayer().getName()))
-              .toArray(Session[]::new);
-
-      ownSessionList.setItems(FXCollections.observableArrayList(ownSessions));
-      otherSessionList.setItems(FXCollections.observableArrayList(otherSessions));
     }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
+   */
+  private static void createFetchSessionThread() {
+    Task<Void> fetchSessionsTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
+        hashCode = sessionList.getKey();
+        sessions = sessionList.getValue();
+        if (sessions == null) {
+          sessions = new Session[] {};
+        }
+        updateSessionList();
+        return null;
+      }
+    };
+    fetchSessionsTask.setOnSucceeded(e -> {
+      if (shouldFetch) {
+        createFetchSessionThread();
+      } else {
+        fetchSessionsThread = null;
+      }
+    });
+    fetchSessionsTask.setOnFailed(e -> {
+      throw new RuntimeException(fetchSessionsTask.getException());
+    });
+    fetchSessionsTask.setOnCancelled(e -> {
+      fetchSessionsThread = null;
+    });
+    fetchSessionsThread = new Thread(fetchSessionsTask);
+    fetchSessionsThread.start();
   }
 
   /**
@@ -78,14 +107,7 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("ownSessionList")
   public Entity ownSessionList(SpawnData data) {
-    if (sessions == null) {
-      sessions = new Session[] {};
-    }
-    Session[] activeSessions = Arrays.stream(sessions).filter(
-            session -> session.getCreator().equals(AuthUtils.getPlayer().getName())
-                || Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName()))
-        .toArray(Session[]::new);
-    return sessionList(data, activeSessions, true);
+    return sessionList(data, true);
   }
 
   /**
@@ -96,25 +118,26 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("otherSessionList")
   public Entity otherSessionList(SpawnData data) {
+    return sessionList(data, false);
+  }
+
+  private Entity sessionList(SpawnData data, boolean isOwn) {
     if (sessions == null) {
       sessions = new Session[] {};
     }
-    Session[] otherSessions = Arrays.stream(sessions).filter(
-            session -> !(session.getCreator().equals(AuthUtils.getPlayer().getName())
-                || Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())))
-        .toArray(Session[]::new);
-    return sessionList(data, otherSessions, false);
-  }
-
-  private Entity sessionList(SpawnData data, Session[] sessionArr, boolean isOwn) {
-    if (sessionArr == null) {
-      sessionArr = new Session[] {};
-    }
+    Session[] sessionArr;
     TableView<Session> sessionTableView = new TableView<>();
     if (isOwn) {
       ownSessionList = sessionTableView;
+      sessionArr = Arrays.stream(sessions).filter(
+          session -> Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())
+      ).toArray(Session[]::new);
     } else {
       otherSessionList = sessionTableView;
+      sessionArr = Arrays.stream(sessions).filter(
+          session -> !(Arrays.asList(session.getPlayers())
+              .contains(AuthUtils.getPlayer().getName()))
+      ).toArray(Session[]::new);
     }
     sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff;");
 
@@ -165,6 +188,7 @@ public class LobbyFactory implements EntityFactory {
                     JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
                         AuthUtils.getAuth().getAccessToken());
                     if (session.getLaunched()) {
+                      shouldFetch = false;
                       LobbyScreen.exitLobby();
                       GameScreen.initGame();
                     }
@@ -184,6 +208,7 @@ public class LobbyFactory implements EntityFactory {
                   launch.setOnAction(event -> {
                     LaunchSessionRequest.execute(session.getId(),
                         AuthUtils.getAuth().getAccessToken());
+                    shouldFetch = false;
                     LobbyScreen.exitLobby();
                     GameScreen.initGame();
                   });
@@ -236,6 +261,10 @@ public class LobbyFactory implements EntityFactory {
 
     sessionTableView.getItems().addAll(sessionArr);
     sessionTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
+
+    if (fetchSessionsThread == null) {
+      createFetchSessionThread();
+    }
 
     return entityBuilder(data)
         .type(isOwn ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
