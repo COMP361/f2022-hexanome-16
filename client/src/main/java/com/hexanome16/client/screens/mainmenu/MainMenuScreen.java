@@ -7,6 +7,8 @@ import com.almasb.fxgl.ui.UI;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
+import com.hexanome16.client.screens.startup.StartupScreen;
+import com.hexanome16.client.utils.AuthUtils;
 
 /**
  * UI Screen Main Menu Screen after logging in.
@@ -37,6 +39,12 @@ public class MainMenuScreen {
     uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
       MainMenuScreen.clearUi();
       RulebookScreen.initUi();
+    });
+    uiControllerSingleton.logoutButton.setOnMouseClicked(event -> {
+      AuthUtils.setPlayer(null);
+      AuthUtils.setAuth(null);
+      MainMenuScreen.clearUi();
+      StartupScreen.backToMainScreen();
     });
   }
 
