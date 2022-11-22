@@ -6,6 +6,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
@@ -15,11 +16,12 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class DeckFactory implements EntityFactory {
+
+  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+          .loadFont("BrushScriptMT.ttf");
 
   // (helper) return a pane with a card and a label
   private StackPane getCard(int multiplicity, String cardName) {
@@ -27,7 +29,7 @@ public class DeckFactory implements EntityFactory {
     Texture card = FXGL.texture(cardName);
     // current multiplicity
     Text number = new Text(Integer.toString(multiplicity));
-    number.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 300));
+    number.setFont(CURSIVE_FONT_FACTORY.newFont(300));
     number.setFill(Paint.valueOf("#FCD828"));
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#936D35"));
@@ -47,14 +49,14 @@ public class DeckFactory implements EntityFactory {
     Texture icon = FXGL.texture("playericon.png");
     // current player's name TODO make this a variable
     Text playerName = new Text("Placeholder");
-    playerName.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 100));
+    playerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
     playerName.setStrokeWidth(2.);
     playerName.setStroke(Paint.valueOf("#000000"));
     playerName.setStyle("-fx-background-color: ffffff00; ");
     // current player's prestige points TODO make this a variable
     Text prestigePoints = new Text("10");
-    prestigePoints.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 100));
+    prestigePoints.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
     prestigePoints.setStrokeWidth(2.);
     prestigePoints.setStroke(Paint.valueOf("#000000"));
@@ -217,7 +219,7 @@ public class DeckFactory implements EntityFactory {
     token.setFitWidth(45);
     // multiplicity (text)
     Text number = new Text(Integer.toString(amount));
-    number.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 28));
+    number.setFont(CURSIVE_FONT_FACTORY.newFont(28));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#000000"));
@@ -259,7 +261,7 @@ public class DeckFactory implements EntityFactory {
   public Entity playersTurn(SpawnData data) {
     // current player's name TODO make this a variable
     Text text = new Text("Placeholder \n is playing");
-    text.setFont(Font.font("Brush Script MT", FontWeight.BOLD, 100));
+    text.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     text.setFill(Paint.valueOf("#FFFFFF"));
     text.setStrokeWidth(2.);
     text.setStroke(Paint.valueOf("#000000"));
