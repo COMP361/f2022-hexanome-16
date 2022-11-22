@@ -13,11 +13,14 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * The StartupScreenFactory contains all entities and methods related to the
@@ -57,6 +60,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("message")
   public Entity text(SpawnData data) {
     Text message = createMessage("Click diamond to enter the game!", 115, "#FCD828");
+    animateMessage(message, 1500);
     return FXGL.entityBuilder(data)
             .view(message)
             .type(EntityType.STARTUP)
@@ -70,6 +74,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("loginScreen")
   public Entity loginScreen(SpawnData data) {
     Rectangle loginScreen = createLogin();
+    animateLoginBox(loginScreen, 1000);
     return FXGL.entityBuilder(data)
         .view(loginScreen)
         .type(EntityType.LOGIN)
@@ -82,6 +87,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("login")
   public Entity login(SpawnData data) {
     Text message = createMessage("Login", 96, "#FCD828");
+    animateLoginText(message, 1000);
     return FXGL.entityBuilder(data)
         .view(message)
         .type(EntityType.LOGIN)
@@ -95,6 +101,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity userText(SpawnData data) {
     Text user = createMessage("Username", 45, "#000000");
     user.setStrokeWidth(1);
+    animateLoginText(user, 1000);
     return FXGL.entityBuilder(data)
         .view(user)
         .type(EntityType.LOGIN)
@@ -108,6 +115,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity passwordText(SpawnData data) {
     Text password = createMessage("Password", 45, "#000000");
     password.setStrokeWidth(1);
+    animateLoginText(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
         .type(EntityType.LOGIN)
@@ -120,6 +128,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("username")
   public Entity username(SpawnData data) {
     TextField username = new TextField();
+    animateLoginTextField(username, 1000);
     return FXGL.entityBuilder(data)
         .view(username)
         .type(EntityType.LOGIN)
@@ -132,6 +141,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("password")
   public Entity password(SpawnData data) {
     PasswordField password = new PasswordField();
+    animateLoginPasswordField(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
         .type(EntityType.LOGIN)
@@ -144,6 +154,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("loginButton")
   public Entity loginButton(SpawnData data) {
     FXGLButton button = createButton("Login");
+    animateLoginButton(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -160,6 +171,7 @@ public class StartupScreenFactory implements EntityFactory {
     button.setOnMouseClicked(e -> {
       StartupScreen.backToStartupScreen();
     });
+    animateLoginButton(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -191,7 +203,7 @@ public class StartupScreenFactory implements EntityFactory {
     loginScreen.setArcHeight(50.0);
     loginScreen.setArcWidth(50.0);
     loginScreen.setFill(Paint.valueOf("#936D35"));
-    loginScreen.setOpacity(0.5);
+    loginScreen.setOpacity(0.2);
     return loginScreen;
   }
 
@@ -209,6 +221,17 @@ public class StartupScreenFactory implements EntityFactory {
     FXGLButton button = new FXGLButton(message);
     button.setOnMouseClicked(e -> {
       MainMenuScreen.initUi();
+    });
+    // TODO: set background colour to a better looking one
+    button.setOnMouseEntered(e -> {
+      button.setStyle("-fx-background-color: #000000;"
+              + "-fx-background-radius: 25px;"
+              + "-fx-text-fill: #fff;");
+    });
+    button.setOnMouseExited(e -> {
+      button.setStyle("-fx-background-color: #603232;"
+              + "-fx-background-radius: 25px;"
+              + "-fx-text-fill: #fff;");
     });
     button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);
@@ -240,5 +263,97 @@ public class StartupScreenFactory implements EntityFactory {
     spawn("password", 1000, 550);
     spawn("loginButton", 1020, 635);
     spawn("cancelButton", 820, 635);
+  }
+
+  private void animateMessage(Text message, int duration) {
+    ScaleTransition animation = new ScaleTransition(Duration.millis(duration), message);
+    animation.setAutoReverse(true);
+    animation.setCycleCount(500);
+    animation.setByX(1.05);
+    animation.setByY(1.05);
+    animation.setToX(1.3);
+    animation.setToY(1.3);
+    animation.play();
+
+    FadeTransition ft = new FadeTransition(Duration.millis(duration), message);
+    ft.setFromValue(1.0);
+    ft.setToValue(0.3);
+    ft.setCycleCount(500);
+    ft.setAutoReverse(true);
+    ft.setDelay(Duration.millis(duration));
+    ft.play();
+  }
+
+  private void animateLoginBox(Rectangle loginBox, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), loginBox);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
+
+    FadeTransition ft = new FadeTransition(Duration.millis(duration), loginBox);
+    ft.setFromValue(0.2);
+    ft.setToValue(0.5);
+    ft.setCycleCount(1);
+    ft.setAutoReverse(false);
+    ft.setDelay(Duration.millis(duration / 2));
+    ft.play();
+  }
+
+  private void animateLoginText(Text text, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), text);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
+  }
+
+  private void animateLoginTextField(TextField textField, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), textField);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
+  }
+
+  private void animateLoginPasswordField(PasswordField passwordField, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), passwordField);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
+  }
+
+  private void animateLoginButton(FXGLButton button, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), button);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
   }
 }
