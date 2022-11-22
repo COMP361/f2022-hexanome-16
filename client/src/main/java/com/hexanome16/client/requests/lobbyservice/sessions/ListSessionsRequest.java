@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import javafx.util.Pair;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * This class provides methods to list sessions in Lobby Service.
@@ -28,21 +29,21 @@ public class ListSessionsRequest {
    * @param hash A hashcode used for long polling (to see if there are changes to the list).
    * @return An array of sessions in Lobby Service.
    */
-  public static Session[] execute(int hash) {
+  public static Pair<String, Session[]> execute(String hash) {
     HttpClient client = RequestClient.getClient();
     URI uri = UrlUtils.createLobbyServiceUri(
         "/api/sessions",
-        hash != 0 ? "hash=" + hash : null
+        "hash=" + hash
     );
     HttpRequest request = HttpRequest.newBuilder()
-        .uri(uri).header("Content-Type", "application/json")
+        .uri(uri)
+        .header("Content-Type", "application/json")
         .GET()
         .build();
-    String response = null;
+    String response = "";
     AtomicInteger returnCode = new AtomicInteger(408);
     while (returnCode.get() == 408) {
       try {
-        Thread.sleep(10);
         CompletableFuture<HttpResponse<String>> res =
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         response = res.thenApply(HttpResponse::statusCode)
@@ -56,11 +57,12 @@ public class ListSessionsRequest {
         e.printStackTrace();
       }
     }
+    String hashCode = DigestUtils.md5Hex(response);
     Map<String, Session> sessions = new Gson().fromJson(response, Response.class).sessions;
-    return sessions.entrySet().stream().map(entry -> {
+    return new Pair<>(hashCode, sessions.entrySet().stream().map(entry -> {
       entry.getValue().setId(Long.valueOf(entry.getKey()));
       return entry.getValue();
-    }).toArray(Session[]::new);
+    }).toArray(Session[]::new));
   }
 
   private static class Response {
