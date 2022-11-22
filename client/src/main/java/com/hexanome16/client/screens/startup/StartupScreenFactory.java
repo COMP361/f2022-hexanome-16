@@ -67,8 +67,8 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the login screen rectangle.
    */
-  @Spawns("loginscreen")
-  public Entity loginscreen(SpawnData data) {
+  @Spawns("loginScreen")
+  public Entity loginScreen(SpawnData data) {
     Rectangle loginScreen = createLogin();
     return FXGL.entityBuilder(data)
         .view(loginScreen)
@@ -91,8 +91,8 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the username text.
    */
-  @Spawns("usertext")
-  public Entity usertext(SpawnData data) {
+  @Spawns("userText")
+  public Entity userText(SpawnData data) {
     Text user = createMessage("Username", 45, "#000000");
     user.setStrokeWidth(1);
     return FXGL.entityBuilder(data)
@@ -104,8 +104,8 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the password text.
    */
-  @Spawns("passtext")
-  public Entity passtext(SpawnData data) {
+  @Spawns("passwordText")
+  public Entity passwordText(SpawnData data) {
     Text password = createMessage("Password", 45, "#000000");
     password.setStrokeWidth(1);
     return FXGL.entityBuilder(data)
@@ -141,8 +141,8 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the login button.
    */
-  @Spawns("loginbutton")
-  public Entity loginbutton(SpawnData data) {
+  @Spawns("loginButton")
+  public Entity loginButton(SpawnData data) {
     FXGLButton button = createButton("Login");
     return FXGL.entityBuilder(data)
         .view(button)
@@ -153,12 +153,12 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the cancel button.
    */
-  @Spawns("cancelbutton")
-  public Entity cancelbutton(SpawnData data) {
+  @Spawns("cancelButton")
+  public Entity cancelButton(SpawnData data) {
     FXGLButton button = createButton("Cancel");
     button.setOpacity(0.85);
     button.setOnMouseClicked(e -> {
-      StartupScreen.backToMainScreen();
+      StartupScreen.backToStartupScreen();
     });
     return FXGL.entityBuilder(data)
         .view(button)
@@ -170,12 +170,12 @@ public class StartupScreenFactory implements EntityFactory {
    * Returns a transparent button similar to the cancel button that allows the user to go back to
    * the startup screen by clicking on a blank area outside the login window.
    */
-  @Spawns("blankspace")
-  public Entity blackspace(SpawnData data) {
+  @Spawns("blankSpace")
+  public Entity blackSpace(SpawnData data) {
     FXGLButton button = createButton();
     button.setPrefSize(APP_WIDTH, APP_HEIGHT);
     button.setOnMouseClicked(e -> {
-      StartupScreen.backToMainScreen();
+      StartupScreen.backToStartupScreen();
     });
     return FXGL.entityBuilder(data)
             .view(button)
@@ -231,14 +231,14 @@ public class StartupScreenFactory implements EntityFactory {
 
   private void spawnLoginScreen() {
     getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
-    spawn("blankspace");
-    spawn("loginscreen", 630, 320);
+    spawn("blankSpace");
+    spawn("loginScreen", 630, 320);
     spawn("login", 880, 420);
-    spawn("usertext", 830, 525);
+    spawn("userText", 830, 525);
     spawn("username", 1000, 505);
-    spawn("passtext", 830, 575);
+    spawn("passwordText", 830, 575);
     spawn("password", 1000, 550);
-    spawn("loginbutton", 1020, 635);
-    spawn("cancelbutton", 820, 635);
+    spawn("loginButton", 1020, 635);
+    spawn("cancelButton", 820, 635);
   }
 }

@@ -44,7 +44,7 @@ public class MainApp extends GameApplication {
     getGameWorld().addEntityFactory(new StartupScreenFactory());
     getGameWorld().addEntityFactory(new LobbyFactory());
 
-    StartupScreen.backToMainScreen();
+    StartupScreen.backToStartupScreen();
   }
 
   @Override
