@@ -41,7 +41,7 @@ public class CreateGameServiceRequest {
   /**
    * This class represents the payload of the request (used for JSON conversion).
    */
-  public static class Payload {
+  private static class Payload {
     String location;
     String name;
     Integer maxSessionPlayers;
