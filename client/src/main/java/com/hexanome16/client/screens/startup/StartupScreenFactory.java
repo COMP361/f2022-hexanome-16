@@ -15,6 +15,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
+import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
@@ -87,7 +88,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("login")
   public Entity login(SpawnData data) {
     Text message = createMessage("Login", 96, "#FCD828");
-    animateLoginText(message, 1000);
+    animateLoginElement(message, 1000);
     return FXGL.entityBuilder(data)
         .view(message)
         .type(EntityType.LOGIN)
@@ -101,7 +102,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity userText(SpawnData data) {
     Text user = createMessage("Username", 45, "#000000");
     user.setStrokeWidth(1);
-    animateLoginText(user, 1000);
+    animateLoginElement(user, 1000);
     return FXGL.entityBuilder(data)
         .view(user)
         .type(EntityType.LOGIN)
@@ -115,7 +116,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity passwordText(SpawnData data) {
     Text password = createMessage("Password", 45, "#000000");
     password.setStrokeWidth(1);
-    animateLoginText(password, 1000);
+    animateLoginElement(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
         .type(EntityType.LOGIN)
@@ -128,7 +129,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("username")
   public Entity username(SpawnData data) {
     TextField username = new TextField();
-    animateLoginTextField(username, 1000);
+    animateLoginElement(username, 1000);
     return FXGL.entityBuilder(data)
         .view(username)
         .type(EntityType.LOGIN)
@@ -141,7 +142,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("password")
   public Entity password(SpawnData data) {
     PasswordField password = new PasswordField();
-    animateLoginPasswordField(password, 1000);
+    animateLoginElement(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
         .type(EntityType.LOGIN)
@@ -154,7 +155,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("loginButton")
   public Entity loginButton(SpawnData data) {
     FXGLButton button = createButton("Login");
-    animateLoginButton(button, 1000);
+    animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -171,7 +172,7 @@ public class StartupScreenFactory implements EntityFactory {
     button.setOnMouseClicked(e -> {
       StartupScreen.backToStartupScreen();
     });
-    animateLoginButton(button, 1000);
+    animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -305,47 +306,8 @@ public class StartupScreenFactory implements EntityFactory {
     ft.play();
   }
 
-  private void animateLoginText(Text text, int duration) {
-    ScaleTransition st = new ScaleTransition(Duration.millis(duration), text);
-    st.setAutoReverse(false);
-    st.setCycleCount(1);
-    st.setByX(1.05);
-    st.setByY(1.05);
-    st.setToX(1.0);
-    st.setToY(1.0);
-    st.setFromX(0.1);
-    st.setFromY(0.1);
-    st.play();
-  }
-
-  private void animateLoginTextField(TextField textField, int duration) {
-    ScaleTransition st = new ScaleTransition(Duration.millis(duration), textField);
-    st.setAutoReverse(false);
-    st.setCycleCount(1);
-    st.setByX(1.05);
-    st.setByY(1.05);
-    st.setToX(1.0);
-    st.setToY(1.0);
-    st.setFromX(0.1);
-    st.setFromY(0.1);
-    st.play();
-  }
-
-  private void animateLoginPasswordField(PasswordField passwordField, int duration) {
-    ScaleTransition st = new ScaleTransition(Duration.millis(duration), passwordField);
-    st.setAutoReverse(false);
-    st.setCycleCount(1);
-    st.setByX(1.05);
-    st.setByY(1.05);
-    st.setToX(1.0);
-    st.setToY(1.0);
-    st.setFromX(0.1);
-    st.setFromY(0.1);
-    st.play();
-  }
-
-  private void animateLoginButton(FXGLButton button, int duration) {
-    ScaleTransition st = new ScaleTransition(Duration.millis(duration), button);
+  private void animateLoginElement(Node node, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), node);
     st.setAutoReverse(false);
     st.setCycleCount(1);
     st.setByX(1.05);

@@ -6,8 +6,6 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
 import com.almasb.fxgl.entity.Entity;
 import java.util.ArrayList;
 
-
-
 /**
  * The Startup Screen is the first screen the user sees
  * after launching the MainApp.
