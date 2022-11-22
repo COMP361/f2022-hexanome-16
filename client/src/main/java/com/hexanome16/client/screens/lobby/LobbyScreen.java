@@ -17,8 +17,8 @@ public class LobbyScreen {
    * Spawns all related elements onto the lobby screen.
    */
   public static void initLobby() {
-    AuthRequest.execute("xox", "laaPhie*aiN0");
-    CreateGameServiceRequest.execute(AuthUtils.getAuth().getAccessToken());
+    //AuthRequest.execute("xox", "laaPhie*aiN0");
+    //CreateGameServiceRequest.execute(AuthUtils.getAuth().getAccessToken());
     spawn("background");
     spawn("ownSessionList");
     spawn("otherSessionList");

@@ -37,6 +37,7 @@ public class GetUserRequest {
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get();
+      System.out.println(response);
       AuthUtils.setPlayer(new Gson().fromJson(response, User.class));
       if (AuthUtils.getPlayer().getName() == null) {
         AuthUtils.setPlayer(null);
