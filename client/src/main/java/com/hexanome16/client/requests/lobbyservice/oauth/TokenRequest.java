@@ -48,7 +48,6 @@ public class TokenRequest {
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
-      System.out.println(response);
       AuthUtils.setAuth(new Gson().fromJson(response, TokensInfo.class));
       if (AuthUtils.getAuth().getAccessToken() == null) {
         AuthUtils.setAuth(null);
