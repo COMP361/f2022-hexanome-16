@@ -19,8 +19,6 @@ import com.hexanome16.client.screens.lobby.LobbyFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import com.hexanome16.client.screens.startup.StartupScreenFactory;
 import java.util.Map;
-import javafx.geometry.Point2D;
-
 
 /**
  * FXGL Game Application, Game's entry point.
@@ -61,5 +59,4 @@ public class MainApp extends GameApplication {
   protected void initGameVars(Map<String, Object> vars) {
     GameScreen.initGameVars(vars);
   }
-
 }

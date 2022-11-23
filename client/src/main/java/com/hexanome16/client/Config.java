@@ -1,8 +1,7 @@
 package com.hexanome16.client;
 
-import javafx.scene.paint.Color;
-
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 
 /**
  * This class contains configuration options for the game.
