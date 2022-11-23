@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAssetLoader;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 
 import com.almasb.fxgl.ui.UI;
+import com.hexanome16.client.requests.lobbyservice.oauth.LogoutRequest;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
@@ -41,10 +42,9 @@ public class MainMenuScreen {
       RulebookScreen.initUi();
     });
     uiControllerSingleton.logoutButton.setOnMouseClicked(event -> {
-      AuthUtils.setPlayer(null);
-      AuthUtils.setAuth(null);
+      LogoutRequest.execute();
       MainMenuScreen.clearUi();
-      StartupScreen.backToMainScreen();
+      StartupScreen.backToStartupScreen();
     });
   }
 

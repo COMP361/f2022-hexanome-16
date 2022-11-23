@@ -32,14 +32,12 @@ public class GetUserRequest {
           "/api/users/" + user,
           "access_token=" + UrlUtils.encodeUriComponent(accessToken)
       );
-      System.out.println(uri);
       HttpRequest request = HttpRequest.newBuilder()
           .uri(uri).header("Accept", "application/json")
           .GET()
           .build();
       String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get();
-      System.out.println(response);
       AuthUtils.setPlayer(new Gson().fromJson(response, User.class));
       if (AuthUtils.getPlayer().getName() == null) {
         AuthUtils.setPlayer(null);
