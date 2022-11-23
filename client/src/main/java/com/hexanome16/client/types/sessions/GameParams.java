@@ -14,6 +14,18 @@ public final class GameParams {
   private String webSupport;
 
   /**
+   * Default params used for testing/UI demo.
+   */
+  public GameParams() {
+    location = "http://127.0.0.1:4243/SplendorService";
+    name = "Splendor";
+    maxSessionPlayers = 4;
+    minSessionPlayers = 2;
+    displayName = "Splendor";
+    webSupport = "true";
+  }
+
+  /**
    * Constructor.
    *
    * @param location          The location of the game service.
