@@ -2,6 +2,7 @@ package com.hexanome16.client.requests.lobbyservice.gameservice;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.types.sessions.GameParams;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -29,56 +30,12 @@ public class CreateGameServiceRequest {
               "/api/gameservices/Splendor",
               "access_token=" + accessToken
           )).header("Content-Type", "application/json")
-          .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload())))
+          .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new GameParams())))
           .build();
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::body).get(10, TimeUnit.SECONDS);
     } catch (Exception e) {
       e.printStackTrace();
-    }
-  }
-
-  /**
-   * This class represents the payload of the request (used for JSON conversion).
-   */
-  private static class Payload {
-    String location;
-    String name;
-    Integer maxSessionPlayers;
-    Integer minSessionPlayers;
-    String displayName;
-    String webSupport;
-
-    /**
-     * Default params used for testing/UI demo.
-     */
-    public Payload() {
-      location = "http://127.0.0.1:4243/SplendorService";
-      name = "Splendor";
-      maxSessionPlayers = 4;
-      minSessionPlayers = 2;
-      displayName = "Splendor";
-      webSupport = "true";
-    }
-
-    /**
-     * Creates the payload with the given params.
-     *
-     * @param location          The location of the game service.
-     * @param name              The name of the game service.
-     * @param maxSessionPlayers The maximum number of players in a session.
-     * @param minSessionPlayers The minimum number of players in a session.
-     * @param displayName       The display name of the game service.
-     * @param webSupport        Whether the game service supports web.
-     */
-    public Payload(String location, String name, Integer maxSessionPlayers,
-                   Integer minSessionPlayers, String displayName, String webSupport) {
-      this.location = location;
-      this.name = name;
-      this.maxSessionPlayers = maxSessionPlayers;
-      this.minSessionPlayers = minSessionPlayers;
-      this.displayName = displayName;
-      this.webSupport = webSupport;
     }
   }
 }
