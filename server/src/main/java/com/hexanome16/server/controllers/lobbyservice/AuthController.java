@@ -2,12 +2,13 @@ package com.hexanome16.server.controllers.lobbyservice;
 
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
+import java.net.URI;
 import java.util.Collections;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -29,19 +30,19 @@ public class AuthController {
       params.append("grant_type=password&username=").append(username)
           .append("&password=").append(password);
     } else {
-      params.append("grant_type=refresh_token&refresh_token=")
-          .append(UrlUtils.encodeUriComponent(refreshToken));
+      params.append("grant_type=refresh_token&refresh_token=").append(refreshToken);
     }
-    String url = UrlUtils.createLobbyServiceUri("/oauth/token", params.toString());
+    URI url = new UrlUtils().createLobbyServiceUri("/oauth/token", params.toString());
+    assert url != null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBasicAuth("bgp-client-name", "bgp-client-pw");
-    ResponseEntity<TokensInfo> response =
-        restTemplate.postForEntity(url, headers, TokensInfo.class);
-    if (response.getStatusCode().is2xxSuccessful()) {
-      return response;
-    } else {
+    HttpEntity<Void> entity = new HttpEntity<>(null, headers);
+    try {
+      return this.restTemplate.postForEntity(url, entity, TokensInfo.class);
+    } catch (Exception e) {
+      e.printStackTrace();
       return null;
     }
   }
