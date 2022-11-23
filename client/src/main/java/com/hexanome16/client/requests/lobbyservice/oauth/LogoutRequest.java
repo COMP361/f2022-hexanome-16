@@ -33,10 +33,12 @@ public class LogoutRequest {
           .thenApply(HttpResponse::statusCode).get();
       if (statusCode == 200) {
         AuthUtils.setAuth(null);
+        AuthUtils.setPlayer(null);
       }
     } catch (InterruptedException | ExecutionException e) {
       e.printStackTrace();
       AuthUtils.setAuth(null);
+      AuthUtils.setPlayer(null);
     }
   }
 }
