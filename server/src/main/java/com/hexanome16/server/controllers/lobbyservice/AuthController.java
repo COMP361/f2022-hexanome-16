@@ -19,9 +19,11 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class AuthController {
   private final RestTemplate restTemplate;
+  private final UrlUtils urlUtils;
 
-  public AuthController(RestTemplateBuilder restTemplateBuilder) {
+  public AuthController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
+    this.urlUtils = urlUtils;
   }
 
   private ResponseEntity<TokensInfo> login(String username, String password, String refreshToken) {
@@ -32,7 +34,7 @@ public class AuthController {
     } else {
       params.append("grant_type=refresh_token&refresh_token=").append(refreshToken);
     }
-    URI url = new UrlUtils().createLobbyServiceUri("/oauth/token", params.toString());
+    URI url = urlUtils.createLobbyServiceUri("/oauth/token", params.toString());
     assert url != null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
