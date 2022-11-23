@@ -1,56 +1,50 @@
 package com.hexanome16.server.util;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Utility class for performing operations on URLs.
  */
+@Component
+@PropertySource("classpath:application.properties")
 public class UrlUtils {
-  @Value("${ls.protocol}")
-  private static String lsProtocol;
+  private final String lsProtocol;
 
-  @Value("${ls.host}")
-  private static String lsHost;
+  private final String lsHost;
 
-  @Value("${ls.port}")
-  private static String lsPort;
+  private final String lsPort;
 
-  private UrlUtils() {
+  /**
+   * Constructor.
+   *
+   * @param lsProtocol The protocol to use for the Lobby Service.
+   * @param lsHost     The host to use for the Lobby Service.
+   * @param lsPort     The port to use for the Lobby Service.
+   */
+  @Autowired
+  private UrlUtils(@Value("${ls.protocol}:http") String lsProtocol,
+                   @Value("${ls.host}:localhost") String lsHost,
+                   @Value("${ls.port}:4242") String lsPort) {
     super();
+    this.lsProtocol = lsProtocol;
+    this.lsHost = lsHost;
+    this.lsPort = lsPort;
   }
 
   /**
-   * Decodes the passed UTF-8 String using an algorithm that's compatible with
-   * JavaScript's <code>decodeURIComponent</code> function. Returns
-   * <code>null</code> if the String is <code>null</code>.
-   *
-   * @param s The UTF-8 encoded String to be decoded
-   * @return the decoded String
+   * Constructor.
    */
-  public static String decodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLDecoder.decode(
-        s.replaceAll("%", "%25"),
-        StandardCharsets.UTF_8
-    );
-  }
-
-  /**
-   * Encodes the passed String as UTF-8 using an algorithm that's compatible
-   * with JavaScript's <code>encodeURIComponent</code> function. Returns
-   * <code>null</code> if the String is <code>null</code>.
-   *
-   * @param s The String to be encoded
-   * @return the encoded String
-   */
-  public static String encodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8)
-        .replaceAll(" ", "%20")
-        .replaceAll("%25", "%")
-        .replaceAll("%26", "&")
-        .replaceAll("%3D", "=");
+  public UrlUtils() {
+    super();
+    this.lsProtocol = "http";
+    this.lsHost = "localhost";
+    this.lsPort = "4242";
   }
 
   /**
@@ -60,7 +54,9 @@ public class UrlUtils {
    * @param query The query parameters to use for the URI.
    * @return The Lobby Service URI.
    */
-  public static String createLobbyServiceUri(String path, String query) {
-    return lsProtocol + "://" + lsHost + ":" + lsPort + path + "?" + query;
+  public URI createLobbyServiceUri(String path, String query) {
+    return UriComponentsBuilder.fromUriString(
+        lsProtocol + "://" + lsHost + ":" + lsPort + path + "?" + query
+    ).build().encode(StandardCharsets.UTF_8).toUri();
   }
 }

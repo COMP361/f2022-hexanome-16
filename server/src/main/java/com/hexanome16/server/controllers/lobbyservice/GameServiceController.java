@@ -1,18 +1,24 @@
 package com.hexanome16.server.controllers.lobbyservice;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.hexanome16.server.models.auth.TokensInfo;
+import com.hexanome16.server.models.sessions.GameParams;
 import com.hexanome16.server.util.UrlUtils;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +31,9 @@ public class GameServiceController {
 
   private final AuthController authController;
 
+  /**
+   * TODO.
+   */
   public GameServiceController(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder.build();
     this.authController = new AuthController(restTemplateBuilder);
@@ -33,62 +42,25 @@ public class GameServiceController {
   /**
    * TODO.
    */
-  @ResponseBody
-  @EventListener(ApplicationReadyEvent.class)
   public void createGameService() {
     ResponseEntity<TokensInfo> tokensInfo =
         authController.login("xox", "laaPhie*aiN0");
-    String url = UrlUtils.createLobbyServiceUri("/api/gameservices/{name}",
+    URI url = new UrlUtils().createLobbyServiceUri("/api/gameservices/Splendor",
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
+    assert url != null;
+    GameParams gameParams = new GameParams();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    Payload payload = new Payload();
-    HttpEntity<Payload> entity = new HttpEntity<>(payload, headers);
-    this.restTemplate.put(url, entity, payload.name);
+    HttpEntity<GameParams> entity = new HttpEntity<>(gameParams, headers);
+    this.restTemplate.put(url, entity);
   }
 
   /**
-   * This class represents the payload of the request (used for JSON conversion).
+   * TODO.
    */
-  private static class Payload {
-    String location;
-    String name;
-    Integer maxSessionPlayers;
-    Integer minSessionPlayers;
-    String displayName;
-    String webSupport;
-
-    /**
-     * Default params used for testing/UI demo.
-     */
-    public Payload() {
-      location = "http://127.0.0.1:4243/SplendorService";
-      name = "Splendor";
-      maxSessionPlayers = 4;
-      minSessionPlayers = 2;
-      displayName = "Splendor";
-      webSupport = "true";
-    }
-
-    /**
-     * Creates the payload with the given params.
-     *
-     * @param location          The location of the game service.
-     * @param name              The name of the game service.
-     * @param maxSessionPlayers The maximum number of players in a session.
-     * @param minSessionPlayers The minimum number of players in a session.
-     * @param displayName       The display name of the game service.
-     * @param webSupport        Whether the game service supports web.
-     */
-    public Payload(String location, String name, Integer maxSessionPlayers,
-                   Integer minSessionPlayers, String displayName, String webSupport) {
-      this.location = location;
-      this.name = name;
-      this.maxSessionPlayers = maxSessionPlayers;
-      this.minSessionPlayers = minSessionPlayers;
-      this.displayName = displayName;
-      this.webSupport = webSupport;
-    }
+  @EventListener(ApplicationReadyEvent.class)
+  public void createGameServiceAfterStartup() {
+    createGameService();
   }
 }
