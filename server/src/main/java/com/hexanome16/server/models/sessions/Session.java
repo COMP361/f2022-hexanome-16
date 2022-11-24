@@ -1,4 +1,4 @@
-package com.hexanome16.client.types.sessions;
+package com.hexanome16.server.models.sessions;
 
 import java.util.Arrays;
 import java.util.Objects;

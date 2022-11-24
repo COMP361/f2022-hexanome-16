@@ -1,6 +1,9 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,6 +14,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to delete a session in Lobby Service.
  */
 public class DeleteSessionRequest {
+  private DeleteSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to delete a session in Lobby Service.
    *
@@ -21,14 +28,18 @@ public class DeleteSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId,
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
           )).DELETE()
           .build();
-      client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();
+      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+          .thenApply(HttpResponse::statusCode)
+          .get();
+      if (statusCode == 401) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+        execute(sessionId, AuthUtils.getAuth().getAccessToken());
+      }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }

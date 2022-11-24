@@ -2,6 +2,7 @@ package com.hexanome16.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * This class is the entry point of the server.
