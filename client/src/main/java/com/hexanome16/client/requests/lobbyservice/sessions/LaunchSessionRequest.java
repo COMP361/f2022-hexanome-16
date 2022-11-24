@@ -1,6 +1,8 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,6 +13,10 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to launch a session in Lobby Service.
  */
 public class LaunchSessionRequest {
+  private LaunchSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to launch a session in Lobby Service.
    *
@@ -21,14 +27,18 @@ public class LaunchSessionRequest {
     HttpClient client = RequestClient.getClient();
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createUri(
+          .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId,
-              "access_token=" + accessToken,
-              null,
-              true
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
           )).POST(HttpRequest.BodyPublishers.noBody())
           .build();
-      client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();
+      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+          .thenApply(HttpResponse::statusCode)
+          .get();
+      if (statusCode == 401) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+        execute(sessionId, AuthUtils.getAuth().getAccessToken());
+      }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }

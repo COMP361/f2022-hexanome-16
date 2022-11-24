@@ -1,20 +1,15 @@
 package com.hexanome16.client.screens.lobby;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.run;
-import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.requests.lobbyservice.gameservice.CreateGameServiceRequest;
-import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
-import com.hexanome16.client.types.auth.TokensInfo;
-import javafx.util.Duration;
 
 /**
  * This class controls the entities of the lobby screen.
  */
 public class LobbyScreen {
+
   /**
    * Spawns all related elements onto the lobby screen.
    */
@@ -28,12 +23,6 @@ public class LobbyScreen {
     spawn("logo");
     spawn("ownHeader");
     spawn("otherHeader");
-    runOnce(() -> {
-      TokensInfo tokensInfo = TokenRequest.execute("xox", "laaPhie*aiN0", null);
-      assert tokensInfo != null;
-      CreateGameServiceRequest.execute(tokensInfo.accessToken());
-    }, Duration.ZERO);
-    run(LobbyFactory::updateSessionList, Duration.seconds(1));
   }
 
   /**

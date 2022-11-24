@@ -25,6 +25,8 @@ public class MainMenuScreenUiController implements UIController {
   VBox rulebookSection;
   @FXML
   VBox settingsSection;
+  @FXML
+  VBox logoutButton;
 
   @FXML
   void clickLobby(MouseEvent event) {
@@ -70,6 +72,9 @@ public class MainMenuScreenUiController implements UIController {
   void shrinkSettings(MouseEvent event) {
     resize(settingsSection, NORMAL_SIZE);
   }
+
+  @FXML
+  void clickLogoutButton(MouseEvent event) {}
 
   private void resize(Node n, float size) {
     ScaleTransition scale =

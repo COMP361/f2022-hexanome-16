@@ -1,9 +1,9 @@
 package com.hexanome16.client.screens.startup;
 
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.hexanome16.client.Config.APP_HEIGHT;
-import static com.hexanome16.client.Config.APP_WIDTH;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -12,12 +12,18 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
+import com.hexanome16.client.utils.AuthUtils;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
+import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * The StartupScreenFactory contains all entities and methods related to the
@@ -27,6 +33,9 @@ public class StartupScreenFactory implements EntityFactory {
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
       .loadFont("BrushScriptMT.ttf");
 
+  private static String username = "";
+  private static String password = "";
+
   /**
    * Returns the image of the full startup screen.
    */
@@ -34,9 +43,9 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity mainScreen(SpawnData data) {
     var mainScreen = FXGL.texture("splendor_main_screen.jpg");
     return FXGL.entityBuilder(data)
-            .view(mainScreen)
-            .type(EntityType.STARTUP)
-            .build();
+        .view(mainScreen)
+        .type(EntityType.STARTUP)
+        .build();
   }
 
   /**
@@ -46,9 +55,9 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity diamond(SpawnData data) {
     FXGLButton button = createButton();
     return FXGL.entityBuilder(data)
-            .view(button)
-            .type(EntityType.STARTUP)
-            .build();
+        .view(button)
+        .type(EntityType.STARTUP)
+        .build();
   }
 
   /**
@@ -56,20 +65,24 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("message")
   public Entity text(SpawnData data) {
-    Text message = createMessage("Click diamond to enter the game!", 115, "#FCD828");
+    String text =
+        (String) data.getData().getOrDefault("message", "Click diamond to enter the game!");
+    Text message = createMessage(text, 115, "#FCD828");
+    animateMessage(message, 1500);
     return FXGL.entityBuilder(data)
-            .view(message)
-            .type(EntityType.STARTUP)
-            .type(EntityType.MESSAGE)
-            .build();
+        .view(message)
+        .type(EntityType.STARTUP)
+        .type(EntityType.MESSAGE)
+        .build();
   }
 
   /**
    * Returns the login screen rectangle.
    */
-  @Spawns("loginscreen")
-  public Entity loginscreen(SpawnData data) {
+  @Spawns("loginScreen")
+  public Entity loginScreen(SpawnData data) {
     Rectangle loginScreen = createLogin();
+    animateLoginBox(loginScreen, 1000);
     return FXGL.entityBuilder(data)
         .view(loginScreen)
         .type(EntityType.LOGIN)
@@ -82,6 +95,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("login")
   public Entity login(SpawnData data) {
     Text message = createMessage("Login", 96, "#FCD828");
+    animateLoginElement(message, 1000);
     return FXGL.entityBuilder(data)
         .view(message)
         .type(EntityType.LOGIN)
@@ -91,10 +105,11 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the username text.
    */
-  @Spawns("usertext")
-  public Entity usertext(SpawnData data) {
+  @Spawns("userText")
+  public Entity userText(SpawnData data) {
     Text user = createMessage("Username", 45, "#000000");
     user.setStrokeWidth(1);
+    animateLoginElement(user, 1000);
     return FXGL.entityBuilder(data)
         .view(user)
         .type(EntityType.LOGIN)
@@ -104,10 +119,11 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the password text.
    */
-  @Spawns("passtext")
-  public Entity passtext(SpawnData data) {
+  @Spawns("passwordText")
+  public Entity passwordText(SpawnData data) {
     Text password = createMessage("Password", 45, "#000000");
     password.setStrokeWidth(1);
+    animateLoginElement(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
         .type(EntityType.LOGIN)
@@ -119,9 +135,13 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("username")
   public Entity username(SpawnData data) {
-    TextField username = new TextField();
+    TextField usernameField = new TextField();
+    usernameField.setOnKeyTyped(e -> {
+      username = usernameField.getText();
+    });
+    animateLoginElement(usernameField, 1000);
     return FXGL.entityBuilder(data)
-        .view(username)
+        .view(usernameField)
         .type(EntityType.LOGIN)
         .build();
   }
@@ -131,9 +151,13 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("password")
   public Entity password(SpawnData data) {
-    PasswordField password = new PasswordField();
+    PasswordField passwordField = new PasswordField();
+    passwordField.setOnKeyTyped(e -> {
+      password = passwordField.getText();
+    });
+    animateLoginElement(passwordField, 1000);
     return FXGL.entityBuilder(data)
-        .view(password)
+        .view(passwordField)
         .type(EntityType.LOGIN)
         .build();
   }
@@ -141,9 +165,21 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the login button.
    */
-  @Spawns("loginbutton")
-  public Entity loginbutton(SpawnData data) {
+  @Spawns("loginButton")
+  public Entity loginButton(SpawnData data) {
     FXGLButton button = createButton("Login");
+    button.setOnMouseClicked(e -> {
+      getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
+      AuthRequest.execute(username, password);
+      if (AuthUtils.getAuth() == null) {
+        spawn("message",
+            new SpawnData(getAppWidth() / 3.0 - 200, getAppHeight() - 200)
+                .put("message", "Invalid username or password"));
+      } else {
+        MainMenuScreen.initUi();
+      }
+    });
+    animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -153,13 +189,14 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns the cancel button.
    */
-  @Spawns("cancelbutton")
-  public Entity cancelbutton(SpawnData data) {
+  @Spawns("cancelButton")
+  public Entity cancelButton(SpawnData data) {
     FXGLButton button = createButton("Cancel");
     button.setOpacity(0.85);
     button.setOnMouseClicked(e -> {
-      StartupScreen.backToMainScreen();
+      StartupScreen.backToStartupScreen();
     });
+    animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -170,17 +207,17 @@ public class StartupScreenFactory implements EntityFactory {
    * Returns a transparent button similar to the cancel button that allows the user to go back to
    * the startup screen by clicking on a blank area outside the login window.
    */
-  @Spawns("blankspace")
-  public Entity blackspace(SpawnData data) {
+  @Spawns("blankSpace")
+  public Entity blackSpace(SpawnData data) {
     FXGLButton button = createButton();
-    button.setPrefSize(APP_WIDTH, APP_HEIGHT);
+    button.setPrefSize(getAppWidth(), getAppHeight());
     button.setOnMouseClicked(e -> {
-      StartupScreen.backToMainScreen();
+      StartupScreen.backToStartupScreen();
     });
     return FXGL.entityBuilder(data)
-            .view(button)
-            .type(EntityType.LOGIN)
-            .build();
+        .view(button)
+        .type(EntityType.LOGIN)
+        .build();
   }
 
   // TODO: replace all magic numbers
@@ -191,7 +228,7 @@ public class StartupScreenFactory implements EntityFactory {
     loginScreen.setArcHeight(50.0);
     loginScreen.setArcWidth(50.0);
     loginScreen.setFill(Paint.valueOf("#936D35"));
-    loginScreen.setOpacity(0.5);
+    loginScreen.setOpacity(0.2);
     return loginScreen;
   }
 
@@ -210,11 +247,22 @@ public class StartupScreenFactory implements EntityFactory {
     button.setOnMouseClicked(e -> {
       MainMenuScreen.initUi();
     });
+    // TODO: set background colour to a better looking one
+    button.setOnMouseEntered(e -> {
+      button.setStyle("-fx-background-color: #000000;"
+              + "-fx-background-radius: 25px;"
+              + "-fx-text-fill: #fff;");
+    });
+    button.setOnMouseExited(e -> {
+      button.setStyle("-fx-background-color: #603232;"
+              + "-fx-background-radius: 25px;"
+              + "-fx-text-fill: #fff;");
+    });
     button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);
     button.setStyle("-fx-background-color: #603232;"
-            + "-fx-background-radius: 25px;"
-            + "-fx-text-fill: #fff;");
+        + "-fx-background-radius: 25px;"
+        + "-fx-text-fill: #fff;");
     button.setOpacity(0.95);
     return button;
   }
@@ -231,14 +279,67 @@ public class StartupScreenFactory implements EntityFactory {
 
   private void spawnLoginScreen() {
     getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
-    spawn("blankspace");
-    spawn("loginscreen", 630, 320);
+    spawn("blankSpace");
+    spawn("loginScreen", 630, 320);
     spawn("login", 880, 420);
-    spawn("usertext", 830, 525);
+    spawn("userText", 830, 525);
     spawn("username", 1000, 505);
-    spawn("passtext", 830, 575);
+    spawn("passwordText", 830, 575);
     spawn("password", 1000, 550);
-    spawn("loginbutton", 1020, 635);
-    spawn("cancelbutton", 820, 635);
+    spawn("loginButton", 1020, 635);
+    spawn("cancelButton", 820, 635);
+  }
+
+  private void animateMessage(Text message, int duration) {
+    ScaleTransition animation = new ScaleTransition(Duration.millis(duration), message);
+    animation.setAutoReverse(true);
+    animation.setCycleCount(500);
+    animation.setByX(1.05);
+    animation.setByY(1.05);
+    animation.setToX(1.3);
+    animation.setToY(1.3);
+    animation.play();
+
+    FadeTransition ft = new FadeTransition(Duration.millis(duration), message);
+    ft.setFromValue(1.0);
+    ft.setToValue(0.3);
+    ft.setCycleCount(500);
+    ft.setAutoReverse(true);
+    ft.setDelay(Duration.millis(duration));
+    ft.play();
+  }
+
+  private void animateLoginBox(Rectangle loginBox, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), loginBox);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
+
+    FadeTransition ft = new FadeTransition(Duration.millis(duration), loginBox);
+    ft.setFromValue(0.2);
+    ft.setToValue(0.5);
+    ft.setCycleCount(1);
+    ft.setAutoReverse(false);
+    ft.setDelay(Duration.millis(duration / 2));
+    ft.play();
+  }
+
+  private void animateLoginElement(Node node, int duration) {
+    ScaleTransition st = new ScaleTransition(Duration.millis(duration), node);
+    st.setAutoReverse(false);
+    st.setCycleCount(1);
+    st.setByX(1.05);
+    st.setByY(1.05);
+    st.setToX(1.0);
+    st.setToY(1.0);
+    st.setFromX(0.1);
+    st.setFromY(0.1);
+    st.play();
   }
 }

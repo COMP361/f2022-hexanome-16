@@ -1,19 +1,19 @@
-package com.hexanome16.client.types.auth;
+package com.hexanome16.server.models.auth;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 /**
  * This class contains information about OAuth user tokens.
  */
 public final class TokensInfo {
-  @SerializedName("access_token")
+  @JsonProperty("access_token")
   private String accessToken;
-  @SerializedName("refresh_token")
+  @JsonProperty("refresh_token")
   private String refreshToken;
-  @SerializedName("token_type")
+  @JsonProperty("token_type")
   private String tokenType;
-  @SerializedName("expires_in")
+  @JsonProperty("expires_in")
   private int expiresIn;
   private String scope;
 

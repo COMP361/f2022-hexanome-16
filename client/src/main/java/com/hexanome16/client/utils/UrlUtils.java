@@ -3,8 +3,10 @@ package com.hexanome16.client.utils;
 import com.almasb.fxgl.core.asset.AssetType;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -36,10 +38,7 @@ public class UrlUtils {
    * @return the decoded String
    */
   public static String decodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLDecoder.decode(
-        s.replaceAll("%", "%25"),
-        StandardCharsets.UTF_8
-    );
+    return s == null ? null : s.isBlank() ? "" : URLDecoder.decode(s, StandardCharsets.UTF_8);
   }
 
   /**
@@ -51,37 +50,62 @@ public class UrlUtils {
    * @return the encoded String
    */
   public static String encodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8)
-        .replaceAll("%25", "%")
-        .replaceAll(" ", "%20")
-        .replaceAll("%26", "&")
-        .replaceAll("%3D", "=");
+    return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8);
+  }
+
+  //TODO: Add ability to set custom URLs for LS/Game Server.
+
+  /**
+   * Creates a Lobby Service URI based on the passed parameters.
+   *
+   * @param path  The path to use for the URI.
+   * @param query The query parameters to use for the URI.
+   * @return The Lobby Service URI.
+   */
+  public static URI createLobbyServiceUri(String path, String query) {
+    try {
+      String urlString = LS_PROPERTIES.getString("server.protocol") + "://"
+          + LS_PROPERTIES.getString("server.host") + ":"
+          + LS_PROPERTIES.getInt("server.port") + path + "?" + query;
+      URL url = new URL(decodeUriComponent(urlString));
+      return new URI(
+          url.getProtocol(),
+          url.getUserInfo(),
+          url.getHost(),
+          url.getPort(),
+          url.getPath(),
+          url.getQuery(),
+          url.getRef()
+      );
+    } catch (URISyntaxException | MalformedURLException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   /**
-   * Creates a URI from the passed parameters depending on the active Maven profile.
+   * Creates a game server URI based on the passed parameters.
    *
-   * @param path        The path to use for the URI.
-   * @param query       The query parameters to use for the URI.
-   * @param fragment    The fragment to use for the URI.
-   * @return The URI.
+   * @param path  The path to use for the URI.
+   * @param query The query parameters to use for the URI.
+   * @return The game server URI.
    */
-  public static URI createUri(String path, String query, String fragment,
-                              boolean isLobbyService) {
-    final PropertyMap properties = isLobbyService ? LS_PROPERTIES : SERVER_PROPERTIES;
+  public static URI createGameServerUri(String path, String query) {
     try {
-      URI uri = new URI(
-          properties.getString("server.protocol"),
-          null,
-          properties.getString("server.host"),
-          properties.getInt("server.port"),
-          path,
-          encodeUriComponent(query),
-          encodeUriComponent(fragment)
+      String urlString = SERVER_PROPERTIES.getString("server.protocol") + "://"
+          + SERVER_PROPERTIES.getString("server.host") + ":"
+          + SERVER_PROPERTIES.getInt("server.port") + path + "?" + query;
+      URL url = new URL(decodeUriComponent(urlString));
+      return new URI(
+          url.getProtocol(),
+          url.getUserInfo(),
+          url.getHost(),
+          url.getPort(),
+          url.getPath(),
+          url.getQuery(),
+          url.getRef()
       );
-      System.out.println("URI: " + uri);
-      return uri;
-    } catch (URISyntaxException e) {
+    } catch (URISyntaxException | MalformedURLException e) {
       e.printStackTrace();
       return null;
     }
