@@ -35,6 +35,7 @@ public class GameScreen {
    * player inventory and settings button to the game screen.
    */
   public static void initGame() {
+
     for (int i = 0; i < level_one_list.length; i++) {
       level_one.push(level_one_list[i]);
     }
@@ -112,6 +113,7 @@ public class GameScreen {
    * Adds a new level-one card to the game board.
    */
   public static void addLevelOneCard() {
+
     if (!level_one.empty()) {
       FXGL.spawn("LevelOneCard", new SpawnData().put("cardIndex", level_one.pop()));
     }

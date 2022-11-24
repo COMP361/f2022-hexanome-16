@@ -10,7 +10,14 @@ public abstract class DevelopmentCard {
   private final String texturePath;
   private final Price price;
 
-
+  /**
+   * Creates a new card object with id, prestigePoint, texturePath and price.
+   *
+   * @param id card id
+   * @param prestigePoint card prestige point
+   * @param texturePath card texture
+   * @param price card price
+   */
   public DevelopmentCard(int id, int prestigePoint, String texturePath, Price price) {
     this.id = id;
     this.prestigePoint = prestigePoint;
@@ -33,4 +40,5 @@ public abstract class DevelopmentCard {
   public String getTexturePath() {
     return texturePath;
   }
+
 }
