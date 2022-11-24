@@ -56,6 +56,4 @@ public class MainApp extends GameApplication {
   protected void initGameVars(Map<String, Object> vars) {
     GameScreen.initGameVars(vars);
   }
-
-
 }
