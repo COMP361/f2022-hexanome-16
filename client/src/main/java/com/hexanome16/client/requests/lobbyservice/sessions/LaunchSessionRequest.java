@@ -29,7 +29,7 @@ public class LaunchSessionRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId,
-              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+              "access_token=" + accessToken
           )).POST(HttpRequest.BodyPublishers.noBody())
           .build();
       int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())

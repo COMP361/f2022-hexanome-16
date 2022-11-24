@@ -30,7 +30,7 @@ public class GetUserRequest {
     try {
       URI uri = UrlUtils.createLobbyServiceUri(
           "/api/users/" + user,
-          "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+          "access_token=" + accessToken
       );
       HttpRequest request = HttpRequest.newBuilder()
           .uri(uri).header("Accept", "application/json")
