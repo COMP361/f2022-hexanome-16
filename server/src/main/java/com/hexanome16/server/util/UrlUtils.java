@@ -1,6 +1,7 @@
 package com.hexanome16.server.util;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,12 @@ public class UrlUtils {
    * @return The Lobby Service URI.
    */
   public URI createLobbyServiceUri(String path, String query) {
-    String url = protocol + "://" + host + ":" + port + path + "?" + query;
-    return UriComponentsBuilder.fromUriString(url).build().encode(StandardCharsets.UTF_8).toUri();
+    try {
+      String urlString = protocol + "://" + host + ":" + port + path + "?" + query;
+      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }
