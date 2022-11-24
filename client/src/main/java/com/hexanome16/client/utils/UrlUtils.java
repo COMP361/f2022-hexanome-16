@@ -3,13 +3,10 @@ package com.hexanome16.client.utils;
 import com.almasb.fxgl.core.asset.AssetType;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javafx.concurrent.Task;
 
 /**
  * Utility class for performing operations on URLs.
@@ -66,6 +63,48 @@ public class UrlUtils {
     } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;
+    }
+  }
+
+  public static class RequestThread {
+    private Thread worker;
+    private Runnable task;
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean finished = new AtomicBoolean(false);
+    private int interval;
+
+    public RequestThread(int interval, Runnable task) {
+      this.interval = interval;
+      this.task = task;
+    }
+
+    public boolean isRunning() {
+      return running.get();
+    }
+
+    public boolean isFinished() {
+      return finished.get();
+    }
+
+    public void setTask(Runnable task) {
+      this.task = task;
+    }
+
+    public void setInterval(int interval) {
+      this.interval = interval;
+    }
+
+    public void start() {
+      if (running.compareAndSet(false, true)) {
+        worker = new Thread(task);
+        worker.start();
+      }
+    }
+
+    public void stop() {
+      if (running.compareAndSet(true, false)) {
+        worker.interrupt();
+      }
     }
   }
 }
