@@ -48,8 +48,10 @@ public class RequestClient {
               }
               return body;
             }).get();
-      } catch (InterruptedException | ExecutionException e) {
+      } catch (ExecutionException e) {
         e.printStackTrace();
+      } catch (InterruptedException e) {
+        System.out.println("Interrupted long polling");
       }
     }
     return new Pair<>(DigestUtils.md5Hex(response), response);
