@@ -65,46 +65,4 @@ public class UrlUtils {
       return null;
     }
   }
-
-  public static class RequestThread {
-    private Thread worker;
-    private Runnable task;
-    private final AtomicBoolean running = new AtomicBoolean(false);
-    private final AtomicBoolean finished = new AtomicBoolean(false);
-    private int interval;
-
-    public RequestThread(int interval, Runnable task) {
-      this.interval = interval;
-      this.task = task;
-    }
-
-    public boolean isRunning() {
-      return running.get();
-    }
-
-    public boolean isFinished() {
-      return finished.get();
-    }
-
-    public void setTask(Runnable task) {
-      this.task = task;
-    }
-
-    public void setInterval(int interval) {
-      this.interval = interval;
-    }
-
-    public void start() {
-      if (running.compareAndSet(false, true)) {
-        worker = new Thread(task);
-        worker.start();
-      }
-    }
-
-    public void stop() {
-      if (running.compareAndSet(true, false)) {
-        worker.interrupt();
-      }
-    }
-  }
 }

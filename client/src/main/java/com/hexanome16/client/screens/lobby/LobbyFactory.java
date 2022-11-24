@@ -45,7 +45,7 @@ public class LobbyFactory implements EntityFactory {
   private static TableView<Session> ownSessionList;
   private static TableView<Session> otherSessionList;
   private static String hashCode = "";
-  private static UrlUtils.RequestThread fetchSessionsThread;
+  private static Thread fetchSessionsThread;
   private static boolean shouldFetch = true;
 
   /**
@@ -98,7 +98,8 @@ public class LobbyFactory implements EntityFactory {
       fetchSessionsTask.setOnCancelled(e -> {
         fetchSessionsThread = null;
       });
-      fetchSessionsThread = new UrlUtils.RequestThread(10, fetchSessionsTask);
+      fetchSessionsThread = new Thread(fetchSessionsTask);
+      fetchSessionsThread.setDaemon(true);
       fetchSessionsThread.start();
     }
   }
@@ -193,7 +194,7 @@ public class LobbyFactory implements EntityFactory {
                         AuthUtils.getAuth().getAccessToken());
                     if (session.getLaunched()) {
                       shouldFetch = false;
-                      fetchSessionsThread.stop();
+                      fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
                       GameScreen.initGame();
@@ -215,7 +216,7 @@ public class LobbyFactory implements EntityFactory {
                     LaunchSessionRequest.execute(session.getId(),
                         AuthUtils.getAuth().getAccessToken());
                     shouldFetch = false;
-                    fetchSessionsThread.stop();
+                    fetchSessionsThread.interrupt();
                     fetchSessionsThread = null;
                     LobbyScreen.exitLobby();
                     GameScreen.initGame();
