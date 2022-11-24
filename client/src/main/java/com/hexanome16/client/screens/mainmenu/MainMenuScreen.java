@@ -4,49 +4,71 @@ import static com.almasb.fxgl.dsl.FXGL.getAssetLoader;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 
 import com.almasb.fxgl.ui.UI;
+import com.hexanome16.client.requests.lobbyservice.oauth.LogoutRequest;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
+import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
+import com.hexanome16.client.screens.startup.StartupScreen;
+import com.hexanome16.client.utils.AuthUtils;
 
+/**
+ * UI Screen Main Menu Screen after logging in.
+ */
 public class MainMenuScreen {
   private static UI uiSingleton;
-  private static MainMenuScreenUIController uiControllerSingleton;
+  private static MainMenuScreenUiController uiControllerSingleton;
   private static boolean isVisible = false;
 
-  private static UI getUI() {
+  private static UI getUi() {
     if (uiSingleton == null) {
-      uiControllerSingleton = new MainMenuScreenUIController();
+      uiControllerSingleton = new MainMenuScreenUiController();
       uiSingleton = getAssetLoader().loadUI("MenuScreen.fxml", uiControllerSingleton);
-      setupUI();
+      setupUi();
     }
     return uiSingleton;
   }
 
-  private static void setupUI() {
+  private static void setupUi() {
     uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
       //MainMenuScreen.clearUI();
-      SettingsScreen.initUI(true);
+      SettingsScreen.initUi(true);
     });
     uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
-      MainMenuScreen.clearUI();
+      MainMenuScreen.clearUi();
       LobbyScreen.initLobby();
+    });
+    uiControllerSingleton.rulebookSection.setOnMouseClicked(event -> {
+      MainMenuScreen.clearUi();
+      RulebookScreen.initUi();
+    });
+    uiControllerSingleton.logoutButton.setOnMouseClicked(event -> {
+      LogoutRequest.execute();
+      MainMenuScreen.clearUi();
+      StartupScreen.backToStartupScreen();
     });
   }
 
-  public static void initUI() {
+  /**
+   * Adds UI layer on top of game screen.
+   */
+  public static void initUi() {
     if (isVisible) {
       return;
     }
 
-    getGameScene().addUI(getUI());
+    getGameScene().addUI(getUi());
     isVisible = true;
   }
 
-  public static void clearUI() {
+  /**
+   * Removes UI layer on top of game screen.
+   */
+  public static void clearUi() {
     if (!isVisible) {
       return;
     }
 
-    getGameScene().removeUI(getUI());
+    getGameScene().removeUI(getUi());
 
     isVisible = false;
   }

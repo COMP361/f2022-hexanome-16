@@ -2,17 +2,19 @@ package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.lobby.sessions.Session;
-import java.net.URI;
-import java.net.http.HttpClient;
+import com.hexanome16.client.types.sessions.Session;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import javafx.util.Pair;
 
 /**
  * This class provides methods to get details about a session in Lobby Service.
  */
 public class SessionDetailsRequest {
+  private SessionDetailsRequest() {
+    super();
+  }
+
   /**
    * Sends a request to get details about a session in Lobby Service.
    *
@@ -20,24 +22,15 @@ public class SessionDetailsRequest {
    * @param hash A hashcode used for long polling (to check if the session details have changed).
    * @return The session details.
    */
-  public static Session execute(long sessionId, int hash) {
-    HttpClient client = RequestClient.getClient();
-    try {
-      String url = "http://127.0.0.1:4242/api/sessions/" + sessionId;
-      if (hash > 0) {
-        url += "?hash=" + hash;
-      }
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .header("Content-Type", "application/json")
-          .GET()
-          .build();
-      String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::body).get();
-      return new Gson().fromJson(response, Session.class);
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-      return null;
-    }
+  public static Pair<String, Session> execute(long sessionId, String hash) {
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(UrlUtils.createLobbyServiceUri(
+            "/api/sessions" + sessionId,
+            hash == null || hash.isBlank() ? null : "hash=" + hash
+        )).header("Content-Type", "application/json")
+        .GET()
+        .build();
+    Pair<String, String> response = RequestClient.longPoll(request);
+    return new Pair<>(response.getKey(), new Gson().fromJson(response.getValue(), Session.class));
   }
 }

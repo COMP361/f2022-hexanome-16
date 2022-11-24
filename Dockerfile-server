@@ -6,8 +6,12 @@ COPY server/src src
 COPY server/pom.xml .
 COPY server/google_checks.xml .
 
+RUN apk add --no-cache sed
+RUN sed -i 's/localhost/lobby-service/g' src/main/resources/application.properties
+RUN sed -i 's/localhost/lobby-service/g' src/test/resources/application-test.properties
+
 # Build the application
-RUN mvn clean package -P prod
+RUN mvn clean package -P prod -Dmaven.javadoc.skip=true
 
 FROM eclipse-temurin:17-jre-alpine AS runtime
 EXPOSE 4243
