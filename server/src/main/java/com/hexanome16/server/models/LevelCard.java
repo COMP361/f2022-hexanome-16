@@ -1,5 +1,9 @@
 package com.hexanome16.server.models;
 
+/**
+ * Card instead of noble.
+ */
+
 public class LevelCard extends DevelopmentCard {
   private final Level level;
 

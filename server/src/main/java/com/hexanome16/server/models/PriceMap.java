@@ -1,5 +1,8 @@
 package com.hexanome16.server.models;
 
+/**
+ * Holds the token price for a level card.
+ */
 public class PriceMap {
   int rubyAmount;
   int emeraldAmount;

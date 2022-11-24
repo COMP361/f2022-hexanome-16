@@ -1,8 +1,22 @@
 package com.hexanome16.server.dto;
 
+/**
+ * For converting json file to development card objects.
+ */
 public class CardJson {
-  String level, bonus;
-  int prestigePoint, onyxAmount, sapphireAmount, emeraldAmount, rubyAmount, diamondAmount;
+  String level;
+  String bonus;
+  int prestigePoint;
+
+  int onyxAmount;
+
+  int sapphireAmount;
+
+  int emeraldAmount;
+
+  int rubyAmount;
+
+  int diamondAmount;
 
   public CardJson() {
   }

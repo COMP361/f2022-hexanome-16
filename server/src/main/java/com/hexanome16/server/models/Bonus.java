@@ -1,5 +1,8 @@
 package com.hexanome16.server.models;
 
+/**
+ * Bonus of a development card.
+ */
 public class Bonus {
   private final BonusType bonusType;
 

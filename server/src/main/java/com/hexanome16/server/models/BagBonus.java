@@ -2,6 +2,9 @@ package com.hexanome16.server.models;
 
 import java.util.Optional;
 
+/**
+ * Bonus of a bag card: it let you choose another gem bonus.
+ */
 public class BagBonus extends Bonus {
 
   private Optional<Gem> chosenGem;
