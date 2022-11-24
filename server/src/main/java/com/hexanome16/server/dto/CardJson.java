@@ -21,6 +21,18 @@ public class CardJson {
   public CardJson() {
   }
 
+  /**
+   * Json to java object.
+   *
+   * @param level card level
+   * @param bonus card bonus
+   * @param prestigePoint card prestige point
+   * @param onyxAmount onyx amount
+   * @param sapphireAmount sapphire amount
+   * @param emeraldAmount emerald amount
+   * @param rubyAmount ruby amount
+   * @param diamondAmount diamond amount
+   */
   public CardJson(String level, String bonus, int prestigePoint, int onyxAmount, int sapphireAmount,
                   int emeraldAmount, int rubyAmount, int diamondAmount) {
     this.level = level;

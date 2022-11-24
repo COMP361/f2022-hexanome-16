@@ -1,36 +1,47 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.CardJson;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Game class that holds all the information.
  */
 public class Game {
-  private final List<Deck> decks = new ArrayList<Deck>();
+  private final Map<Level, Deck> decks = new HashMap<Level, Deck>();
 
-  public Game() {
+  private final long sessionId;
+
+  public Game(long sessionId) throws IOException {
+    this.sessionId = sessionId;
     createDecks();
   }
 
-  public static void main(String[] args) {
+  /**
+   * debugging purpose.
+   *
+   * @param args main method args
+   * @throws JsonProcessingException e
+   */
+  public static void main(String[] args) throws IOException {
+    Game game = new Game(0);
+    ObjectMapper objectMapper = new ObjectMapper();
+    System.out.println(objectMapper.writeValueAsString(game.getDeck(Level.ONE).nextCard()));
   }
 
-  private void createDecks() {
-    List<CardJson> cardJsonList = null;
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      cardJsonList = objectMapper.readValue(new File("./server/src/main/resources/cards.json"),
-          new TypeReference<List<CardJson>>() {
-          });
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  private void createDecks() throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    List<CardJson> cardJsonList =
+        objectMapper.readValue(new File(
+                "/app/cards.json"),
+            new TypeReference<List<CardJson>>() {
+            });
     createBaseLevelOneDeck(cardJsonList);
   }
 
@@ -60,6 +71,10 @@ public class Game {
       deck.addCard(card);
     }
     deck.shuffle();
-    decks.add(deck);
+    decks.put(Level.ONE, deck);
+  }
+
+  public Deck getDeck(Level level) {
+    return decks.get(level);
   }
 }

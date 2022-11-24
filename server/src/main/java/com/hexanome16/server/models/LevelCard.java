@@ -11,4 +11,8 @@ public class LevelCard extends DevelopmentCard {
     super(id, prestigePoint, texturePath, price);
     this.level = level;
   }
+
+  public Level getLevel() {
+    return level;
+  }
 }
