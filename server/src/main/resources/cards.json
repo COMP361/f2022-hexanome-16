@@ -1,0 +1,902 @@
+[
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 1,
+   "emeraldAmount": 1,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 1,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 2,
+   "rubyAmount": 1,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "onyx",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 4,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 2,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 2,
+   "rubyAmount": 2,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 1,
+   "emeraldAmount": 3,
+   "rubyAmount": 1,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 0,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "sapphire",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 4,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 1,
+   "rubyAmount": 1,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 2,
+   "rubyAmount": 1,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 2,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 2,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "diamond",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 4,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 1,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 1,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 1,
+   "rubyAmount": 0,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 1,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "emerald",
+   "prestigePoint": 1,
+   "onyxAmount": 4,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 1,
+   "rubyAmount": 0,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 1,
+   "sapphireAmount": 1,
+   "emeraldAmount": 1,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 1
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 1,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 2
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 0,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "ONE",
+   "bonus": "ruby",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 4
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 1,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 1,
+   "emeraldAmount": 4,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 5,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 5
+ },
+ {
+   "level": "TWO",
+   "bonus": "onyx",
+   "prestigePoint": 3,
+   "onyxAmount": 6,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 2,
+   "emeraldAmount": 2,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 1,
+   "onyxAmount": 3,
+   "sapphireAmount": 2,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 5
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 2,
+   "onyxAmount": 4,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 2
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 5,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "sapphire",
+   "prestigePoint": 3,
+   "onyxAmount": 0,
+   "sapphireAmount": 6,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 1,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 3,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 3,
+   "diamondAmount": 2
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 2,
+   "onyxAmount": 2,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 4,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 2,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 5,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 5,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "diamond",
+   "prestigePoint": 3,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 6
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 1,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 2,
+   "rubyAmount": 3,
+   "diamondAmount": 3
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 1,
+   "onyxAmount": 2,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 2,
+   "onyxAmount": 1,
+   "sapphireAmount": 2,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 4
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 5,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 5,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "emerald",
+   "prestigePoint": 3,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 6,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 1,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 2
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 1,
+   "onyxAmount": 3,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 2,
+   "onyxAmount": 0,
+   "sapphireAmount": 4,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 1
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 2,
+   "onyxAmount": 5,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 2,
+   "onyxAmount": 5,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "TWO",
+   "bonus": "ruby",
+   "prestigePoint": 3,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 6,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "onyx",
+   "prestigePoint": 3,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 5,
+   "rubyAmount": 3,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "onyx",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 7,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "onyx",
+   "prestigePoint": 4,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 3,
+   "rubyAmount": 6,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "onyx",
+   "prestigePoint": 5,
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 7,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "sapphire",
+   "prestigePoint": 3,
+   "onyxAmount": 5,
+   "sapphireAmount": 0,
+   "emeraldAmount": 3,
+   "rubyAmount": 3,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "sapphire",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 7
+ },
+ {
+   "level": "THREE",
+   "bonus": "sapphire",
+   "prestigePoint": 4,
+   "onyxAmount": 3,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 6
+ },
+ {
+   "level": "THREE",
+   "bonus": "sapphire",
+   "prestigePoint": 5,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 7
+ },
+ {
+   "level": "THREE",
+   "bonus": "diamond",
+   "prestigePoint": 3,
+   "onyxAmount": 3,
+   "sapphireAmount": 3,
+   "emeraldAmount": 3,
+   "rubyAmount": 5,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "diamond",
+   "prestigePoint": 4,
+   "onyxAmount": 7,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "diamond",
+   "prestigePoint": 4,
+   "onyxAmount": 6,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 3,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "diamond",
+   "prestigePoint": 5,
+   "onyxAmount": 7,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "emerald",
+   "prestigePoint": 3,
+   "onyxAmount": 3,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 3,
+   "diamondAmount": 5
+ },
+ {
+   "level": "THREE",
+   "bonus": "emerald",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 7,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "emerald",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 6,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "emerald",
+   "prestigePoint": 5,
+   "onyxAmount": 0,
+   "sapphireAmount": 7,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "ruby",
+   "prestigePoint": 3,
+   "onyxAmount": 3,
+   "sapphireAmount": 5,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 3
+ },
+ {
+   "level": "THREE",
+   "bonus": "ruby",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 7,
+   "rubyAmount": 0,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "ruby",
+   "prestigePoint": 4,
+   "onyxAmount": 0,
+   "sapphireAmount": 3,
+   "emeraldAmount": 6,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+ {
+   "level": "THREE",
+   "bonus": "ruby",
+   "prestigePoint": 5,
+   "onyxAmount": 0,
+   "sapphireAmount": 0,
+   "emeraldAmount": 7,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ }
+]
