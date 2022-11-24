@@ -1,7 +1,9 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
-import java.net.URI;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -11,22 +13,33 @@ import java.util.concurrent.ExecutionException;
  * This class provides methods to join a session in Lobby Service.
  */
 public class JoinSessionRequest {
+  private JoinSessionRequest() {
+    super();
+  }
+
   /**
    * Sends a request to join a session in Lobby Service.
    *
-   * @param sessionId The id of the session to join.
-   * @param player The user to add to the session.
+   * @param sessionId   The id of the session to join.
+   * @param player      The user to add to the session.
    * @param accessToken The access token of the user.
    */
   public static void execute(long sessionId, String player, String accessToken) {
     HttpClient client = RequestClient.getClient();
     try {
-      String url = "http://127.0.0.1:4242/api/sessions/" + sessionId + "/players/" + player + "?access_token=" + accessToken;
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .PUT(HttpRequest.BodyPublishers.noBody())
+          .uri(UrlUtils.createLobbyServiceUri(
+              "/api/sessions/" + sessionId + "/players/" + player,
+              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+          )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
-      client.sendAsync(request, HttpResponse.BodyHandlers.discarding()).get();
+      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+          .thenApply(HttpResponse::statusCode)
+          .get();
+      if (statusCode == 401) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+        execute(sessionId, player, AuthUtils.getAuth().getAccessToken());
+      }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }
