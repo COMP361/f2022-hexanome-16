@@ -22,6 +22,7 @@ import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Task;
@@ -69,34 +70,36 @@ public class LobbyFactory implements EntityFactory {
    * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
    */
   private static void createFetchSessionThread() {
-    Task<Void> fetchSessionsTask = new Task<>() {
-      @Override
-      protected Void call() throws Exception {
-        Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
-        hashCode = sessionList.getKey();
-        sessions = sessionList.getValue();
-        if (sessions == null) {
-          sessions = new Session[] {};
+    if (shouldFetch) {
+      Task<Void> fetchSessionsTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
+          hashCode = sessionList.getKey();
+          sessions = sessionList.getValue();
+          if (sessions == null) {
+            sessions = new Session[] {};
+          }
+          Platform.runLater(LobbyFactory::updateSessionList);
+          return null;
         }
-        updateSessionList();
-        return null;
-      }
-    };
-    fetchSessionsTask.setOnSucceeded(e -> {
-      if (shouldFetch) {
-        createFetchSessionThread();
-      } else {
+      };
+      fetchSessionsTask.setOnSucceeded(e -> {
+        if (shouldFetch) {
+          createFetchSessionThread();
+        } else {
+          fetchSessionsThread = null;
+        }
+      });
+      fetchSessionsTask.setOnFailed(e -> {
+        throw new RuntimeException(fetchSessionsTask.getException());
+      });
+      fetchSessionsTask.setOnCancelled(e -> {
         fetchSessionsThread = null;
-      }
-    });
-    fetchSessionsTask.setOnFailed(e -> {
-      throw new RuntimeException(fetchSessionsTask.getException());
-    });
-    fetchSessionsTask.setOnCancelled(e -> {
-      fetchSessionsThread = null;
-    });
-    fetchSessionsThread = new Thread(fetchSessionsTask);
-    fetchSessionsThread.start();
+      });
+      fetchSessionsThread = new Thread(fetchSessionsTask);
+      fetchSessionsThread.start();
+    }
   }
 
   /**
