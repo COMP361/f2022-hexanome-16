@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ public class GameController {
    * @param sessionId sessionId
    * @return error if present
    */
-  @PostMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
+  @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId) {
     try {
       Game game = new Game(sessionId);
@@ -40,11 +41,6 @@ public class GameController {
      // e.printStackTrace(new PrintWriter(errors));
     }
     return "success";
-  }
-
-  @GetMapping(value = {"/game/test", "/game/test/"})
-  public String test() {
-    return "test";
   }
 
   /**

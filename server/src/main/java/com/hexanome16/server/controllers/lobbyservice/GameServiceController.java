@@ -43,6 +43,7 @@ public class GameServiceController {
   public void createGameService() {
     ResponseEntity<TokensInfo> tokensInfo =
         authController.login("xox", "laaPhie*aiN0");
+    System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;

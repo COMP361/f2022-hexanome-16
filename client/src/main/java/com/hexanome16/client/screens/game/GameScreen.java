@@ -34,7 +34,7 @@ public class GameScreen {
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
    */
-  public static void initGame() {
+  public static void initGame(long sessionId) {
 
     for (int i = 0; i < level_one_list.length; i++) {
       level_one.push(level_one_list[i]);
@@ -68,6 +68,7 @@ public class GameScreen {
     }
     // spawn the player's hands
     PlayerDecks.generateAll();
+    GameRequest.newCard(sessionId);
   }
 
   /**
