@@ -7,8 +7,8 @@ COPY server/pom.xml .
 COPY server/google_checks.xml .
 
 RUN apk add --no-cache sed
-RUN sed -i 's/localhost/lobby-service/g' src/main/resources/application.properties
-RUN sed -i 's/localhost/lobby-service/g' src/test/resources/application-test.properties
+RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/application.properties
+RUN sed -i 's/server.host=localhost/server.host=splendor-server/g' src/main/resources/application.properties
 
 # Build the application
 RUN mvn clean package -P prod -Dmaven.javadoc.skip=true
