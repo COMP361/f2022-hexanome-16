@@ -29,30 +29,6 @@ public class UrlUtils {
     super();
   }
 
-  /**
-   * Decodes the passed UTF-8 String using an algorithm that's compatible with
-   * JavaScript's <code>decodeURIComponent</code> function. Returns
-   * <code>null</code> if the String is <code>null</code>.
-   *
-   * @param s The UTF-8 encoded String to be decoded
-   * @return the decoded String
-   */
-  public static String decodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLDecoder.decode(s, StandardCharsets.UTF_8);
-  }
-
-  /**
-   * Encodes the passed String as UTF-8 using an algorithm that's compatible
-   * with JavaScript's <code>encodeURIComponent</code> function. Returns
-   * <code>null</code> if the String is <code>null</code>.
-   *
-   * @param s The String to be encoded
-   * @return the encoded String
-   */
-  public static String encodeUriComponent(String s) {
-    return s == null ? null : s.isBlank() ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8);
-  }
-
   //TODO: Add ability to set custom URLs for LS/Game Server.
 
   /**
@@ -67,17 +43,8 @@ public class UrlUtils {
       String urlString = LS_PROPERTIES.getString("server.protocol") + "://"
           + LS_PROPERTIES.getString("server.host") + ":"
           + LS_PROPERTIES.getInt("server.port") + path + "?" + query;
-      URL url = new URL(decodeUriComponent(urlString));
-      return new URI(
-          url.getProtocol(),
-          url.getUserInfo(),
-          url.getHost(),
-          url.getPort(),
-          url.getPath(),
-          url.getQuery(),
-          url.getRef()
-      );
-    } catch (URISyntaxException | MalformedURLException e) {
+      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+    } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;
     }
@@ -95,17 +62,8 @@ public class UrlUtils {
       String urlString = SERVER_PROPERTIES.getString("server.protocol") + "://"
           + SERVER_PROPERTIES.getString("server.host") + ":"
           + SERVER_PROPERTIES.getInt("server.port") + path + "?" + query;
-      URL url = new URL(decodeUriComponent(urlString));
-      return new URI(
-          url.getProtocol(),
-          url.getUserInfo(),
-          url.getHost(),
-          url.getPort(),
-          url.getPath(),
-          url.getQuery(),
-          url.getRef()
-      );
-    } catch (URISyntaxException | MalformedURLException e) {
+      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+    } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;
     }

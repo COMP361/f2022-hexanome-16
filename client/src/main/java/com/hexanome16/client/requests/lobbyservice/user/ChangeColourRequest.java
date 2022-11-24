@@ -33,7 +33,7 @@ public class ChangeColourRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/users/" + user + "/colour",
-              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+              "access_token=" + accessToken
           )).header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload(colour))))
           .build();

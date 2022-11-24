@@ -35,7 +35,7 @@ public class CreateSessionRequest {
     HttpRequest request = HttpRequest.newBuilder()
         .uri(UrlUtils.createLobbyServiceUri(
             "/api/sessions",
-            "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+            "access_token=" + accessToken
         )).header("Content-Type", "application/json")
         .POST(HttpRequest.BodyPublishers.ofString(
             new Gson().toJson(new Payload(creator, game, savegame))

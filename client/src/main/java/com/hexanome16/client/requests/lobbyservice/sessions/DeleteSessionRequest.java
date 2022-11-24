@@ -30,7 +30,7 @@ public class DeleteSessionRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createLobbyServiceUri(
               "/api/sessions/" + sessionId,
-              "access_token=" + UrlUtils.encodeUriComponent(accessToken)
+              "access_token=" + accessToken
           )).DELETE()
           .build();
       int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
