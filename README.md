@@ -1,6 +1,6 @@
 # COMP 361 Project
 
- > See also [my video instuctions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
+ > See also [my video instructions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
 ## Setup CheckStyle in IntelliJ
  * Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
@@ -16,6 +16,14 @@
  * Commit hook is added :)
  * When you commit, the hook will run CheckStyle and prevent you from committing if there are any errors or warnings.
  * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
+
+## How to run the project (development)
+  * Build Lobby Service API and DB images with ```docker-compose build```.
+    * If you'd like to also run our game server in Docker, run ```docker-compose --profile with-server build```.
+  * Start the Lobby Service with ```docker-compose up -d```.
+    * To also start our game server in Docker, run ```docker-compose --profile with-server up -d```.
+    * Otherwise, the game server can be launched with the Server run config in IntelliJ (uses Maven.)
+  * Start the client with Splendor Dev run config in IntelliJ.
 
 ## The Rules
 
@@ -37,7 +45,7 @@ See [Static Content](#static-content)
 ## Static content
 
  * [```.gitignore```](.gitignore): Preliminary git exclusion instructions. Visit [Toptal's generator](https://www.toptal.com/developers/gitignore) to update.
- * [```reports```](reports): Base directory for automatic report collection. Your weekly reports go here. Must be uploaded every monday noon **to master** and follow correct date string ```YYYY-MM-DD.md```. Use [template](reports/YYYY-MM-DD.md) for your own reports. Do not resubmit same report / copy paste.
+ * [```reports```](reports): Base directory for automatic report collection. Your weekly reports go here. Must be uploaded every monday noon **to master** and follow correct date string ```YYYY-MM-DD.md```. Use [template](reports/YYYY-MM-DD.md) for your own reports. Do not resubmit same report / copy and paste.
  * [```docs```](docs): source directory for your [enabled GitHub Pages](https://comp361.github.io/f2022-hexanome-00/). (Update number in link). Configure IDE to generate API docs into this directory or build your own webpage (optional).
  *  [```client```](client): Place your client sources into this directory. Do not use a separate repository for your work.
  * [```server```](server): Place your Spring Boot Game Server sources in this directory. Do not use a separate repository for your work.
