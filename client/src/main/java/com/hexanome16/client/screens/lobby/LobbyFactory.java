@@ -19,10 +19,11 @@ import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.client.utils.UrlUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
@@ -69,34 +70,38 @@ public class LobbyFactory implements EntityFactory {
    * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
    */
   private static void createFetchSessionThread() {
-    Task<Void> fetchSessionsTask = new Task<>() {
-      @Override
-      protected Void call() throws Exception {
-        Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
-        hashCode = sessionList.getKey();
-        sessions = sessionList.getValue();
-        if (sessions == null) {
-          sessions = new Session[] {};
+    if (shouldFetch) {
+      Task<Void> fetchSessionsTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
+          hashCode = sessionList.getKey();
+          sessions = sessionList.getValue();
+          if (sessions == null) {
+            hashCode = "";
+            sessions = new Session[] {};
+          }
+          return null;
         }
-        updateSessionList();
-        return null;
-      }
-    };
-    fetchSessionsTask.setOnSucceeded(e -> {
-      if (shouldFetch) {
-        createFetchSessionThread();
-      } else {
+      };
+      fetchSessionsTask.setOnSucceeded(e -> {
         fetchSessionsThread = null;
-      }
-    });
-    fetchSessionsTask.setOnFailed(e -> {
-      throw new RuntimeException(fetchSessionsTask.getException());
-    });
-    fetchSessionsTask.setOnCancelled(e -> {
-      fetchSessionsThread = null;
-    });
-    fetchSessionsThread = new Thread(fetchSessionsTask);
-    fetchSessionsThread.start();
+        if (shouldFetch) {
+          Platform.runLater(LobbyFactory::updateSessionList);
+          createFetchSessionThread();
+        }
+      });
+      fetchSessionsTask.setOnFailed(e -> {
+        fetchSessionsThread = null;
+        throw new RuntimeException(fetchSessionsTask.getException());
+      });
+      fetchSessionsTask.setOnCancelled(e -> {
+        fetchSessionsThread = null;
+      });
+      fetchSessionsThread = new Thread(fetchSessionsTask);
+      fetchSessionsThread.setDaemon(true);
+      fetchSessionsThread.start();
+    }
   }
 
   /**
@@ -189,6 +194,8 @@ public class LobbyFactory implements EntityFactory {
                         AuthUtils.getAuth().getAccessToken());
                     if (session.getLaunched()) {
                       shouldFetch = false;
+                      fetchSessionsThread.interrupt();
+                      fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
                       GameScreen.initGame();
                     }
@@ -209,6 +216,8 @@ public class LobbyFactory implements EntityFactory {
                     LaunchSessionRequest.execute(session.getId(),
                         AuthUtils.getAuth().getAccessToken());
                     shouldFetch = false;
+                    fetchSessionsThread.interrupt();
+                    fetchSessionsThread = null;
                     LobbyScreen.exitLobby();
                     GameScreen.initGame();
                   });
@@ -263,6 +272,7 @@ public class LobbyFactory implements EntityFactory {
     sessionTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
 
     if (fetchSessionsThread == null) {
+      shouldFetch = true;
       createFetchSessionThread();
     }
 

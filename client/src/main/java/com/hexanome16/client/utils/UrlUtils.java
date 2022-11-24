@@ -3,13 +3,10 @@ package com.hexanome16.client.utils;
 import com.almasb.fxgl.core.asset.AssetType;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javafx.concurrent.Task;
 
 /**
  * Utility class for performing operations on URLs.
