@@ -1,5 +1,8 @@
 package com.hexanome16.server.models;
 
+/**
+ * Development card class.
+ */
 public abstract class DevelopmentCard {
   private final int id;
   private final int prestigePoint;

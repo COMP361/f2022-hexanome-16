@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Game class that holds all the information.
+ */
 public class Game {
-  private List<Deck> decks = new ArrayList<Deck>();
+  private final List<Deck> decks = new ArrayList<Deck>();
 
   public Game() {
     createDecks();
@@ -37,6 +40,7 @@ public class Game {
       CardJson cardJson = cardJsonList.get(i);
       Level level = null;
       switch (cardJson.getLevel()) {
+        default:
         case "ONE":
           level = Level.ONE;
           break;

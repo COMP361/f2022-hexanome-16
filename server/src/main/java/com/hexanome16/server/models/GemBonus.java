@@ -1,5 +1,8 @@
 package com.hexanome16.server.models;
 
+/**
+ * Bonus for a base game card.
+ */
 public class GemBonus extends Bonus {
   private Gem gem;
   private GemAmount gemAmount;
