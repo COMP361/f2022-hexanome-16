@@ -17,7 +17,7 @@ public final class GameParams {
    * Default params used for testing/UI demo.
    */
   public GameParams() {
-    location = "http://127.0.0.1:4243/SplendorService";
+    location = "http://splendor-server:4243";
     name = "Splendor";
     maxSessionPlayers = 4;
     minSessionPlayers = 2;

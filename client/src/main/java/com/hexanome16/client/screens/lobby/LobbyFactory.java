@@ -197,7 +197,7 @@ public class LobbyFactory implements EntityFactory {
                       fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
-                      GameScreen.initGame();
+                      GameScreen.initGame(session.getId());
                     }
                   });
                   String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
@@ -219,7 +219,7 @@ public class LobbyFactory implements EntityFactory {
                     fetchSessionsThread.interrupt();
                     fetchSessionsThread = null;
                     LobbyScreen.exitLobby();
-                    GameScreen.initGame();
+                    GameScreen.initGame(session.getId());
                   });
                   launch.setStyle(
                       "-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle

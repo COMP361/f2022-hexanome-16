@@ -5,27 +5,29 @@ import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class GameRequest
 {
-  public static void newGame(){
-    HttpClient client = RequestClient.getClient();
+  public static void newCard(long sessionId){
     try {
+      HttpClient client = RequestClient.getClient();
+      System.out.println("called");
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
-              "/api/game/",
-              "sessionId=" + "???"
-          )).POST(HttpRequest.BodyPublishers.noBody())
+              "/api/game/nextCard/" + sessionId,
+              "level=ONE"
+          )).GET()
           .build();
-      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::statusCode).get();
-      if (statusCode == 200) {
-        //start game??? fetch game info???
-      }
-    } catch (InterruptedException | ExecutionException e) {
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+      response.thenApply(HttpResponse::body).thenAccept(System.out::println).join();
+    }catch(Exception e){
       e.printStackTrace();
-      // do nothing??
     }
+    //if (statusCode == 200) {
+    //start game??? fetch game info???
+    //}
   }
 }
