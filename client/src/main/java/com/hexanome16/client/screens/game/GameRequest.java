@@ -14,7 +14,7 @@ public class GameRequest
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
-              "/game/",
+              "/api/game/",
               "sessionId=" + "???"
           )).POST(HttpRequest.BodyPublishers.noBody())
           .build();

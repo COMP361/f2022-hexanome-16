@@ -29,17 +29,17 @@ public class GameController {
    * @param sessionId sessionId
    * @return error if present
    */
-  @PostMapping(value = {"/game/{sessionId}", "/game/{sessionId}/"})
+  @PostMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId) {
     try {
       Game game = new Game(sessionId);
+      System.out.println(sessionId);
       gameMap.put(sessionId, game);
     } catch (Exception e) {
      // StringWriter errors = new StringWriter();
      // e.printStackTrace(new PrintWriter(errors));
     }
-    File file = new File("/app");
-    return Arrays.toString(file.list());
+    return "success";
   }
 
   @GetMapping(value = {"/game/test", "/game/test/"})
