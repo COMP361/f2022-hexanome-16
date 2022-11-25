@@ -10,6 +10,24 @@ import java.util.concurrent.ExecutionException;
 
 public class GameRequest
 {
+  public static String initDeck(long sessionId, Level level){
+    try {
+      HttpClient client = RequestClient.getClient();
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(UrlUtils.createGameServerUri(
+              "/api/game/getCards/" + sessionId,
+              "level=" + level.name()
+          )).GET()
+          .build();
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+      return response.thenApply(HttpResponse::body).get();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   public static String newCard(long sessionId, Level level){
     try {
       HttpClient client = RequestClient.getClient();

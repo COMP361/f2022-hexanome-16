@@ -64,10 +64,38 @@ public class GameController {
     return objectMapper.writeValueAsString(gameMap.get(sessionId).getDeck(alevel).nextCard());
   }
 
-  @GetMapping(value = {"/game/nextNoble/{sessionId}", "/game/nextNoble/{sessionId}/"})
-  public String nextNoble(@PathVariable long sessionId)
+  /**
+   * Return initial deck to client at the start of the game.
+   *
+   * @param sessionId sessionId
+   * @param level     deck level
+   * @return next card on board
+   * @throws JsonProcessingException json exception
+   */
+  @GetMapping(value = {"/game/getCards/{sessionId}", "/game/getCards/{sessionId}/"})
+  public String getCards(@PathVariable long sessionId, @RequestParam String level)
+      throws JsonProcessingException {
+    Level alevel = null;
+    switch (level) {
+      default:
+      case "ONE":
+        alevel = Level.ONE;
+        break;
+      case "TWO":
+        alevel = Level.TWO;
+        break;
+      case "THREE":
+        alevel = Level.THREE;
+        break;
+    }
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(gameMap.get(sessionId).getOnBoardDeck(alevel));
+  }
+
+  @GetMapping(value = {"/game/getNobles/{sessionId}", "/game/getNobles/{sessionId}/"})
+  public String getNobles(@PathVariable long sessionId)
       throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString(gameMap.get(sessionId).getNobleDeck().nextCard());
+    return objectMapper.writeValueAsString(gameMap.get(sessionId).getOnBoardNobles());
   }
 }

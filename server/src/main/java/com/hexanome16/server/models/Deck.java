@@ -35,6 +35,10 @@ public class Deck {
     return cardList.get(index++);
   }
 
+  public List<DevelopmentCard> getCardList() {
+    return cardList;
+  }
+
   public int remainingAmount() {
     return cardList.size() - index - 1;
   }
