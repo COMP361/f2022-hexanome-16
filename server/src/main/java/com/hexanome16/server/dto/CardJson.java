@@ -6,6 +6,8 @@ package com.hexanome16.server.dto;
 public class CardJson {
   String level;
   String bonus;
+
+  int id;
   int prestigePoint;
 
   int onyxAmount;
@@ -33,8 +35,10 @@ public class CardJson {
    * @param rubyAmount     ruby amount
    * @param diamondAmount  diamond amount
    */
-  public CardJson(String level, String bonus, int prestigePoint, int onyxAmount, int sapphireAmount,
+  public CardJson(int id, String level, String bonus, int prestigePoint, int onyxAmount,
+                  int sapphireAmount,
                   int emeraldAmount, int rubyAmount, int diamondAmount) {
+    this.id = id;
     this.level = level;
     this.bonus = bonus;
     this.prestigePoint = prestigePoint;
@@ -51,6 +55,10 @@ public class CardJson {
 
   public String getBonus() {
     return bonus;
+  }
+
+  public int getId() {
+    return id;
   }
 
   public int getPrestigePoint() {
