@@ -61,7 +61,8 @@ public class Game {
           cardJson.getSapphireAmount(),
           cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
       LevelCard card =
-          new LevelCard(i, cardJson.getPrestigePoint(), "level_one" + i, new TokenPrice(priceMap),
+          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
+              "level_one" + cardJson.getId(), new TokenPrice(priceMap),
               Level.ONE);
       deck.addCard(card);
     }
@@ -72,12 +73,13 @@ public class Game {
   private void createBaseLevelTwoDeck(List<CardJson> cardJsonList) {
     Deck deck = new Deck();
     for (int i = 40; i < 70; i++) {
-      CardJson cardJson = cardJsonList.get(i - 40);
+      CardJson cardJson = cardJsonList.get(i);
       PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
           cardJson.getSapphireAmount(),
           cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
       LevelCard card =
-          new LevelCard(i, cardJson.getPrestigePoint(), "level_two" + (i - 40),
+          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
+              "level_two" + cardJson.getId(),
               new TokenPrice(priceMap),
               Level.TWO);
       deck.addCard(card);
@@ -89,12 +91,13 @@ public class Game {
   private void createBaseLevelThreeDeck(List<CardJson> cardJsonList) {
     Deck deck = new Deck();
     for (int i = 70; i < 90; i++) {
-      CardJson cardJson = cardJsonList.get(i - 70);
+      CardJson cardJson = cardJsonList.get(i);
       PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
           cardJson.getSapphireAmount(),
           cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
       LevelCard card =
-          new LevelCard(i, cardJson.getPrestigePoint(), "level_three" + (i - 70),
+          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
+              "level_three" + cardJson.getId(),
               new TokenPrice(priceMap),
               Level.THREE);
       deck.addCard(card);
