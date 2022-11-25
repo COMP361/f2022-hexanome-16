@@ -26,14 +26,17 @@ public class GameServiceController {
 
   private final AuthController authController;
   private final UrlUtils urlUtils;
+  private final GameParams gameParams;
 
   /**
    * TODO.
    */
-  public GameServiceController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils) {
+  public GameServiceController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
+                               GameParams gameParams) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authController = new AuthController(restTemplateBuilder, this.urlUtils);
+    this.gameParams = gameParams;
   }
 
   /**
@@ -43,10 +46,10 @@ public class GameServiceController {
   public void createGameService() {
     ResponseEntity<TokensInfo> tokensInfo =
         authController.login("xox", "laaPhie*aiN0");
+    System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
-    GameParams gameParams = new GameParams();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
