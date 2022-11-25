@@ -30,16 +30,15 @@ import javafx.scene.text.Text;
 public class GameFactory implements EntityFactory {
   public static final int matCoordsX = 400;
   public static final int matCoordsY = 150;
+  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+      .loadFont("BrushScriptMT.ttf");
   private final String levelOne = "level_one";
   private final String levelTwo = "level_two";
   private final String levelThree = "level_three";
 
-  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-          .loadFont("BrushScriptMT.ttf");
-
   /**
    * Adds a level-one card from the level-one deck to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -47,15 +46,16 @@ public class GameFactory implements EntityFactory {
   public Entity newLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
-        .view(levelOne + data.getData().get("cardIndex") + ".png")
+        .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(Level.ONE, levelOne + data.getData().get("cardIndex") + ".png"))
+        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.ONE,
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
         .build();
   }
 
   /**
    * Adds a level-two card from the level-two deck to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -63,15 +63,16 @@ public class GameFactory implements EntityFactory {
   public Entity newLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 360)
-        .view(levelTwo + data.getData().get("cardIndex") + ".png")
+        .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(Level.TWO, levelTwo + data.getData().get("cardIndex") + ".png"))
+        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.TWO,
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
         .build();
   }
 
   /**
    * Adds a level-three card from the level-three deck to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -79,15 +80,16 @@ public class GameFactory implements EntityFactory {
   public Entity newLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 155)
-        .view(levelThree + data.getData().get("cardIndex") + ".png")
+        .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(Level.THREE, levelThree + data.getData().get("cardIndex") + ".png"))
+        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.THREE,
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
         .build();
   }
 
   /**
    * Adds a sacrifice card to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -105,7 +107,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds a noble-reserve card to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -123,7 +125,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds a bag card to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -141,7 +143,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the level-three deck to the game board.
-
+   *
    * @param data spawn data
    * @return deck entity
    */
@@ -164,7 +166,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the level-two deck to the game board.
-
+   *
    * @param data spawn data
    * @return deck entity
    */
@@ -187,7 +189,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the level-one deck to the game board.
-
+   *
    * @param data spawn data
    * @return deck entity
    */
@@ -209,7 +211,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the game bank to the game board.
-
+   *
    * @param data spawn data
    * @return bank entity
    */
@@ -274,7 +276,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the in-game menu button to the game board.
-
+   *
    * @param data spawn data
    * @return icon entity
    */
@@ -295,14 +297,14 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds a new noble tile to the game board.
-
+   *
    * @param data spawn data
    * @return noble entity
    */
   @Spawns("Noble")
   public Entity newNoble(SpawnData data) {
     return FXGL.entityBuilder()
-        .view("noble" + data.getData().get("nobleIndex") + ".png")
+        .view(data.getData().get("texture") + ".png")
         .with(new NobleComponent())
         .scale(0.15, 0.15)
         .build();
@@ -310,7 +312,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the game mat to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */
@@ -325,7 +327,7 @@ public class GameFactory implements EntityFactory {
 
   /**
    * Adds the background to the game board.
-
+   *
    * @param data spawn data
    * @return card entity
    */

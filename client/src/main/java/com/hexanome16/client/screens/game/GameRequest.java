@@ -10,24 +10,39 @@ import java.util.concurrent.ExecutionException;
 
 public class GameRequest
 {
-  public static void newCard(long sessionId){
+  public static String newCard(long sessionId, Level level){
     try {
       HttpClient client = RequestClient.getClient();
-      System.out.println("called");
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
               "/api/game/nextCard/" + sessionId,
-              "level=ONE"
+              "level=" + level.name()
           )).GET()
           .build();
       CompletableFuture<HttpResponse<String>> response =
           client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-      response.thenApply(HttpResponse::body).thenAccept(System.out::println).join();
+      return response.thenApply(HttpResponse::body).get();
     }catch(Exception e){
       e.printStackTrace();
     }
-    //if (statusCode == 200) {
-    //start game??? fetch game info???
-    //}
+    return null;
+  }
+
+  public static String newNoble(long sessionId){
+    try {
+      HttpClient client = RequestClient.getClient();
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(UrlUtils.createGameServerUri(
+              "/api/game/nextNoble/" + sessionId,
+              ""
+          )).GET()
+          .build();
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+      return response.thenApply(HttpResponse::body).get();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return null;
   }
 }

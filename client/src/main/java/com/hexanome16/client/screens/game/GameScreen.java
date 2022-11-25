@@ -4,6 +4,7 @@ import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.google.gson.Gson;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
@@ -17,9 +18,7 @@ public class GameScreen {
   private static final Stack<Integer> level_one = new Stack<>();
   private static final Stack<Integer> level_two = new Stack<>();
   private static final Stack<Integer> level_three = new Stack<>();
-
   private static final Stack<Integer> nobles = new Stack<>();
-
   //for demo use only: lists of cards returned by the server
   private static final int[] level_one_list = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
       16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
@@ -29,12 +28,14 @@ public class GameScreen {
   private static final int[] level_three_list = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
       15, 16, 17, 18, 19};
   private static final int[] noble_list = {0, 1, 2, 3, 4};
+  private static long sessionId = -1;
 
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
    */
-  public static void initGame(long sessionId) {
+  public static void initGame(long id) {
+    sessionId = id;
 
     for (int i = 0; i < level_one_list.length; i++) {
       level_one.push(level_one_list[i]);
@@ -64,16 +65,21 @@ public class GameScreen {
       addLevelThreeCard();
     }
     for (int i = 0; i < 5; i++) {
-      FXGL.spawn("Noble", new SpawnData().put("nobleIndex", nobles.pop()));
+      String cardJson = GameRequest.newNoble(sessionId);
+      Gson gson = new Gson();
+
+      // convert JSON file to map
+      Map<String, String> map = gson.fromJson(cardJson, Map.class);
+      FXGL.spawn("Noble",
+          new SpawnData().put("texture", map.get("texturePath")));
     }
     // spawn the player's hands
     PlayerDecks.generateAll();
-    GameRequest.newCard(sessionId);
   }
 
   /**
    * Initializes the number of cards in each deck.
-
+   *
    * @param vars game variables
    */
   public static void initGameVars(Map<String, Object> vars) {
@@ -96,28 +102,58 @@ public class GameScreen {
    * Adds a new level-three card to the game board.
    */
   public static void addLevelThreeCard() {
-    if (!level_three.empty()) {
-      FXGL.spawn("LevelThreeCard", new SpawnData().put("cardIndex", level_three.pop()));
-    }
+    String cardJson = GameRequest.newCard(sessionId, Level.THREE);
+    Gson gson = new Gson();
+
+    // convert JSON file to map
+    Map<String, Object> map = gson.fromJson(cardJson, Map.class);
+    Map<String, Object> priceMap = (Map)((Map)map.get("price")).get("priceMap");
+    PriceMap pm = new PriceMap(((Double) priceMap.get("rubyAmount")).intValue(),
+        ((Double) priceMap.get("emeraldAmount")).intValue(),
+        ((Double) priceMap.get("sapphireAmount")).intValue(),
+        ((Double) priceMap.get("diamondAmount")).intValue(),
+        ((Double) priceMap.get("onyxAmount")).intValue());
+    FXGL.spawn("LevelThreeCard",
+        new SpawnData().put("id", map.get("id")).put("texture", map.get("texturePath")));
   }
 
   /**
    * Adds a new level-two card to the game board.
    */
   public static void addLevelTwoCard() {
-    if (!level_two.empty()) {
-      FXGL.spawn("LevelTwoCard", new SpawnData().put("cardIndex", level_two.pop()));
-    }
+    String cardJson = GameRequest.newCard(sessionId, Level.TWO);
+    Gson gson = new Gson();
+
+    // convert JSON file to map
+    Map<String, Object> map = gson.fromJson(cardJson, Map.class);
+    Map<String, Object> priceMap = (Map)((Map)map.get("price")).get("priceMap");
+    PriceMap pm = new PriceMap(((Double) priceMap.get("rubyAmount")).intValue(),
+        ((Double) priceMap.get("emeraldAmount")).intValue(),
+        ((Double) priceMap.get("sapphireAmount")).intValue(),
+        ((Double) priceMap.get("diamondAmount")).intValue(),
+        ((Double) priceMap.get("onyxAmount")).intValue());
+
+    FXGL.spawn("LevelTwoCard",
+        new SpawnData().put("id", map.get("id")).put("texture", map.get("texturePath")));
   }
 
   /**
    * Adds a new level-one card to the game board.
    */
   public static void addLevelOneCard() {
+    String cardJson = GameRequest.newCard(sessionId, Level.ONE);
+    Gson gson = new Gson();
 
-    if (!level_one.empty()) {
-      FXGL.spawn("LevelOneCard", new SpawnData().put("cardIndex", level_one.pop()));
-    }
+    // convert JSON file to map
+    Map<String, Object> map = gson.fromJson(cardJson, Map.class);
+    Map<String, Object> priceMap = (Map)((Map)map.get("price")).get("priceMap");
+    PriceMap pm = new PriceMap(((Double) priceMap.get("rubyAmount")).intValue(),
+        ((Double) priceMap.get("emeraldAmount")).intValue(),
+        ((Double) priceMap.get("sapphireAmount")).intValue(),
+        ((Double) priceMap.get("diamondAmount")).intValue(),
+        ((Double) priceMap.get("onyxAmount")).intValue());
+    FXGL.spawn("LevelOneCard",
+        new SpawnData().put("id", map.get("id")).put("texture", map.get("texturePath")).put("price", pm));
   }
 
   /**
@@ -134,5 +170,4 @@ public class GameScreen {
     FXGL.getGameWorld()
         .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
   }
-
 }

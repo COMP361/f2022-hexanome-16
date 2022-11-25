@@ -8,12 +8,10 @@ import java.util.List;
  * Development deck class.
  */
 public class Deck {
-  private final Level level;
   private final List<DevelopmentCard> cardList = new ArrayList<>();
   private int index;
 
-  public Deck(Level level) {
-    this.level = level;
+  public Deck() {
     this.index = 0;
   }
 

@@ -4,15 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,11 +29,9 @@ public class GameController {
   public String createGame(@PathVariable long sessionId) {
     try {
       Game game = new Game(sessionId);
-      System.out.println(sessionId);
       gameMap.put(sessionId, game);
     } catch (Exception e) {
-     // StringWriter errors = new StringWriter();
-     // e.printStackTrace(new PrintWriter(errors));
+      e.printStackTrace();
     }
     return "success";
   }
@@ -69,5 +62,12 @@ public class GameController {
     }
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.writeValueAsString(gameMap.get(sessionId).getDeck(alevel).nextCard());
+  }
+
+  @GetMapping(value = {"/game/nextNoble/{sessionId}", "/game/nextNoble/{sessionId}/"})
+  public String nextNoble(@PathVariable long sessionId)
+      throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(gameMap.get(sessionId).getNobleDeck().nextCard());
   }
 }
