@@ -1,11 +1,9 @@
 package com.hexanome16.server.dto;
 
 /**
- * For converting json file to level card objects.
+ * For converting json file to noble objects.
  */
-public class CardJson {
-  String level;
-  String bonus;
+public class NobleJson {
   int prestigePoint;
 
   int onyxAmount;
@@ -18,39 +16,28 @@ public class CardJson {
 
   int diamondAmount;
 
-  public CardJson() {
+  public NobleJson() {
+
   }
 
   /**
    * Json to java object.
    *
-   * @param level          card level
-   * @param bonus          card bonus
-   * @param prestigePoint  card prestige point
+   * @param prestigePoint  prestige point
    * @param onyxAmount     onyx amount
    * @param sapphireAmount sapphire amount
    * @param emeraldAmount  emerald amount
    * @param rubyAmount     ruby amount
    * @param diamondAmount  diamond amount
    */
-  public CardJson(String level, String bonus, int prestigePoint, int onyxAmount, int sapphireAmount,
-                  int emeraldAmount, int rubyAmount, int diamondAmount) {
-    this.level = level;
-    this.bonus = bonus;
+  public NobleJson(int prestigePoint, int onyxAmount, int sapphireAmount, int emeraldAmount,
+                   int rubyAmount, int diamondAmount) {
     this.prestigePoint = prestigePoint;
     this.onyxAmount = onyxAmount;
     this.sapphireAmount = sapphireAmount;
     this.emeraldAmount = emeraldAmount;
     this.rubyAmount = rubyAmount;
     this.diamondAmount = diamondAmount;
-  }
-
-  public String getLevel() {
-    return level;
-  }
-
-  public String getBonus() {
-    return bonus;
   }
 
   public int getPrestigePoint() {

@@ -1,4 +1,4 @@
-package com.hexanome16.server.models;
+package com.hexanome16.client.screens.game;
 
 /**
  * Holds the token price for a development card.
@@ -10,6 +10,9 @@ public class PriceMap {
   int diamondAmount;
   int onyxAmount;
 
+  public PriceMap(){
+
+  }
   /**
    * Stores a certain price.
    *
@@ -48,3 +51,4 @@ public class PriceMap {
     return onyxAmount;
   }
 }
+
