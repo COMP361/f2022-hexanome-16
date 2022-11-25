@@ -1,6 +1,5 @@
 package com.hexanome16.server.models;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.CardJson;
@@ -16,12 +15,23 @@ import java.util.Map;
  */
 public class Game {
   private final Map<Level, Deck> decks = new HashMap<Level, Deck>();
+  private final Map<Level, Deck> onBoardDecks = new HashMap<Level, Deck>();
+
   private final long sessionId;
   private Deck nobleDeck = new Deck();
 
+  private Deck onBoardNobles = new Deck();
+
+  /**
+   * Game constructor, create a new with a unique session id.
+   *
+   * @param sessionId session id
+   * @throws IOException exception
+   */
   public Game(long sessionId) throws IOException {
     this.sessionId = sessionId;
     createDecks();
+    createOnBoardDecks();
   }
 
   private void createDecks() throws IOException {
@@ -107,6 +117,25 @@ public class Game {
     }
   }
 
+  private void createOnBoardDecks() {
+    Deck baseOneDeck = new Deck();
+    Deck baseTwoDeck = new Deck();
+    Deck baseThreeDeck = new Deck();
+    for (int i = 0; i < 4; i++) {
+      baseOneDeck.addCard(decks.get(Level.ONE).nextCard());
+      baseTwoDeck.addCard(decks.get(Level.TWO).nextCard());
+      baseThreeDeck.addCard(decks.get(Level.THREE).nextCard());
+    }
+    this.onBoardDecks.put(Level.ONE, baseOneDeck);
+    this.onBoardDecks.put(Level.TWO, baseTwoDeck);
+    this.onBoardDecks.put(Level.THREE, baseThreeDeck);
+    Deck nobleDeck = new Deck();
+    for (int i = 0; i < 5; i++) {
+      nobleDeck.addCard(this.nobleDeck.nextCard());
+    }
+    this.onBoardNobles = nobleDeck;
+  }
+
   public Deck getDeck(Level level) {
     return decks.get(level);
   }
@@ -114,4 +143,13 @@ public class Game {
   public Deck getNobleDeck() {
     return this.nobleDeck;
   }
+
+  public Deck getOnBoardDeck(Level level) {
+    return onBoardDecks.get(level);
+  }
+
+  public Deck getOnBoardNobles() {
+    return this.onBoardNobles;
+  }
+
 }
