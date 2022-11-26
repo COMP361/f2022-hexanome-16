@@ -7,8 +7,8 @@ COPY server/pom.xml .
 COPY server/google_checks.xml .
 
 RUN apk add --no-cache sed
-RUN sed -i 's/localhost/lobby-service/g' src/main/resources/application.properties
-RUN sed -i 's/localhost/lobby-service/g' src/test/resources/application-test.properties
+RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/application.properties
+RUN sed -i 's/server.host=localhost/server.host=splendor-server/g' src/main/resources/application.properties
 
 # Build the application
 RUN mvn clean package -P prod -Dmaven.javadoc.skip=true
@@ -23,6 +23,10 @@ RUN chmod +x /wait
 
 COPY --from=build /app/target/server-0.0.1-SNAPSHOT.jar /app/splendor.jar
 #ENTRYPOINT ["java","-jar","/app/splendor.jar"]
+
+#Copy the json file
+COPY ./server/src/main/resources/cards.json /app
+COPY ./server/src/main/resources/nobles.json /app
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed

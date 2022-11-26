@@ -27,8 +27,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="clean" />
-              <option value="package" />
+              <option value="compile" />
               <option value="javafx:run" />
               <option value="-Dcheckstyle.skip" />
               <option value="-Dmaven.javadoc.skip=true" />
