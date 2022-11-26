@@ -29,7 +29,12 @@ public class UrlUtils {
    * @return The Lobby Service URI.
    */
   public URI createLobbyServiceUri(String path, String query) {
-    String urlString = protocol + "://" + host + ":" + port + path + "?" + query;
-    return URI.create(urlString.replaceAll("\\+", "%2B"));
+    try {
+      String urlString = protocol + "://" + host + ":" + port + path + "?" + query;
+      return new URI(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }
