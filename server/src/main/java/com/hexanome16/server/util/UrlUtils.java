@@ -31,7 +31,7 @@ public class UrlUtils {
   public URI createLobbyServiceUri(String path, String query) {
     try {
       String urlString = protocol + "://" + host + ":" + port + path + "?" + query;
-      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+      return new URI(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
     } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;
