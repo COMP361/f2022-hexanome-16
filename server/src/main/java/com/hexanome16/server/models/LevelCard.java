@@ -1,7 +1,5 @@
 package com.hexanome16.server.models;
 
-import com.hexanome16.server.action.PurchaseAction;
-
 /**
  * Card instead of noble.
  */
