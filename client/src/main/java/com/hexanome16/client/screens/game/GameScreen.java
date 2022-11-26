@@ -44,7 +44,7 @@ public class GameScreen {
     initLevelTwoDeck();
     initLevelThreeDeck();
     // spawn the player's hands
-    PlayerDecks.generateAll();
+    PlayerDecks.generateAll(4);
   }
 
   /**
