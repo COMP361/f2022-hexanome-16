@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Player bank class.
  */
-public class PlayerBank {
+public class PlayerBank extends Bank {
   private final Map<Gem, TokenStack> tokenStackMap = new HashMap<Gem, TokenStack>();
 
   public PlayerBank() {
