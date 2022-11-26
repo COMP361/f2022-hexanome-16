@@ -49,7 +49,8 @@ public class GameFactory implements EntityFactory {
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.ONE,
-            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
+            (String) data.getData().get("MD5")))
         .build();
   }
 
@@ -66,7 +67,8 @@ public class GameFactory implements EntityFactory {
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.TWO,
-            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
+            (String) data.getData().get("MD5")))
         .build();
   }
 
@@ -83,7 +85,8 @@ public class GameFactory implements EntityFactory {
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.THREE,
-            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price")))
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
+            (String) data.getData().get("MD5")))
         .build();
   }
 

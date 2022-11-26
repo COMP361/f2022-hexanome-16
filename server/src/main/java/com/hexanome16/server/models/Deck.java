@@ -19,6 +19,10 @@ public class Deck {
     cardList.add(card);
   }
 
+  public void removeCard(DevelopmentCard card) {
+    cardList.remove(card);
+  }
+
   public void shuffle() {
     Collections.shuffle(cardList);
   }
