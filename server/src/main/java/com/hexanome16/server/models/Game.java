@@ -6,6 +6,7 @@ import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.NobleJson;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,14 @@ import java.util.Map;
  * Game class that holds all the information.
  */
 public class Game {
+  //store all the games here
+  private static final Map<Long, Game> gameMap = new HashMap<Long, Game>();
   private final Map<Level, Deck> decks = new HashMap<Level, Deck>();
   private final Map<Level, Deck> onBoardDecks = new HashMap<Level, Deck>();
 
   private final long sessionId;
+
+  private final List<Player> participants = new ArrayList<Player>();
   private Deck nobleDeck = new Deck();
 
   private Deck onBoardNobles = new Deck();
@@ -32,6 +37,14 @@ public class Game {
     this.sessionId = sessionId;
     createDecks();
     createOnBoardDecks();
+  }
+
+  public static Map<Long, Game> getGameMap() {
+    return gameMap;
+  }
+
+  public List<Player> getParticipants() {
+    return participants;
   }
 
   private void createDecks() throws IOException {
@@ -155,4 +168,21 @@ public class Game {
     return this.onBoardNobles;
   }
 
+  /**
+   * Adds a new card from deck to game board.
+   *
+   * @param level level of the deck
+   */
+  public void addOnBoardCard(Level level) {
+    this.onBoardDecks.get(level).addCard(this.decks.get(level).nextCard());
+  }
+
+  /**
+   * Removes a card from game board.
+   *
+   * @param card card to be removed
+   */
+  public void removeOnBoardCard(LevelCard card) {
+    this.onBoardDecks.get(card.getLevel()).removeCard(card);
+  }
 }
