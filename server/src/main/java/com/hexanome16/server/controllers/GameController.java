@@ -121,37 +121,6 @@ public class GameController {
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.writeValueAsString(Game.getGameMap().get(sessionId).getOnBoardNobles());
   }
-
-  /**
-   * Client requests a list of possible buy actions for a certain card.
-   *
-   * @param sessionId game id
-   * @param username player username
-   * @param cardHash MD5 card
-   * @return a hash string of actions
-   * @throws JsonProcessingException exception
-   */
-  @GetMapping(value = {"/game/{sessionId}/{username}/actions/purchase"})
-  public String getPurchaseActions(@PathVariable long sessionId, @PathVariable String username,
-                                   @RequestParam String cardHash)
-      throws JsonProcessingException {
-    //player auth goes here I guess
-    Game game = Game.getGameMap().get(sessionId);
-    //to be implemented
-    //Player player= game.getPlayerByUserame(username);
-    Player player = new Player("");
-    DevelopmentCard card = cardHashMap.get(cardHash);
-    ObjectMapper objectMapper = new ObjectMapper();
-    String serializedActions = objectMapper.writeValueAsString(
-        purchaseActionGenerator.generateActions(game, player, (LevelCard) card));
-    return serializedActions;
-  }
-
-  @PatchMapping(value = {"/game/{sessionId}/{username}/action/purchase"})
-  public void selectPurchaseAction(@PathVariable long sessionId, @PathVariable String username,
-                                   @RequestParam String actionHash) {
-
-  }
 }
 
 
