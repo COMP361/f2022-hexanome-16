@@ -1,28 +1,35 @@
 FROM maven:3.8-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 
-# Copy the source code
-COPY server/src src
+# Download all the dependencies first so we can cache them
+# (thank you https://stackoverflow.com/a/71066133)
 COPY server/pom.xml .
+RUN mvn -Ddocker.build.skip=true -Ddocker.javadoc.skip=true package test
+
+# Copy the source code and Checkstyle config
+COPY server/src ./src
 COPY server/google_checks.xml .
 
+# Adjust application.properties to use the correct hostnames for Docker
 RUN apk add --no-cache sed
 RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/application.properties
 RUN sed -i 's/server.host=localhost/server.host=splendor-server/g' src/main/resources/application.properties
 
 # Build the application
-RUN mvn clean package -P prod -Dmaven.javadoc.skip=true
+RUN mvn -Ddocker.javadoc.skip=true package
 
+# Discard Maven, run JAR file using JRE
 FROM eclipse-temurin:17-jre-alpine AS runtime
 EXPOSE 4243
 
-## Wait for LS to be ready
+## Download the utility that waits for another container to be ready
 ENV WAIT_VERSION 2.7.2
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
 RUN chmod +x /wait
 
+# Copy the JAR file from the build stage
 COPY --from=build /app/target/server-0.0.1-SNAPSHOT.jar /app/splendor.jar
-#ENTRYPOINT ["java","-jar","/app/splendor.jar"]
+# ENTRYPOINT ["java","-jar","/app/splendor.jar"]
 
 #Copy the json file
 COPY ./server/src/main/resources/cards.json /app
