@@ -13,11 +13,11 @@ public class PriceMap {
   /**
    * Stores a certain price.
    *
-   * @param rubyAmount ruby amount
-   * @param emeraldAmount emerald amount
+   * @param rubyAmount     ruby amount
+   * @param emeraldAmount  emerald amount
    * @param sapphireAmount sapphire amount
-   * @param diamondAmount diamond amount
-   * @param onyxAmount onyx amount
+   * @param diamondAmount  diamond amount
+   * @param onyxAmount     onyx amount
    */
   public PriceMap(int rubyAmount, int emeraldAmount, int sapphireAmount, int diamondAmount,
                   int onyxAmount) {

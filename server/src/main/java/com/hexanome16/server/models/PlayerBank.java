@@ -7,7 +7,7 @@ import java.util.Map;
  * Player bank class.
  */
 public class PlayerBank {
-  private Map<Gem, TokenStack> tokenStackMap = new HashMap<Gem, TokenStack>();
+  private final Map<Gem, TokenStack> tokenStackMap = new HashMap<Gem, TokenStack>();
 
   public PlayerBank() {
   }

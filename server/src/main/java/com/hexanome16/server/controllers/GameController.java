@@ -2,20 +2,13 @@ package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.action.generator.PurchaseActionGenerator;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.Player;
-import java.awt.SystemColor;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class GameController {
-  private final PurchaseActionGenerator purchaseActionGenerator = new PurchaseActionGenerator();
-
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<String, DevelopmentCard>();
 
   /**

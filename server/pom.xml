@@ -18,6 +18,8 @@
 		<testcontainers.version>1.17.4</testcontainers.version>
 		<maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
 		<checkstyle.version>10.3.4</checkstyle.version>
+		<docker.build.skip>false</docker.build.skip>
+		<docker.javadoc.skip>false</docker.javadoc.skip>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -107,6 +109,9 @@
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
 				<version>1.5.8</version>
+				<configuration>
+					<skip>${docker.build.skip}</skip>
+				</configuration>
 				<executions>
 					<execution>
 						<id>generate-docs</id>
@@ -148,6 +153,7 @@
 					<failOnViolation>true</failOnViolation>
 					<failsOnError>true</failsOnError>
 					<linkXRef>false</linkXRef>
+					<skip>${docker.build.skip}</skip>
 				</configuration>
 				<executions>
 					<execution>
@@ -171,6 +177,7 @@
 						${project.reporting.outputDirectory}../../../docs
 					</reportOutputDirectory>
 					<destDir>server</destDir>
+					<skip>${docker.javadoc.skip}</skip>
 				</configuration>
 				<executions>
 					<execution>
@@ -189,6 +196,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M7</version>
+				<configuration>
+					<skip>${docker.build.skip}</skip>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -196,6 +206,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>com.hexanome16.server.ServerApplication</mainClass>
+					<skip>${docker.build.skip}</skip>
 				</configuration>
 				<executions>
 					<execution>
