@@ -19,6 +19,7 @@
 
 ## How to run the project (development)
   * Start the server and Lobby Service by running "Server + LS" run config in IntelliJ.
+    * If you'd like to run this manually, do ```docker-compose --profile with-server up -d --build --force-recreate --remove-orphans```.
   * Start the client with Splendor Dev run config in IntelliJ.
 
 ## The Rules
