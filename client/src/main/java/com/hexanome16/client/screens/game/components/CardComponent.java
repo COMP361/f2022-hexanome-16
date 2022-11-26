@@ -30,13 +30,17 @@ public class CardComponent extends Component {
   private int gridX;
   private boolean purchased = false;
 
+  private String cardMD5 = "";
+
   private PriceMap priceMap = new PriceMap();
 
 
-  public CardComponent(long id, Level level, String texture, PriceMap priceMap) {
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardMD5) {
     this.level = level;
     this.texture = texture;
     this.priceMap = priceMap;
+    this.cardMD5 = cardMD5;
+    System.out.println("card hash: "+cardMD5);
   }
 
   /**
