@@ -4,7 +4,7 @@ package com.hexanome16.server.models;
  * Player class.
  */
 public class Player {
-  private String username;
+  private final String username;
   private PlayerBank bank;
 
   public Player(String username) {
