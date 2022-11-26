@@ -109,42 +109,49 @@ public class GameScreen {
     Map<String, Object> map = gson.fromJson(cardJson, Map.class);
     PriceMap pm = getPriceMap(map);
     FXGL.spawn("LevelOneCard",
-        new SpawnData().put("id", map.get("id")).put("texture", map.get("texturePath")).put("price", pm));
+        new SpawnData().put("id", map.get("id")).put("texture", map.get("texturePath"))
+            .put("price", pm));
   }
 
-  public static void initLevelOneDeck(){
+  public static void initLevelOneDeck() {
     String cardJson = GameRequest.initDeck(sessionId, Level.ONE);
     Gson gson = new Gson();
-    String deck = gson.fromJson(cardJson, Map.class).get("cardList").toString();
-    List<Map<String, Object>> cardList = gson.fromJson(deck, List.class);
-    for(Map<String, Object> card: cardList){
+    Map<String, Object> cardHashList = gson.fromJson(cardJson, Map.class);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>)entry.getValue();
       PriceMap pm = getPriceMap(card);
       FXGL.spawn("LevelOneCard",
-          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath")).put("price", pm));
+          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+              .put("price", pm).put("MD5", hash));
     }
   }
 
-  public static void initLevelTwoDeck(){
+  public static void initLevelTwoDeck() {
     String cardJson = GameRequest.initDeck(sessionId, Level.TWO);
     Gson gson = new Gson();
-    String deck = gson.fromJson(cardJson, Map.class).get("cardList").toString();
-    List<Map<String, Object>> cardList = gson.fromJson(deck, List.class);
-    for(Map<String, Object> card: cardList){
-      PriceMap pm = getPriceMap(card);
-      FXGL.spawn("LevelTwoCard",
-          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath")).put("price", pm));
+    Map<String, Object> cardHashList = gson.fromJson(cardJson, Map.class);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>)entry.getValue();
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("LevelTwoCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
     }
   }
 
-  public static void initLevelThreeDeck(){
+  public static void initLevelThreeDeck() {
     String cardJson = GameRequest.initDeck(sessionId, Level.THREE);
     Gson gson = new Gson();
-    String deck = gson.fromJson(cardJson, Map.class).get("cardList").toString();
-    List<Map<String, Object>> cardList = gson.fromJson(deck, List.class);
-    for(Map<String, Object> card: cardList){
-      PriceMap pm = getPriceMap(card);
-      FXGL.spawn("LevelThreeCard",
-          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath")).put("price", pm));
+    Map<String, Object> cardHashList = gson.fromJson(cardJson, Map.class);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>)entry.getValue();
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("LevelThreeCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
     }
   }
 
@@ -163,8 +170,8 @@ public class GameScreen {
         .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(ViewComponent.class));
   }
 
-  private static PriceMap getPriceMap(Map<String, Object> card){
-    Map<String, Object> priceMap = (Map)((Map)card.get("price")).get("priceMap");
+  private static PriceMap getPriceMap(Map<String, Object> card) {
+    Map<String, Object> priceMap = (Map) ((Map) card.get("price")).get("priceMap");
     PriceMap pm = new PriceMap(((Double) priceMap.get("rubyAmount")).intValue(),
         ((Double) priceMap.get("emeraldAmount")).intValue(),
         ((Double) priceMap.get("sapphireAmount")).intValue(),
