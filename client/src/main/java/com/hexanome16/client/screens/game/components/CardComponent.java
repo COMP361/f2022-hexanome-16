@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.Level;
+import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.scene.input.MouseEvent;
@@ -29,10 +30,13 @@ public class CardComponent extends Component {
   private int gridX;
   private boolean purchased = false;
 
+  private PriceMap priceMap = new PriceMap();
 
-  public CardComponent(Level level, String texture) {
+
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap) {
     this.level = level;
     this.texture = texture;
+    this.priceMap = priceMap;
   }
 
   /**
