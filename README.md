@@ -18,11 +18,8 @@
  * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
 
 ## How to run the project (development)
-  * Build Lobby Service API and DB images with ```docker-compose build```.
-    * If you'd like to also run our game server in Docker, run ```docker-compose --profile with-server build```.
-  * Start the Lobby Service with ```docker-compose up -d```.
-    * To also start our game server in Docker, run ```docker-compose --profile with-server up -d```.
-    * Otherwise, the game server can be launched with the Server run config in IntelliJ (uses Maven.)
+  * Start the server and Lobby Service by running "Server + LS" run config in IntelliJ.
+    * If you'd like to run this manually, do ```docker-compose --profile with-server up -d --build --force-recreate --remove-orphans```.
   * Start the client with Splendor Dev run config in IntelliJ.
 
 ## The Rules

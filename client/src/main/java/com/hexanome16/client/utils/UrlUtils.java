@@ -40,7 +40,7 @@ public class UrlUtils {
       String urlString = LS_PROPERTIES.getString("server.protocol") + "://"
           + LS_PROPERTIES.getString("server.host") + ":"
           + LS_PROPERTIES.getInt("server.port") + path + "?" + query;
-      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
+      return new URI(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
     } catch (URISyntaxException e) {
       e.printStackTrace();
       return null;

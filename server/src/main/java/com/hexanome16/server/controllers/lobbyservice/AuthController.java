@@ -4,11 +4,13 @@ import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -17,9 +19,14 @@ import org.springframework.web.client.RestTemplate;
  * TODO.
  */
 @RestController
+@Service
 public class AuthController {
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
+  @Value("${ls.username}")
+  private String lsUsername;
+  @Value("${ls.password}")
+  private String lsPassword;
 
   public AuthController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
@@ -39,7 +46,7 @@ public class AuthController {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setBasicAuth("bgp-client-name", "bgp-client-pw");
+    headers.setBasicAuth(lsUsername, lsPassword);
     HttpEntity<Void> entity = new HttpEntity<>(null, headers);
     try {
       return this.restTemplate.postForEntity(url, entity, TokensInfo.class);
