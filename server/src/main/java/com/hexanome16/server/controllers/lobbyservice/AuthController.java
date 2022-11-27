@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * TODO.
+ * This controller is used for authentication operations related to Lobby Service.
  */
 @RestController
 @Service
@@ -88,13 +88,13 @@ public class AuthController {
   }
 
   /**
-   * TODO.
+   * This request logs out the user in LS associated with the access token.
    *
-   * @param refreshToken TODO.
+   * @param accessToken The access token.
    */
   @PreDestroy
-  public void logout(String refreshToken) {
-    URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + refreshToken);
+  public void logout(String accessToken) {
+    URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
     try {
       this.restTemplate.delete(url);
     } catch (Exception e) {
