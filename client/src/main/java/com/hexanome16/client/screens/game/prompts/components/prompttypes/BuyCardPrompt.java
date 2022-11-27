@@ -8,6 +8,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.PriceMap;
+import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -52,6 +54,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
   double atButtonWidth = 3 * atWidth / 14;
   double atButtonSpacing = atButtonHeight / 2;
   double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
+  PriceMap atCardPriceMap;
+
 
   // make true if card is reserved
   protected boolean cardIsReserved;
@@ -135,6 +139,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
   }
 
+  // -------------------------------------------------------------------------------------------- //
   /**
    * An enum of the possible button types in a card purchase.
    */
@@ -159,7 +164,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
         t.setOpacity(0.5);
 
         FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
-          if (canBuy()) {
+          if (canBuy(buyCardPrompt)) {
             t.setOpacity(1);
           } else {
             t.setOpacity(0.5);
@@ -177,11 +182,48 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
 
 
-    private static boolean canBuy() {
-      // hardCoded for now
-      return FXGL.getWorldProperties()
-          .getInt(BankType.GAME_BANK + "/" + CurrencyType.BONUS_GOLD_CARDS)
-          >= 2;
+    private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
+      int rubyAmount = 0;
+      int emeraldAmount = 0;
+      int sapphireAmount = 0;
+      int diamondAmount = 0;
+      int onyxAmount = 0;
+      int goldAmount = 0;
+      int amountInBank;
+
+      for (CurrencyType e : CurrencyType.values()) {
+        amountInBank = FXGL.getWorldProperties()
+            .getInt(BankType.GAME_BANK + "/" + e);
+        switch (e) {
+          case RED_TOKENS:
+            rubyAmount = amountInBank;
+            break;
+          case GREEN_TOKENS:
+            emeraldAmount = amountInBank;
+            break;
+          case BLUE_TOKENS:
+            sapphireAmount = amountInBank;
+            break;
+          case WHITE_TOKENS:
+            diamondAmount = amountInBank;
+            break;
+          case BLACK_TOKENS:
+            onyxAmount = amountInBank;
+            break;
+          case GOLD_TOKENS:
+            goldAmount = amountInBank;
+            break;
+          default:
+            continue;
+        }
+      }
+
+      PurchaseMap amountInBankMap =
+          new PurchaseMap(rubyAmount, emeraldAmount,
+              sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+
+      PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
+      return amountInBankMap.equals(priceToMeet);
     }
   }
 
@@ -203,6 +245,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
    */
   public void populatePrompt(Entity entity, Entity cardEntity) {
     atCardEntity = cardEntity;
+    atCardPriceMap = cardEntity.getComponent(CardComponent.class).getPriceMap();
     populatePrompt(entity);
   }
 
