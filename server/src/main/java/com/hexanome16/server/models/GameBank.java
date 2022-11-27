@@ -16,4 +16,8 @@ public class GameBank extends Bank {
     gameBank = initBank(7);
   }
 
+  public Hashtable<Gem, ArrayList<Token>>  getGameBank() {
+    return this.gameBank;
+  }
+
 }
