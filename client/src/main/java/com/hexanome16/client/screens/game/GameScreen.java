@@ -115,6 +115,7 @@ public class GameScreen {
 
   public static void initLevelOneDeck() {
     String cardJson = GameRequest.initDeck(sessionId, Level.ONE);
+    System.out.println(cardJson);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(cardJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {

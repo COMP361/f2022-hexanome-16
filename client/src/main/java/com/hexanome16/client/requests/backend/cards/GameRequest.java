@@ -4,6 +4,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -26,7 +27,7 @@ public class GameRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
               "/api/game/getCards/" + sessionId,
-              "level=" + level.name() + "&access_token=" + AuthUtils.getAuth().getAccessToken()
+              "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
           )).GET()
           .build();
       CompletableFuture<HttpResponse<String>> response =
@@ -48,11 +49,13 @@ public class GameRequest {
   public static String newCard(long sessionId, Level level) {
     try {
       HttpClient client = RequestClient.getClient();
+      URI uri = UrlUtils.createGameServerUri(
+          "/api/game/nextCard/" + sessionId,
+          "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
+      );
+      System.out.println(uri);
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createGameServerUri(
-              "/api/game/nextCard/" + sessionId,
-              "level=" + level.name() + "&access_token=" + AuthUtils.getAuth().getAccessToken()
-          )).GET()
+          .uri(uri).GET()
           .build();
       CompletableFuture<HttpResponse<String>> response =
           client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
@@ -75,7 +78,7 @@ public class GameRequest {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
               "/api/game/nextNoble/" + sessionId,
-              "access_token=" + AuthUtils.getAuth().getAccessToken()
+              "accessToken=" + AuthUtils.getAuth().getAccessToken()
           )).GET()
           .build();
       CompletableFuture<HttpResponse<String>> response =
