@@ -34,6 +34,7 @@ public class GameController {
       case "ONE" -> Level.ONE;
       case "TWO" -> Level.TWO;
       case "THREE" -> Level.THREE;
+      default -> throw new IllegalArgumentException("Invalid level");
     };
   }
 
