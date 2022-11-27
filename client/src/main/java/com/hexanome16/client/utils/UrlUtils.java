@@ -4,9 +4,6 @@ import com.almasb.fxgl.core.asset.AssetType;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javafx.concurrent.Task;
 
 /**
  * Utility class for performing operations on URLs.
