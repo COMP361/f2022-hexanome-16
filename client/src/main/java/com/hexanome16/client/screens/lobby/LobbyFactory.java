@@ -19,10 +19,8 @@ import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Task;
@@ -42,7 +40,7 @@ import javafx.util.Pair;
  */
 public class LobbyFactory implements EntityFactory {
   private static Session[] sessions = new Session[] {};
-  private static TableView<Session> ownSessionList;
+  private static TableView<Session> activeSessionList;
   private static TableView<Session> otherSessionList;
   private static String hashCode = "";
   private static Thread fetchSessionsThread;
@@ -52,13 +50,13 @@ public class LobbyFactory implements EntityFactory {
    * This method updates the list of sessions shown in the lobby screen.
    */
   public static void updateSessionList() {
-    ownSessionList.getItems().clear();
+    activeSessionList.getItems().clear();
     otherSessionList.getItems().clear();
 
     if (AuthUtils.getPlayer() != null) {
       for (Session session : sessions) {
         if (Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())) {
-          ownSessionList.getItems().add(session);
+          activeSessionList.getItems().add(session);
         } else {
           otherSessionList.getItems().add(session);
         }
@@ -126,14 +124,14 @@ public class LobbyFactory implements EntityFactory {
     return sessionList(data, false);
   }
 
-  private Entity sessionList(SpawnData data, boolean isOwn) {
+  private Entity sessionList(SpawnData data, boolean isActive) {
     if (sessions == null) {
       sessions = new Session[] {};
     }
     Session[] sessionArr;
     TableView<Session> sessionTableView = new TableView<>();
-    if (isOwn) {
-      ownSessionList = sessionTableView;
+    if (isActive) {
+      activeSessionList = sessionTableView;
       sessionArr = Arrays.stream(sessions).filter(
           session -> Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())
       ).toArray(Session[]::new);
@@ -189,6 +187,7 @@ public class LobbyFactory implements EntityFactory {
                   setGraphic(null);
                 } else {
                   final Session session = getTableView().getItems().get(getIndex());
+                  boolean isOwn = session.getCreator().equals(AuthUtils.getPlayer().getName());
                   join.setOnAction(event -> {
                     JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
                         AuthUtils.getAuth().getAccessToken());
@@ -232,12 +231,11 @@ public class LobbyFactory implements EntityFactory {
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
-                  if (isOwn) {
-                    buttons.add(session.getLaunched() ? join : launch);
-                    buttons.add(session.getLaunched() ? leave : delete);
-                  } else if (Arrays.asList(session.getPlayers())
-                      .contains(AuthUtils.getPlayer().getName())) {
-                    buttons.add(leave);
+                  if (isActive) {
+                    buttons.add(session.getLaunched() || !isOwn ? join : launch);
+                    if (!session.getLaunched()) {
+                      buttons.add(isOwn ? delete : leave);
+                    }
                   } else {
                     buttons.add(join);
                   }
@@ -277,9 +275,9 @@ public class LobbyFactory implements EntityFactory {
     }
 
     return entityBuilder(data)
-        .type(isOwn ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
+        .type(isActive ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
         .viewWithBBox(sessionTableView)
-        .at(160, isOwn ? 350 : 450 + getAppHeight() / 4.0)
+        .at(160, isActive ? 350 : 450 + getAppHeight() / 4.0)
         .build();
   }
 

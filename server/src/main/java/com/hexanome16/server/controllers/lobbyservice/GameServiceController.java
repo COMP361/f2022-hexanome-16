@@ -20,7 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * TODO.
+ * This controller is used for Game Service operations related to Lobby Service.
  */
 @RestController
 @Service
@@ -36,7 +36,12 @@ public class GameServiceController {
   private String gsPassword;
 
   /**
-   * TODO.
+   * Constructor.
+   *
+   * @param restTemplateBuilder The RestTemplateBuilder.
+   * @param authController      The AuthController.
+   * @param urlUtils            The UrlUtils.
+   * @param gameParams          The GameParams.
    */
   public GameServiceController(RestTemplateBuilder restTemplateBuilder,
                                AuthController authController, UrlUtils urlUtils,
@@ -48,7 +53,8 @@ public class GameServiceController {
   }
 
   /**
-   * TODO.
+   * This method registers this server as a game service in Lobby Service.
+   * It is called at the startup of the server.
    */
   @EventListener(ApplicationReadyEvent.class)
   public void createGameService() {

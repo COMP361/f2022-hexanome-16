@@ -4,6 +4,7 @@ import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * TODO.
+ * This controller is used for authentication operations related to Lobby Service.
  */
 @RestController
 @Service
@@ -63,7 +64,40 @@ public class AuthController {
   }
 
   @ResponseBody
-  public ResponseEntity<TokensInfo> refresh(String refreshToken) {
+  public ResponseEntity<TokensInfo> login(String refreshToken) {
     return login(null, null, refreshToken);
+  }
+
+  /**
+   * This request returns the username of the LS account associated with the access token.
+   *
+   * @param accessToken The access token.
+   * @return The username of the LS account associated with the access token.
+   */
+  @ResponseBody
+  public ResponseEntity<String> getPlayer(String accessToken) {
+    URI url = urlUtils.createLobbyServiceUri("/oauth/username",
+        "access_token=" + accessToken);
+    assert url != null;
+    try {
+      return this.restTemplate.getForEntity(url, String.class);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  /**
+   * This request logs out the user in LS associated with the access token.
+   *
+   * @param accessToken The access token.
+   */
+  public void logout(String accessToken) {
+    URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
+    try {
+      this.restTemplate.delete(url);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
