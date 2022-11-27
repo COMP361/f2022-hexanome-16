@@ -71,11 +71,13 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
+
     FXGL.getEventBus().addEventHandler(SplendorEvents.BOUGHT, e -> {
       if (e.eventEntity == entity) {
         buyCard();
       }
     });
+
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());

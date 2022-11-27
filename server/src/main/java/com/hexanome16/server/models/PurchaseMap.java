@@ -1,4 +1,4 @@
-package com.hexanome16.client.screens.game;
+package com.hexanome16.server.models;
 
 /**
  * Class responsible for representing the gems the player decided to put down
