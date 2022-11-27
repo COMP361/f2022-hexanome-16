@@ -4,9 +4,6 @@ import com.almasb.fxgl.core.asset.AssetType;
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javafx.concurrent.Task;
 
 /**
  * Utility class for performing operations on URLs.
@@ -36,15 +33,10 @@ public class UrlUtils {
    * @return The Lobby Service URI.
    */
   public static URI createLobbyServiceUri(String path, String query) {
-    try {
-      String urlString = LS_PROPERTIES.getString("server.protocol") + "://"
-          + LS_PROPERTIES.getString("server.host") + ":"
-          + LS_PROPERTIES.getInt("server.port") + path + "?" + query;
-      return new URI(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-      return null;
-    }
+    String urlString = LS_PROPERTIES.getString("server.protocol") + "://"
+        + LS_PROPERTIES.getString("server.host") + ":"
+        + LS_PROPERTIES.getInt("server.port") + path + "?" + query;
+    return URI.create(URI.create(urlString).toASCIIString().replaceAll("\\+", "%2B"));
   }
 
   /**
@@ -55,14 +47,9 @@ public class UrlUtils {
    * @return The game server URI.
    */
   public static URI createGameServerUri(String path, String query) {
-    try {
-      String urlString = SERVER_PROPERTIES.getString("server.protocol") + "://"
-          + SERVER_PROPERTIES.getString("server.host") + ":"
-          + SERVER_PROPERTIES.getInt("server.port") + path + "?" + query;
-      return URI.create(new URI(urlString).toASCIIString().replaceAll("\\+", "%2B"));
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-      return null;
-    }
+    String urlString = SERVER_PROPERTIES.getString("server.protocol") + "://"
+        + SERVER_PROPERTIES.getString("server.host") + ":"
+        + SERVER_PROPERTIES.getInt("server.port") + path + "?" + query;
+    return URI.create(URI.create(urlString).toASCIIString().replaceAll("\\+", "%2B"));
   }
 }
