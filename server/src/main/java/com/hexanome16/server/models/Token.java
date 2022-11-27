@@ -5,4 +5,8 @@ package com.hexanome16.server.models;
  */
 public class Token {
   Gem gem;
+
+  public Token(Gem gem) {
+    this.gem = gem;
+  }
 }
