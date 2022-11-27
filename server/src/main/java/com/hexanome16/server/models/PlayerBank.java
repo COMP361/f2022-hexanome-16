@@ -52,5 +52,9 @@ public class PlayerBank extends Bank {
 
   }
 
+  public Hashtable<Gem, ArrayList<Token>> getPlayerBank() {
+    return this.playerBank;
+  }
+
 
 }
