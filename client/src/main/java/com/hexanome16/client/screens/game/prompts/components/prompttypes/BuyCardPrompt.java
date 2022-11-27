@@ -55,7 +55,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   double atButtonSpacing = atButtonHeight / 2;
   double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
   PriceMap atCardPriceMap;
-
+  String playerName;
 
   // make true if card is reserved
   protected boolean cardIsReserved;
@@ -175,6 +175,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
           if (t.getOpacity() == 1) {
             closeBuyPrompt();
             buyCardPrompt.cardBought();
+            buyCardPrompt.notifyServer();
             e.consume();
           }
         });
@@ -182,6 +183,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
 
 
+    // allows to check if card can be bought with current amount of tokens in trade bank
     private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
       int rubyAmount = 0;
       int emeraldAmount = 0;
@@ -190,7 +192,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
       int onyxAmount = 0;
       int goldAmount = 0;
       int amountInBank;
-
+      // go through every currently supported currencytype and modify the value of the
+      // variable associated to it
       for (CurrencyType e : CurrencyType.values()) {
         amountInBank = FXGL.getWorldProperties()
             .getInt(BankType.GAME_BANK + "/" + e);
@@ -217,15 +220,19 @@ public class BuyCardPrompt implements PromptTypeInterface {
             continue;
         }
       }
-
+      // Creates a Purchase map of the current amounts in the Transaction bank
       PurchaseMap amountInBankMap =
           new PurchaseMap(rubyAmount, emeraldAmount,
               sapphireAmount, diamondAmount, onyxAmount, goldAmount);
 
+      // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
-      return amountInBankMap.equals(priceToMeet);
+
+      // check if we can buy card with the gems we put down.
+      return amountInBankMap.canBeUsedToBuy(priceToMeet);
     }
   }
+
 
   @Override
   public double width() {
@@ -251,6 +258,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
+
+    fetchPlayerBank(playerName);
 
     // initiate playerBank
     VBox playerBank = new VBox();
@@ -299,6 +308,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.getChildren().addAll(playerBank, cardImage, gameBank, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
+
+
 
   private Collection<StackPane> createBank(BankType banktype) {
 
@@ -436,6 +447,17 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setPrefHeight(atHeight);
     myPrompt.setMaxHeight(atHeight);
   }
+
+  // TODO: what to do to notify server that we desire to purchase a card
+  private void notifyServer() {
+    
+  }
+
+  // TODO: get player bank and set it up for the prompt
+  private void fetchPlayerBank(String playerName) {
+    //
+  }
+
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 
