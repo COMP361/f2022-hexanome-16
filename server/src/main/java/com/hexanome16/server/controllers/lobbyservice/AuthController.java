@@ -92,7 +92,6 @@ public class AuthController {
    *
    * @param accessToken The access token.
    */
-  @PreDestroy
   public void logout(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
     try {
