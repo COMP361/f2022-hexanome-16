@@ -182,6 +182,10 @@ public class CardComponent extends Component {
     }
   }
 
+  public PriceMap getPriceMap() {
+    return priceMap;
+  }
+
   enum Direction {
     DOWN,
     RIGHT,
