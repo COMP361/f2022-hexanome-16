@@ -16,13 +16,14 @@ import java.util.Map;
  */
 public class Game {
   //store all the games here
-  private static final Map<Long, Game> gameMap = new HashMap<Long, Game>();
-  private final Map<Level, Deck> decks = new HashMap<Level, Deck>();
-  private final Map<Level, Deck> onBoardDecks = new HashMap<Level, Deck>();
+  private static final Map<Long, Game> gameMap = new HashMap<>();
+  private final Map<Level, Deck> decks = new HashMap<>();
+  private final Map<Level, Deck> onBoardDecks = new HashMap<>();
 
   private final long sessionId;
 
-  private final List<Player> participants = new ArrayList<Player>();
+  private final ArrayList<Player> participants = new ArrayList<>();
+  private int currentPlayerIndex = 0;
   private Deck nobleDeck = new Deck();
 
   private Deck onBoardNobles = new Deck();
@@ -43,8 +44,16 @@ public class Game {
     return gameMap;
   }
 
-  public List<Player> getParticipants() {
+  public ArrayList<Player> getParticipants() {
     return participants;
+  }
+
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
+  public void setCurrentPlayerIndex(int currentPlayerIndex) {
+    this.currentPlayerIndex = currentPlayerIndex;
   }
 
   private void createDecks() throws IOException {
