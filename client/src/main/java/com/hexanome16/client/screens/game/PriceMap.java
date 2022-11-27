@@ -10,9 +10,8 @@ public class PriceMap {
   int diamondAmount;
   int onyxAmount;
 
-  public PriceMap(){
+  public PriceMap() {}
 
-  }
   /**
    * Stores a certain price.
    *
