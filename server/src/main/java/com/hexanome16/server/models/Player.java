@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public class Player {
   private final String name;
   private final String preferredColour;
-  private PlayerBank bank;
-  public PlayerBank getBank() { return bank; }
-  public void setBank(PlayerBank bank) { this.bank = bank; }
+  private Inventory inventory; // the player has an inventory, not a bank
+  public Inventory getInventory() { return this.inventory; }
+  public void setInventory(Inventory inventory) { this.inventory = inventory; }
 
   @JsonCreator
   public Player(String name, String preferredColour) {
