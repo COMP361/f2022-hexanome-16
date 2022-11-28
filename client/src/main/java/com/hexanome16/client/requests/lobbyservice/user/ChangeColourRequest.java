@@ -41,7 +41,7 @@ public class ChangeColourRequest {
           .thenApply(HttpResponse::statusCode).get();
       if (statusCode == 200) {
         AuthUtils.getPlayer().setPreferredColour(colour);
-      } else if (statusCode == 401) {
+      } else if (statusCode >= 400 && statusCode <= 403) {
         TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
         execute(AuthUtils.getAuth().getAccessToken(), user, colour);
       }
