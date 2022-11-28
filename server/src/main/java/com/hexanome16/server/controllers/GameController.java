@@ -155,10 +155,10 @@ public class GameController {
                                                         @RequestParam String accessToken)
       throws JsonProcessingException {
     if (verifyPlayer(sessionId, accessToken)) {
-      System.out.println("long polling start");
       Map<String, DevelopmentCard> cardHash = new HashMap<>();
-      System.out.println("loop: ");
       if (level.equals("ONE")) {
+        System.out.println("loop: " + gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+            .getCardList().size());
         for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
             .getCardList()) {
           System.out.println(card.getId() + " " + ((LevelCard) card).getLevel().name());
@@ -250,7 +250,8 @@ public class GameController {
                                         @RequestParam int sapphireAmount,
                                         @RequestParam int diamondAmount,
                                         @RequestParam int onyxAmount,
-                                        @RequestParam int goldAmount) {
+                                        @RequestParam int goldAmount)
+      throws JsonProcessingException {
 
 
     if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
@@ -309,7 +310,7 @@ public class GameController {
     System.out.println("ready to update: ");
     //update long polling
     broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
-        .updateBroadcastContent(game.getOnBoardDeck(level));
+        .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
 
     // ends players turn, which is current player
     game.endCurrentPlayersTurn();
