@@ -11,15 +11,18 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.screens.lobby.LobbyFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 /**
  * GameScreen class spawns all the entities for game board.
  */
 public class GameScreen {
+  private String levelOneDeckJson;
   private static final Map<String, Map> level_one = new HashMap<String, Map>();
   private static final Map<String, Map> level_two = new HashMap<String, Map>();
   private static final Map<String, Map> level_three = new HashMap<String, Map>();
@@ -28,6 +31,23 @@ public class GameScreen {
 
   private static Thread updateDeck;
 
+  private static void fetchLevelOneDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        deckJson = GameRequest.updateDeck(sessionId, Level.ONE);
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateDeck = null;
+      Platform.runLater(GameScreen::updateLevelOneDeck);
+      fetchLevelOneDeckThread();
+    });
+    updateDeck = new Thread(updateDeckTask);
+    updateDeck.setDaemon(true);
+    updateDeck.start();
+  }
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
@@ -50,18 +70,6 @@ public class GameScreen {
     initLevelOneDeck();
     initLevelTwoDeck();
     initLevelThreeDeck();
-    Task<Void> updateDeckTask = new Task<>() {
-      @Override
-      protected Void call() throws Exception {
-        updateLevelOneDeck();
-        updateLevelTwoDeck();
-        updateLevelThreeDeck();
-        return null;
-      }
-    };
-    updateDeck = new Thread(updateDeckTask);
-    updateDeck.setDaemon(true);
-    updateDeck.start();
     // spawn the player's hands
     PlayerDecks.generateAll();
   }
