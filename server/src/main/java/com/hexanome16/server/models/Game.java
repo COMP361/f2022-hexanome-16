@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.CardJson;
@@ -15,14 +16,15 @@ import java.util.Map;
  * Game class that holds all the information.
  */
 public class Game {
-  //store all the games here
-  private static final Map<Long, Game> gameMap = new HashMap<Long, Game>();
-  private final Map<Level, Deck> decks = new HashMap<Level, Deck>();
-  private final Map<Level, Deck> onBoardDecks = new HashMap<Level, Deck>();
+  private final Map<Level, Deck> decks = new HashMap<>();
+  private final Map<Level, Deck> onBoardDecks = new HashMap<>();
 
   private final long sessionId;
 
-  private final List<Player> participants = new ArrayList<Player>();
+  private Player[] players;
+  private String creator;
+  private String savegame;
+  private int currentPlayerIndex = 0;
   private Deck nobleDeck = new Deck();
 
   private Deck onBoardNobles = new Deck();
@@ -33,18 +35,35 @@ public class Game {
    * @param sessionId session id
    * @throws IOException exception
    */
-  public Game(long sessionId) throws IOException {
+  @JsonCreator
+  public Game(long sessionId, Player[] players, String creator, String savegame)
+      throws IOException {
     this.sessionId = sessionId;
+    this.players = players;
+    this.creator = creator;
+    this.savegame = savegame;
     createDecks();
     createOnBoardDecks();
   }
 
-  public static Map<Long, Game> getGameMap() {
-    return gameMap;
+  public Player[] getPlayers() {
+    return players;
   }
 
-  public List<Player> getParticipants() {
-    return participants;
+  public String getCreator() {
+    return creator;
+  }
+
+  public String getSavegame() {
+    return savegame;
+  }
+
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
+  public void setCurrentPlayerIndex(int currentPlayerIndex) {
+    this.currentPlayerIndex = currentPlayerIndex;
   }
 
   private void createDecks() throws IOException {

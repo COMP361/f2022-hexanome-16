@@ -1,18 +1,27 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * Player class.
  */
 public class Player {
-  private final String username;
+  private final String name;
+  private final String preferredColour;
   private PlayerBank bank;
 
-  public Player(String username) {
-    this.username = username;
+  @JsonCreator
+  public Player(String name, String preferredColour) {
+    this.name = name;
+    this.preferredColour = preferredColour;
   }
 
-  public String getUsername() {
-    return username;
+  public String getName() {
+    return name;
+  }
+
+  public String getPreferredColour() {
+    return preferredColour;
   }
 
   public PlayerBank getBank() {

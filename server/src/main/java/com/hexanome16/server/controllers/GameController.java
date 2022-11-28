@@ -1,7 +1,10 @@
 package com.hexanome16.server.controllers;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.server.controllers.lobbyservice.AuthController;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -15,10 +18,11 @@ import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import java.util.Arrays;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +31,43 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class GameController {
-  private static final Map<String, DevelopmentCard> cardHashMap =
-      new HashMap<String, DevelopmentCard>();
+
+  //store all the games here
+  private static final Map<Long, Game> gameMap = new HashMap<>();
+  private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final AuthController authController;
+
+  public GameController(AuthController authController) {
+    this.authController = authController;
+    objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  }
+
+  private Level getLevel(String level) {
+    return switch (level) {
+      case "ONE" -> Level.ONE;
+      case "TWO" -> Level.TWO;
+      case "THREE" -> Level.THREE;
+      default -> throw new IllegalArgumentException("Invalid level");
+    };
+  }
+
+  private boolean verifyPlayer(long sessionId, String accessToken) {
+    Game game = gameMap.get(sessionId);
+    if (game == null) {
+      return false;
+    }
+    ResponseEntity<String> username = authController.getPlayer(accessToken);
+    if (username.getStatusCode().is2xxSuccessful()) {
+      return Arrays.stream(game.getPlayers())
+          .anyMatch(player -> player.getName().equals(username.getBody()));
+    }
+    return false;
+  }
+
+  public static Map<Long, Game> getGameMap() {
+    return gameMap;
+  }
 
   /**
    * Create a new game as client requested.
@@ -37,10 +76,13 @@ public class GameController {
    * @return error if present
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
-  public String createGame(@PathVariable long sessionId) {
+  public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
-      Game game = new Game(sessionId);
-      Game.getGameMap().put(sessionId, game);
+      Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
+      String creator = objectMapper.convertValue(payload.get("creator"), String.class);
+      String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
+      Game game = new Game(sessionId, players, creator, savegame);
+      gameMap.put(sessionId, game);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -56,24 +98,11 @@ public class GameController {
    * @throws JsonProcessingException json exception
    */
   @GetMapping(value = {"/game/nextCard/{sessionId}", "/game/nextCard/{sessionId}/"})
-  public String nextCard(@PathVariable long sessionId, @RequestParam String level)
+  public String nextCard(@PathVariable long sessionId, @RequestParam String level,
+                         @RequestParam String accessToken)
       throws JsonProcessingException {
-    Level alevel = null;
-    switch (level) {
-      default:
-      case "ONE":
-        alevel = Level.ONE;
-        break;
-      case "TWO":
-        alevel = Level.TWO;
-        break;
-      case "THREE":
-        alevel = Level.THREE;
-        break;
-    }
-    ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString(
-        Game.getGameMap().get(sessionId).getDeck(alevel).nextCard());
+    return verifyPlayer(sessionId, accessToken) ? objectMapper.writeValueAsString(
+        gameMap.get(sessionId).getDeck(getLevel(level)).nextCard()) : null;
   }
 
   /**
@@ -85,41 +114,40 @@ public class GameController {
    * @throws JsonProcessingException json exception
    */
   @GetMapping(value = {"/game/getCards/{sessionId}", "/game/getCards/{sessionId}/"})
-  public String getCards(@PathVariable long sessionId, @RequestParam String level)
+  public String getCards(@PathVariable long sessionId, @RequestParam String level,
+                         @RequestParam String accessToken)
       throws JsonProcessingException {
-    Level alevel = null;
-    switch (level) {
-      default:
-      case "ONE":
-        alevel = Level.ONE;
-        break;
-      case "TWO":
-        alevel = Level.TWO;
-        break;
-      case "THREE":
-        alevel = Level.THREE;
-        break;
+    if (verifyPlayer(sessionId, accessToken)) {
+      //All hash is MD5 checksum, checkstyle won't let me use the word MD5!!!
+      Map<String, DevelopmentCard> cardHash = new HashMap<>();
+      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+          .getCardList()) {
+        //store in the class
+        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+        //store in the list we are going to send to the client
+        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+        System.out.println(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)));
+      }
+      System.out.println(objectMapper.writeValueAsString(cardHash));
+      return objectMapper.writeValueAsString(cardHash);
     }
-    ObjectMapper objectMapper = new ObjectMapper();
-    //All hash is MD5 checksum, checkstyle won't let me use the word MD5!!!
-    Map<String, DevelopmentCard> cardHash = new HashMap<String, DevelopmentCard>();
-    for (DevelopmentCard card : Game.getGameMap().get(sessionId).getOnBoardDeck(alevel)
-        .getCardList()) {
-      //store in the class
-      cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      //store in the list we are going to send to the client
-      cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      System.out.println(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)));
-    }
-    System.out.println(objectMapper.writeValueAsString(cardHash));
-    return objectMapper.writeValueAsString(cardHash);
+    return null;
   }
 
+  /**
+   * Returns nobles present on the game board.
+   *
+   * @param sessionId   session id
+   * @param accessToken access token
+   * @return nobles present on the game board
+   * @throws JsonProcessingException if json processing fails
+   */
   @GetMapping(value = {"/game/{sessionId}/getNobles", "/game/{sessionId}/getNobles/"})
-  public String getNobles(@PathVariable long sessionId)
+  public String getNobles(@PathVariable long sessionId, @RequestParam String accessToken)
       throws JsonProcessingException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString(Game.getGameMap().get(sessionId).getOnBoardNobles());
+    return verifyPlayer(sessionId, accessToken)
+        ? objectMapper.writeValueAsString(gameMap.get(sessionId).getOnBoardNobles())
+        : null;
   }
 
 
@@ -163,7 +191,7 @@ public class GameController {
                                         @RequestParam int goldAmount) {
 
 
-    if (!Game.getGameMap().containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
+    if (!gameMap.containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     ////////////////////////////////////////////////
@@ -184,9 +212,9 @@ public class GameController {
     DevelopmentCard cardToBuy = cardHashMap.get(cardMd5);
 
     // get game in question
-    Game game = Game.getGameMap().get(sessionId);
-    for (Player e : game.getParticipants()) {
-      System.out.println(e.getUsername());
+    Game game = gameMap.get(sessionId);
+    for (Player e : game.getPlayers()) {
+      System.out.println(e.getName());
     }
     System.out.println("Is offer acceptable : ");
     // get proposed Deal as a purchase map
@@ -262,8 +290,8 @@ public class GameController {
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
   // finds player with username "username" in the game, returns null if no such player in game
   private Player findPlayer(Game game, String username) {
-    for (Player e : game.getParticipants()) {
-      if (e.getUsername().equals(username)) {
+    for (Player e : game.getPlayers()) {
+      if (e.getName().equals(username)) {
         return e;
       }
     }
