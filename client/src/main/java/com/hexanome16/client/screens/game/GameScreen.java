@@ -103,12 +103,42 @@ public class GameScreen {
    */
   private static void updateLevelOneDeck() {
     String deckJson = GameRequest.updateDeck(sessionId, Level.ONE);
-    System.out.println("updated: " + deckJson);
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(deckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>)deckHash.get("cards");
+
+    String hashToRemove = "";
+    //check if remove
+    for (Map.Entry<String, Map> entry : level_one.entrySet()) {
+      String hash = entry.getKey();
+      if(!cardHashList.containsKey(hash)) {
+        System.out.println("remove card");
+        hashToRemove = hash;
+        for(int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.level_one_grid[i].getCardHash())) {
+            CardComponent.level_one_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    level_one.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      if(!level_one.containsKey(hash)) {
+        System.out.println("add card");
+        level_one.put(hash, card);
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("LevelOneCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
+    updateLevelOneDeck();
   }
 
   public static void initLevelOneDeck() {
     String deckJson = GameRequest.initDeck(sessionId, Level.ONE);
-    System.out.println(deckJson);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(deckJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
