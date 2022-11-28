@@ -39,6 +39,7 @@ public class GameController {
 
   //store all the games here
   private static final Map<Long, Game> gameMap = new HashMap<>();
+  private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
 
@@ -225,6 +226,28 @@ public class GameController {
     return objectMapper.writeValueAsString(playerBankMap);
   }
 
+  /**
+   * Allows client to see how many of each gem the game bank has.
+   *
+   * @param sessionId sessionId.
+   * @return String representation of the Purchase map
+   * @throws JsonProcessingException if Json processing fails
+   */
+  @GetMapping(value = {"/game/{sessionId}/gameBank", "/game/{sessionId}/gameBank/"})
+  public String getGameBankInfo(@PathVariable long sessionId)
+      throws JsonProcessingException {
+    // session not found
+    if (!gameMap.containsKey(sessionId)) {
+      return null;
+    }
+
+
+    PurchaseMap gameBankMap = gameMap.get(sessionId).getGameBank().toPurchaseMap();
+
+    return objectMapper.writeValueAsString(gameBankMap);
+  }
+
+
 
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
@@ -283,19 +306,21 @@ public class GameController {
 
     // last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
-    // kimi's part for first expression
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount)
         || !game.isPlayersTurn(clientPlayer)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // TODO: increase Game Bank (not for M5)
+    System.out.println("PrePurchase");
+    System.out.println(clientPlayer.getBank());
 
+    // Increase Game Bank and decrease player funds
+    game.incGameBankFromPlayer(clientPlayer, rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
 
-    // kimi's part
-    clientPlayer.incPlayerBank(-rubyAmount, -emeraldAmount,
-        -sapphireAmount, -diamondAmount, -onyxAmount, -goldAmount);
+    System.out.println("PostPurchase");
+    System.out.println(clientPlayer.getBank());
 
     // TODO: add that card to the player's Inventory
     clientPlayer.addCardToInventory(cardToBuy);

@@ -231,12 +231,12 @@ public class GameFactory implements EntityFactory {
     tokens.setPrefRows(2);
     tokens.setPrefSize(200, 150);
 
-    addToken(tokens, "ruby.png", 3);
-    addToken(tokens, "emerald.png", 3);
-    addToken(tokens, "sapphire.png", 2);
-    addToken(tokens, "diamond.png", 3);
-    addToken(tokens, "onyx.png", 4);
-    addToken(tokens, "gold.png", 4);
+    addToken(CurrencyType.RED_TOKENS, tokens, "ruby.png");
+    addToken(CurrencyType.RED_TOKENS, tokens, "emerald.png");
+    addToken(CurrencyType.BLUE_TOKENS, tokens, "sapphire.png");
+    addToken(CurrencyType.WHITE_TOKENS, tokens, "diamond.png");
+    addToken(CurrencyType.BLACK_TOKENS, tokens, "onyx.png");
+    addToken(CurrencyType.GOLD_TOKENS, tokens, "gold.png");
 
     StackPane mytokens = new StackPane();
     mytokens.getChildren().addAll(myRectangle, tokens);
@@ -257,13 +257,19 @@ public class GameFactory implements EntityFactory {
         .build();
   }
 
-  private void addToken(TilePane tokens, String textureName, int amount) {
+  private void addToken(CurrencyType currencyType, TilePane tokens,
+                        String textureName) {
     // token (image)
     Texture token = FXGL.texture(textureName);
     token.setFitHeight(75);
     token.setFitWidth(75);
     // multiplicity (text)
-    Text number = new Text(Integer.toString(amount));
+    Text number = new Text();
+    // Binds number to world property associated with the currency type in the bank and session.
+    number.textProperty().bind(
+        FXGL.getWorldProperties().intProperty(GameScreen.getSessionId() + currencyType.toString())
+            .asString());
+
     number.setFont(CURSIVE_FONT_FACTORY.newFont(50));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
