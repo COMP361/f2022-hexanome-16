@@ -8,12 +8,15 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -55,6 +58,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   double atButtonSpacing = atButtonHeight / 2;
   double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
   PriceMap atCardPriceMap;
+  PurchaseMap atProposedOffer;
   String playerName;
 
   // make true if card is reserved
@@ -62,7 +66,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   // image
   protected Texture cardImage;
   // card
-  protected static Entity atCardEntity;
+  protected Entity atCardEntity;
 
   /**
    * An enum of the possible bank types in a card purchase.
@@ -227,7 +231,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
       // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
-
+      buyCardPrompt.atProposedOffer = amountInBankMap;
       // check if we can buy card with the gems we put down.
       return amountInBankMap.canBeUsedToBuy(priceToMeet);
     }
@@ -258,6 +262,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
   @Override
   public void populatePrompt(Entity entity) {
+
 
     fetchPlayerBank(playerName);
 
@@ -308,8 +313,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.getChildren().addAll(playerBank, cardImage, gameBank, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
-
-
 
   private Collection<StackPane> createBank(BankType banktype) {
 
@@ -448,31 +451,40 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setMaxHeight(atHeight);
   }
 
-  // TODO: what to do to notify server that we desire to purchase a card
-  private void notifyServer() {
-    
-  }
-
   // TODO: get player bank and set it up for the prompt
   private void fetchPlayerBank(String playerName) {
-    //
+    long promptSessionId = GameScreen.getSessionId();
+    String username = AuthUtils.getPlayer().getName();
+
   }
 
+  // TODO: what to do to notify server that we desire to purchase a card
+  private void notifyServer() {
+    long promptSessionId = GameScreen.getSessionId();
+    String username = AuthUtils.getPlayer().getName();
+
+    PromptsRequests.buyCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        username,
+        atProposedOffer);
+  }
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 
   protected static void closeBuyPrompt() {
     PromptComponent.closePrompts();
+
     for (CurrencyType e : CurrencyType.values()) {
-      int gemsinBank =
+      int gemsInBank =
           FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
-      if (gemsinBank != 0) {
+      if (gemsInBank != 0) {
         FXGL.getWorldProperties()
-            .increment(BankType.PLAYER_BANK + "/" + e, gemsinBank);
+            .increment(BankType.PLAYER_BANK + "/" + e, gemsInBank);
         FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
       }
     }
   }
+
 
 
   // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////

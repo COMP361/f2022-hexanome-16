@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -124,8 +125,8 @@ public class GameController {
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
 
-  // TODO : Find a way to send game bank to client
-  @GetMapping(value = {"/game/{sessionId}/bankInfo", "/game/{sessionId}/bankInfo/"})
+  //TODO : Find a way to send game bank to client
+  @GetMapping(value = {"/game/{sessionId}/playerBank", "/game/{sessionId}/playerBank/"})
   public String getPlayerBankInfo(@PathVariable long sessionId, @RequestParam String username) {
 
     return "haiiii :3";
@@ -150,7 +151,7 @@ public class GameController {
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *         HTTP BAD_REQUEST otherwise.
    */
-  @PutMapping(value = {"/game/{sessionId}/{cardMd5}/buy", "/game/{sessionId}/{cardMd5}/buy/"})
+  @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
                                         @PathVariable String cardMd5,
                                         @RequestParam String username,
@@ -161,24 +162,94 @@ public class GameController {
                                         @RequestParam int onyxAmount,
                                         @RequestParam int goldAmount) {
 
+
+    if (!Game.getGameMap().containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    ////////////////////////////////////////////////
+    System.out.println("First Check Done");
+    ////////////////////////////////////////////////
+
+
+
+
+
+
+    // makes sure player is in game && proposed deal is acceptable && player has enough tokens
+    ///////////////////////////////////////
+    System.out.println("Inputed username : ");
+    System.out.println(username);
+    System.out.println("Available usernames : ");
+    // fetch the card in question
     DevelopmentCard cardToBuy = cardHashMap.get(cardMd5);
+
+    // get game in question
     Game game = Game.getGameMap().get(sessionId);
+    for (Player e : game.getParticipants()) {
+      System.out.println(e.getUsername());
+    }
+    System.out.println("Is offer acceptable : ");
+    // get proposed Deal as a purchase map
     PurchaseMap proposedDeal = new PurchaseMap(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
-    PriceMap cardPriceMap = ((TokenPrice) ((LevelCard) cardToBuy).getPrice()).getPriceMap();
 
-    if (!playerIsInGame(game, username)
+    // get card price as a priceMap
+    PriceMap cardPriceMap = ((TokenPrice) cardToBuy.getPrice()).getPriceMap();
+
+    // get player using found index
+    Player clientPlayer = findPlayer(game, username);
+    System.out.println(proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap)));
+    ///////////////////////////////////////
+    if (clientPlayer == null
         || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    ////////////////////////////////////////
+    System.out.println("Second Check Done");
+    ////////////////////////////////////////
 
-    int playerIndex = findPlayer(game, username);
-    // removes the tokens from the player's funds
-    game.getParticipants().get(playerIndex).getBank().incPlayerBank(rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+    // last layer of sanity check, making sure player has enough funds to do the purchase.
+    // and is player's turn
+    // TODO modify player turn stuff with what Costa did
+    if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount)
+        || !game.isPlayersTurn(clientPlayer)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    //////////////////////////////////////
+    System.out.println("Last Check Done");
+    //////////////////////////////////////
+
+
+    // TODO: increase Game Bank (not for M5)
+
+    // TODO: removes the tokens from the player's funds
+    clientPlayer.incPlayerBank(-rubyAmount, -emeraldAmount,
+        -sapphireAmount, -diamondAmount, -onyxAmount, -goldAmount);
 
     // TODO: add that card to the player's Inventory
-    // TODO: remove card from game inventory
+    clientPlayer.addCardToInventory(cardToBuy);
+
+    game.removeOnBoardCard((LevelCard) cardToBuy);
+
+    // TODO: endPlayer's turn, Use Costa's work
+    game.endCurrentPlayersTurn();
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+    System.out.println("Buy Request Received, param. : ");
+    System.out.println(sessionId);
+    System.out.println(cardMd5);
+    System.out.println(username);
+    System.out.println(rubyAmount);
+    System.out.println(emeraldAmount);
+    System.out.println(sapphireAmount);
+    System.out.println(diamondAmount);
+    System.out.println(onyxAmount);
+    System.out.println(goldAmount);
+    /////////////////////////////////////////////////////////////////////////////////////////
+
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -189,28 +260,16 @@ public class GameController {
 
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
-  // finds index of player with username "username" in the game
-  private int findPlayer(Game game, String username) {
-    int i = 0;
+  // finds player with username "username" in the game, returns null if no such player in game
+  private Player findPlayer(Game game, String username) {
     for (Player e : game.getParticipants()) {
       if (e.getUsername().equals(username)) {
-        return i;
-      }
-      i++;
-    }
-    return -1;
-  }
-
-  // returns true if player with username "username" is in the game
-  private boolean playerIsInGame(Game game, String username) {
-    for (Player e : game.getParticipants()) {
-      if (e.getUsername().equals(username)) {
-
-        return true;
+        return e;
       }
     }
-    return false;
+    return null;
   }
+
 
 
 }
