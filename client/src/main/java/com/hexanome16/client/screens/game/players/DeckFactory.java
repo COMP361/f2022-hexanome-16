@@ -48,7 +48,8 @@ public class DeckFactory implements EntityFactory {
     // player icon
     Texture icon = FXGL.texture("playericon.png");
     // current player's name TODO make this a variable
-    Text playerName = new Text("Placeholder");
+    String text = (String) data.getData().getOrDefault("name", "Player");
+    Text playerName = new Text(text);
     playerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
     playerName.setStrokeWidth(2.);
