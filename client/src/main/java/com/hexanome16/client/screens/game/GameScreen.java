@@ -5,10 +5,10 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.google.gson.Gson;
+import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -115,6 +115,7 @@ public class GameScreen {
 
   public static void initLevelOneDeck() {
     String cardJson = GameRequest.initDeck(sessionId, Level.ONE);
+    System.out.println(cardJson);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(cardJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
