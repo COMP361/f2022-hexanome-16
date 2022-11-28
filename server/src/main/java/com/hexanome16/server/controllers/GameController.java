@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.lobbyservice.AuthController;
+import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -13,6 +15,8 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * Not implemented.
@@ -38,9 +43,16 @@ public class GameController {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
 
+  private final Map<String, BroadcastContentManager> broadcastContentManagerMap =
+      new HashMap<String, BroadcastContentManager>();
+
   public GameController(AuthController authController) {
     this.authController = authController;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  }
+
+  public static Map<Long, Game> getGameMap() {
+    return gameMap;
   }
 
   private Level getLevel(String level) {
@@ -65,10 +77,6 @@ public class GameController {
     return false;
   }
 
-  public static Map<Long, Game> getGameMap() {
-    return gameMap;
-  }
-
   /**
    * Create a new game as client requested.
    *
@@ -83,6 +91,15 @@ public class GameController {
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
       Game game = new Game(sessionId, players, creator, savegame);
       gameMap.put(sessionId, game);
+      BroadcastContentManager<DeckHash> broadcastContentManagerOne =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.ONE));
+      BroadcastContentManager<DeckHash> broadcastContentManagerTwo =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.TWO));
+      BroadcastContentManager<DeckHash> broadcastContentManagerThree =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.THREE));
+      broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
+      broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
+      broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -113,23 +130,50 @@ public class GameController {
    * @return next card on board
    * @throws JsonProcessingException json exception
    */
-  @GetMapping(value = {"/game/getCards/{sessionId}", "/game/getCards/{sessionId}/"})
-  public String getCards(@PathVariable long sessionId, @RequestParam String level,
-                         @RequestParam String accessToken)
+  @GetMapping(value = {"/game/{sessionId}/deck/init", "/game/{sessionId}/deck/init/"})
+  public String getDeckInit(@PathVariable long sessionId, @RequestParam String level,
+                            @RequestParam String accessToken)
       throws JsonProcessingException {
     if (verifyPlayer(sessionId, accessToken)) {
-      //All hash is MD5 checksum, checkstyle won't let me use the word MD5!!!
+      DeckHash deckHash = new DeckHash(gameMap.get(sessionId), getLevel(level));
+      return objectMapper.writeValueAsString(deckHash.getCards());
+    }
+    return null;
+  }
+
+  /**
+   * Long polling on update on onboard deck.
+   *
+   * @param sessionId   game session id
+   * @param level       deck level
+   * @param accessToken account access token
+   * @return updated game deck
+   * @throws JsonProcessingException exception
+   */
+  @GetMapping(value = "/game/{sessionId}/deck", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getDeck(@PathVariable long sessionId,
+                                                        @RequestParam String level,
+                                                        @RequestParam String accessToken)
+      throws JsonProcessingException {
+    if (verifyPlayer(sessionId, accessToken)) {
       Map<String, DevelopmentCard> cardHash = new HashMap<>();
-      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-          .getCardList()) {
-        //store in the class
-        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        //store in the list we are going to send to the client
-        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        System.out.println(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)));
+      if (level.equals("ONE")) {
+        System.out.println("loop: " + gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+            .getCardList().size());
+        for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+            .getCardList()) {
+          System.out.println(card.getId() + " " + ((LevelCard) card).getLevel().name());
+        }
+        System.out.println("--------------------------");
       }
-      System.out.println(objectMapper.writeValueAsString(cardHash));
-      return objectMapper.writeValueAsString(cardHash);
+      DeferredResult<ResponseEntity<String>> result;
+      result = ResponseGenerator.getAsyncUpdate(10000, broadcastContentManagerMap.get(level));
+      try {
+        System.out.println(result.getResult().toString());
+      } catch (Exception e) {
+        System.out.println("no change");
+      }
+      return result;
     }
     return null;
   }
@@ -157,13 +201,13 @@ public class GameController {
    * Allows client to see how many of each gem a player has.
    *
    * @param sessionId sessionId.
-   * @param username username of the player.
+   * @param username  username of the player.
    * @return String representation of the Purchase map
    * @throws JsonProcessingException if Json processing fails
    */
   @GetMapping(value = {"/game/{sessionId}/playerBank", "/game/{sessionId}/playerBank/"})
   public String getPlayerBankInfo(@PathVariable long sessionId,
-                                       @RequestParam String username)
+                                  @RequestParam String username)
       throws JsonProcessingException {
     // session not found
     if (!gameMap.containsKey(sessionId)) {
@@ -208,17 +252,17 @@ public class GameController {
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
    *
-   * @param sessionId sessionID.
-   * @param cardMd5 Card we want to purchase's md5.
-   * @param username username of the player trying to buy the card.
-   * @param rubyAmount amount of ruby gems proposed.
-   * @param emeraldAmount amount of emerald gems proposed.
+   * @param sessionId      sessionID.
+   * @param cardMd5        Card we want to purchase's md5.
+   * @param username       username of the player trying to buy the card.
+   * @param rubyAmount     amount of ruby gems proposed.
+   * @param emeraldAmount  amount of emerald gems proposed.
    * @param sapphireAmount amount of sapphire gems proposed.
-   * @param diamondAmount amount of diamond gems proposed.
-   * @param onyxAmount amount of onyx gems proposed.
-   * @param goldAmount amount of gold gems proposed.
+   * @param diamondAmount  amount of diamond gems proposed.
+   * @param onyxAmount     amount of onyx gems proposed.
+   * @param goldAmount     amount of gold gems proposed.
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
+   *     HTTP BAD_REQUEST otherwise.
    */
   @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
@@ -229,15 +273,16 @@ public class GameController {
                                         @RequestParam int sapphireAmount,
                                         @RequestParam int diamondAmount,
                                         @RequestParam int onyxAmount,
-                                        @RequestParam int goldAmount) {
+                                        @RequestParam int goldAmount)
+      throws JsonProcessingException {
 
 
-    if (!gameMap.containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
+    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     // fetch the card in question
-    DevelopmentCard cardToBuy = cardHashMap.get(cardMd5);
+    DevelopmentCard cardToBuy = DeckHash.allCards.get(cardMd5);
 
     // get game in question
     Game game = gameMap.get(sessionId);
@@ -283,6 +328,15 @@ public class GameController {
     // remove card from the board
     game.removeOnBoardCard((LevelCard) cardToBuy);
 
+    Level level = ((LevelCard) cardToBuy).getLevel();
+    //add new card to the deck
+    game.addOnBoardCard(level);
+
+    System.out.println("ready to update: ");
+    //update long polling
+    broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
+        .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
+
     // ends players turn, which is current player
     game.endCurrentPlayersTurn();
 
@@ -291,7 +345,6 @@ public class GameController {
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
@@ -304,8 +357,6 @@ public class GameController {
     }
     return null;
   }
-
-
 
 }
 
