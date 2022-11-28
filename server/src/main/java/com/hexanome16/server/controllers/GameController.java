@@ -261,7 +261,7 @@ public class GameController {
    * @param onyxAmount     amount of onyx gems proposed.
    * @param goldAmount     amount of gold gems proposed.
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *    HTTP BAD_REQUEST otherwise.
+   *         HTTP BAD_REQUEST otherwise.
    */
   @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
@@ -318,10 +318,8 @@ public class GameController {
     game.incGameBankFromPlayer(clientPlayer, rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
 
-    System.out.println("PostPurchase");
-    System.out.println(clientPlayer.getBank());
 
-    // TODO: add that card to the player's Inventory
+    // add that card to the player's Inventory
     clientPlayer.addCardToInventory(cardToBuy);
 
     // remove card from the board
@@ -331,7 +329,7 @@ public class GameController {
     //add new card to the deck
     game.addOnBoardCard(level);
 
-    System.out.println("ready to update: ");
+
     //update long polling
     broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
         .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));

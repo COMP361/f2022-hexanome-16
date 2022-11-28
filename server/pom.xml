@@ -58,7 +58,11 @@
 			<artifactId>asyncrestlib</artifactId>
 			<version>1.6.2</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+    </dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

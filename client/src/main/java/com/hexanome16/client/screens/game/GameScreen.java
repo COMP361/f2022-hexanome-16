@@ -71,7 +71,7 @@ public class GameScreen {
     initLevelTwoDeck();
     initLevelThreeDeck();
     // spawn the player's hands
-    PlayerDecks.generateAll();
+    PlayerDecks.generateAll(4);
   }
 
   // puts values necessary for game bank in the world properties
