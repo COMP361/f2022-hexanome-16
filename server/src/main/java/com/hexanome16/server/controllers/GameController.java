@@ -261,7 +261,7 @@ public class GameController {
    * @param onyxAmount     amount of onyx gems proposed.
    * @param goldAmount     amount of gold gems proposed.
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.
+   *    HTTP BAD_REQUEST otherwise.
    */
   @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
