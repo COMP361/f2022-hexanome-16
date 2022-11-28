@@ -53,7 +53,6 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
-        System.out.println("task called");
         updateLevelOneDeck();
         updateLevelTwoDeck();
         updateLevelThreeDeck();
@@ -117,6 +116,7 @@ public class GameScreen {
    */
   private static void updateLevelOneDeck() {
     String deckJson = GameRequest.updateDeck(sessionId, Level.ONE);
+    System.out.println("level one is updating");
     Gson gson = new Gson();
     Map<String, Object> deckHash = gson.fromJson(deckJson, Map.class);
     Map<String, Object> cardHashList = (Map<String, Object>)deckHash.get("cards");
@@ -126,7 +126,6 @@ public class GameScreen {
     for (Map.Entry<String, Map> entry : level_one.entrySet()) {
       String hash = entry.getKey();
       if(!cardHashList.containsKey(hash)) {
-        System.out.println("remove card");
         hashToRemove = hash;
         for(int i = 0; i < 4; i++) {
           if (hash.equals(CardComponent.level_one_grid[i].getCardHash())) {
@@ -140,7 +139,6 @@ public class GameScreen {
       String hash = entry.getKey();
       Map<String, Object> card = (Map<String, Object>)entry.getValue();
       if(!level_one.containsKey(hash)) {
-        System.out.println("add card");
         level_one.put(hash, card);
         PriceMap pm = getPriceMap(card);
         FXGL.spawn("LevelOneCard",

@@ -44,6 +44,7 @@ public class GameFactory implements EntityFactory {
    */
   @Spawns("LevelOneCard")
   public Entity newLevelOneCard(SpawnData data) {
+    System.out.println("why are you invisible????");
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(data.getData().get("texture") + ".png")
