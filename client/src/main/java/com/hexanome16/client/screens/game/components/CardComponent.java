@@ -26,10 +26,9 @@ public class CardComponent extends Component {
   private ViewComponent view;
   private TransformComponent position;
   private boolean fading = false;
-
-  private Direction direction;
   private boolean adding = false;
   private int gridX;
+
   private boolean purchased = false;
 
   private String cardMD5 = "";
@@ -42,7 +41,6 @@ public class CardComponent extends Component {
     this.texture = texture;
     this.priceMap = priceMap;
     this.cardMD5 = cardMD5;
-    System.out.println("card hash: "+ cardMD5);
   }
 
   /**
@@ -61,7 +59,7 @@ public class CardComponent extends Component {
       if(opacity > 0) {
         entity.getViewComponent().setOpacity(opacity - 0.1);
       }else {
-        fading = false;
+        entity.removeFromWorld();
       }
     } else if (adding) {
       double diff = (matCoordsX + 140 + 138 * gridX) - position.getX();
@@ -69,6 +67,7 @@ public class CardComponent extends Component {
       if (diff > 0) {
         position.translateX(5);
       } else {
+        System.out.println("diff: " + position.getX() + " " + position.getY());
         adding = false;
       }
     }
@@ -79,7 +78,6 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
-    adding = true;
     switch (level) {
       default:
       case ONE:
@@ -110,7 +108,7 @@ public class CardComponent extends Component {
       if (grid[i] == null) {
         gridX = i;
         grid[i] = this;
-        System.out.println(entity.getViewComponent().getOpacity());
+        adding = true;
         break;
       }
     }
@@ -147,10 +145,4 @@ public class CardComponent extends Component {
     return cardMD5;
   }
 
-  enum Direction {
-    DOWN,
-    RIGHT,
-    LEFT,
-    UP
-  }
 }
