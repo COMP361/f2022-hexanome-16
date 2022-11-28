@@ -47,6 +47,16 @@ public class Player {
 
 
 
+
+  /**
+   * Add this card to the player's inventory.
+   *
+   * @return true on success
+   */
+  public boolean addCardToInventory(DevelopmentCard developmentCard) {
+    return developmentCard.addToInventory(this.inventory);
+  }
+
   // TODO: TEST CASE
   /**
    * increments Player bank by the amount specified by each parameter for each of their
@@ -86,19 +96,19 @@ public class Player {
   }
 
 
-  /** Reserve this card.
+  /**
+   * Reserve this card.
    *
-   * @return true on success */
+   * @return true on success
+   */
   public boolean reserveCard(DevelopmentCard developmentCard) {
     return developmentCard.reserveCard(this.inventory);
   }
 
-  /** Add this card to the player's inventory.
-   *
-   * @return true on success */
-  public boolean addCardToInventory(DevelopmentCard developmentCard) {
-    return developmentCard.addToInventory(this.inventory);
+  public void deleteInventory() {
+    this.inventory = null;
   }
+
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 
