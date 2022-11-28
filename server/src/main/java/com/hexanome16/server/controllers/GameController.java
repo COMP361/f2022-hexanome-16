@@ -90,6 +90,13 @@ public class GameController {
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
       Game game = new Game(sessionId, players, creator, savegame);
       gameMap.put(sessionId, game);
+      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+          .getCardList()) {
+        //store in the class
+        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+        //store in the list we are going to send to the client
+        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+      }
       BroadcastContentManager<Deck> broadcastContentManagerOne =
           new BroadcastContentManager<Deck>(game.getOnBoardDeck(Level.ONE));
       BroadcastContentManager<Deck> broadcastContentManagerTwo =
@@ -142,7 +149,6 @@ public class GameController {
         cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
         //store in the list we are going to send to the client
         cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        System.out.println(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)));
       }
       System.out.println(objectMapper.writeValueAsString(cardHash));
       return objectMapper.writeValueAsString(cardHash);
@@ -165,17 +171,23 @@ public class GameController {
                                                         @RequestParam String accessToken)
       throws JsonProcessingException {
     if (verifyPlayer(sessionId, accessToken)) {
-
+      System.out.println("long polling start");
       Map<String, DevelopmentCard> cardHash = new HashMap<>();
-      DeferredResult<ResponseEntity<String>> result;
-      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-          .getCardList()) {
-        //store in the class
-        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        //store in the list we are going to send to the client
-        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+      System.out.println("loop: ");
+      if (level.equals("ONE")) {
+        for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+            .getCardList()) {
+          System.out.println(card.getId() + " " + ((LevelCard) card).getLevel().name());
+        }
+        System.out.println("--------------------------");
       }
+      DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getAsyncUpdate(10000, broadcastContentManagerMap.get(level));
+      try {
+        System.out.println(result.getResult().toString());
+      } catch (Exception e) {
+        System.out.println("no change");
+      }
       return result;
     }
     return null;
@@ -243,7 +255,7 @@ public class GameController {
    * @param onyxAmount     amount of onyx gems proposed.
    * @param goldAmount     amount of gold gems proposed.
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.
+   *     HTTP BAD_REQUEST otherwise.
    */
   @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
@@ -310,6 +322,7 @@ public class GameController {
     //add new card to the deck
     game.addOnBoardCard(level);
 
+    System.out.println("ready to update: ");
     //update long polling
     broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
         .updateBroadcastContent(game.getOnBoardDeck(level));
@@ -335,6 +348,15 @@ public class GameController {
     return null;
   }
 
+  private Map<String, String> deckHash(long sessionId, String level) {
+    for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
+        .getCardList()) {
+      //store in the class
+      cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+      //store in the list we are going to send to the client
+      cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+    }
+  }
 
 }
 

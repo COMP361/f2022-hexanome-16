@@ -53,7 +53,9 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
+    System.out.println("working?");
     String response = RequestClient.longPollAlt(request);
+    System.out.println("working...");
     return response;
   }
 
