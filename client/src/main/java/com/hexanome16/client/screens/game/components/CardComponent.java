@@ -17,14 +17,16 @@ import javafx.scene.input.MouseEvent;
  * FXGL component for development cards on board.
  */
 public class CardComponent extends Component {
-  private static boolean[] level_one_grid = new boolean[4];
-  private static boolean[] level_two_grid = new boolean[4];
-  private static boolean[] level_three_grid = new boolean[4];
+  public static CardComponent[] level_one_grid = new CardComponent[4];
+  public static CardComponent[] level_two_grid = new CardComponent[4];
+  public static CardComponent[] level_three_grid = new CardComponent[4];
   private final Level level;
+
   public String texture;
   private ViewComponent view;
   private TransformComponent position;
   private boolean fading = false;
+
   private Direction direction;
   private boolean adding = false;
   private int gridX;
@@ -40,16 +42,16 @@ public class CardComponent extends Component {
     this.texture = texture;
     this.priceMap = priceMap;
     this.cardMD5 = cardMD5;
-    System.out.println("card hash: "+cardMD5);
+    System.out.println("card hash: "+ cardMD5);
   }
 
   /**
    * Reset the deck when exiting the game, might need to be deleted in the future.
    */
   public static void reset() {
-    level_one_grid = new boolean[4];
-    level_two_grid = new boolean[4];
-    level_three_grid = new boolean[4];
+    level_one_grid = new CardComponent[4];
+    level_two_grid = new CardComponent[4];
+    level_three_grid = new CardComponent[4];
   }
 
   @Override
@@ -57,8 +59,8 @@ public class CardComponent extends Component {
     if (fading) {
       Double opacity = entity.getViewComponent().getOpacity();
       if(opacity > 0) {
-        entity.getViewComponent().setOpacity(opacity - 5);
-      }else{
+        entity.getViewComponent().setOpacity(opacity - 0.1);
+      }else {
         fading = false;
       }
     } else if (adding) {
@@ -74,13 +76,6 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-
-    FXGL.getEventBus().addEventHandler(SplendorEvents.BOUGHT, e -> {
-      if (e.eventEntity == entity) {
-        this.fading = true;
-      }
-    });
-
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
@@ -110,11 +105,35 @@ public class CardComponent extends Component {
     position.setScaleY(0.15);
   }
 
-  private void addToMat(boolean[] grid) {
+  private void addToMat(CardComponent[] grid) {
     for (int i = 0; i < grid.length; i++) {
-      if (!grid[i]) {
+      if (grid[i] == null) {
         gridX = i;
-        grid[i] = true;
+        grid[i] = this;
+        System.out.println(entity.getViewComponent().getOpacity());
+        break;
+      }
+    }
+  }
+
+  public void removeFromMat() {
+    this.fading = true;
+    CardComponent[] grid;
+    switch (level) {
+      default:
+      case ONE:
+        grid = level_one_grid;
+        break;
+      case TWO:
+        grid = level_two_grid;
+        break;
+      case THREE:
+        grid = level_three_grid;
+        break;
+    }
+    for (int i = 0; i < grid.length; i++) {
+      if (grid[i] == this) {
+        grid[i] = null;
         break;
       }
     }
