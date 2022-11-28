@@ -32,7 +32,6 @@ public abstract class Bank {
       sapphireList.add(new Token(Gem.SAPPHIRE));
       diamondList.add(new Token(Gem.DIAMOND));
       onyxList.add(new Token(Gem.ONYX));
-      goldList.add(new Token(Gem.GOLD));
       if (i < 5) {
         goldList.add(new Token(Gem.GOLD));
       }
