@@ -34,8 +34,11 @@ public class ListSessionsRequest {
         .GET()
         .build();
     Pair<String, String> response = RequestClient.longPoll(request);
-    Map<String, Session> sessions =
-        new Gson().fromJson(response.getValue(), Response.class).sessions;
+    Response res = new Gson().fromJson(response.getValue(), Response.class);
+    if (res == null || res.sessions == null) {
+      return new Pair<>("", null);
+    }
+    Map<String, Session> sessions = res.sessions;
     return new Pair<>(response.getKey(), sessions.entrySet().stream().map(entry -> {
       entry.getValue().setId(Long.valueOf(entry.getKey()));
       return entry.getValue();
