@@ -1,6 +1,9 @@
 package com.hexanome16.client.screens.game.players;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
+
+import java.util.List;
 
 import static com.hexanome16.client.Config.APP_HEIGHT;
 import static com.hexanome16.client.Config.APP_WIDTH;
@@ -8,105 +11,86 @@ import static com.hexanome16.client.Config.OPPONENT_SCALE;
 
 public class PlayerDecks {
   // there are 4 players hence 4 decks
-  private static final double horizontalDistBetweenCards = 150;
-  private static final double verticalDistBetweenCards = 180;
-  private static final double x_shift = APP_WIDTH / 4 + 7 * horizontalDistBetweenCards + 10;
-  private static final double y_shift = 150;
+  private static final double xCardDist = 150; // horizontal distance between cards (this is for the current player)
+  private static final double yCardDist = 180; // vertical distance between cards (this is for opponents)
 
-    // generates the player decks
-  public static void generateAll() {
+  // helper
+  private void spawnHorizontalPlayer(String name, double x_pos, double y_pos, double scale){
+    // iteration variable
+    int i = 0;
+    // spawn the player icon
+    FXGL.spawn("Player", new SpawnData(x_pos - xCardDist * scale, y_pos + 20).put("name", name)).setScaleUniform(0.2 * scale);
+    // card entities names
+    List<String> cards = List.of("RedCard", "GreenCard", "BlueCard",  "WhiteCard", "BlackCard", "GoldCard");
+    // spawn the playing cards deck
+    while(i < 6) FXGL.spawn(cards.get(i), x_pos + (i++ * xCardDist)*scale, y_pos).setScaleUniform(0.25 * scale);
+    // spawn the nobles deck
+    FXGL.spawn("NobleCard", x_pos + (i++ * xCardDist)*scale, y_pos + 15).setScaleUniform(0.2 * scale);
+    // spawn the player's bank
+    FXGL.spawn("PlayerTokens", x_pos - (2 * xCardDist + 20)*scale, y_pos).setScaleUniform(1.2 * scale);
+    // spawn the reserved nobles and cards
+    FXGL.spawn("ReservedNobles", x_pos + (i * xCardDist + 10)*scale, y_pos + 95* scale).setScaleUniform(0.1 * scale);
+    for(int j=10; j<=130; j+=60) FXGL.spawn("ReservedCards", x_pos + (i * xCardDist + j)*scale, y_pos).setScaleUniform(0.07 * scale);
+  }
+
+  // helper
+  private void spawnLeftPlayer(String name, double y_shift, double scale){
+    FXGL.spawn("Player", new SpawnData(xCardDist + xCardDist * scale, y_shift + 110).put("name", name)).setScaleUniform(0.2 * scale);
+    FXGL.spawn("RedCard", xCardDist, y_shift + 120 + yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("GreenCard", xCardDist + xCardDist * scale, y_shift + 120 + yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("BlueCard", xCardDist, y_shift + 130 + 2 * yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("WhiteCard", xCardDist + xCardDist * scale, y_shift + 130 + 2 * yCardDist * scale)
+            .setScaleUniform(0.25 * scale);
+    FXGL.spawn("BlackCard", xCardDist, y_shift + 140 + 3 * yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("GoldCard", xCardDist + xCardDist * scale, y_shift + 140 + 3 * yCardDist * scale)
+            .setScaleUniform(0.25 * scale);
+    FXGL.spawn("NobleCard", xCardDist + xCardDist * scale / 2.0, y_shift + 150 + 4 * yCardDist * scale)
+            .setScaleUniform(0.2 * scale);
+    FXGL.spawn("PlayerTokens", xCardDist, y_shift + 100).setScaleUniform(1.2 * scale);
+    FXGL.spawn("ReservedNobles", xCardDist - 60, y_shift + 120 + yCardDist * scale).setScaleUniform(0.1 * scale);
+    FXGL.spawn("ReservedCards", xCardDist - 50, y_shift + 180 + yCardDist * scale).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", xCardDist - 50, y_shift + 240 + yCardDist * scale).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", xCardDist - 50, y_shift + 300 + yCardDist * scale).setScaleUniform(0.07 * scale);
+  }
+  private void spawnRightPlayer(String name, double x_shift, double y_shift, double scale){
+    FXGL.spawn("Player", new SpawnData(x_shift + xCardDist * scale, y_shift + 110).put("name", name)).setScaleUniform(0.2 * scale);
+    FXGL.spawn("RedCard", x_shift, y_shift + 120 + yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("GreenCard", x_shift + xCardDist * scale, y_shift + 120 + yCardDist * scale)
+            .setScaleUniform(0.25 * scale);
+    FXGL.spawn("BlueCard", x_shift, y_shift + 130 + 2 * yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("WhiteCard", x_shift + xCardDist * scale, y_shift + 130 + 2 * yCardDist * scale)
+            .setScaleUniform(0.25 * scale);
+    FXGL.spawn("BlackCard", x_shift, y_shift + 140 + 3 * yCardDist * scale).setScaleUniform(0.25 * scale);
+    FXGL.spawn("GoldCard", x_shift + xCardDist * scale, y_shift + 140 + 3 * yCardDist * scale)
+            .setScaleUniform(0.25 * scale);
+    FXGL.spawn("NobleCard", x_shift + xCardDist * scale / 2.0, y_shift + 150 + 4 * yCardDist * scale)
+            .setScaleUniform(0.2 * scale);
+    FXGL.spawn("PlayerTokens", x_shift, y_shift + 100).setScaleUniform(1.2 * scale);
+    FXGL.spawn("ReservedNobles", x_shift + xCardDist * scale + 95, y_shift + 120 + yCardDist * scale)
+            .setScaleUniform(0.1 * scale);
+    FXGL.spawn("ReservedCards", x_shift + xCardDist * scale + 95, y_shift + 180 + yCardDist * scale)
+            .setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", x_shift + xCardDist * scale + 95, y_shift + 240 + yCardDist * scale)
+            .setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", x_shift + + xCardDist * scale + 95, y_shift + 300 + yCardDist * scale)
+            .setScaleUniform(0.07 * scale);
+  }
+
+  // generates the player decks
+  public static void generateAll(int numOfPlayers) {
+    // current decks
+    PlayerDecks decks = new PlayerDecks();
     // spawn who is playing TODO animation
     FXGL.spawn("PlayersTurn", 95, 60);
-    // spawn player1 and its hand (bottom)
-    spawnPlayerOne();
-    // spawn player2 and its hand (right)
-    spawnPlayerTwo();
-    // spawn player3 and its hand (top)
-    spawnPlayerThree();
-    // spawn player4 and its hand (left)
-    spawnPlayerFour();
-  }
-
-  /**
-   * Elea I'm leaving this part for now...
-   */
-  private static void spawnPlayerOne() {
-    FXGL.spawn("Player", APP_WIDTH / 4 - horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards + 20);
-    FXGL.spawn("RedCard", APP_WIDTH / 4, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("GreenCard", APP_WIDTH / 4 + horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("BlueCard", APP_WIDTH / 4 + 2 * horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("WhiteCard", APP_WIDTH / 4 + 3 * horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("BlackCard", APP_WIDTH / 4 + 4 * horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("GoldCard", APP_WIDTH / 4 + 5 * horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("NobleCard", APP_WIDTH / 4 + 6 * horizontalDistBetweenCards, APP_HEIGHT - verticalDistBetweenCards + 15);
-    FXGL.spawn("PlayerTokens", APP_WIDTH / 4 - 2 * horizontalDistBetweenCards + 20, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("ReservedNobles", APP_WIDTH / 4 + 7 * horizontalDistBetweenCards + 10, APP_HEIGHT - 85);
-    FXGL.spawn("ReservedCards", APP_WIDTH / 4 + 7 * horizontalDistBetweenCards + 10, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("ReservedCards", APP_WIDTH / 4 + 7 * horizontalDistBetweenCards + 70, APP_HEIGHT - verticalDistBetweenCards);
-    FXGL.spawn("ReservedCards", APP_WIDTH / 4 + 7 * horizontalDistBetweenCards + 130, APP_HEIGHT - verticalDistBetweenCards);
-  }
-
-  private static void spawnPlayerTwo() {
-    FXGL.spawn("Player", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 110).setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("RedCard", x_shift, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GreenCard", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlueCard", x_shift, y_shift + 130 + 2 * verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("WhiteCard", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 130 + 2 * verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlackCard", x_shift, y_shift + 140 + 3 * verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GoldCard", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 140 + 3 * verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("NobleCard", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE / 2.0, y_shift + 150 + 4 * verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("PlayerTokens", x_shift, y_shift + 100).setScaleUniform(1.2 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedNobles", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE + 95, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.1 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE + 95, y_shift + 180 + verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", x_shift + horizontalDistBetweenCards * OPPONENT_SCALE + 95, y_shift + 240 + verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", x_shift + +horizontalDistBetweenCards * OPPONENT_SCALE + 95, y_shift + 300 + verticalDistBetweenCards * OPPONENT_SCALE)
-        .setScaleUniform(0.07 * OPPONENT_SCALE);
-  }
-
-  private static void spawnPlayerThree() {
-    FXGL.spawn("Player", 140 + APP_WIDTH / 4 - horizontalDistBetweenCards * OPPONENT_SCALE, 21).setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("RedCard", 140 + APP_WIDTH / 4, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GreenCard", 140 + APP_WIDTH / 4 + (horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlueCard", 140 + APP_WIDTH / 4 + (2 * horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("WhiteCard", 140 + APP_WIDTH / 4 + (3 * horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlackCard", 140 + APP_WIDTH / 4 + (4 * horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GoldCard", 140 + APP_WIDTH / 4 + (5 * horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("NobleCard", 140 + APP_WIDTH / 4 + (6 * horizontalDistBetweenCards) * OPPONENT_SCALE, 1).setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("PlayerTokens", 140 + APP_WIDTH / 4 - (2 * horizontalDistBetweenCards + 20) * OPPONENT_SCALE, 1)
-            .setScaleUniform(1.2 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedNobles", 140 + APP_WIDTH / 4 + 10 + (7 * horizontalDistBetweenCards + 10) * OPPONENT_SCALE, 85 * OPPONENT_SCALE)
-            .setScaleUniform(0.1 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", 140 + APP_WIDTH / 4 + 10 + (7 * horizontalDistBetweenCards + 10) * OPPONENT_SCALE, 1)
-            .setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", 140 + APP_WIDTH / 4 + 10 + (7 * horizontalDistBetweenCards + 70) * OPPONENT_SCALE, 1)
-            .setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", 140 + APP_WIDTH / 4 + 10 + (7 * horizontalDistBetweenCards + 130) * OPPONENT_SCALE, 1)
-            .setScaleUniform(0.07 * OPPONENT_SCALE);
-  }
-
-  private static void spawnPlayerFour() {
-    FXGL.spawn("Player", horizontalDistBetweenCards + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 110).setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("RedCard", horizontalDistBetweenCards, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GreenCard", horizontalDistBetweenCards + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlueCard", horizontalDistBetweenCards, y_shift + 130 + 2 * verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("WhiteCard", horizontalDistBetweenCards + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 130 + 2 * verticalDistBetweenCards * OPPONENT_SCALE)
-            .setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("BlackCard", horizontalDistBetweenCards, y_shift + 140 + 3 * verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("GoldCard", horizontalDistBetweenCards + horizontalDistBetweenCards * OPPONENT_SCALE, y_shift + 140 + 3 * verticalDistBetweenCards * OPPONENT_SCALE)
-            .setScaleUniform(0.25 * OPPONENT_SCALE);
-    FXGL.spawn("NobleCard", horizontalDistBetweenCards + horizontalDistBetweenCards * OPPONENT_SCALE / 2.0, y_shift + 150 + 4 * verticalDistBetweenCards * OPPONENT_SCALE)
-            .setScaleUniform(0.2 * OPPONENT_SCALE);
-    FXGL.spawn("PlayerTokens", horizontalDistBetweenCards, y_shift + 100).setScaleUniform(1.2 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedNobles", horizontalDistBetweenCards - 60, y_shift + 120 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.1 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", horizontalDistBetweenCards - 50, y_shift + 180 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", horizontalDistBetweenCards - 50, y_shift + 240 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.07 * OPPONENT_SCALE);
-    FXGL.spawn("ReservedCards", horizontalDistBetweenCards - 50, y_shift + 300 + verticalDistBetweenCards * OPPONENT_SCALE).setScaleUniform(0.07 * OPPONENT_SCALE);
+    // spawn the players
+    int curr = 0;
+    // spawn the current player
+    if( ++curr <= numOfPlayers ) decks.spawnHorizontalPlayer("Player "+curr, APP_WIDTH / 4.0, APP_HEIGHT - yCardDist, 1);
+    // spawn a player on the left
+    if( ++curr <= numOfPlayers ) decks.spawnLeftPlayer("Player "+curr, 150.0, OPPONENT_SCALE);
+    // spawn a player at the top
+    if( ++curr <= numOfPlayers ) decks.spawnHorizontalPlayer("Player "+curr, 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
+    // spawn a player at the right
+    if( ++curr <= numOfPlayers ) decks.spawnRightPlayer("Player "+curr, APP_WIDTH / 4.0 + 7 * xCardDist + 10, 150.0 , OPPONENT_SCALE);
   }
 }
