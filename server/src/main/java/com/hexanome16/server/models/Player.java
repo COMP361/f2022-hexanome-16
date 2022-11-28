@@ -16,6 +16,11 @@ public class Player {
     this.preferredColour = preferredColour;
   }
 
+  public Player(String username) {
+    this.name = username;
+    this.bank = new PlayerBank();
+  }
+
   public String getName() {
     return name;
   }

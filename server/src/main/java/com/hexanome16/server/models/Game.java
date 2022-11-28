@@ -28,6 +28,7 @@ public class Game {
   private Deck nobleDeck = new Deck();
 
   private Deck onBoardNobles = new Deck();
+  private GameBank gameBank;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -42,6 +43,7 @@ public class Game {
     this.players = players;
     this.creator = creator;
     this.savegame = savegame;
+    gameBank = new GameBank();
     createDecks();
     createOnBoardDecks();
   }
@@ -186,6 +188,10 @@ public class Game {
   public Deck getOnBoardNobles() {
     return this.onBoardNobles;
   }
+  public GameBank getGameBank() {
+    return this.gameBank;
+  }
+
 
   /**
    * Adds a new card from deck to game board.
