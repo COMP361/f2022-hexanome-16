@@ -24,7 +24,6 @@ public class Player {
 
   public String getPreferredColour() {
     return preferredColour;
-
   }
 
 }

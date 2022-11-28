@@ -23,7 +23,7 @@ public class InventoryController {
 
 
     @PostMapping(value = { "/games/{sessionId}/{playerId}/inventory/create"})
-    public InventoryDto createLoan(@Valid @RequestBody LoanRequestDto request){
+    public InventoryDto createLoan(@Valid @RequestBody InventoryDto request){
         // new Inventory
         Inventory inventory = new Inventory();
         return null;
