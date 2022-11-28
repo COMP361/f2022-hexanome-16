@@ -50,7 +50,7 @@ public class Player {
    */
   public void incPlayerBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    bank.incPlayerBank(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
+    getBank().incBank(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
         onyxAmount, goldAmount);
 
   }
@@ -70,7 +70,7 @@ public class Player {
    */
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    return bank.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
+    return getBank().hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
         onyxAmount, goldAmount);
   }
 

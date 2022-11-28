@@ -10,6 +10,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.PurchaseMap;
@@ -34,7 +35,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -87,60 +87,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
       } else {
         return PLAYER_BANK;
       }
-    }
-  }
-
-  /**
-   * An enum of the possible currency types in a card purchase.
-   */
-  public enum CurrencyType {
-    RED_TOKENS,
-    GREEN_TOKENS,
-    BLUE_TOKENS,
-    WHITE_TOKENS,
-    BLACK_TOKENS,
-    GOLD_TOKENS,
-    BONUS_GOLD_CARDS;
-    static final Map<CurrencyType, Color> colorType = new HashMap<>();
-
-    static {
-      colorType.put(RED_TOKENS, Color.DARKRED);
-      colorType.put(GREEN_TOKENS, Color.DARKGREEN);
-      colorType.put(BLUE_TOKENS, Color.DARKBLUE);
-      colorType.put(WHITE_TOKENS, Color.WHITE.darker());
-      colorType.put(BLACK_TOKENS, Color.BLACK);
-      colorType.put(GOLD_TOKENS, Color.GOLD.darker());
-      colorType.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
-    }
-
-    /**
-     * Gets the color of the CurrencyType.
-     *
-     * @return the color of the implied argument.
-     */
-    public Paint getColor() {
-      return colorType.get(this);
-    }
-
-    /**
-     * Gets a color that pops over the color of the CurrencyType, for the stroke.
-     *
-     * @return A color that would be suitable for the stroke over a CurrencyType.s
-     */
-    public Paint getStrokeColor() {
-      return this.getTextColor();
-    }
-
-    /**
-     * Gets a color that pops over the color of the CurrencyType, for the Text.
-     *
-     * @return A color that would be suitable for the Text over a currencyType.
-     */
-    public Paint getTextColor() {
-      if (this == BLACK_TOKENS) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
     }
   }
 
@@ -464,32 +410,26 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
   }
 
-
-  // TODO: get player bank and set it up for the prompt
+  // This also fetches Game Bank
   private void fetchPlayerBank(String playerName) {
-
+    // gets sessionId and username
     long promptSessionId = GameScreen.getSessionId();
     String username = AuthUtils.getPlayer().getName();
 
     // get string bank from server
     String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
 
-    // parse through string and add values to prompt values
-    Gson myGson = new Gson();
-    Map<String, Double> stringGameBank = myGson.fromJson(bankPriceMapAsString, Map.class);
-    Map<CurrencyType, Integer> gemGameBank = new HashMap<>();
+    // set player info in the prompt to be whatever the server says
+    setPlayerInfo(toGemAmountMap(bankPriceMapAsString));
 
+    // request Game bank info post purchase
+    String newGameBankString = PromptsRequests.getNewGameBankInfo(promptSessionId);
 
-    gemGameBank.put(CurrencyType.RED_TOKENS, stringGameBank.get("rubyAmount").intValue());
-    gemGameBank.put(CurrencyType.GREEN_TOKENS, stringGameBank.get("emeraldAmount").intValue());
-    gemGameBank.put(CurrencyType.BLUE_TOKENS, stringGameBank.get("sapphireAmount").intValue());
-    gemGameBank.put(CurrencyType.WHITE_TOKENS, stringGameBank.get("diamondAmount").intValue());
-    gemGameBank.put(CurrencyType.BLACK_TOKENS, stringGameBank.get("onyxAmount").intValue());
-    gemGameBank.put(CurrencyType.GOLD_TOKENS, stringGameBank.get("goldAmount").intValue());
-    gemGameBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
-
-    setPlayerInfo(gemGameBank);
+    // get game bank map from string
+    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
+    setGameBank(promptSessionId, gameBankMap);
   }
+
 
 
 
@@ -498,14 +438,51 @@ public class BuyCardPrompt implements PromptTypeInterface {
     long promptSessionId = GameScreen.getSessionId();
     String username = AuthUtils.getPlayer().getName();
 
+    // sends a request to server telling it purchase information
     PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         username,
         atProposedOffer);
+
+    // request Game bank info post purchase
+    String newGameBankString = PromptsRequests.getNewGameBankInfo(promptSessionId);
+
+    // get game bank map from string
+    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
+    setGameBank(promptSessionId, gameBankMap);
+    
   }
 
+  private void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
+    for (CurrencyType e : gameBankMap.keySet()) {
+      FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
+    }
+  }
 
+  /**
+   * Transforms String of bank retrieved from server to a Map .
+   *
+   * @param bankPriceMapAsString String of bank
+   * @return Map mapping CurrencyType to amount of each currency type in bank
+   */
+  public static Map<CurrencyType, Integer> toGemAmountMap(String bankPriceMapAsString) {
 
+    // parse through string and add values to prompt values
+    Gson myGson = new Gson();
+    Map<String, Double> stringPlayerBank = myGson.fromJson(bankPriceMapAsString, Map.class);
+    Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
+
+    // put each gem type with its value in the string
+    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("rubyAmount").intValue());
+    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("emeraldAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("sapphireAmount").intValue());
+    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("diamondAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("onyxAmount").intValue());
+    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("goldAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
+
+    return gemPlayerBank;
+  }
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 
