@@ -1,8 +1,10 @@
-package com.hexanome16.client.screens.game.prompts;
+package com.hexanome16.client.requests.backend.prompts;
 
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.screens.game.PurchaseMap;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -51,6 +53,35 @@ public class PromptsRequests {
 
   }
 
+
+  /**
+   * Gets player bank of player with username "username" in session with session id "sessionId".
+   *
+   * @param sessionId Session ID.
+   * @param username username of player.
+   * @return PurchaseMap representation of the player's funds
+   */
+  public static String getPlayerBank(long  sessionId, String username) {
+    try {
+      HttpClient client = RequestClient.getClient();
+      URI uri = UrlUtils.createGameServerUri(
+          "/api/game/" + sessionId + "/playerBank",
+          "username=" + username
+      );
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(uri).GET()
+          .build();
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+      return response.thenApply(HttpResponse::body).get();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+
+  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
   private static String requestParam(String username, PurchaseMap proposedDeal) {
     StringJoiner requestParam = new StringJoiner("&");
     requestParam.add("username=" + username);

@@ -7,9 +7,9 @@ import java.util.Hashtable;
  * Bank class. Used for storing tokens.
  */
 public abstract class Bank {
-//  public abstract void acquireTokenSameColor(Gem gem);
-//
-//  public abstract void acquireTokenDiffColor(Gem gem1, Gem gem2, Gem gem3);
+  //  public abstract void acquireTokenSameColor(Gem gem);
+  //
+  //  public abstract void acquireTokenDiffColor(Gem gem1, Gem gem2, Gem gem3);
 
   /**
    * Initializes the bank.
@@ -58,10 +58,7 @@ public abstract class Bank {
   ArrayList<Token> removeTokenFromList(ArrayList<Token> list, int amount) {
     ArrayList<Token> removed = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
-      if (i < list.size()) {
-        removed.add(list.remove(i));
-        i--;
-      }
+      removed.add(list.remove(0));
     }
     return removed;
   }

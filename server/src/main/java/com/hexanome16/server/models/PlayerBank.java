@@ -22,9 +22,9 @@ public class PlayerBank extends Bank {
    * @param gem = Gem type (RUBY, DIAMOND, etc) associated with the token.
    */
   public void acquireTokenSameColor(Gem gem) {
-//    ArrayList<Token> currentList = playerBank.get(gem);
-//    addTokensToList(currentList, Game.getGameMap().get(sessionId).
-//    playerBank.replace(gem, currentList);
+  //    ArrayList<Token> currentList = playerBank.get(gem);
+  //    addTokensToList(currentList, Game.getGameMap().get(sessionId).
+  //    playerBank.replace(gem, currentList);
   }
 
   /**
@@ -35,17 +35,17 @@ public class PlayerBank extends Bank {
    * @param gem3 = Gem type (RUBY, DIAMOND, etc) associated with the token.
    */
   public void acquireTokenDiffColor(Gem gem1, Gem gem2, Gem gem3) {
-//    ArrayList<Token> currentList1 = playerBank.get(gem1);
-//    currentList1 = initBank(currentList1, gem1, 1);
-//    playerBank.replace(gem1, currentList1);
-//
-//    ArrayList<Token> currentList2 = playerBank.get(gem2);
-//    currentList2 = initBank(currentList2, gem2, 1);
-//    playerBank.replace(gem2, currentList2);
-//
-//    ArrayList<Token> currentList3 = playerBank.get(gem3);
-//    currentList3 = initBank(currentList3, gem3, 1);
-//    playerBank.replace(gem3, currentList3);
+    //    ArrayList<Token> currentList1 = playerBank.get(gem1);
+    //    currentList1 = initBank(currentList1, gem1, 1);
+    //    playerBank.replace(gem1, currentList1);
+    //
+    //    ArrayList<Token> currentList2 = playerBank.get(gem2);
+    //    currentList2 = initBank(currentList2, gem2, 1);
+    //    playerBank.replace(gem2, currentList2);
+    //
+    //    ArrayList<Token> currentList3 = playerBank.get(gem3);
+    //    currentList3 = initBank(currentList3, gem3, 1);
+    //    playerBank.replace(gem3, currentList3);
   }
 
   public void purchaseCard() {
@@ -74,25 +74,25 @@ public class PlayerBank extends Bank {
                             int diamondAmount, int onyxAmount, int goldAmount) {
 
     for (Gem e : Gem.values()) {
-      TokenStack tokenStackForGem = tokenStackMap.get(e);
+      ArrayList<Token> tokenStackForGem = playerBank.get(e);
       switch (e) {
         case RUBY -> {
-          incSingularTokenStack(tokenStackForGem, rubyAmount);
+          incSingularTokenStack(e, tokenStackForGem, rubyAmount);
         }
         case EMERALD -> {
-          incSingularTokenStack(tokenStackForGem, emeraldAmount);
+          incSingularTokenStack(e, tokenStackForGem, emeraldAmount);
         }
         case SAPPHIRE -> {
-          incSingularTokenStack(tokenStackForGem, sapphireAmount);
+          incSingularTokenStack(e, tokenStackForGem, sapphireAmount);
         }
         case DIAMOND -> {
-          incSingularTokenStack(tokenStackForGem, diamondAmount);
+          incSingularTokenStack(e, tokenStackForGem, diamondAmount);
         }
         case ONYX -> {
-          incSingularTokenStack(tokenStackForGem, onyxAmount);
+          incSingularTokenStack(e, tokenStackForGem, onyxAmount);
         }
         case GOLD -> {
-          incSingularTokenStack(tokenStackForGem, goldAmount);
+          incSingularTokenStack(e, tokenStackForGem, goldAmount);
         }
         default -> {
           continue;
@@ -102,16 +102,17 @@ public class PlayerBank extends Bank {
   }
 
   // may have off by one error
-  private void incSingularTokenStack(TokenStack tokenStack, int incrementAmount) {
+  private void incSingularTokenStack(Gem gemType, ArrayList<Token> tokenList, int incrementAmount) {
     if (incrementAmount > 0) {
+      ArrayList<Token> additionalTokens = new ArrayList<>();
       for (; incrementAmount != 0; incrementAmount--) {
-        Token newToken = new Token();
-        newToken.gem = tokenStack.getGem();
-        tokenStack.addToken(newToken);
+        Token newToken = new Token(gemType);
+        additionalTokens.add(new Token(gemType));
       }
+      addTokensToList(tokenList, additionalTokens);
     } else if (incrementAmount < 0) {
-      for (; incrementAmount != 0 && !tokenStack.isEmpty(); incrementAmount++) {
-        tokenStack.removeToken();
+      for (; incrementAmount != 0 && !tokenList.isEmpty(); incrementAmount++) {
+        removeTokenFromList(tokenList, 1);
       }
     }
   }
@@ -133,26 +134,28 @@ public class PlayerBank extends Bank {
                             int diamondAmount, int onyxAmount, int goldAmount) {
     boolean checkResult = true;
 
+    // goes through every gem type and makes sure bank contains at least that amount
+    // each
     for (Gem e : Gem.values()) {
-      TokenStack tokenStackForGem = tokenStackMap.get(e);
+      ArrayList<Token> tokenListForGem = playerBank.get(e);
       switch (e) {
         case RUBY -> {
-          checkResult = checkResult && tokenStackMap.size() <= rubyAmount;
+          checkResult = checkResult && tokenListForGem.size() >= rubyAmount;
         }
         case EMERALD -> {
-          checkResult = checkResult && tokenStackMap.size() <= emeraldAmount;
+          checkResult = checkResult && tokenListForGem.size() >= emeraldAmount;
         }
         case SAPPHIRE -> {
-          checkResult = checkResult && tokenStackMap.size() <= sapphireAmount;
+          checkResult = checkResult && tokenListForGem.size() >= sapphireAmount;
         }
         case DIAMOND -> {
-          checkResult = checkResult && tokenStackMap.size() <= diamondAmount;
+          checkResult = checkResult && tokenListForGem.size() >= diamondAmount;
         }
         case ONYX -> {
-          checkResult = checkResult && tokenStackMap.size() <= onyxAmount;
+          checkResult = checkResult && tokenListForGem.size() >= onyxAmount;
         }
         case GOLD -> {
-          checkResult = checkResult && tokenStackMap.size() <= goldAmount;
+          checkResult = checkResult && tokenListForGem.size() >= goldAmount;
         }
         default -> {
           continue;
@@ -161,6 +164,43 @@ public class PlayerBank extends Bank {
     }
 
     return checkResult;
+  }
+
+  /**
+   * Returns the player bank as if it was a Purchase Map.
+   *
+   * @return Purchase map of what the player bank looks like.
+   */
+  public PurchaseMap toPurchaseMap() {
+    return new PurchaseMap(playerBank.get(Gem.RUBY).size(),
+        playerBank.get(Gem.EMERALD).size(),
+        playerBank.get(Gem.SAPPHIRE).size(),
+        playerBank.get(Gem.DIAMOND).size(),
+        playerBank.get(Gem.ONYX).size(),
+        playerBank.get(Gem.GOLD).size());
+  }
+
+
+  /**
+   * String representation of a player bank.
+   *
+   * @return a String of the bank.
+   */
+  @Override
+  public String toString() {
+    StringBuilder playerBankRepresentation = new StringBuilder();
+
+    playerBankRepresentation.append("---------------------------------\n");
+    playerBankRepresentation.append("Player Bank contains : \n");
+
+    for (Gem e : Gem.values()) {
+      playerBankRepresentation.append(e).append(" : ")
+          .append(getPlayerBank().get(e).size()).append("\n");
+    }
+
+    playerBankRepresentation.append("---------------------------------\n");
+
+    return playerBankRepresentation.toString();
   }
 }
 
