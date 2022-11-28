@@ -49,7 +49,7 @@ public class CreateSessionRequest {
           (body, statusCode) -> {
             if (statusCode == 200) {
               return body;
-            } else if (statusCode == 401) {
+            } else if (statusCode >= 400 && statusCode <= 403) {
               TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
               return execute(AuthUtils.getAuth().getAccessToken(), creator, game, savegame);
             } else {
