@@ -9,6 +9,7 @@ import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
@@ -16,9 +17,10 @@ import java.util.Stack;
  * GameScreen class spawns all the entities for game board.
  */
 public class GameScreen {
-  private static final Stack<Integer> level_one = new Stack<>();
-  private static final Stack<Integer> level_two = new Stack<>();
-  private static final Stack<Integer> level_three = new Stack<>();
+  private static final Map<String, Map> level_one = new HashMap<String, Map>();
+  private static final Map<String, Map> level_two = new HashMap<String, Map>();
+  private static final Map<String, Map> level_three = new HashMap<String, Map>();
+
   private static final Stack<Integer> nobles = new Stack<>();
   //for demo use only: lists of cards returned by the server
   private static long sessionId = -1;
@@ -121,6 +123,7 @@ public class GameScreen {
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
       Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      level_one.put(hash, card);
       PriceMap pm = getPriceMap(card);
       FXGL.spawn("LevelOneCard",
           new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
@@ -135,6 +138,7 @@ public class GameScreen {
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
       Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      level_two.put(hash,card);
         PriceMap pm = getPriceMap(card);
         FXGL.spawn("LevelTwoCard",
             new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
@@ -149,6 +153,7 @@ public class GameScreen {
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
       Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      level_three.put(hash, card);
         PriceMap pm = getPriceMap(card);
         FXGL.spawn("LevelThreeCard",
             new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
