@@ -6,9 +6,11 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import java.util.Map;
 import java.util.Stack;
 
@@ -28,6 +30,8 @@ public class GameScreen {
    * player inventory and settings button to the game screen.
    */
   public static void initGame(long id) {
+    initializeBankGameVars(id);
+
     sessionId = id;
 
     FXGL.spawn("Background");
@@ -45,6 +49,16 @@ public class GameScreen {
     initLevelThreeDeck();
     // spawn the player's hands
     PlayerDecks.generateAll();
+  }
+
+  // puts values necessary for game bank in the world properties
+  private static void initializeBankGameVars(long id) {
+    String gameBankString = PromptsRequests.getNewGameBankInfo(id);
+    Map<CurrencyType, Integer> gameBankMap = BuyCardPrompt.toGemAmountMap(gameBankString);
+    for (CurrencyType e : gameBankMap.keySet()) {
+      FXGL.getWorldProperties().setValue(id + e.toString(), gameBankMap.get(e));
+    }
+
   }
 
   /**
