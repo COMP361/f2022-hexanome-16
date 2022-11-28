@@ -179,4 +179,13 @@ public class GameScreen {
         ((Double) priceMap.get("onyxAmount")).intValue());
     return pm;
   }
+
+  /**
+   * Returns session Id.
+   *
+   * @return returns session Id.
+   */
+  public static long getSessionId() {
+    return sessionId;
+  }
 }

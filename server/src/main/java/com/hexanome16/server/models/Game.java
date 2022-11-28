@@ -185,4 +185,22 @@ public class Game {
   public void removeOnBoardCard(LevelCard card) {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
   }
+
+  // TODO : IMPLEMENTATION + TEST CASE
+  /**
+   * Checks if is player's turn.
+   *
+   * @param clientPlayer player we want to check.
+   * @return true if is player's turn, false otherwise
+   */
+  public boolean isPlayersTurn(Player clientPlayer) {
+    return true;
+  }
+
+  // TODO :  IMPLEMENTATION + TEST CASE
+  /**
+   * Ends current player's turn.
+   */
+  public void endCurrentPlayersTurn() {
+  }
 }

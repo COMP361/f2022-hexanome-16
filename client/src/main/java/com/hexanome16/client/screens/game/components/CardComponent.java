@@ -188,6 +188,10 @@ public class CardComponent extends Component {
     return priceMap;
   }
 
+  public String getCardHash() {
+    return cardMD5;
+  }
+
   enum Direction {
     DOWN,
     RIGHT,

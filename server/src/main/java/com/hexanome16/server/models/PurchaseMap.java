@@ -18,6 +18,7 @@ public class PurchaseMap extends PriceMap {
     return goldAmount;
   }
 
+  // TODO: TEST CASE
   /**
    * Makes a purchase map out of the input price map, sets gold amount in the new purchase
    * map to be 0.
@@ -41,6 +42,7 @@ public class PurchaseMap extends PriceMap {
   }
 
 
+  // TODO: TEST CASE
   /**
    * Checks if implied argument can be used instead of the parameter to commit a purchase.
    *

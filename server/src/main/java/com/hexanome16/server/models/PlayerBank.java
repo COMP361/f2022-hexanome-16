@@ -17,6 +17,7 @@ public class PlayerBank {
   }
 
 
+  // TODO TEST
   /**
    * increments Player bank by the amount specified by each parameter for each of their
    * corresponding gem types.
@@ -74,6 +75,52 @@ public class PlayerBank {
     }
   }
 
+  // TODO: TEST CASE
+  /**
+   * Returns true if bank has at least specified amounts of each gem type in their bank, false
+   * otherwise.
+   *
+   * @param rubyAmount minimum amount or rubies player should have
+   * @param emeraldAmount minimum amount or emerald player should have
+   * @param sapphireAmount minimum amount or sapphire player should have
+   * @param diamondAmount minimum amount or diamond player should have
+   * @param onyxAmount minimum amount or onyx player should have
+   * @param goldAmount minimum amount or gold player should have
+   * @return true if bank has at least input amounts of each gem type, false otherwise.
+   */
+  public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
+                            int diamondAmount, int onyxAmount, int goldAmount) {
+    boolean checkResult = true;
+
+    for (Gem e : Gem.values()) {
+      TokenStack tokenStackForGem = tokenStackMap.get(e);
+      switch (e) {
+        case RUBY -> {
+          checkResult = checkResult && tokenStackMap.size() <= rubyAmount;
+        }
+        case EMERALD -> {
+          checkResult = checkResult && tokenStackMap.size() <= emeraldAmount;
+        }
+        case SAPPHIRE -> {
+          checkResult = checkResult && tokenStackMap.size() <= sapphireAmount;
+        }
+        case DIAMOND -> {
+          checkResult = checkResult && tokenStackMap.size() <= diamondAmount;
+        }
+        case ONYX -> {
+          checkResult = checkResult && tokenStackMap.size() <= onyxAmount;
+        }
+        case GOLD -> {
+          checkResult = checkResult && tokenStackMap.size() <= goldAmount;
+        }
+        default -> {
+          continue;
+        }
+      }
+    }
+
+    return checkResult;
+  }
 }
 
 
