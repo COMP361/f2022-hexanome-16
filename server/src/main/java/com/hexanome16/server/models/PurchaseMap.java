@@ -74,6 +74,13 @@ public class PurchaseMap extends PriceMap {
 
     return false;
   }
+
+  @Override
+  public String toString() {
+    return String.format("ruby : %s \n emerald : %s \n "
+        + "sapphire : %s \n diamond : %s \n onyx : %s \n gold : %s ", rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+  }
 }
 
 

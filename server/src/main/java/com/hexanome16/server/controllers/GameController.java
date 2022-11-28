@@ -13,12 +13,12 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.Arrays;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -194,29 +194,13 @@ public class GameController {
     if (!gameMap.containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    ////////////////////////////////////////////////
-    System.out.println("First Check Done");
-    ////////////////////////////////////////////////
 
-
-
-
-
-
-    // makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    ///////////////////////////////////////
-    System.out.println("Inputed username : ");
-    System.out.println(username);
-    System.out.println("Available usernames : ");
     // fetch the card in question
     DevelopmentCard cardToBuy = cardHashMap.get(cardMd5);
 
     // get game in question
     Game game = gameMap.get(sessionId);
-    for (Player e : game.getPlayers()) {
-      System.out.println(e.getName());
-    }
-    System.out.println("Is offer acceptable : ");
+
     // get proposed Deal as a purchase map
     PurchaseMap proposedDeal = new PurchaseMap(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
@@ -226,28 +210,22 @@ public class GameController {
 
     // get player using found index
     Player clientPlayer = findPlayer(game, username);
-    System.out.println(proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap)));
-    ///////////////////////////////////////
+
+    // makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (clientPlayer == null
         || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    ////////////////////////////////////////
-    System.out.println("Second Check Done");
-    ////////////////////////////////////////
+
 
     // last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
-    // TODO modify player turn stuff with what Costa did
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount)
         || !game.isPlayersTurn(clientPlayer)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    //////////////////////////////////////
-    System.out.println("Last Check Done");
-    //////////////////////////////////////
 
 
     // TODO: increase Game Bank (not for M5)
@@ -259,25 +237,11 @@ public class GameController {
     // TODO: add that card to the player's Inventory
     clientPlayer.addCardToInventory(cardToBuy);
 
+    // remove card from the board
     game.removeOnBoardCard((LevelCard) cardToBuy);
 
-    // TODO: endPlayer's turn, Use Costa's work
+    // ends players turn, which is current player
     game.endCurrentPlayersTurn();
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    System.out.println("Buy Request Received, param. : ");
-    System.out.println(sessionId);
-    System.out.println(cardMd5);
-    System.out.println(username);
-    System.out.println(rubyAmount);
-    System.out.println(emeraldAmount);
-    System.out.println(sapphireAmount);
-    System.out.println(diamondAmount);
-    System.out.println(onyxAmount);
-    System.out.println(goldAmount);
-    /////////////////////////////////////////////////////////////////////////////////////////
-
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

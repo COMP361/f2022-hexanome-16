@@ -39,6 +39,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class responsible for populating Buy card prompt.
@@ -177,6 +178,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
         t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
           if (t.getOpacity() == 1) {
+            buyCardPrompt.atProposedOffer = getPurchaseMapOfCurrentInput();
             closeBuyPrompt();
             buyCardPrompt.cardBought();
             buyCardPrompt.notifyServer();
@@ -189,53 +191,15 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
     // allows to check if card can be bought with current amount of tokens in trade bank
     private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
-      int rubyAmount = 0;
-      int emeraldAmount = 0;
-      int sapphireAmount = 0;
-      int diamondAmount = 0;
-      int onyxAmount = 0;
-      int goldAmount = 0;
-      int amountInBank;
-      // go through every currently supported currencytype and modify the value of the
-      // variable associated to it
-      for (CurrencyType e : CurrencyType.values()) {
-        amountInBank = FXGL.getWorldProperties()
-            .getInt(BankType.GAME_BANK + "/" + e);
-        switch (e) {
-          case RED_TOKENS:
-            rubyAmount = amountInBank;
-            break;
-          case GREEN_TOKENS:
-            emeraldAmount = amountInBank;
-            break;
-          case BLUE_TOKENS:
-            sapphireAmount = amountInBank;
-            break;
-          case WHITE_TOKENS:
-            diamondAmount = amountInBank;
-            break;
-          case BLACK_TOKENS:
-            onyxAmount = amountInBank;
-            break;
-          case GOLD_TOKENS:
-            goldAmount = amountInBank;
-            break;
-          default:
-            continue;
-        }
-      }
-      // Creates a Purchase map of the current amounts in the Transaction bank
-      PurchaseMap amountInBankMap =
-          new PurchaseMap(rubyAmount, emeraldAmount,
-              sapphireAmount, diamondAmount, onyxAmount, goldAmount);
-
+      PurchaseMap amountInBankMap = getPurchaseMapOfCurrentInput();
       // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
-      buyCardPrompt.atProposedOffer = amountInBankMap;
       // check if we can buy card with the gems we put down.
       return amountInBankMap.canBeUsedToBuy(priceToMeet);
     }
   }
+
+
 
 
   @Override
@@ -449,6 +413,48 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setMaxWidth(atWidth);
     myPrompt.setPrefHeight(atHeight);
     myPrompt.setMaxHeight(atHeight);
+  }
+
+
+  private static PurchaseMap getPurchaseMapOfCurrentInput() {
+    int rubyAmount = 0;
+    int emeraldAmount = 0;
+    int sapphireAmount = 0;
+    int diamondAmount = 0;
+    int onyxAmount = 0;
+    int goldAmount = 0;
+    int amountInBank;
+    // go through every currently supported currency and modify the value of the
+    // variable associated to it
+    for (CurrencyType e : CurrencyType.values()) {
+      amountInBank = FXGL.getWorldProperties()
+          .getInt(BankType.GAME_BANK + "/" + e);
+      switch (e) {
+        case RED_TOKENS:
+          rubyAmount = amountInBank;
+          break;
+        case GREEN_TOKENS:
+          emeraldAmount = amountInBank;
+          break;
+        case BLUE_TOKENS:
+          sapphireAmount = amountInBank;
+          break;
+        case WHITE_TOKENS:
+          diamondAmount = amountInBank;
+          break;
+        case BLACK_TOKENS:
+          onyxAmount = amountInBank;
+          break;
+        case GOLD_TOKENS:
+          goldAmount = amountInBank;
+          break;
+        default:
+          continue;
+      }
+    }
+    // Creates a Purchase map of the current amounts in the Transaction bank
+    return new PurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
   // TODO: get player bank and set it up for the prompt

@@ -205,7 +205,7 @@ public class Game {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
   }
 
-  // TODO : IMPLEMENTATION + TEST CASE
+  // TODO: TEST CASE
   /**
    * Checks if is player's turn.
    *
@@ -213,13 +213,28 @@ public class Game {
    * @return true if is player's turn, false otherwise
    */
   public boolean isPlayersTurn(Player clientPlayer) {
-    return true;
+    return findPlayerIndex(clientPlayer) == currentPlayerIndex;
   }
 
-  // TODO :  IMPLEMENTATION + TEST CASE
+  // TODO: TEST CASE
   /**
-   * Ends current player's turn.
+   * Ends current player's turn and starts next player's turn.
    */
   public void endCurrentPlayersTurn() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+  }
+
+  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+
+  // TODO: TEST CASE
+  private int findPlayerIndex(Player player) {
+    int i = 0;
+    for (Player e : getPlayers()) {
+      if (e == player) {
+        return i;
+      }
+      i++;
+    }
+    return -1;
   }
 }
