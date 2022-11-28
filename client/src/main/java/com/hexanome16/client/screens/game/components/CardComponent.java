@@ -24,7 +24,7 @@ public class CardComponent extends Component {
   public String texture;
   private ViewComponent view;
   private TransformComponent position;
-  private boolean moving = false;
+  private boolean fading = false;
   private Direction direction;
   private boolean adding = false;
   private int gridX;
@@ -54,10 +54,13 @@ public class CardComponent extends Component {
 
   @Override
   public void onUpdate(double tpf) {
-    if (moving) {
-      // moving(direction);
-      entity.getTransformComponent().translateY(10);
-
+    if (fading) {
+      Double opacity = entity.getViewComponent().getOpacity();
+      if(opacity > 0) {
+        entity.getViewComponent().setOpacity(opacity - 5);
+      }else{
+        fading = false;
+      }
     } else if (adding) {
       double diff = (matCoordsX + 140 + 138 * gridX) - position.getX();
 
@@ -74,7 +77,7 @@ public class CardComponent extends Component {
 
     FXGL.getEventBus().addEventHandler(SplendorEvents.BOUGHT, e -> {
       if (e.eventEntity == entity) {
-        buyCard();
+        this.fading = true;
       }
     });
 
@@ -107,52 +110,6 @@ public class CardComponent extends Component {
     position.setScaleY(0.15);
   }
 
-  private void moving(Direction direction) {
-    switch (direction) {
-      default:
-      case UP:
-        double diffUp = position.getY() - 50;
-
-        if (diffUp > 0) {
-          position.translateY(-10);
-        } else {
-          moving = false;
-          view.setVisible(false);
-        }
-        break;
-      case DOWN:
-        double diffDown = 900 - position.getY();
-
-        if (diffDown > 0) {
-          position.translateY(10);
-        } else {
-          moving = false;
-          view.setVisible(false);
-        }
-        break;
-      case LEFT:
-        double diffLeft = position.getX() - 100;
-
-        if (diffLeft > 0) {
-          position.translateX(-10);
-        } else {
-          moving = false;
-          view.setVisible(false);
-        }
-        break;
-      case RIGHT:
-        double diffRight = 1800 - position.getX();
-
-        if (diffRight > 0) {
-          position.translateX(10);
-        } else {
-          moving = false;
-          view.setVisible(false);
-        }
-        break;
-    }
-  }
-
   private void addToMat(boolean[] grid) {
     for (int i = 0; i < grid.length; i++) {
       if (!grid[i]) {
@@ -160,27 +117,6 @@ public class CardComponent extends Component {
         grid[i] = true;
         break;
       }
-    }
-  }
-
-  private void buyCard() {
-    moving = true;
-    direction = Direction.DOWN;
-    purchased = false;
-    switch (level) {
-      default:
-      case ONE:
-        level_one_grid[gridX] = false;
-        GameScreen.addLevelOneCard();
-        break;
-      case TWO:
-        level_two_grid[gridX] = false;
-        GameScreen.addLevelTwoCard();
-        break;
-      case THREE:
-        level_three_grid[gridX] = false;
-        GameScreen.addLevelThreeCard();
-        break;
     }
   }
 
