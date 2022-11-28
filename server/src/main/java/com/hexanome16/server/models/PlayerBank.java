@@ -10,7 +10,7 @@ public class PlayerBank extends Bank {
   private final Hashtable<Gem, ArrayList<Token>> playerBank;
 
   /**
-   * The constructor gives each player two tokens to start with.
+   * The constructor gives each player three tokens to start with.
    */
   public PlayerBank() {
     playerBank = initBank(3);
