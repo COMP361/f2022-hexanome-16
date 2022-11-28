@@ -15,4 +15,12 @@ public class LevelCard extends DevelopmentCard {
   public Level getLevel() {
     return level;
   }
+
+  public boolean addToInventory(Inventory inventory) {
+    return inventory.aquireCard(this);
+  }
+
+  public boolean reserveCard(Inventory inventory) {
+    return inventory.reserveCard(this);
+  }
 }
