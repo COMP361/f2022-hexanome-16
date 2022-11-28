@@ -153,11 +153,33 @@ public class GameController {
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
 
-  //TODO : Find a way to send game bank to client
+  /**
+   * Allows client to see how many of each gem a player has.
+   *
+   * @param sessionId sessionId.
+   * @param username username of the player.
+   * @return String representation of the Purchase map
+   * @throws JsonProcessingException if Json processing fails
+   */
   @GetMapping(value = {"/game/{sessionId}/playerBank", "/game/{sessionId}/playerBank/"})
-  public String getPlayerBankInfo(@PathVariable long sessionId, @RequestParam String username) {
+  public String getPlayerBankInfo(@PathVariable long sessionId,
+                                       @RequestParam String username)
+      throws JsonProcessingException {
+    // session not found
+    if (!gameMap.containsKey(sessionId)) {
+      return null;
+    }
+    // get player with username
+    Player concernedPlayer = findPlayer(gameMap.get(sessionId), username);
 
-    return "haiiii :3";
+    // Player not in game
+    if (concernedPlayer == null) {
+      return null;
+    }
+
+    PurchaseMap playerBankMap = concernedPlayer.getBank().toPurchaseMap();
+
+    return objectMapper.writeValueAsString(playerBankMap);
   }
 
 
@@ -220,17 +242,17 @@ public class GameController {
 
     // last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
+    // kimi's part for first expression
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount)
         || !game.isPlayersTurn(clientPlayer)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-
-
     // TODO: increase Game Bank (not for M5)
 
-    // TODO: removes the tokens from the player's funds
+
+    // kimi's part
     clientPlayer.incPlayerBank(-rubyAmount, -emeraldAmount,
         -sapphireAmount, -diamondAmount, -onyxAmount, -goldAmount);
 

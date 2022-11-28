@@ -8,18 +8,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public class Player {
   private final String name;
   private final String preferredColour;
-  private PlayerBank bank;
+  private final PlayerBank bank;
 
+  /**
+   * Player Constructor.
+   *
+   * @param name name of the player.
+   * @param preferredColour preferred color of the player.
+   */
   @JsonCreator
   public Player(String name, String preferredColour) {
     this.name = name;
     this.preferredColour = preferredColour;
-  }
-
-  public Player(String username) {
-    this.name = username;
     this.bank = new PlayerBank();
   }
+
 
   public String getName() {
     return name;
@@ -80,4 +83,7 @@ public class Player {
    */
   public void addCardToInventory(DevelopmentCard cardToAdd) {
   }
+
+
+  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 }

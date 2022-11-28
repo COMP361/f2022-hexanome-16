@@ -7,12 +7,13 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.google.gson.Gson;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
@@ -39,7 +40,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A class responsible for populating Buy card prompt.
@@ -457,12 +457,41 @@ public class BuyCardPrompt implements PromptTypeInterface {
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
+  private void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
+    for (CurrencyType e : CurrencyType.values()) {
+      FXGL.getWorldProperties()
+          .setValue(BankType.PLAYER_BANK + "/" + e.toString(), playerInfo.get(e));
+    }
+  }
+
+
   // TODO: get player bank and set it up for the prompt
   private void fetchPlayerBank(String playerName) {
+
     long promptSessionId = GameScreen.getSessionId();
     String username = AuthUtils.getPlayer().getName();
 
+    // get string bank from server
+    String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
+
+    // parse through string and add values to prompt values
+    Gson myGson = new Gson();
+    Map<String, Double> stringGameBank = myGson.fromJson(bankPriceMapAsString, Map.class);
+    Map<CurrencyType, Integer> gemGameBank = new HashMap<>();
+
+
+    gemGameBank.put(CurrencyType.RED_TOKENS, stringGameBank.get("rubyAmount").intValue());
+    gemGameBank.put(CurrencyType.GREEN_TOKENS, stringGameBank.get("emeraldAmount").intValue());
+    gemGameBank.put(CurrencyType.BLUE_TOKENS, stringGameBank.get("sapphireAmount").intValue());
+    gemGameBank.put(CurrencyType.WHITE_TOKENS, stringGameBank.get("diamondAmount").intValue());
+    gemGameBank.put(CurrencyType.BLACK_TOKENS, stringGameBank.get("onyxAmount").intValue());
+    gemGameBank.put(CurrencyType.GOLD_TOKENS, stringGameBank.get("goldAmount").intValue());
+    gemGameBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
+
+    setPlayerInfo(gemGameBank);
   }
+
+
 
   // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
@@ -474,6 +503,9 @@ public class BuyCardPrompt implements PromptTypeInterface {
         username,
         atProposedOffer);
   }
+
+
+
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 

@@ -188,6 +188,7 @@ public class Game {
   public Deck getOnBoardNobles() {
     return this.onBoardNobles;
   }
+
   public GameBank getGameBank() {
     return this.gameBank;
   }
