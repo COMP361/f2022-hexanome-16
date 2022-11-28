@@ -28,7 +28,7 @@ public class Player {
   public Player(String name, String preferredColour) {
     this.name = name;
     this.preferredColour = preferredColour;
-    //    this.bank = new PlayerBank();
+    this.inventory = new Inventory();
   }
 
 
@@ -97,11 +97,6 @@ public class Player {
    *
    * @return true on success */
   public boolean addCardToInventory(DevelopmentCard developmentCard) {
-
-    //
-    System.out.println(getInventory().getOwnedCards());
-    //
-
     return developmentCard.addToInventory(this.inventory);
   }
 
