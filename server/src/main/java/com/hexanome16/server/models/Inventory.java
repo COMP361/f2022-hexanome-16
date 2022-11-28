@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +13,19 @@ public class Inventory {
   private List<Noble> reservedNobles;
   private List<LevelCard> ownedCards;
   private List<LevelCard> reservedCards;
+
+  /* Constructor *********************************************************************************/
+
+  /**
+   * Creates Inventory and sets up all fields.
+   */
+  public Inventory() {
+    playerBank = new PlayerBank();
+    ownedNobles = new ArrayList<>();
+    reservedNobles = new ArrayList<>();
+    ownedCards = new ArrayList<>();
+    reservedCards = new ArrayList<>();
+  }
 
   /* setters *************************************************************************************/
   public void setPlayerBank(PlayerBank playerBank) {

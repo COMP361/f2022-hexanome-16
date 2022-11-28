@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.lobbyservice.AuthController;
 import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -20,7 +19,6 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +74,8 @@ public class GameController {
     }
     return false;
   }
+
+
 
   /**
    * Create a new game as client requested.
@@ -206,24 +206,24 @@ public class GameController {
    * @throws JsonProcessingException if Json processing fails
    */
   @GetMapping(value = {"/game/{sessionId}/playerBank", "/game/{sessionId}/playerBank/"})
-  public String getPlayerBankInfo(@PathVariable long sessionId,
+  public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                   @RequestParam String username)
       throws JsonProcessingException {
     // session not found
     if (!gameMap.containsKey(sessionId)) {
-      return null;
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     // get player with username
-    Player concernedPlayer = findPlayer(gameMap.get(sessionId), username);
+    Player concernedPlayer = findPlayerByName(gameMap.get(sessionId), username);
 
     // Player not in game
     if (concernedPlayer == null) {
-      return null;
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     PurchaseMap playerBankMap = concernedPlayer.getBank().toPurchaseMap();
 
-    return objectMapper.writeValueAsString(playerBankMap);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(playerBankMap), HttpStatus.OK);
   }
 
   /**
@@ -234,17 +234,18 @@ public class GameController {
    * @throws JsonProcessingException if Json processing fails
    */
   @GetMapping(value = {"/game/{sessionId}/gameBank", "/game/{sessionId}/gameBank/"})
-  public String getGameBankInfo(@PathVariable long sessionId)
+  public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
     // session not found
     if (!gameMap.containsKey(sessionId)) {
-      return null;
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     PurchaseMap gameBankMap = gameMap.get(sessionId).getGameBank().toPurchaseMap();
 
-    return objectMapper.writeValueAsString(gameBankMap);
+
+    return new ResponseEntity<>(objectMapper.writeValueAsString(gameBankMap), HttpStatus.OK);
   }
 
 
@@ -253,7 +254,7 @@ public class GameController {
    *
    * @param sessionId      sessionID.
    * @param cardMd5        Card we want to purchase's md5.
-   * @param username       username of the player trying to buy the card.
+   * @param authenticationToken       username of the player trying to buy the card.
    * @param rubyAmount     amount of ruby gems proposed.
    * @param emeraldAmount  amount of emerald gems proposed.
    * @param sapphireAmount amount of sapphire gems proposed.
@@ -266,7 +267,7 @@ public class GameController {
   @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
                                         @PathVariable String cardMd5,
-                                        @RequestParam String username,
+                                        @RequestParam String authenticationToken,
                                         @RequestParam int rubyAmount,
                                         @RequestParam int emeraldAmount,
                                         @RequestParam int sapphireAmount,
@@ -275,35 +276,42 @@ public class GameController {
                                         @RequestParam int goldAmount)
       throws JsonProcessingException {
 
-
+    //
     if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // fetch the card in question
+    // Verify player is who they claim to be
+    if (!verifyPlayer(sessionId, authenticationToken)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // Fetch the card in question
     DevelopmentCard cardToBuy = DeckHash.allCards.get(cardMd5);
 
-    // get game in question
+    // Get game in question
     Game game = gameMap.get(sessionId);
 
-    // get proposed Deal as a purchase map
+    // Get proposed Deal as a purchase map
     PurchaseMap proposedDeal = new PurchaseMap(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
 
-    // get card price as a priceMap
+    // Get card price as a priceMap
     PriceMap cardPriceMap = ((TokenPrice) cardToBuy.getPrice()).getPriceMap();
 
-    // get player using found index
-    Player clientPlayer = findPlayer(game, username);
+    // Get player using found index
+    Player clientPlayer = findPlayerByToken(game, authenticationToken);
 
-    // makes sure player is in game && proposed deal is acceptable && player has enough tokens
+    // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (clientPlayer == null
         || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    System.out.println("PLAYER FOUND");
+    System.out.println(clientPlayer.getName());
 
 
-    // last layer of sanity check, making sure player has enough funds to do the purchase.
+    // Last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount)
@@ -311,30 +319,28 @@ public class GameController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    System.out.println("PrePurchase");
-    System.out.println(clientPlayer.getBank());
 
     // Increase Game Bank and decrease player funds
     game.incGameBankFromPlayer(clientPlayer, rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
 
 
-    // add that card to the player's Inventory
+    // Add that card to the player's Inventory
     clientPlayer.addCardToInventory(cardToBuy);
 
-    // remove card from the board
+    // Remove card from the board
     game.removeOnBoardCard((LevelCard) cardToBuy);
 
     Level level = ((LevelCard) cardToBuy).getLevel();
-    //add new card to the deck
+    // Add new card to the deck
     game.addOnBoardCard(level);
 
 
-    //update long polling
+    // Update long polling
     broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
         .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
 
-    // ends players turn, which is current player
+    // Ends players turn, which is current player
     game.endCurrentPlayersTurn();
 
     return new ResponseEntity<>(HttpStatus.OK);
@@ -345,8 +351,33 @@ public class GameController {
 
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+
+  private Player findPlayerByName(Game game, String username) {
+
+    if (game == null) {
+      return null;
+    }
+    for (Player e : game.getPlayers()) {
+      if (e.getName().equals(username)) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+
+
   // finds player with username "username" in the game, returns null if no such player in game
-  private Player findPlayer(Game game, String username) {
+  private Player findPlayerByToken(Game game, String authenticationToken) {
+
+    if (game == null) {
+      return null;
+    }
+    ResponseEntity<String> usernameEntity = authController.getPlayer(authenticationToken);
+
+    String username = usernameEntity.getBody();
+
+
     for (Player e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;

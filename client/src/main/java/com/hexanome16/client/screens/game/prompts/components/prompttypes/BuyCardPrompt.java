@@ -419,6 +419,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
     // get string bank from server
     String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
 
+    System.out.println(bankPriceMapAsString);
+
     // set player info in the prompt to be whatever the server says
     setPlayerInfo(toGemAmountMap(bankPriceMapAsString));
 
@@ -436,12 +438,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
   // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
     long promptSessionId = GameScreen.getSessionId();
-    String username = AuthUtils.getPlayer().getName();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+
 
     // sends a request to server telling it purchase information
     PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
-        username,
+        authToken,
         atProposedOffer);
 
     // request Game bank info post purchase
