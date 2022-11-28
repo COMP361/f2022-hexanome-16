@@ -62,7 +62,7 @@ public class GameController {
     };
   }
 
-  private boolean verifyPlayer(long sessionId, String accessToken) {
+  public boolean verifyPlayer(long sessionId, String accessToken) {
     Game game = gameMap.get(sessionId);
     if (game == null) {
       return false;
@@ -75,6 +75,9 @@ public class GameController {
     return false;
   }
 
+  public Map<Long, Game> getGameMap() {
+    return gameMap;
+  }
 
 
   /**
