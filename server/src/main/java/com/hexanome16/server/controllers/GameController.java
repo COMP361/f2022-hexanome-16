@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.lobbyservice.AuthController;
+import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
@@ -38,7 +39,6 @@ public class GameController {
 
   //store all the games here
   private static final Map<Long, Game> gameMap = new HashMap<>();
-  private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
 
@@ -90,19 +90,12 @@ public class GameController {
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
       Game game = new Game(sessionId, players, creator, savegame);
       gameMap.put(sessionId, game);
-      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-          .getCardList()) {
-        //store in the class
-        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        //store in the list we are going to send to the client
-        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      }
-      BroadcastContentManager<Deck> broadcastContentManagerOne =
-          new BroadcastContentManager<Deck>(game.getOnBoardDeck(Level.ONE));
-      BroadcastContentManager<Deck> broadcastContentManagerTwo =
-          new BroadcastContentManager<Deck>(game.getOnBoardDeck(Level.TWO));
-      BroadcastContentManager<Deck> broadcastContentManagerThree =
-          new BroadcastContentManager<Deck>(game.getOnBoardDeck(Level.THREE));
+      BroadcastContentManager<DeckHash> broadcastContentManagerOne =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.ONE));
+      BroadcastContentManager<DeckHash> broadcastContentManagerTwo =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.TWO));
+      BroadcastContentManager<DeckHash> broadcastContentManagerThree =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.THREE));
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
       broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
       broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
@@ -141,17 +134,8 @@ public class GameController {
                             @RequestParam String accessToken)
       throws JsonProcessingException {
     if (verifyPlayer(sessionId, accessToken)) {
-      //All hash is MD5 checksum, checkstyle won't let me use the word MD5!!!
-      Map<String, DevelopmentCard> cardHash = new HashMap<>();
-      for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-          .getCardList()) {
-        //store in the class
-        cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-        //store in the list we are going to send to the client
-        cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      }
-      System.out.println(objectMapper.writeValueAsString(cardHash));
-      return objectMapper.writeValueAsString(cardHash);
+      DeckHash deckHash = new DeckHash(gameMap.get(sessionId), getLevel(level));
+      return objectMapper.writeValueAsString(deckHash.getCards());
     }
     return null;
   }
@@ -269,12 +253,12 @@ public class GameController {
                                         @RequestParam int goldAmount) {
 
 
-    if (!gameMap.containsKey(sessionId) || !cardHashMap.containsKey(cardMd5)) {
+    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     // fetch the card in question
-    DevelopmentCard cardToBuy = cardHashMap.get(cardMd5);
+    DevelopmentCard cardToBuy = DeckHash.allCards.get(cardMd5);
 
     // get game in question
     Game game = gameMap.get(sessionId);
@@ -346,16 +330,6 @@ public class GameController {
       }
     }
     return null;
-  }
-
-  private Map<String, String> deckHash(long sessionId, String level) {
-    for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-        .getCardList()) {
-      //store in the class
-      cardHashMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      //store in the list we are going to send to the client
-      cardHash.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-    }
   }
 
 }
