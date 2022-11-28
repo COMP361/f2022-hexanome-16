@@ -42,7 +42,7 @@ public class ChangePasswordRequest {
           )).build();
       int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
           .thenApply(HttpResponse::statusCode).get();
-      if (statusCode == 401) {
+      if (statusCode >= 400 && statusCode <= 403) {
         TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
         execute(AuthUtils.getAuth().getAccessToken(), user, oldPassword, newPassword);
       }
