@@ -68,7 +68,7 @@ public class InventoryController {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
     // return the inventory as a DTO
-    return return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()), HttpStatus.CREATED);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()), HttpStatus.CREATED);
   }
 
   /* DELETE methods ************************************************************************/
