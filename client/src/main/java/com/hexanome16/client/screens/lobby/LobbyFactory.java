@@ -50,6 +50,9 @@ public class LobbyFactory implements EntityFactory {
    * This method updates the list of sessions shown in the lobby screen.
    */
   public static void updateSessionList() {
+    if (activeSessionList == null || otherSessionList == null) {
+      return;
+    }
     activeSessionList.getItems().clear();
     otherSessionList.getItems().clear();
 
@@ -189,14 +192,15 @@ public class LobbyFactory implements EntityFactory {
                   final Session session = getTableView().getItems().get(getIndex());
                   boolean isOwn = session.getCreator().equals(AuthUtils.getPlayer().getName());
                   join.setOnAction(event -> {
-                    JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
-                        AuthUtils.getAuth().getAccessToken());
                     if (session.getLaunched()) {
                       shouldFetch = false;
                       fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
                       GameScreen.initGame(session.getId());
+                    } else {
+                      JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
+                          AuthUtils.getAuth().getAccessToken());
                     }
                   });
                   String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
@@ -236,7 +240,7 @@ public class LobbyFactory implements EntityFactory {
                     if (!session.getLaunched()) {
                       buttons.add(isOwn ? delete : leave);
                     }
-                  } else {
+                  } else if (!session.getLaunched()) {
                     buttons.add(join);
                   }
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
