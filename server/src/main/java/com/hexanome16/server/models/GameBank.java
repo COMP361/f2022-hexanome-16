@@ -7,6 +7,7 @@ import java.util.Hashtable;
  * Game Bank for the whole game.
  */
 public class GameBank extends Bank {
+
   private final Hashtable<Gem, ArrayList<Token>> gameBank;
 
   /**
@@ -16,8 +17,10 @@ public class GameBank extends Bank {
     gameBank = initBank(7);
   }
 
-  public Hashtable<Gem, ArrayList<Token>>  getGameBank() {
+  @Override
+  protected Hashtable<Gem, ArrayList<Token>> getBank() {
     return this.gameBank;
   }
+
 
 }

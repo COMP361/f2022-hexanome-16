@@ -8,6 +8,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import javafx.scene.Node;
@@ -90,7 +91,7 @@ public class PromptComponent extends Component {
     String playerbankPrefix = BuyCardPrompt.BankType.PLAYER_BANK + "/";
     String gameBankPrefix = BuyCardPrompt.BankType.GAME_BANK + "/";
     int i = 0;
-    for (BuyCardPrompt.CurrencyType e : BuyCardPrompt.CurrencyType.values()) {
+    for (CurrencyType e : CurrencyType.values()) {
       String gameBank = gameBankPrefix + (e.toString());
       String playerBankKeys = playerbankPrefix + (e);
       i++;

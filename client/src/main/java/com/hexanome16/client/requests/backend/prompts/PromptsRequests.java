@@ -59,7 +59,7 @@ public class PromptsRequests {
    *
    * @param sessionId Session ID.
    * @param username username of player.
-   * @return PurchaseMap representation of the player's funds
+   * @return PurchaseMap representation of the player's funds as a String
    */
   public static String getPlayerBank(long  sessionId, String username) {
     try {
@@ -78,7 +78,30 @@ public class PromptsRequests {
       e.printStackTrace();
     }
     return null;
+  }
 
+  /**
+   * Retrieves the game bank info after the purchase is done. (or attempted)
+   *
+   * @param sessionId Session ID of the game whose bank we want to retrieve.
+   * @return PurchaseMap representation of the Bank's funds as a String
+   */
+  public static String getNewGameBankInfo(long sessionId) {
+    try {
+      HttpClient client = RequestClient.getClient();
+      URI uri = UrlUtils.createGameServerUri(
+          "/api/game/" + sessionId + "/gameBank", ""
+      );
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(uri).GET()
+          .build();
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+      return response.thenApply(HttpResponse::body).get();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
@@ -95,5 +118,6 @@ public class PromptsRequests {
 
     return requestParam.toString();
   }
+
 
 }
