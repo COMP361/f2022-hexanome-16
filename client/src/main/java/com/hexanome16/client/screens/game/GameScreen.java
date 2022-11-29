@@ -1,6 +1,5 @@
 package com.hexanome16.client.screens.game;
 
-import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
@@ -11,10 +10,8 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
-import com.hexanome16.client.screens.lobby.LobbyFactory;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
@@ -22,32 +19,72 @@ import javafx.concurrent.Task;
  * GameScreen class spawns all the entities for game board.
  */
 public class GameScreen {
-  private String levelOneDeckJson;
   private static final Map<String, Map> level_one = new HashMap<String, Map>();
   private static final Map<String, Map> level_two = new HashMap<String, Map>();
   private static final Map<String, Map> level_three = new HashMap<String, Map>();
-
+  private static String levelOneDeckJson;
+  private static String levelTwoDeckJson;
+  private static String levelThreeDeckJson;
   private static long sessionId = -1;
 
-  private static Thread updateDeck;
+  private static Thread updateLevelOneDeck;
+  private static Thread updateLevelTwoDeck;
+  private static Thread updateLevelThreeDeck;
 
   private static void fetchLevelOneDeckThread() {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
-        deckJson = GameRequest.updateDeck(sessionId, Level.ONE);
+        levelOneDeckJson = GameRequest.updateDeck(sessionId, Level.ONE);
         return null;
       }
     };
     updateDeckTask.setOnSucceeded(e -> {
-      updateDeck = null;
+      updateLevelOneDeck = null;
       Platform.runLater(GameScreen::updateLevelOneDeck);
       fetchLevelOneDeckThread();
     });
-    updateDeck = new Thread(updateDeckTask);
-    updateDeck.setDaemon(true);
-    updateDeck.start();
+    updateLevelOneDeck = new Thread(updateDeckTask);
+    updateLevelOneDeck.setDaemon(true);
+    updateLevelOneDeck.start();
   }
+
+  private static void fetchLevelTwoDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        levelTwoDeckJson = GameRequest.updateDeck(sessionId, Level.TWO);
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateLevelTwoDeck = null;
+      Platform.runLater(GameScreen::updateLevelTwoDeck);
+      fetchLevelTwoDeckThread();
+    });
+    updateLevelTwoDeck = new Thread(updateDeckTask);
+    updateLevelTwoDeck.setDaemon(true);
+    updateLevelTwoDeck.start();
+  }
+
+  private static void fetchLevelThreeDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        levelThreeDeckJson = GameRequest.updateDeck(sessionId, Level.THREE);
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateLevelThreeDeck = null;
+      Platform.runLater(GameScreen::updateLevelThreeDeck);
+      fetchLevelThreeDeckThread();
+    });
+    updateLevelThreeDeck = new Thread(updateDeckTask);
+    updateLevelThreeDeck.setDaemon(true);
+    updateLevelThreeDeck.start();
+  }
+
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
@@ -70,6 +107,15 @@ public class GameScreen {
     initLevelOneDeck();
     initLevelTwoDeck();
     initLevelThreeDeck();
+    if (updateLevelOneDeck == null) {
+      fetchLevelOneDeckThread();
+    }
+    if (updateLevelTwoDeck == null) {
+      fetchLevelTwoDeckThread();
+    }
+    if (updateLevelThreeDeck == null) {
+      fetchLevelThreeDeckThread();
+    }
     // spawn the player's hands
     PlayerDecks.generateAll(4);
   }
@@ -85,57 +131,89 @@ public class GameScreen {
   }
 
   /**
-   * Initializes the number of cards in each deck.
-   *
-   * @param vars game variables
-   */
-  public static void initGameVars(Map<String, Object> vars) {
-    vars.put("level_one_quantity", 40);
-    vars.put("level_two_quantity", 30);
-    vars.put("level_three_quantity", 20);
-  }
-
-  /**
-   * Updates the number of cards in each deck.
-   */
-  public static void onUpdate() {
-    PropertyMap state = FXGL.getWorldProperties();
-    state.setValue("level_three_quantity", level_three.size());
-    state.setValue("level_two_quantity", level_two.size());
-    state.setValue("level_one_quantity", level_one.size());
-  }
-
-  /**
-   * Adds a new level-three card to the game board.
+   * Updates level three deck.
    */
   private static void updateLevelThreeDeck() {
-    String deckJson = GameRequest.updateDeck(sessionId, Level.THREE);
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(levelThreeDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
+
+    String hashToRemove = "";
+    for (Map.Entry<String, Map> entry : level_three.entrySet()) {
+      String hash = entry.getKey();
+      if (!cardHashList.containsKey(hash)) {
+        hashToRemove = hash;
+        for (int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.level_three_grid[i].getCardHash())) {
+            CardComponent.level_three_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    level_three.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!level_three.containsKey(hash)) {
+        level_three.put(hash, card);
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("LevelThreeCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
   }
 
   /**
-   * Adds a new level-two card to the game board.
+   * Updates level two deck.
    */
   private static void updateLevelTwoDeck() {
-    String deckJson = GameRequest.updateDeck(sessionId, Level.TWO);
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(levelTwoDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
+
+    String hashToRemove = "";
+    for (Map.Entry<String, Map> entry : level_two.entrySet()) {
+      String hash = entry.getKey();
+      if (!cardHashList.containsKey(hash)) {
+        hashToRemove = hash;
+        for (int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.level_two_grid[i].getCardHash())) {
+            System.out.println("are you leaving?");
+            CardComponent.level_two_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    level_two.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!level_two.containsKey(hash)) {
+        level_two.put(hash, card);
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("LevelTwoCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
   }
 
   /**
-   * Adds a new level-one card to the game board.
+   * Updates level one deck.
    */
   private static void updateLevelOneDeck() {
-    String deckJson = GameRequest.updateDeck(sessionId, Level.ONE);
-    System.out.println("level one is updating");
     Gson gson = new Gson();
-    Map<String, Object> deckHash = gson.fromJson(deckJson, Map.class);
-    Map<String, Object> cardHashList = (Map<String, Object>)deckHash.get("cards");
+    Map<String, Object> deckHash = gson.fromJson(levelOneDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
 
     String hashToRemove = "";
     //check if remove
     for (Map.Entry<String, Map> entry : level_one.entrySet()) {
       String hash = entry.getKey();
-      if(!cardHashList.containsKey(hash)) {
+      if (!cardHashList.containsKey(hash)) {
         hashToRemove = hash;
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
           if (hash.equals(CardComponent.level_one_grid[i].getCardHash())) {
             CardComponent.level_one_grid[i].removeFromMat();
           }
@@ -145,8 +223,8 @@ public class GameScreen {
     level_one.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>)entry.getValue();
-      if(!level_one.containsKey(hash)) {
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!level_one.containsKey(hash)) {
         level_one.put(hash, card);
         PriceMap pm = getPriceMap(card);
         FXGL.spawn("LevelOneCard",
@@ -154,16 +232,18 @@ public class GameScreen {
                 .put("price", pm).put("MD5", hash));
       }
     }
-    updateLevelOneDeck();
   }
 
+  /**
+   * Gets the initial level one deck.
+   */
   public static void initLevelOneDeck() {
     String deckJson = GameRequest.initDeck(sessionId, Level.ONE);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(deckJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
       level_one.put(hash, card);
       PriceMap pm = getPriceMap(card);
       FXGL.spawn("LevelOneCard",
@@ -172,33 +252,39 @@ public class GameScreen {
     }
   }
 
+  /**
+   * Gets the initial level to deck.
+   */
   public static void initLevelTwoDeck() {
     String deckJson = GameRequest.initDeck(sessionId, Level.TWO);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(deckJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>)entry.getValue();
-      level_two.put(hash,card);
-        PriceMap pm = getPriceMap(card);
-        FXGL.spawn("LevelTwoCard",
-            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
-                .put("price", pm).put("MD5", hash));
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      level_two.put(hash, card);
+      PriceMap pm = getPriceMap(card);
+      FXGL.spawn("LevelTwoCard",
+          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+              .put("price", pm).put("MD5", hash));
     }
   }
 
+  /**
+   * Gets the initial level three deck.
+   */
   public static void initLevelThreeDeck() {
     String deckJson = GameRequest.initDeck(sessionId, Level.THREE);
     Gson gson = new Gson();
     Map<String, Object> cardHashList = gson.fromJson(deckJson, Map.class);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>)entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
       level_three.put(hash, card);
-        PriceMap pm = getPriceMap(card);
-        FXGL.spawn("LevelThreeCard",
-            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
-                .put("price", pm).put("MD5", hash));
+      PriceMap pm = getPriceMap(card);
+      FXGL.spawn("LevelThreeCard",
+          new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+              .put("price", pm).put("MD5", hash));
     }
   }
 
@@ -207,7 +293,7 @@ public class GameScreen {
    */
   public static void exitGame() {
     level_one.clear();
-    level_two.clear();
+    level_three.clear();
     level_three.clear();
     CardComponent.reset();
     NobleComponent.reset();

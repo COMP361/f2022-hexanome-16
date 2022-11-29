@@ -2,15 +2,12 @@ package com.hexanome16.client.screens.game.components;
 
 import static com.hexanome16.client.screens.game.GameFactory.matCoordsX;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
-import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
-import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -29,7 +26,7 @@ public class CardComponent extends Component {
   private boolean adding = false;
   private int gridX;
 
-  private boolean purchased = false;
+  private final boolean purchased = false;
 
   private String cardMD5 = "";
 
@@ -56,9 +53,9 @@ public class CardComponent extends Component {
   public void onUpdate(double tpf) {
     if (fading) {
       Double opacity = entity.getViewComponent().getOpacity();
-      if(opacity > 0) {
+      if (opacity > 0) {
         entity.getViewComponent().setOpacity(opacity - 0.1);
-      }else {
+      } else {
         entity.removeFromWorld();
       }
     } else if (adding) {
@@ -67,7 +64,6 @@ public class CardComponent extends Component {
       if (diff > 0) {
         position.translateX(5);
       } else {
-        System.out.println("diff: " + position.getX() + " " + position.getY());
         adding = false;
       }
     }
@@ -131,6 +127,7 @@ public class CardComponent extends Component {
     }
     for (int i = 0; i < grid.length; i++) {
       if (grid[i] == this) {
+        System.out.println("level two removed");
         grid[i] = null;
         break;
       }
