@@ -14,4 +14,7 @@ public class Config {
   public static final Point2D CURSOR_HOTSPOT = new Point2D(40.0, 10.0);
   public static final Color PRIMARY_COLOR = Color.rgb(78, 147, 180);
   public static final Color SECONDARY_COLOR = Color.rgb(249, 161, 89);
+  public static final double OPPONENT_SCALE = 2.0 / 3.0;
+
+
 }

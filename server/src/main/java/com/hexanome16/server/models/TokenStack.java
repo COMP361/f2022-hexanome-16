@@ -26,5 +26,13 @@ public class TokenStack {
   public void addToken(Token token) {
     tokenList.add(token);
   }
+
+  public void removeToken() {
+    tokenList.remove(0);
+  }
+
+  public boolean isEmpty() {
+    return tokenList.isEmpty();
+  }
 }
 
