@@ -8,7 +8,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public class Player {
   private final String name;
   private final String preferredColour;
-  private final PlayerBank bank;
+  private Inventory inventory; // the player has an inventory, not a bank
+
+  public Inventory getInventory() {
+    return this.inventory;
+  }
+
+  public void setInventory(Inventory inventory) {
+    this.inventory = inventory;
+  }
 
   /**
    * Player Constructor.
@@ -20,7 +28,7 @@ public class Player {
   public Player(String name, String preferredColour) {
     this.name = name;
     this.preferredColour = preferredColour;
-    this.bank = new PlayerBank();
+    this.inventory = new Inventory();
   }
 
 
@@ -33,7 +41,20 @@ public class Player {
   }
 
   public PlayerBank getBank() {
-    return bank;
+    return getInventory().getPlayerBank();
+  }
+
+
+
+
+
+  /**
+   * Add this card to the player's inventory.
+   *
+   * @return true on success
+   */
+  public boolean addCardToInventory(DevelopmentCard developmentCard) {
+    return developmentCard.addToInventory(this.inventory);
   }
 
   // TODO: TEST CASE
@@ -75,15 +96,20 @@ public class Player {
   }
 
 
-  // TODO: TEST CASE
   /**
-   * Adds card to the player's inventory.
+   * Reserve this card.
    *
-   * @param cardToAdd card to add to inventory
+   * @return true on success
    */
-  public void addCardToInventory(DevelopmentCard cardToAdd) {
+  public boolean reserveCard(DevelopmentCard developmentCard) {
+    return developmentCard.reserveCard(this.inventory);
+  }
+
+  public void deleteInventory() {
+    this.inventory = null;
   }
 
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+
 }
