@@ -21,6 +21,7 @@ RUN mvn -Ddocker.javadoc.skip=true package
 # Discard Maven, run JAR file using JRE
 FROM eclipse-temurin:17-jre-alpine AS runtime
 EXPOSE 4243
+LABEL org.opencontainers.image.source=https://github.com/COMP361/f2022-hexanome-16
 
 ## Download the utility that waits for another container to be ready
 ENV WAIT_VERSION 2.7.2
@@ -36,4 +37,3 @@ COPY ./server/src/main/resources/nobles.json /app
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed
-LABEL org.opencontainers.image.source https://github.com/COMP361/f2022-hexanome-16
