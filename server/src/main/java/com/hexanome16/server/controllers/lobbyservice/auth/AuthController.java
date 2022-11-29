@@ -1,10 +1,9 @@
-package com.hexanome16.server.controllers.lobbyservice;
+package com.hexanome16.server.controllers.lobbyservice.auth;
 
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
-import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -68,12 +67,6 @@ public class AuthController {
     return login(null, null, refreshToken);
   }
 
-  /**
-   * This request returns the username of the LS account associated with the access token.
-   *
-   * @param accessToken The access token.
-   * @return The username of the LS account associated with the access token.
-   */
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
 
