@@ -68,6 +68,10 @@ public class Game {
     this.currentPlayerIndex = currentPlayerIndex;
   }
 
+  public Player getCurrentPlayer() {
+    return getPlayers()[getCurrentPlayerIndex()];
+  }
+
   private void createDecks() throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     List<CardJson> cardJsonList =

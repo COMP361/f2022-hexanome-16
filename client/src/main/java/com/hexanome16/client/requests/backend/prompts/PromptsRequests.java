@@ -21,12 +21,12 @@ public class PromptsRequests {
    *
    * @param sessionId id of the game request is sent from.
    * @param cardMd5 Hash value of the card we're sending.
-   * @param username username of player trying to buy card.
+   * @param authToken username of player trying to buy card.
    * @param proposedDeal deal proposed by the player.
    */
   public static void buyCard(long  sessionId,
                                String cardMd5,
-                               String username,
+                               String authToken,
                                PurchaseMap proposedDeal) {
     try {
 
@@ -34,8 +34,8 @@ public class PromptsRequests {
 
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
-              "/api/game/" + sessionId + "/" + cardMd5,
-              requestParam(username, proposedDeal)
+              "/api/games/" + sessionId + "/" + cardMd5,
+              requestParam(authToken, proposedDeal)
           )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
 
@@ -65,7 +65,7 @@ public class PromptsRequests {
     try {
       HttpClient client = RequestClient.getClient();
       URI uri = UrlUtils.createGameServerUri(
-          "/api/game/" + sessionId + "/playerBank",
+          "/api/games/" + sessionId + "/playerBank",
           "username=" + username
       );
       HttpRequest request = HttpRequest.newBuilder()
@@ -90,7 +90,7 @@ public class PromptsRequests {
     try {
       HttpClient client = RequestClient.getClient();
       URI uri = UrlUtils.createGameServerUri(
-          "/api/game/" + sessionId + "/gameBank", ""
+          "/api/games/" + sessionId + "/gameBank", ""
       );
       HttpRequest request = HttpRequest.newBuilder()
           .uri(uri).GET()
@@ -105,16 +105,15 @@ public class PromptsRequests {
   }
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
-  private static String requestParam(String username, PurchaseMap proposedDeal) {
+  private static String requestParam(String authToken, PurchaseMap proposedDeal) {
     StringJoiner requestParam = new StringJoiner("&");
-    requestParam.add("username=" + username);
+    requestParam.add("authenticationToken=" + authToken);
     requestParam.add("rubyAmount=" + proposedDeal.getRubyAmount());
     requestParam.add("emeraldAmount=" + proposedDeal.getEmeraldAmount());
     requestParam.add("sapphireAmount=" + proposedDeal.getSapphireAmount());
     requestParam.add("diamondAmount=" + proposedDeal.getDiamondAmount());
     requestParam.add("onyxAmount=" + proposedDeal.getOnyxAmount());
     requestParam.add("goldAmount=" + proposedDeal.getGoldAmount());
-
 
     return requestParam.toString();
   }

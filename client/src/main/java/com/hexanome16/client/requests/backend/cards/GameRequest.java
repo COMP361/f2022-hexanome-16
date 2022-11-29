@@ -31,7 +31,7 @@ public class GameRequest {
       HttpClient client = RequestClient.getClient();
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
-              "/api/game/" + sessionId + "/deck/init",
+              "/api/games/" + sessionId + "/deck/init",
               "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
           )).GET()
           .build();
@@ -44,11 +44,18 @@ public class GameRequest {
     return null;
   }
 
+  /**
+   * Updates deck.
+   *
+   * @param sessionId session ID.
+   * @param level level.
+   * @return string representation of deck.
+   */
   public static String updateDeck(long sessionId, Level level) {
     HttpClient client = RequestClient.getClient();
     HttpRequest request = HttpRequest.newBuilder()
         .uri(UrlUtils.createGameServerUri(
-            "/api/game/" + sessionId + "/deck",
+            "/api/games/" + sessionId + "/deck",
             "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
         )).header("Content-Type", "application/json")
         .GET()
@@ -60,54 +67,4 @@ public class GameRequest {
   }
 
 
-  /**
-   * Sends a request to draw a card.
-   *
-   * @param sessionId The id of the session.
-   * @param level     The level of the card deck.
-   * @return card json
-   */
-  public static String newCard(long sessionId, Level level) {
-    try {
-      HttpClient client = RequestClient.getClient();
-      URI uri = UrlUtils.createGameServerUri(
-          "/api/game/nextCard/" + sessionId,
-          "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
-      );
-      System.out.println(uri);
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(uri).GET()
-          .build();
-      CompletableFuture<HttpResponse<String>> response =
-          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-      return response.thenApply(HttpResponse::body).get();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  /**
-   * Sends a request to get the next noble.
-   *
-   * @param sessionId The id of the session.
-   * @return noble json
-   */
-  public static String newNoble(long sessionId) {
-    try {
-      HttpClient client = RequestClient.getClient();
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createGameServerUri(
-              "/api/game/nextNoble/" + sessionId,
-              "accessToken=" + AuthUtils.getAuth().getAccessToken()
-          )).GET()
-          .build();
-      CompletableFuture<HttpResponse<String>> response =
-          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-      return response.thenApply(HttpResponse::body).get();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
 }
