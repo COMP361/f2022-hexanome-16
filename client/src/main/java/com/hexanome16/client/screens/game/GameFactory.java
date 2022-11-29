@@ -1,7 +1,6 @@
 package com.hexanome16.client.screens.game;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getip;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -44,7 +43,6 @@ public class GameFactory implements EntityFactory {
    */
   @Spawns("LevelOneCard")
   public Entity newLevelOneCard(SpawnData data) {
-    System.out.println("why are you invisible????");
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(data.getData().get("texture") + ".png")
@@ -156,7 +154,6 @@ public class GameFactory implements EntityFactory {
     Text myNumber = new Text();
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
-    myNumber.textProperty().bind(getip("level_three_quantity").asString());
     StackPane myStackPane = new StackPane();
     Texture level3deck = FXGL.texture("level_three.png");
     myStackPane.getChildren().addAll(level3deck, myNumber);
@@ -179,7 +176,6 @@ public class GameFactory implements EntityFactory {
     Text myNumber = new Text();
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
-    myNumber.textProperty().bind(getip("level_two_quantity").asString());
     StackPane myStackPane = new StackPane();
     Texture level2deck = FXGL.texture("level_two.png");
     myStackPane.getChildren().addAll(level2deck, myNumber);
@@ -202,7 +198,6 @@ public class GameFactory implements EntityFactory {
     Text myNumber = new Text();
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
-    myNumber.textProperty().bind(getip("level_one_quantity").asString());
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
