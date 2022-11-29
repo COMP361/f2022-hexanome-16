@@ -21,12 +21,12 @@ import javafx.scene.text.Text;
 public class DeckFactory implements EntityFactory {
 
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-          .loadFont("BrushScriptMT.ttf");
+      .loadFont("BrushScriptMT.ttf");
 
   // (helper) return a pane with a card and a label
   private StackPane getCard(int multiplicity, String cardName) {
     // current card
-    Texture card = FXGL.texture(cardName);
+    final Texture card = FXGL.texture(cardName);
     // current multiplicity
     Text number = new Text(Integer.toString(multiplicity));
     number.setFont(CURSIVE_FONT_FACTORY.newFont(300));
@@ -43,10 +43,10 @@ public class DeckFactory implements EntityFactory {
     return pane;
   }
 
-    @Spawns("Player")
+  @Spawns("Player")
   public Entity player(SpawnData data) {
     // player icon
-    Texture icon = FXGL.texture("playericon.png");
+    final Texture icon = FXGL.texture("playericon.png");
     // current player's name TODO make this a variable
     String text = (String) data.getData().getOrDefault("name", "Player");
     Text playerName = new Text(text);
@@ -79,7 +79,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("RedCard")
+  @Spawns("RedCard")
   public Entity redCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "redcard.png");
@@ -93,7 +93,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("GreenCard")
+  @Spawns("GreenCard")
   public Entity greenCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "greencard.png");
@@ -107,7 +107,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("BlueCard")
+  @Spawns("BlueCard")
   public Entity blueCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "bluecard.png");
@@ -121,7 +121,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("WhiteCard")
+  @Spawns("WhiteCard")
   public Entity whiteCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "whitecard.png");
@@ -135,7 +135,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("BlackCard")
+  @Spawns("BlackCard")
   public Entity blackCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(2, "blackcard.png");
@@ -149,7 +149,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("GoldCard")
+  @Spawns("GoldCard")
   public Entity goldCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "goldcard.png");
@@ -163,7 +163,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("NobleCard")
+  @Spawns("NobleCard")
   public Entity nobleCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
@@ -177,10 +177,10 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    // this code is reused from peini's part
+  // this code is reused from peini's part
   @Spawns("PlayerTokens")
   public Entity playerTokens(SpawnData data) {
-    StackPane mytokens = new StackPane();
+    final StackPane mytokens = new StackPane();
     Rectangle myRectangle = new Rectangle(110, 160, Color.GREY);
     myRectangle.setOpacity(0.5);
     TilePane tokens = new TilePane();
@@ -207,7 +207,7 @@ public class DeckFactory implements EntityFactory {
     mytokens.setOnMouseExited(e -> {
           myRectangle.setOpacity(0.5);
         }
-    );//.at(getAppWidth()- 210, 10 )
+    ); //.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder(data)
         .view(mytokens)
         .build();
@@ -234,7 +234,7 @@ public class DeckFactory implements EntityFactory {
   }
 
 
-    @Spawns("ReservedNobles")
+  @Spawns("ReservedNobles")
   public Entity reservedNobles(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
@@ -246,7 +246,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("ReservedCards")
+  @Spawns("ReservedCards")
   public Entity reservedCards(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "card.png");
@@ -258,7 +258,7 @@ public class DeckFactory implements EntityFactory {
         .build();
   }
 
-    @Spawns("PlayersTurn")
+  @Spawns("PlayersTurn")
   public Entity playersTurn(SpawnData data) {
     // current player's name TODO make this a variable
     Text text = new Text("Placeholder \n is playing");

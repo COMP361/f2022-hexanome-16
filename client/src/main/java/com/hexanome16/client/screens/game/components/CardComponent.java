@@ -28,16 +28,16 @@ public class CardComponent extends Component {
 
   private final boolean purchased = false;
 
-  private String cardMD5 = "";
+  private String cardMd5 = "";
 
   private PriceMap priceMap = new PriceMap();
 
 
-  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardMD5) {
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardMd5) {
     this.level = level;
     this.texture = texture;
     this.priceMap = priceMap;
-    this.cardMD5 = cardMD5;
+    this.cardMd5 = cardMd5;
   }
 
   /**
@@ -139,7 +139,7 @@ public class CardComponent extends Component {
   }
 
   public String getCardHash() {
-    return cardMD5;
+    return cardMd5;
   }
 
 }
