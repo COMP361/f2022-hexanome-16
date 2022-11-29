@@ -36,3 +36,4 @@ COPY ./server/src/main/resources/nobles.json /app
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed
+LABEL org.opencontainers.image.source https://github.com/COMP361/f2022-hexanome-16
