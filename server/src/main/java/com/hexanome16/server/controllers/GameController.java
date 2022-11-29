@@ -36,7 +36,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class GameController {
 
   //store all the games here
-  private static final Map<Long, Game> gameMap = new HashMap<>();
+  private final Map<Long, Game> gameMap = new HashMap<>();
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
@@ -49,7 +49,7 @@ public class GameController {
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
-  public static Map<Long, Game> getGameMap() {
+  public Map<Long, Game> getGameMap() {
     return gameMap;
   }
 
@@ -62,6 +62,13 @@ public class GameController {
     };
   }
 
+  /**
+   * Verify player by their access .
+   *
+   * @param sessionId session id we desire to verify.
+   * @param accessToken access token we're looking for
+   * @return true if access Token is in game with session ID, false otherwise.
+   */
   public boolean verifyPlayer(long sessionId, String accessToken) {
     Game game = gameMap.get(sessionId);
     if (game == null) {
@@ -75,9 +82,7 @@ public class GameController {
     return false;
   }
 
-  public Map<Long, Game> getGameMap() {
-    return gameMap;
-  }
+
 
 
   /**
@@ -355,7 +360,14 @@ public class GameController {
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 
-  private Player findPlayerByName(Game game, String username) {
+  /**
+   * Finds a player in a game given their username.
+   *
+   * @param game game where player is supposed to be.
+   * @param username name of player.
+   * @return Player with that username in that game, null if no such player.
+   */
+  public Player findPlayerByName(Game game, String username) {
 
     if (game == null) {
       return null;
@@ -369,9 +381,14 @@ public class GameController {
   }
 
 
-
-  // finds player with username "username" in the game, returns null if no such player in game
-  private Player findPlayerByToken(Game game, String authenticationToken) {
+  /**
+   * Finds player with that authentication token in the game.
+   *
+   * @param game game to search.
+   * @param authenticationToken token associated to player
+   * @return player with that token, null if no such player
+   */
+  public Player findPlayerByToken(Game game, String authenticationToken) {
 
     if (game == null) {
       return null;

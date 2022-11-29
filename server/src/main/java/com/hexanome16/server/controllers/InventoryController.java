@@ -1,12 +1,5 @@
 package com.hexanome16.server.controllers;
 
-import com.hexanome16.server.dto.InventoryDto;
-import com.hexanome16.server.models.Inventory;
-import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.Noble;
-import com.hexanome16.server.models.PlayerBank;
-import java.util.List;
-import javax.validation.Valid;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +52,9 @@ public class InventoryController {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token
-    return gameController.findPlayer(gameController.getGameMap().get(sessionId), accessToken);
+    return gameController.findPlayerByToken(
+        gameController.getGameMap().get(sessionId), accessToken
+    );
   }
 
   private JsonNode getInventoryNode(Player player) throws JsonProcessingException {
@@ -69,19 +64,39 @@ public class InventoryController {
   }
 
   /* POST methods *****************************************************************************/
-  @PostMapping(value = {"/games/{sessionId}/inventory/create"})
-  public ResponseEntity<String> createInventory(@PathVariable long sessionId, @RequestParam String accessToken)
+
+  /** Create a new inventory for the given player.
+   *
+   * @param sessionId ID of the current section
+   * @param accessToken access token for this request
+   * @return {@link ResponseEntity} the inventory as a response entity
+   * @throws JsonProcessingException com.fasterxml.jackson.core. json processing exception
+   * */
+  @PostMapping(value = {"/games/{sessionId}/inventory"})
+  public ResponseEntity<String> createInventory(@PathVariable long sessionId,
+                                                @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
-    // return the inventory as a DTO
-    return return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()), HttpStatus.CREATED);
+    // create a new inventory
+    player.setInventory(new Inventory());
+    // return the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()),
+        HttpStatus.CREATED);
   }
 
   /* DELETE methods ************************************************************************/
 
-  @DeleteMapping(value = {"/games/{sessionId}/inventory/delete"})
-  public ResponseEntity<Void> deleteInventory(@PathVariable long sessionId, @RequestParam String accessToken) {
+  /**
+   * Delete inventory.
+   *
+   * @param sessionId session
+   * @param accessToken access token
+   * @return response entity
+   */
+  @DeleteMapping(value = {"/games/{sessionId}/inventory"})
+  public ResponseEntity<Void> deleteInventory(@PathVariable long sessionId,
+                                              @RequestParam String accessToken) {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
     // delete the inventory and return the success
@@ -90,26 +105,61 @@ public class InventoryController {
   }
 
   /* GET methods ******************************************************************************/
-  @GetMapping(value = {"/games/{sessionId}/{playerId}/inventory/cards"})
-  public ResponseEntity<String> getCards(@PathVariable long sessionId, @RequestParam String accessToken)
+
+  /**
+   * get Cards.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token
+   * @return response.
+   * @throws JsonProcessingException if json doesnt work.
+   */
+  @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
+  public ResponseEntity<String> getCards(@PathVariable long sessionId,
+                                         @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
-    // return the cards in the inventory as a DTO
-    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory().getOwnedCards()), HttpStatus.OK);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+        HttpStatus.OK
+    );
   }
 
-  @GetMapping(value = {"/games/{sessionId}/{playerId}/inventory/nobles"})
-  public ResponseEntity<String> getNobles(@PathVariable long sessionId, @RequestParam String accessToken)
+
+  /**
+   * get Nobles.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @return response entity.
+   * @throws JsonProcessingException if json doesnt work
+   */
+  @GetMapping(value = {"/games/{sessionId}/inventory/nobles"})
+  public ResponseEntity<String> getNobles(@PathVariable long sessionId,
+                                          @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
-    // return the cards in the inventory as a DTO
-    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()), HttpStatus.OK);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
+        HttpStatus.OK);
   }
 
-  @GetMapping(value = {"/games/{sessionId}/{playerId}/inventory/reservedCards"})
-  public ResponseEntity<String> getReservedCards(@PathVariable long sessionId, @RequestParam String accessToken)
+
+  /**
+   * Get reserved Cards.
+   *
+   * @param sessionId session Id.
+   * @param accessToken access Token.
+   * @return get reserve nobles.
+   * @throws JsonProcessingException if json doesnt work.
+   */
+  @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
+  public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
+                                                 @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
@@ -118,8 +168,18 @@ public class InventoryController {
     return new ResponseEntity<>(node.get("reservedCards").asText(), HttpStatus.OK);
   }
 
-  @GetMapping(value = {"/games/{sessionId}/{playerId}/inventory/reservedNobles"})
-  public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId, @RequestParam String accessToken)
+
+  /**
+   * get reserved nobles.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @return response entity.
+   * @throws JsonProcessingException if json doesnt work.
+   */
+  @GetMapping(value = {"/games/{sessionId}/inventory/reservedNobles"})
+  public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,
+                                                  @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
