@@ -34,7 +34,7 @@ public class PromptsRequests {
 
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
-              "/api/game/" + sessionId + "/" + cardMd5,
+              "/api/games/" + sessionId + "/" + cardMd5,
               requestParam(authToken, proposedDeal)
           )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
@@ -65,7 +65,7 @@ public class PromptsRequests {
     try {
       HttpClient client = RequestClient.getClient();
       URI uri = UrlUtils.createGameServerUri(
-          "/api/game/" + sessionId + "/playerBank",
+          "/api/games/" + sessionId + "/playerBank",
           "username=" + username
       );
       HttpRequest request = HttpRequest.newBuilder()
@@ -90,7 +90,7 @@ public class PromptsRequests {
     try {
       HttpClient client = RequestClient.getClient();
       URI uri = UrlUtils.createGameServerUri(
-          "/api/game/" + sessionId + "/gameBank", ""
+          "/api/games/" + sessionId + "/gameBank", ""
       );
       HttpRequest request = HttpRequest.newBuilder()
           .uri(uri).GET()
@@ -114,7 +114,6 @@ public class PromptsRequests {
     requestParam.add("diamondAmount=" + proposedDeal.getDiamondAmount());
     requestParam.add("onyxAmount=" + proposedDeal.getOnyxAmount());
     requestParam.add("goldAmount=" + proposedDeal.getGoldAmount());
-
 
     return requestParam.toString();
   }
