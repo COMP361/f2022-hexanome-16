@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.AuthController;
+import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;

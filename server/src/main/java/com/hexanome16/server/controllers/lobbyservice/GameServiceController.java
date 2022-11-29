@@ -1,5 +1,6 @@
 package com.hexanome16.server.controllers.lobbyservice;
 
+import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.GameParams;
 import com.hexanome16.server.util.UrlUtils;
