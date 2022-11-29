@@ -20,7 +20,7 @@ public class DeckHash implements BroadcastContent {
   public DeckHash() {}
 
   /**
-   * Create card MD5.
+   * Create deck MD5.
    *
    * @param game current game
    * @param level deck level
