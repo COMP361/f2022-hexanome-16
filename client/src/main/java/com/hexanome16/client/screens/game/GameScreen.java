@@ -43,7 +43,8 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
-        levelOneDeckJson = GameRequest.updateDeck(sessionId, Level.ONE, DigestUtils.md5Hex(levelOneDeckJson));
+        levelOneDeckJson =
+            GameRequest.updateDeck(sessionId, Level.ONE, DigestUtils.md5Hex(levelOneDeckJson));
         return null;
       }
     };
@@ -61,7 +62,8 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
-        levelTwoDeckJson = GameRequest.updateDeck(sessionId, Level.TWO, DigestUtils.md5Hex(levelTwoDeckJson));
+        levelTwoDeckJson =
+            GameRequest.updateDeck(sessionId, Level.TWO, DigestUtils.md5Hex(levelTwoDeckJson));
         return null;
       }
     };
@@ -79,7 +81,8 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
-        levelThreeDeckJson = GameRequest.updateDeck(sessionId, Level.THREE, DigestUtils.md5Hex(levelThreeDeckJson));
+        levelThreeDeckJson =
+            GameRequest.updateDeck(sessionId, Level.THREE, DigestUtils.md5Hex(levelThreeDeckJson));
         return null;
       }
     };
@@ -279,6 +282,7 @@ public class GameScreen {
       }
     }
   }
+
   /**
    * Resets every component and clears the game board when exit the game.
    */
