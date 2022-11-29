@@ -6,6 +6,7 @@ RUN mvn -f /usr/src/app/pom.xml clean package -P prod
 
 ## Discard Maven, run JAR file using JRE
 FROM eclipse-temurin:17-jre-alpine AS runtime
+LABEL org.opencontainers.image.source=https://github.com/COMP361/f2022-hexanome-16
 
 ## Wait for SQL to be ready
 ENV WAIT_VERSION 2.7.2
@@ -18,4 +19,3 @@ EXPOSE 4242
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash ls-api -s
 RUN apk add --no-cache bash coreutils grep sed
-LABEL org.opencontainers.image.source https://github.com/COMP361/f2022-hexanome-16
