@@ -115,22 +115,6 @@ public class GameController {
   }
 
   /**
-   * Return next card in a deck to client.
-   *
-   * @param sessionId sessionId
-   * @param level     deck level
-   * @return next card on board
-   * @throws JsonProcessingException json exception
-   */
-  @GetMapping(value = {"/game/nextCard/{sessionId}", "/game/nextCard/{sessionId}/"})
-  public String nextCard(@PathVariable long sessionId, @RequestParam String level,
-                         @RequestParam String accessToken)
-      throws JsonProcessingException {
-    return verifyPlayer(sessionId, accessToken) ? objectMapper.writeValueAsString(
-        gameMap.get(sessionId).getDeck(getLevel(level)).nextCard()) : null;
-  }
-
-  /**
    * Return initial deck to client at the start of the game.
    *
    * @param sessionId sessionId
@@ -138,7 +122,7 @@ public class GameController {
    * @return next card on board
    * @throws JsonProcessingException json exception
    */
-  @GetMapping(value = {"/game/{sessionId}/deck/init", "/game/{sessionId}/deck/init/"})
+  @GetMapping(value = {"/games/{sessionId}/deck/init", "/games/{sessionId}/deck/init/"})
   public String getDeckInit(@PathVariable long sessionId, @RequestParam String level,
                             @RequestParam String accessToken)
       throws JsonProcessingException {
@@ -158,7 +142,7 @@ public class GameController {
    * @return updated game deck
    * @throws JsonProcessingException exception
    */
-  @GetMapping(value = "/game/{sessionId}/deck", produces = "application/json; charset=utf-8")
+  @GetMapping(value = "/games/{sessionId}/deck", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getDeck(@PathVariable long sessionId,
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken)
@@ -194,7 +178,7 @@ public class GameController {
    * @return nobles present on the game board
    * @throws JsonProcessingException if json processing fails
    */
-  @GetMapping(value = {"/game/{sessionId}/getNobles", "/game/{sessionId}/getNobles/"})
+  @GetMapping(value = {"/games/{sessionId}/nobles", "/games/{sessionId}/nobles/"})
   public String getNobles(@PathVariable long sessionId, @RequestParam String accessToken)
       throws JsonProcessingException {
     return verifyPlayer(sessionId, accessToken)
@@ -213,7 +197,7 @@ public class GameController {
    * @return String representation of the Purchase map
    * @throws JsonProcessingException if Json processing fails
    */
-  @GetMapping(value = {"/game/{sessionId}/playerBank", "/game/{sessionId}/playerBank/"})
+  @GetMapping(value = {"/games/{sessionId}/playerBank", "/games/{sessionId}/playerBank/"})
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                   @RequestParam String username)
       throws JsonProcessingException {
@@ -241,7 +225,7 @@ public class GameController {
    * @return String representation of the Purchase map
    * @throws JsonProcessingException if Json processing fails
    */
-  @GetMapping(value = {"/game/{sessionId}/gameBank", "/game/{sessionId}/gameBank/"})
+  @GetMapping(value = {"/games/{sessionId}/gameBank", "/games/{sessionId}/gameBank/"})
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
     // session not found
@@ -272,7 +256,7 @@ public class GameController {
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *         HTTP BAD_REQUEST otherwise.
    */
-  @PutMapping(value = {"/game/{sessionId}/{cardMd5}", "/game/{sessionId}/{cardMd5}/"})
+  @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
                                         @PathVariable String cardMd5,
                                         @RequestParam String authenticationToken,
