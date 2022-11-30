@@ -17,6 +17,7 @@ public class PlayerDecks {
   // there are 4 players hence 4 decks
   private static final double horizontal = 150; // horizontal distance between cards
   private static final double vertical = 180; // vertical distance between cards
+  private static final List<String> cards = List.of("red", "green", "blue", "white", "black", "gold");
 
   // helper
   private void spawnHorizontalPlayer(String name, double horizontal, double vertical,
@@ -26,13 +27,13 @@ public class PlayerDecks {
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical + 20)
             .put("name", name)).setScaleUniform(0.2 * scale);
-    // card entities names
-    List<String> cards = List.of("RedCard", "GreenCard",
-            "BlueCard", "WhiteCard", "BlackCard", "GoldCard");
     // spawn the playing cards deck
     while (i < 6) {
-      FXGL.spawn(cards.get(i), horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical)
-              .setScaleUniform(0.25 * scale);
+      FXGL.spawn("Card",
+              new SpawnData(horizontal + (i * PlayerDecks.horizontal) * scale, vertical)
+                      .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+      //FXGL.spawn(cards.get(i), horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical)
+      //        .setScaleUniform(0.25 * scale);
     }
     // spawn the nobles deck
     FXGL.spawn("NobleCard", horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
@@ -52,25 +53,31 @@ public class PlayerDecks {
 
   // helper
   private void spawnLeftPlayer(String name, double verticalShift, double scale) {
+    // spawn the player icon
     FXGL.spawn("Player",
             new SpawnData(horizontal + horizontal * scale, verticalShift + 110)
                     .put("name", name)).setScaleUniform(0.2 * scale);
-    // FXGL.spawn("Card", new SpawnData(xCardDist, verticalShift + 120 + yCardDist * scale)
-    // .put("color", "red")).setScaleUniform(0.25 * scale);
-    FXGL.spawn("RedCard", horizontal, verticalShift + 120 + vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("GreenCard", horizontal + horizontal * scale, verticalShift + 120 + vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("BlueCard", horizontal, verticalShift + 130 + 2 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("WhiteCard", horizontal + horizontal * scale,
-                    verticalShift + 130 + 2 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("BlackCard", horizontal, verticalShift + 140 + 3 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("GoldCard", horizontal + horizontal * scale,
-                    verticalShift + 140 + 3 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
+    // iterate through and spawn all the cards
+    int i = 0;
+    FXGL.spawn("Card",
+            new SpawnData(horizontal, verticalShift + 120 + vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontal + horizontal * scale, verticalShift + 120 + vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontal, verticalShift + 130 + 2 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontal + horizontal * scale, verticalShift + 130 + 2 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontal, verticalShift + 140 + 3 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontal + horizontal * scale, verticalShift + 140 + 3 * vertical * scale)
+                    .put("color", cards.get(i))).setScaleUniform(0.25 * scale);
+    // spawn the nobles, tokens, etc.
     FXGL.spawn("NobleCard", horizontal + horizontal * scale / 2.0,
                     verticalShift + 150 + 4 * vertical * scale)
             .setScaleUniform(0.2 * scale);
@@ -87,25 +94,32 @@ public class PlayerDecks {
 
   private void spawnRightPlayer(String name, double horizontalShift,
                                 double verticalShift, double scale) {
+    // spawn the player icon
     FXGL.spawn("Player",
                     new SpawnData(horizontalShift + horizontal * scale,
                             verticalShift + 110).put("name", name))
             .setScaleUniform(0.2 * scale);
-    FXGL.spawn("RedCard", horizontalShift, verticalShift + 120 + vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("GreenCard", horizontalShift + horizontal * scale,
-                    verticalShift + 120 + vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("BlueCard", horizontalShift, verticalShift + 130 + 2 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("WhiteCard", horizontalShift + horizontal * scale,
-                    verticalShift + 130 + 2 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("BlackCard", horizontalShift, verticalShift + 140 + 3 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
-    FXGL.spawn("GoldCard", horizontalShift + horizontal * scale,
-                    verticalShift + 140 + 3 * vertical * scale)
-            .setScaleUniform(0.25 * scale);
+    // iterate through and spawn all the cards
+    int i = 0;
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift, verticalShift + 120 + vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift + horizontal * scale, verticalShift + 120 + vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift, verticalShift + 130 + 2 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift + horizontal * scale, verticalShift + 130 + 2 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift, verticalShift + 140 + 3 * vertical * scale)
+                    .put("color", cards.get(i++))).setScaleUniform(0.25 * scale);
+    FXGL.spawn("Card",
+            new SpawnData(horizontalShift + horizontal * scale, verticalShift + 140 + 3 * vertical * scale)
+                    .put("color", cards.get(i))).setScaleUniform(0.25 * scale);
+    // spawn the nobles, tokens, etc.
     FXGL.spawn("NobleCard", horizontalShift + horizontal * scale / 2.0,
                     verticalShift + 150 + 4 * vertical * scale)
             .setScaleUniform(0.2 * scale);
