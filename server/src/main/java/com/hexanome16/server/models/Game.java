@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Game class that holds all the information.
  */
+@Getter
 public class Game {
   private final Map<Level, Deck> decks = new HashMap<>();
   private final Map<Level, Deck> onBoardDecks = new HashMap<>();
@@ -24,6 +27,7 @@ public class Game {
   private Player[] players;
   private String creator;
   private String savegame;
+  @Setter
   private int currentPlayerIndex = 0;
   private Deck nobleDeck = new Deck();
 
@@ -48,25 +52,6 @@ public class Game {
     createOnBoardDecks();
   }
 
-  public Player[] getPlayers() {
-    return players;
-  }
-
-  public String getCreator() {
-    return creator;
-  }
-
-  public String getSavegame() {
-    return savegame;
-  }
-
-  public int getCurrentPlayerIndex() {
-    return currentPlayerIndex;
-  }
-
-  public void setCurrentPlayerIndex(int currentPlayerIndex) {
-    this.currentPlayerIndex = currentPlayerIndex;
-  }
 
   public Player getCurrentPlayer() {
     return getPlayers()[getCurrentPlayerIndex()];
@@ -181,20 +166,8 @@ public class Game {
     return decks.get(level);
   }
 
-  public Deck getNobleDeck() {
-    return this.nobleDeck;
-  }
-
   public Deck getOnBoardDeck(Level level) {
     return onBoardDecks.get(level);
-  }
-
-  public Deck getOnBoardNobles() {
-    return this.onBoardNobles;
-  }
-
-  public GameBank getGameBank() {
-    return this.gameBank;
   }
 
 
