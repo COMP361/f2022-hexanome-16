@@ -32,7 +32,6 @@ public class CardComponent extends Component {
 
   private PriceMap priceMap = new PriceMap();
 
-
   /**
    * Creates a new card fxgl component.
    *
