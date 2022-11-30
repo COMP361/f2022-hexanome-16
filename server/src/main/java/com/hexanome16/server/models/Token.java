@@ -1,12 +1,14 @@
 package com.hexanome16.server.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Token class.
  */
+@Getter
+@AllArgsConstructor
 public class Token {
-  final Gem gem;
-
-  public Token(Gem gem) {
-    this.gem = gem;
-  }
+  private final Gem gem;
 }

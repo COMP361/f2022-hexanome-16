@@ -1,21 +1,22 @@
 package com.hexanome16.server.models;
 
+import lombok.Getter;
+import lombok.ToString;
+
 /**
  * Class responsible for representing the gems the player decided to put down
  * to buy a card.
  */
+@Getter
+@ToString
 public class PurchaseMap extends PriceMap {
 
-  int goldAmount;
+  private final int goldAmount;
 
   public PurchaseMap(int rubyAmount, int emeraldAmount, int sapphireAmount, int diamondAmount,
                      int onyxAmount, int goldAmount) {
     super(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount);
     this.goldAmount = goldAmount;
-  }
-
-  public int getGoldAmount() {
-    return goldAmount;
   }
 
   // TODO: TEST CASE
@@ -75,12 +76,6 @@ public class PurchaseMap extends PriceMap {
     return false;
   }
 
-  @Override
-  public String toString() {
-    return String.format("ruby : %s \n emerald : %s \n "
-        + "sapphire : %s \n diamond : %s \n onyx : %s \n gold : %s ", rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
-  }
 }
 
 

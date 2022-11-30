@@ -1,18 +1,26 @@
 package com.hexanome16.server.models.sessions;
 
-import java.util.Arrays;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This class contains information about a session in Lobby Service.
  */
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
 public final class Session {
   private Long id;
   private String creator;
   private GameParams gameParameters;
   private boolean launched;
   private String[] players;
-  private String savegameid;
+  @JsonProperty("savegameid")
+  private String saveGameId;
 
   /**
    * Constructor.
@@ -21,94 +29,16 @@ public final class Session {
    * @param gameParameters The game parameters of the session.
    * @param launched Whether the session is launched.
    * @param players The players in the session.
-   * @param savegameid The savegame id of the session (can be empty).
+   * @param saveGameId The savegame id of the session (can be empty).
    */
   public Session(String creator, GameParams gameParameters, boolean launched, String[] players,
-                 String savegameid) {
+                 String saveGameId) {
     this.creator = creator;
     this.gameParameters = gameParameters;
     this.launched = launched;
     this.players = players;
-    this.savegameid = savegameid;
+    this.saveGameId = saveGameId;
   }
 
-  @Override
-  public String toString() {
-    return "Session{"
-        + "creator='" + creator + '\''
-        + ", gameParameters=" + gameParameters
-        + ", launched=" + (launched ? "yes" : "no")
-        + ", players=" + Arrays.toString(players)
-        + ", savegameid='" + savegameid + '\'' + '}';
-  }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Session session = (Session) o;
-    return getLaunched() == session.getLaunched() && getCreator().equals(session.getCreator())
-        && getGameParameters().equals(session.getGameParameters())
-        && Arrays.equals(getPlayers(), session.getPlayers())
-        && Objects.equals(getSaveGameId(), session.getSaveGameId());
-  }
-
-  @Override
-  public int hashCode() {
-    int result = Objects.hash(getCreator(), getGameParameters(), getLaunched(), getSaveGameId());
-    result = 31 * result + Arrays.hashCode(getPlayers());
-    return result;
-  }
-
-  public String getCreator() {
-    return creator;
-  }
-
-  public GameParams getGameParameters() {
-    return gameParameters;
-  }
-
-  public boolean getLaunched() {
-    return launched;
-  }
-
-  public String[] getPlayers() {
-    return players;
-  }
-
-  public String getSaveGameId() {
-    return savegameid;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setCreator(String creator) {
-    this.creator = creator;
-  }
-
-  public void setGameParameters(GameParams gameParameters) {
-    this.gameParameters = gameParameters;
-  }
-
-  public void setLaunched(boolean launched) {
-    this.launched = launched;
-  }
-
-  public void setPlayers(String[] players) {
-    this.players = players;
-  }
-
-  public void setSaveGameId(String savegameid) {
-    this.savegameid = savegameid;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
 }

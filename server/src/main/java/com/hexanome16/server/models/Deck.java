@@ -4,10 +4,15 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Development deck class.
  */
+@Data
 public class Deck implements BroadcastContent {
   private final List<DevelopmentCard> cardList = new ArrayList<>();
   private int index;
@@ -38,10 +43,6 @@ public class Deck implements BroadcastContent {
       return null;
     }
     return cardList.get(index++);
-  }
-
-  public List<DevelopmentCard> getCardList() {
-    return cardList;
   }
 
   public int remainingAmount() {
