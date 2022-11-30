@@ -28,16 +28,25 @@ public class CardComponent extends Component {
 
   private final boolean purchased = false;
 
-  private String cardMD5 = "";
+  private String cardHash = "";
 
   private PriceMap priceMap = new PriceMap();
 
 
-  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardMD5) {
+  /**
+   * Creates a new card fxgl component.
+   *
+   * @param id card id
+   * @param level card level
+   * @param texture card texture
+   * @param priceMap the price of the card
+   * @param cardHash MD5 hash of the card
+   */
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash) {
     this.level = level;
     this.texture = texture;
     this.priceMap = priceMap;
-    this.cardMD5 = cardMD5;
+    this.cardHash = cardHash;
   }
 
   /**
@@ -99,6 +108,11 @@ public class CardComponent extends Component {
     position.setScaleY(0.15);
   }
 
+  /**
+   * Adds this card to the game board.
+   *
+   * @param grid game board coords
+   */
   private void addToMat(CardComponent[] grid) {
     for (int i = 0; i < grid.length; i++) {
       if (grid[i] == null) {
@@ -110,6 +124,9 @@ public class CardComponent extends Component {
     }
   }
 
+  /**
+   * Removes this card from the game board.
+   */
   public void removeFromMat() {
     this.fading = true;
     CardComponent[] grid;
@@ -127,7 +144,6 @@ public class CardComponent extends Component {
     }
     for (int i = 0; i < grid.length; i++) {
       if (grid[i] == this) {
-        System.out.println("level two removed");
         grid[i] = null;
         break;
       }
@@ -139,7 +155,7 @@ public class CardComponent extends Component {
   }
 
   public String getCardHash() {
-    return cardMD5;
+    return cardHash;
   }
 
 }
