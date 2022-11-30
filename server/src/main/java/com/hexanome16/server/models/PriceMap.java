@@ -1,50 +1,22 @@
 package com.hexanome16.server.models;
 
+import javax.websocket.server.ServerEndpoint;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Holds the token price for a development card.
  */
+@Data
+@AllArgsConstructor
 public class PriceMap {
-  int rubyAmount;
-  int emeraldAmount;
-  int sapphireAmount;
-  int diamondAmount;
-  int onyxAmount;
-
-  /**
-   * Stores a certain price.
-   *
-   * @param rubyAmount     ruby amount
-   * @param emeraldAmount  emerald amount
-   * @param sapphireAmount sapphire amount
-   * @param diamondAmount  diamond amount
-   * @param onyxAmount     onyx amount
-   */
-  public PriceMap(int rubyAmount, int emeraldAmount, int sapphireAmount, int diamondAmount,
-                  int onyxAmount) {
-    this.rubyAmount = rubyAmount;
-    this.emeraldAmount = emeraldAmount;
-    this.sapphireAmount = sapphireAmount;
-    this.diamondAmount = diamondAmount;
-    this.onyxAmount = onyxAmount;
-  }
-
-  public int getRubyAmount() {
-    return rubyAmount;
-  }
-
-  public int getEmeraldAmount() {
-    return emeraldAmount;
-  }
-
-  public int getSapphireAmount() {
-    return sapphireAmount;
-  }
-
-  public int getDiamondAmount() {
-    return diamondAmount;
-  }
-
-  public int getOnyxAmount() {
-    return onyxAmount;
-  }
+  protected int rubyAmount;
+  protected int emeraldAmount;
+  protected int sapphireAmount;
+  protected int diamondAmount;
+  protected int onyxAmount;
 }
