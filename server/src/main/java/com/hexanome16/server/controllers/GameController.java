@@ -67,7 +67,7 @@ public class GameController {
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
     System.out.println(username);
-    if (username.getStatusCode().is2xxSuccessful()) {
+    if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
     }

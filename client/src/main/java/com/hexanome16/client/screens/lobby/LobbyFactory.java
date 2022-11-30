@@ -236,11 +236,17 @@ public class LobbyFactory implements EntityFactory {
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
-                    buttons.add(session.getLaunched() || !isOwn ? join : launch);
                     if (!session.getLaunched()) {
+                      if (isOwn && session.getPlayers().length
+                          >= session.getGameParameters().getMinSessionPlayers()) {
+                        buttons.add(launch);
+                      }
                       buttons.add(isOwn ? delete : leave);
+                    } else {
+                      buttons.add(join);
                     }
-                  } else if (!session.getLaunched()) {
+                  } else if (!session.getLaunched() && session.getPlayers().length
+                      < session.getGameParameters().getMaxSessionPlayers()) {
                     buttons.add(join);
                   }
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));

@@ -28,16 +28,11 @@ public class SettingsScreen {
     return uiSingleton;
   }
 
-//  // more sorry
-//  private static UI getUi(boolean x) {
-//    if (uiSingleton == null) {
-//      uiControllerSingleton = new SettingsScreenUiController();
-//      uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-//      setupUi(x);
-//    }
-//    return uiSingleton;
-//  }
-
+  /**
+   * Setup settings screen ui and ui actions
+   *
+   * @param mainMenu true if I need to re-render the mainMenu on close
+   */
   private static void setupUi(boolean mainMenu) {
     uiControllerSingleton.doneButton.setOnAction((event) -> {
       SettingsScreen.clearUi(mainMenu);
@@ -46,18 +41,6 @@ public class SettingsScreen {
       }
     });
   }
-
-//  /**
-//   * Adds UI layer on top of game screen.
-//   */
-//  public static void initUi() {
-//    if (isVisible) {
-//      return;
-//    }
-//
-//    getGameScene().addUI(getUi());
-//    isVisible = true;
-//  }
 
   /**
    * Adds UI layer on top of game screen.
@@ -72,21 +55,6 @@ public class SettingsScreen {
     getGameScene().addUI(getUi(mainMenu));
     isVisible = true;
   }
-
-//  /**
-//   * Removes UI layer on top of game screen.
-//   */
-//  public static void clearUi() {
-//    if (!isVisible) {
-//      return;
-//    }
-//
-//    getGameScene().removeUI(getUi());
-//
-//    isVisible = false;
-//  }
-
-  //sorry
 
   /**
    * Removes UI layer on top of game screen.
