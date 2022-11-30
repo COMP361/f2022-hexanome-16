@@ -268,7 +268,8 @@ public class GameController {
 
     //
     if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("session id not in game or bad card hash",
+          HttpStatus.BAD_REQUEST);
     }
 
     // Verify player is who they claim to be
@@ -295,7 +296,8 @@ public class GameController {
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (clientPlayer == null
         || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("player not in game or bad deal",
+          HttpStatus.BAD_REQUEST);
     }
     System.out.println("PLAYER FOUND");
     System.out.println(clientPlayer.getName());
@@ -306,7 +308,8 @@ public class GameController {
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount)
         || !game.isPlayersTurn(clientPlayer)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("lack of funds or not player's turn",
+          HttpStatus.BAD_REQUEST);
     }
 
 
