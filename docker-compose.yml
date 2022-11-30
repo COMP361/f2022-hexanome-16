@@ -3,6 +3,7 @@ services:
   database:
     platform: linux/x86_64
     container_name: ls-db
+    image: ghcr.io/comp361/f2022-hexanome-16/database:latest
     build:
       context: .
       dockerfile: Dockerfile-ls-db
@@ -15,6 +16,7 @@ services:
   lobby-service:
     platform: linux/x86_64
     container_name: ls-api
+    image: ghcr.io/comp361/f2022-hexanome-16/lobby-service:latest
     build:
       context: .
       dockerfile: Dockerfile-ls-api
@@ -32,6 +34,7 @@ services:
     platform: linux/x86_64
     container_name: splendor-server
     profiles: ["with-server"]
+    image: ghcr.io/comp361/f2022-hexanome-16/splendor-server:latest
     build:
       context: .
       dockerfile: Dockerfile-server

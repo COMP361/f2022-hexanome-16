@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.AuthController;
+import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
@@ -94,6 +94,7 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
+      //{"players": [{"name": "maex", preferredColour: "#FFFFFF"}, {"name": "linus", preferredColour: "#FFFFFF"}], creator: "maex", savegame: ""}
       Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
       String creator = objectMapper.convertValue(payload.get("creator"), String.class);
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
