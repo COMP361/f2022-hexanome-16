@@ -74,7 +74,8 @@ public class Inventory {
     return ownedCards.add(card);
   }
 
-  /** Reserve the given card.
+  /**
+   * Reserve the given card.
    *
    * @param card card to reserve
    * @return if the card has been reserved successfully
