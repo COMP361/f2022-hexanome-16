@@ -4,7 +4,7 @@ WORKDIR /app
 # Download all the dependencies first so we can cache them
 # (thank you https://stackoverflow.com/a/71066133)
 COPY server/pom.xml .
-RUN mvn -Ddocker.build.skip=true -Ddocker.javadoc.skip=true package test
+RUN mvn -Ddocker.build.skip=true -Ddocker.javadoc.skip=true -Ddocker.test.skip=true package test
 
 # Copy the source code and Checkstyle config
 COPY server/src ./src
@@ -16,11 +16,12 @@ RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/appl
 RUN sed -i 's/server.host=localhost/server.host=splendor-server/g' src/main/resources/application.properties
 
 # Build the application
-RUN mvn -Ddocker.javadoc.skip=true package
+RUN mvn -Ddocker.javadoc.skip=true -Ddocker.test.skip=true package
 
 # Discard Maven, run JAR file using JRE
 FROM eclipse-temurin:17-jre-alpine AS runtime
 EXPOSE 4243
+LABEL org.opencontainers.image.source=https://github.com/COMP361/f2022-hexanome-16
 
 ## Download the utility that waits for another container to be ready
 ENV WAIT_VERSION 2.7.2
