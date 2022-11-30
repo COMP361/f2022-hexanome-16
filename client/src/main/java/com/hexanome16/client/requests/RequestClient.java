@@ -77,7 +77,6 @@ public class RequestClient {
               }
               return body;
             }).get();
-        System.out.println(response);
       } catch (ExecutionException e) {
         e.printStackTrace();
       } catch (InterruptedException e) {

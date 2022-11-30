@@ -1,10 +1,10 @@
-package com.hexanome16.server.controllers.lobbyservice;
+package com.hexanome16.server.controllers.lobbyservice.auth;
 
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
-import javax.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -13,13 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This controller is used for authentication operations related to Lobby Service.
+ * This service is responsible for sending authentication related requests to Lobby Service.
  */
-@RestController
 @Service
 public class AuthController {
   private final RestTemplate restTemplate;
@@ -29,11 +27,13 @@ public class AuthController {
   @Value("${ls.password}")
   private String lsPassword;
 
-  public AuthController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils) {
+  public AuthController(@Autowired RestTemplateBuilder restTemplateBuilder,
+                        @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
   }
 
+  @ResponseBody
   private ResponseEntity<TokensInfo> login(String username, String password, String refreshToken) {
     StringBuilder params = new StringBuilder();
     if (refreshToken == null || refreshToken.isBlank()) {
@@ -59,7 +59,6 @@ public class AuthController {
 
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String username, String password) {
-    assert username != null && !username.isBlank() && password != null && !password.isBlank();
     return login(username, password, null);
   }
 
@@ -69,17 +68,15 @@ public class AuthController {
   }
 
   /**
-   * This request returns the username of the LS account associated with the access token.
+   * Sends a request to Lobby Service to get the username associated with the passed access token.
    *
-   * @param accessToken The access token.
-   * @return The username of the LS account associated with the access token.
+   * @param accessToken The access token of the user.
+   * @return The username associated with the passed access token.
    */
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
-
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
         "access_token=" + accessToken);
-
     assert url != null;
     try {
       return this.restTemplate.getForEntity(url, String.class);
@@ -94,12 +91,13 @@ public class AuthController {
    *
    * @param accessToken The access token.
    */
-  public void logout(String accessToken) {
+  public ResponseEntity<Void> logout(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
     try {
       this.restTemplate.delete(url);
     } catch (Exception e) {
       e.printStackTrace();
     }
+    return ResponseEntity.ok().build();
   }
 }
