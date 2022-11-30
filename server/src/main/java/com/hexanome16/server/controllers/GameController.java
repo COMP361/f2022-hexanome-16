@@ -18,6 +18,7 @@ import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +78,7 @@ public class GameController {
       return false;
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
+    System.out.println(username);
     if (username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
@@ -94,7 +96,6 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
-      System.out.println(payload.get("players"));
       Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
       String creator = objectMapper.convertValue(payload.get("creator"), String.class);
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
