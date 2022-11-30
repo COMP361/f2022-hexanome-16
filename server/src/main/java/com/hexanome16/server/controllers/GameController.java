@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.lobbyservice.AuthController;
 import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.server.dto.NoblesHash;
+import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -65,7 +67,7 @@ public class GameController {
   /**
    * Verify player by their access .
    *
-   * @param sessionId session id we desire to verify.
+   * @param sessionId   session id we desire to verify.
    * @param accessToken access token we're looking for
    * @return true if access Token is in game with session ID, false otherwise.
    */
@@ -83,8 +85,6 @@ public class GameController {
   }
 
 
-
-
   /**
    * Create a new game as client requested.
    *
@@ -94,6 +94,7 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
+      System.out.println(payload.get("players"));
       Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
       String creator = objectMapper.convertValue(payload.get("creator"), String.class);
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
@@ -105,32 +106,20 @@ public class GameController {
           new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.TWO));
       BroadcastContentManager<DeckHash> broadcastContentManagerThree =
           new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.THREE));
+      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+          new BroadcastContentManager<PlayerJson>(
+              new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
+      BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
+          new BroadcastContentManager<NoblesHash>(new NoblesHash(gameMap.get(sessionId)));
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
       broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
       broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
+      broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
+      broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
     } catch (Exception e) {
       e.printStackTrace();
     }
     return "success";
-  }
-
-  /**
-   * Return initial deck to client at the start of the game.
-   *
-   * @param sessionId sessionId
-   * @param level     deck level
-   * @return next card on board
-   * @throws JsonProcessingException json exception
-   */
-  @GetMapping(value = {"/games/{sessionId}/deck/init", "/games/{sessionId}/deck/init/"})
-  public String getDeckInit(@PathVariable long sessionId, @RequestParam String level,
-                            @RequestParam String accessToken)
-      throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
-      DeckHash deckHash = new DeckHash(gameMap.get(sessionId), getLevel(level));
-      return objectMapper.writeValueAsString(deckHash.getCards());
-    }
-    return null;
   }
 
   /**
@@ -139,32 +128,20 @@ public class GameController {
    * @param sessionId   game session id
    * @param level       deck level
    * @param accessToken account access token
+   * @param hash        hash used for long polling
    * @return updated game deck
    * @throws JsonProcessingException exception
    */
   @GetMapping(value = "/games/{sessionId}/deck", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getDeck(@PathVariable long sessionId,
                                                         @RequestParam String level,
-                                                        @RequestParam String accessToken)
+                                                        @RequestParam String accessToken,
+                                                        @RequestParam String hash)
       throws JsonProcessingException {
     if (verifyPlayer(sessionId, accessToken)) {
-      Map<String, DevelopmentCard> cardHash = new HashMap<>();
-      if (level.equals("ONE")) {
-        System.out.println("loop: " + gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-            .getCardList().size());
-        for (DevelopmentCard card : gameMap.get(sessionId).getOnBoardDeck(getLevel(level))
-            .getCardList()) {
-          System.out.println(card.getId() + " " + ((LevelCard) card).getLevel().name());
-        }
-        System.out.println("--------------------------");
-      }
       DeferredResult<ResponseEntity<String>> result;
-      result = ResponseGenerator.getAsyncUpdate(10000, broadcastContentManagerMap.get(level));
-      try {
-        System.out.println(result.getResult().toString());
-      } catch (Exception e) {
-        System.out.println("no change");
-      }
+      result =
+          ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get(level), hash);
       return result;
     }
     return null;
@@ -178,14 +155,44 @@ public class GameController {
    * @return nobles present on the game board
    * @throws JsonProcessingException if json processing fails
    */
-  @GetMapping(value = {"/games/{sessionId}/nobles", "/games/{sessionId}/nobles/"})
-  public String getNobles(@PathVariable long sessionId, @RequestParam String accessToken)
+  @GetMapping(value = "/games/{sessionId}/nobles", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
+                                                          @RequestParam String accessToken,
+                                                          @RequestParam String hash)
       throws JsonProcessingException {
-    return verifyPlayer(sessionId, accessToken)
-        ? objectMapper.writeValueAsString(gameMap.get(sessionId).getOnBoardNobles())
-        : null;
+    if (verifyPlayer(sessionId, accessToken)) {
+      DeferredResult<ResponseEntity<String>> result;
+      result = ResponseGenerator.getHashBasedUpdate(10000,
+          broadcastContentManagerMap.get("noble"), hash);
+      return result;
+    }
+    return null;
+
   }
 
+  /**
+   * Return the username of current player.
+   *
+   * @param sessionId game id
+   * @param accessToken player access token
+   * @param hash hash for long polling
+   * @return current player username
+   * @throws JsonProcessingException exception
+   */
+  @GetMapping(value = "/games/{sessionId}/player", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
+                                                                 @RequestParam String accessToken,
+                                                                 @RequestParam String hash)
+      throws JsonProcessingException {
+    if (verifyPlayer(sessionId, accessToken)) {
+      DeferredResult<ResponseEntity<String>> result;
+      result = ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get("player"),
+          hash);
+      return result;
+    }
+    return null;
+
+  }
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
 
@@ -199,7 +206,7 @@ public class GameController {
    */
   @GetMapping(value = {"/games/{sessionId}/playerBank", "/games/{sessionId}/playerBank/"})
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
-                                  @RequestParam String username)
+                                                  @RequestParam String username)
       throws JsonProcessingException {
     // session not found
     if (!gameMap.containsKey(sessionId)) {
@@ -244,17 +251,17 @@ public class GameController {
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
    *
-   * @param sessionId      sessionID.
-   * @param cardMd5        Card we want to purchase's md5.
-   * @param authenticationToken       username of the player trying to buy the card.
-   * @param rubyAmount     amount of ruby gems proposed.
-   * @param emeraldAmount  amount of emerald gems proposed.
-   * @param sapphireAmount amount of sapphire gems proposed.
-   * @param diamondAmount  amount of diamond gems proposed.
-   * @param onyxAmount     amount of onyx gems proposed.
-   * @param goldAmount     amount of gold gems proposed.
+   * @param sessionId           sessionID.
+   * @param cardMd5             Card we want to purchase's md5.
+   * @param authenticationToken username of the player trying to buy the card.
+   * @param rubyAmount          amount of ruby gems proposed.
+   * @param emeraldAmount       amount of emerald gems proposed.
+   * @param sapphireAmount      amount of sapphire gems proposed.
+   * @param diamondAmount       amount of diamond gems proposed.
+   * @param onyxAmount          amount of onyx gems proposed.
+   * @param goldAmount          amount of gold gems proposed.
    * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
+   *     HTTP BAD_REQUEST otherwise.
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,
@@ -347,7 +354,7 @@ public class GameController {
   /**
    * Finds a player in a game given their username.
    *
-   * @param game game where player is supposed to be.
+   * @param game     game where player is supposed to be.
    * @param username name of player.
    * @return Player with that username in that game, null if no such player.
    */
@@ -368,7 +375,7 @@ public class GameController {
   /**
    * Finds player with that authentication token in the game.
    *
-   * @param game game to search.
+   * @param game                game to search.
    * @param authenticationToken token associated to player
    * @return player with that token, null if no such player
    */
