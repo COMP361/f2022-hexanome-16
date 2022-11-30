@@ -1,8 +1,15 @@
 package com.hexanome16.server.models;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 /**
  * Development card class.
  */
+@Data
 public abstract class DevelopmentCard {
   private final int id;
   private final int prestigePoint;
