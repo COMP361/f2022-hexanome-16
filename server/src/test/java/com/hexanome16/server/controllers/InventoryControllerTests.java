@@ -1,6 +1,6 @@
 package com.hexanome16.server.controllers;
 
-import org.hibernate.cfg.NotYetImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,47 +18,47 @@ public class InventoryControllerTests {
    */
   @BeforeEach
   void setup() {
-
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOwnCards() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOthersCards() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOwnNobles() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOthersNobles() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOwnReservedCards() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOthersReservedCards() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOwnReservedNobles() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
   @Test
   public void testGetOthersReservedNobles() {
-    throw new NotYetImplementedException();
+    throw new NotImplementedException();
   }
 
 }
