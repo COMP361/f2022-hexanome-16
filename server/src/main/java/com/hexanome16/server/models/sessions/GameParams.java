@@ -2,12 +2,20 @@ package com.hexanome16.server.models.sessions;
 
 import java.util.Objects;
 import javax.annotation.PostConstruct;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * This class contains information about session game parameters in Lobby Service.
  */
+@Setter
+@Getter
+@EqualsAndHashCode
+@ToString
 @Component
 public class GameParams {
   private String location;
@@ -57,85 +65,4 @@ public class GameParams {
     this.webSupport = webSupport;
   }
 
-  @Override
-  public String toString() {
-    return "GameParams{"
-        + "location='" + location + '\''
-        + ", maxSessionPlayers=" + maxSessionPlayers
-        + ", minSessionPlayers=" + minSessionPlayers
-        + ", name='" + name + '\''
-        + ", displayName='" + displayName + '\''
-        + ", webSupport='" + webSupport + '\'' + '}';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    GameParams that = (GameParams) o;
-    return getMaxSessionPlayers() == that.getMaxSessionPlayers()
-        && getMinSessionPlayers() == that.getMinSessionPlayers()
-        && getLocation().equals(that.getLocation())
-        && getName().equals(that.getName())
-        && getDisplayName().equals(that.getDisplayName())
-        && getWebSupport().equals(that.getWebSupport());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getLocation(), getMaxSessionPlayers(), getMinSessionPlayers(), getName(),
-        getDisplayName(), getWebSupport());
-  }
-
-  public String getLocation() {
-    return location;
-  }
-
-  public int getMaxSessionPlayers() {
-    return maxSessionPlayers;
-  }
-
-  public int getMinSessionPlayers() {
-    return minSessionPlayers;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public String getWebSupport() {
-    return webSupport;
-  }
-
-  public void setLocation(String location) {
-    this.location = location;
-  }
-
-  public void setMaxSessionPlayers(int maxSessionPlayers) {
-    this.maxSessionPlayers = maxSessionPlayers;
-  }
-
-  public void setMinSessionPlayers(int minSessionPlayers) {
-    this.minSessionPlayers = minSessionPlayers;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public void setWebSupport(String webSupport) {
-    this.webSupport = webSupport;
-  }
 }

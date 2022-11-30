@@ -1,22 +1,20 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Player class.
  */
+@Data
 public class Player {
   private final String name;
   private final String preferredColour;
   private Inventory inventory; // the player has an inventory, not a bank
-
-  public Inventory getInventory() {
-    return this.inventory;
-  }
-
-  public void setInventory(Inventory inventory) {
-    this.inventory = inventory;
-  }
 
   /**
    * Player Constructor.
@@ -31,14 +29,6 @@ public class Player {
     this.inventory = new Inventory();
   }
 
-
-  public String getName() {
-    return name;
-  }
-
-  public String getPreferredColour() {
-    return preferredColour;
-  }
 
   public PlayerBank getBank() {
     return getInventory().getPlayerBank();
