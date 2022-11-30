@@ -41,7 +41,6 @@ public abstract class DevelopmentCard {
     return texturePath;
   }
 
-
   /** Add this card to the player's inventory.
    *
    * @return true on success */
