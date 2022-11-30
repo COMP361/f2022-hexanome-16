@@ -67,6 +67,12 @@ public class AuthController {
     return login(null, null, refreshToken);
   }
 
+  /**
+   * Logout from Lobby Service.
+   *
+   * @param accessToken
+   * @return
+   */
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
