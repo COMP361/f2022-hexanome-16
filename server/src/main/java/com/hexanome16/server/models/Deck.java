@@ -52,4 +52,21 @@ public class Deck implements BroadcastContent {
   public boolean isEmpty() {
     return cardList.isEmpty();
   }
+
+  public boolean isSameDeck(Deck otherDeck) {
+    if (otherDeck == null) {
+      return false;
+    }
+    if (this.getCardList().size() != otherDeck.getCardList().size()) {
+      return false;
+    }
+    for (int i = 0; i < this.getCardList().size() && !this.getCardList().isEmpty(); i++) {
+      if (this.getCardList().get(i).getId() != otherDeck.getCardList().get(i).getId()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
 }

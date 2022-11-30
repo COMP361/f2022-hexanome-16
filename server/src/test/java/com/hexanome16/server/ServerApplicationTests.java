@@ -1,12 +1,6 @@
 package com.hexanome16.server;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
-import com.hexanome16.server.models.GameBank;
-import com.hexanome16.server.models.Gem;
-import com.hexanome16.server.models.PlayerBank;
-import com.hexanome16.server.models.Token;
+import com.hexanome16.server.models.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -50,13 +44,37 @@ class ServerApplicationTests {
     assertTrue(playerBankTest.hasAtLeast(4, 4, 4,
         4, 4, 4));
   }
-
+  @Test
+  // This test checks that over-withdrawing is not possible
   public void testDecreasePlayerTokensToNeg() {
     PlayerBank playerBankTest = new PlayerBank();
     playerBankTest.incBank(-4, -4, -4,
         -4, -4, -4);
     assertTrue(playerBankTest.hasAtLeast(0, 0, 0,
         0, 0, 0));
+  }
+
+  @Test
+  public void testInitBagBonusType() {
+    BagBonus bagBonusTest = new BagBonus(BonusType.CARD_BONUS);
+    assertEquals(BonusType.CARD_BONUS, bagBonusTest.getBonusType());
+  }
+
+  @Test
+  public void testInitBagBonusGem() {
+    BagBonus bagBonusTest = new BagBonus(BonusType.CARD_BONUS);
+    bagBonusTest.setChosenGem(Gem.RUBY);
+    assertEquals(Gem.RUBY, bagBonusTest.getChosenGem());
+  }
+
+  @Test
+  public void testDeckShuffle() {
+    Deck deckTest1 = new Deck();
+    deckTest1.shuffle();
+    Deck deckTest2 = new Deck();
+    deckTest2.shuffle();
+    System.out.println(deckTest1.isSameDeck(deckTest2));
+    assertFalse(deckTest1.isSameDeck(deckTest2));
   }
 
 }
