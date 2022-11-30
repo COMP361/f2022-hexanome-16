@@ -68,10 +68,10 @@ public class AuthController {
   }
 
   /**
-   * Logout from Lobby Service.
+   * Sends a request to Lobby Service to get the username associated with the passed access token.
    *
-   * @param accessToken
-   * @return
+   * @param accessToken The access token of the user.
+   * @return The username associated with the passed access token.
    */
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
