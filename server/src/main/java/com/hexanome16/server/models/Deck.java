@@ -46,11 +46,12 @@ public class Deck implements BroadcastContent {
   }
 
   public int remainingAmount() {
-    return cardList.size() - index - 1;
+    return cardList.size() - index;
   }
 
   @Override
   public boolean isEmpty() {
     return cardList.isEmpty();
   }
+
 }
