@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for {@link DevelopmentCard}.
+ */
 public class DevelopmentCardTest {
   private final PriceMap priceMap = new PriceMap(1, 2, 3, 4, 5);
 

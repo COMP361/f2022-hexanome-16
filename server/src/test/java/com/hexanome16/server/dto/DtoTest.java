@@ -7,6 +7,10 @@ import com.hexanome16.server.models.Level;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for {@link CardJson}, {@link DeckHash}, {@link NobleJson}
+ * , {@link NoblesHash} and {@link PlayerJson}.
+ */
 public class DtoTest {
 
   private final Game game = new Game(12345, null, "", "");
@@ -21,17 +25,17 @@ public class DtoTest {
   }
 
   @Test
-  public void testDeckEmpty(){
+  public void testDeckEmpty() {
     assertNotNull(deckHash.isEmpty());
   }
 
   @Test
-  public void testNoblesEmpty(){
+  public void testNoblesEmpty() {
     assertNotNull(noblesHash.isEmpty());
   }
 
   @Test
-  public void testPlayerEmpty(){
+  public void testPlayerEmpty() {
     assertNotNull(playerJson.isEmpty());
   }
 }
