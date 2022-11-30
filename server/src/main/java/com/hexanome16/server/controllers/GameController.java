@@ -18,7 +18,6 @@ import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,15 +53,6 @@ public class GameController {
 
   public Map<Long, Game> getGameMap() {
     return gameMap;
-  }
-
-  private Level getLevel(String level) {
-    return switch (level) {
-      case "ONE" -> Level.ONE;
-      case "TWO" -> Level.TWO;
-      case "THREE" -> Level.THREE;
-      default -> throw new IllegalArgumentException("Invalid level");
-    };
   }
 
   /**

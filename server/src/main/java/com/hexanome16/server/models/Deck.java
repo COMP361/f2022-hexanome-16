@@ -53,4 +53,5 @@ public class Deck implements BroadcastContent {
   public boolean isEmpty() {
     return cardList.isEmpty();
   }
+
 }
