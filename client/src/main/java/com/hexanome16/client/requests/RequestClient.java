@@ -56,4 +56,34 @@ public class RequestClient {
     }
     return new Pair<>(DigestUtils.md5Hex(response), response);
   }
+
+  /**
+   * Long polling but no need to hash result.
+   *
+   * @param request http request to send
+   * @return response as string
+   */
+  public static String longPollAlt(HttpRequest request) {
+    String response = "";
+    AtomicInteger returnCode = new AtomicInteger(408);
+    while (returnCode.get() == 408) {
+      try {
+        CompletableFuture<HttpResponse<String>> res =
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        response = res.thenApply(HttpResponse::statusCode)
+            .thenCombine(res.thenApply(HttpResponse::body), (statusCode, body) -> {
+              if (statusCode == 200) {
+                returnCode.set(200);
+              }
+              return body;
+            }).get();
+        System.out.println(response);
+      } catch (ExecutionException e) {
+        e.printStackTrace();
+      } catch (InterruptedException e) {
+        System.out.println("Interrupted long polling");
+      }
+    }
+    return response;
+  }
 }
