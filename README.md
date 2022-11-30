@@ -22,6 +22,17 @@
     * If you'd like to run this manually, do ```docker-compose --profile with-server up -d --build --force-recreate --remove-orphans```.
   * Start the client with Splendor Dev run config in IntelliJ.
 
+## How to deploy and run the project (production)
+  * Prerequisites: you need a GitHub PAT (Personal Access Token) with the `write:packages` scope and an Ubuntu/Debian server.
+    * If you don't want to hassle with PAT, you can use the one Costa created (already included in script), but deployment will be credited to him.
+    * The Ubuntu/Debian server should not have a private IP to prevent wrong Docker network configuration.
+    * Commands below assume you are in the root of the project, and you're executing them in Bash (Git Bash for Windows).
+  * Make sure the project is stable and ready to be deployed.
+  * First, publish the images to GitHub Packages:  ```./publish-images.sh```.
+  * Next, SSH into the server and run the setup script: ```ssh root@ip 'bash -s' < ./server-setup-script.sh``` (current ip is listed in ```server-prod.properties```).
+  * Wait for the server to execute all commands.
+  * Start the client with Splendor Prod run config in IntelliJ.
+
 ## The Rules
 
  * Feel free to edit/replace this file.
