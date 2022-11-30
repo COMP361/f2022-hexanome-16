@@ -94,6 +94,7 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
+      System.out.println(payload.get("players"));
       Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
       String creator = objectMapper.convertValue(payload.get("creator"), String.class);
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
