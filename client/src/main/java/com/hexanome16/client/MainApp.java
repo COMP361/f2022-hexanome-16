@@ -46,14 +46,4 @@ public class MainApp extends GameApplication {
     getGameScene().setCursor(FXGL.getAssetLoader().loadCursorImage("cursor.png"), CURSOR_HOTSPOT);
     StartupScreen.backToStartupScreen();
   }
-
-  @Override
-  protected void onUpdate(double tpf) {
-    GameScreen.onUpdate();
-  }
-
-  @Override
-  protected void initGameVars(Map<String, Object> vars) {
-    GameScreen.initGameVars(vars);
-  }
 }

@@ -28,6 +28,7 @@ public class Game {
   private Deck nobleDeck = new Deck();
 
   private Deck onBoardNobles = new Deck();
+  private GameBank gameBank;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -42,6 +43,7 @@ public class Game {
     this.players = players;
     this.creator = creator;
     this.savegame = savegame;
+    gameBank = new GameBank();
     createDecks();
     createOnBoardDecks();
   }
@@ -64,6 +66,10 @@ public class Game {
 
   public void setCurrentPlayerIndex(int currentPlayerIndex) {
     this.currentPlayerIndex = currentPlayerIndex;
+  }
+
+  public Player getCurrentPlayer() {
+    return getPlayers()[getCurrentPlayerIndex()];
   }
 
   private void createDecks() throws IOException {
@@ -187,6 +193,11 @@ public class Game {
     return this.onBoardNobles;
   }
 
+  public GameBank getGameBank() {
+    return this.gameBank;
+  }
+
+
   /**
    * Adds a new card from deck to game board.
    *
@@ -203,5 +214,104 @@ public class Game {
    */
   public void removeOnBoardCard(LevelCard card) {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
+  }
+
+  // TODO: TEST CASE
+  /**
+   * Checks if is player's turn.
+   *
+   * @param player player we want to check.
+   * @return true if is player's turn, false otherwise
+   */
+  public boolean isPlayersTurn(Player player) {
+    return findPlayerIndex(player) == currentPlayerIndex;
+  }
+
+  // TODO: TEST CASE
+  /**
+   * Ends current player's turn and starts next player's turn.
+   */
+  public void endCurrentPlayersTurn() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+  }
+
+  // TODO: TEST CASE
+  /**
+   * increments game bank by the amount specified by each parameter for each of their
+   * corresponding gem types.
+   *
+   * @param rubyAmount amount to increase ruby stack by.
+   * @param emeraldAmount amount to increase emerald stack by.
+   * @param sapphireAmount amount to increase sapphire stack by.
+   * @param diamondAmount amount to increase diamond stack by.
+   * @param onyxAmount amount to increase onyx stack by.
+   * @param goldAmount amount to increase gold stack by.
+   */
+  public void incGameBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
+                          int diamondAmount, int onyxAmount, int goldAmount) {
+    getGameBank().incBank(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount);
+  }
+
+
+  // TODO: TEST CASE
+  /**
+   * Increase game bank and decrease player bank by specified amount. (works the opposite for
+   * negative number)
+   *
+   * @param player player whose funds will get decreased.
+   * @pre player is in game.
+   * @param rubyAmount amount to increase ruby stack by.
+   * @param emeraldAmount amount to increase emerald stack by.
+   * @param sapphireAmount amount to increase sapphire stack by.
+   * @param diamondAmount amount to increase diamond stack by.
+   * @param onyxAmount amount to increase onyx stack by.
+   * @param goldAmount amount to increase gold stack by.
+   */
+  public void incGameBankFromPlayer(Player player, int rubyAmount, int emeraldAmount,
+                                    int sapphireAmount, int diamondAmount, int onyxAmount,
+                                    int goldAmount) {
+    player.incPlayerBank(-rubyAmount, -emeraldAmount, -sapphireAmount,
+        -diamondAmount, -onyxAmount, -goldAmount);
+
+    incGameBank(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount);
+  }
+
+  // TODO: TEST CASE
+  /**
+   * Checks if game bank has at least x amount of each gem type.
+   *
+   * @param rubyAmount minimum amount or rubies player should have
+   * @param emeraldAmount minimum amount or emerald player should have
+   * @param sapphireAmount minimum amount or sapphire player should have
+   * @param diamondAmount minimum amount or diamond player should have
+   * @param onyxAmount minimum amount or onyx player should have
+   * @param goldAmount minimum amount or gold player should have
+   * @return true if bank has at least input amounts of each gem type, false otherwise.
+   */
+  public boolean gameBankHasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
+                                    int diamondAmount, int onyxAmount, int goldAmount) {
+    return getGameBank().hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount);
+  }
+
+
+  public PurchaseMap gameBankToPurchaseMap() {
+    return getGameBank().toPurchaseMap();
+  }
+
+  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+
+  // TODO: TEST CASE
+  private int findPlayerIndex(Player player) {
+    int i = 0;
+    for (Player e : getPlayers()) {
+      if (e == player) {
+        return i;
+      }
+      i++;
+    }
+    return -1;
   }
 }

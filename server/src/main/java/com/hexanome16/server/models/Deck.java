@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Development deck class.
  */
-public class Deck {
+public class Deck implements BroadcastContent {
   private final List<DevelopmentCard> cardList = new ArrayList<>();
   private int index;
 
@@ -47,4 +48,8 @@ public class Deck {
     return cardList.size() - index - 1;
   }
 
+  @Override
+  public boolean isEmpty() {
+    return cardList.isEmpty();
+  }
 }

@@ -76,8 +76,10 @@ public class AuthController {
    */
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
+
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
         "access_token=" + accessToken);
+
     assert url != null;
     try {
       return this.restTemplate.getForEntity(url, String.class);
