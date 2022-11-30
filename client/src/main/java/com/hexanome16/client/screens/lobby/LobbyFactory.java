@@ -404,7 +404,7 @@ public class LobbyFactory implements EntityFactory {
         "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> {
-      SettingsScreen.initUi(true);
+      SettingsScreen.initUi(false);
     });
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
