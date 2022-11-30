@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -65,5 +67,21 @@ public class DeckTest {
   public void testIsEmpty(){
     deck.removeCard(noble_1);
     assertTrue(deck.isEmpty());
+  }
+
+  @Test
+  public void testDeckShuffle() {
+    Deck deckTest1 = new Deck();
+    addCardsToDeckAndShuffle(deckTest1, 10);
+    Deck deckTest2 = new Deck();
+    addCardsToDeckAndShuffle(deckTest2, 10);
+    Assert.assertEquals(false, deckTest1.isSameDeck(deckTest2));
+  }
+
+  private void addCardsToDeckAndShuffle(Deck deck, int amount) {
+    for (int i = 0; i < amount; i++) {
+      deck.addCard(new LevelCard(i, 0, "", new CardPrice(), Level.ONE ));
+    }
+    deck.shuffle();
   }
 }
