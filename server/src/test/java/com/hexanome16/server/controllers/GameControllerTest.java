@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 @ExtendWith(SpringExtension.class)
@@ -40,12 +41,13 @@ public class GameControllerTest {
   private final String savegame = "";
   private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  private final Map<String, Object> payload = new HashMap<String, Object>();
   @Autowired
   private GameController gameController;
   @Autowired
   private AuthController authController;
   private String accessToken;
-  private final Map<String, Object> payload = new HashMap<String, Object>();
+  private String invalidAccessToken;
   private String gameResponse;
 
   @BeforeEach
@@ -53,6 +55,8 @@ public class GameControllerTest {
     ResponseEntity<TokensInfo> tokens = authController.login("kim", "123");
     authController.login("imad", "123");
     accessToken = tokens.getBody().getAccessToken();
+    tokens = authController.login("peini", "123");
+    invalidAccessToken = tokens.getBody().getAccessToken();
     List playerList = new ArrayList<String>();
     playerList.add(objectMapper.readValue(imad, Map.class));
     playerList.add(objectMapper.readValue(kim, Map.class));
@@ -81,9 +85,9 @@ public class GameControllerTest {
   public void testUpdateDeckFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getDeck(12345, "ONE", "accessToken", hash)
-            .getResult();
+    DeferredResult<ResponseEntity<String>> response =
+        gameController.getDeck(12345, "ONE",
+            invalidAccessToken, hash);
     assertNull(response);
   }
 
@@ -100,8 +104,9 @@ public class GameControllerTest {
   public void testUpdateNoblesFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getNobles(12345, "accessToken", hash).getResult();
+    DeferredResult<ResponseEntity<String>> response =
+        gameController.getNobles(12345, invalidAccessToken,
+            hash);
     assertNull(response);
   }
 
@@ -119,9 +124,9 @@ public class GameControllerTest {
   public void testCurrentPlayerFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getCurrentPlayer(12345, "accessToken", hash)
-            .getResult();
+    DeferredResult<ResponseEntity<String>> response =
+        gameController.getCurrentPlayer(12345,
+            invalidAccessToken, hash);
     assertNull(response);
   }
 }
