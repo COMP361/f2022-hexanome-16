@@ -1,4 +1,4 @@
-package com.hexanome16.server.controllers.lobbyservice;
+package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
 import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.models.auth.TokensInfo;
@@ -58,7 +58,7 @@ public class GameServiceController {
    * It is called at the startup of the server.
    */
   @EventListener(ApplicationReadyEvent.class)
-  public void createGameService() {
+  public ResponseEntity<Void> createGameService() {
     ResponseEntity<TokensInfo> tokensInfo = authController.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
@@ -73,5 +73,23 @@ public class GameServiceController {
     } catch (HttpClientErrorException.BadRequest e) {
       System.out.println("Game service already registered");
     }
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * This method deletes the associated game service in Lobby Service.
+   */
+  public ResponseEntity<Void> deleteGameService() {
+    ResponseEntity<TokensInfo> tokensInfo = authController.login(gsUsername, gsPassword);
+    System.out.println(tokensInfo.getBody());
+    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
+        "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
+    assert url != null;
+    try {
+      this.restTemplate.delete(url);
+    } catch (HttpClientErrorException.BadRequest e) {
+      System.out.println("Game service not deleted");
+    }
+    return ResponseEntity.ok().build();
   }
 }

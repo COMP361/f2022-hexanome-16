@@ -4,6 +4,7 @@ import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -12,13 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This controller is used for authentication operations related to Lobby Service.
+ * This service is responsible for sending authentication related requests to Lobby Service.
  */
-@RestController
 @Service
 public class AuthController {
   private final RestTemplate restTemplate;
@@ -28,11 +27,13 @@ public class AuthController {
   @Value("${ls.password}")
   private String lsPassword;
 
-  public AuthController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils) {
+  public AuthController(@Autowired RestTemplateBuilder restTemplateBuilder,
+                        @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
   }
 
+  @ResponseBody
   private ResponseEntity<TokensInfo> login(String username, String password, String refreshToken) {
     StringBuilder params = new StringBuilder();
     if (refreshToken == null || refreshToken.isBlank()) {
@@ -58,7 +59,6 @@ public class AuthController {
 
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String username, String password) {
-    assert username != null && !username.isBlank() && password != null && !password.isBlank();
     return login(username, password, null);
   }
 
@@ -69,10 +69,8 @@ public class AuthController {
 
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
-
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
         "access_token=" + accessToken);
-
     assert url != null;
     try {
       return this.restTemplate.getForEntity(url, String.class);
@@ -87,12 +85,13 @@ public class AuthController {
    *
    * @param accessToken The access token.
    */
-  public void logout(String accessToken) {
+  public ResponseEntity<Void> logout(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
     try {
       this.restTemplate.delete(url);
     } catch (Exception e) {
       e.printStackTrace();
     }
+    return ResponseEntity.ok().build();
   }
 }
