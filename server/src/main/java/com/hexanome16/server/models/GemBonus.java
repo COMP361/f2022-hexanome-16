@@ -1,8 +1,17 @@
 package com.hexanome16.server.models;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Bonus for a base game card.
  */
+@Getter
+@Setter
+@ToString
 public class GemBonus extends Bonus {
   private Gem gem;
   private GemAmount gemAmount;
@@ -20,11 +29,4 @@ public class GemBonus extends Bonus {
     this.gemAmount = gemAmount;
   }
 
-  public void setGem(Gem gem) {
-    this.gem = gem;
-  }
-
-  public void setGemAmount(GemAmount gemAmount) {
-    this.gemAmount = gemAmount;
-  }
 }
