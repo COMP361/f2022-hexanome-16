@@ -18,6 +18,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * Player's deck factory.
+ *
+ * @author Elea Dufresne
+ */
 public class DeckFactory implements EntityFactory {
 
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
@@ -25,8 +30,6 @@ public class DeckFactory implements EntityFactory {
 
   // (helper) return a pane with a card and a label
   private StackPane getCard(int multiplicity, String cardName) {
-    // current card
-    Texture card = FXGL.texture(cardName);
     // current multiplicity
     Text number = new Text(Integer.toString(multiplicity));
     number.setFont(CURSIVE_FONT_FACTORY.newFont(300));
@@ -34,6 +37,8 @@ public class DeckFactory implements EntityFactory {
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#936D35"));
     number.setStyle("-fx-background-color: ffffff00; ");
+    // current card
+    Texture card = FXGL.texture(cardName);
     // pane
     StackPane pane = new StackPane();
     StackPane.setAlignment(card, Pos.CENTER);
@@ -43,13 +48,17 @@ public class DeckFactory implements EntityFactory {
     return pane;
   }
 
-    @Spawns("Player")
+  /**
+   * Player entity - spawns their icon and their name -.
+   *
+   * @param data player's chosen name and icon
+   * @return player
+   */
+  @Spawns("Player")
   public Entity player(SpawnData data) {
-    // player icon
-    Texture icon = FXGL.texture("playericon.png");
-    // current player's name TODO make this a variable
-    String text = (String) data.getData().getOrDefault("name", "Player");
-    Text playerName = new Text(text);
+    // current player's name
+    String name = (String) data.getData().getOrDefault("name", "Player");
+    Text playerName = new Text(name);
     playerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
     playerName.setStrokeWidth(2.);
@@ -62,6 +71,8 @@ public class DeckFactory implements EntityFactory {
     prestigePoints.setStrokeWidth(2.);
     prestigePoints.setStroke(Paint.valueOf("#000000"));
     prestigePoints.setStyle("-fx-background-color: ffffff00; ");
+    // player icon
+    final Texture icon = FXGL.texture("playericon.png");
     // pane
     BorderPane pane = new BorderPane();
     BorderPane.setAlignment(prestigePoints, Pos.TOP_RIGHT);
@@ -71,116 +82,185 @@ public class DeckFactory implements EntityFactory {
     pane.setCenter(icon);
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.2, 0.2)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.2, 0.2)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("RedCard")
+  /**
+   * TODO Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("Card")
+  public Entity card(SpawnData data) {
+    // get a pane for this card
+    String color = (String) data.getData().getOrDefault("color", "red");
+    StackPane pane = getCard(0, color + ".png");
+    // build the entity
+    return FXGL.entityBuilder(data)
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
+  }
+
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("RedCard")
   public Entity redCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "redcard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("GreenCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("GreenCard")
   public Entity greenCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "greencard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("BlueCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("BlueCard")
   public Entity blueCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "bluecard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("WhiteCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("WhiteCard")
   public Entity whiteCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "whitecard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("BlackCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("BlackCard")
   public Entity blackCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(2, "blackcard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("GoldCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("GoldCard")
   public Entity goldCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "goldcard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.25, 0.25)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.25, 0.25)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    @Spawns("NobleCard")
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   */
+  @Spawns("NobleCard")
   public Entity nobleCard(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.2, 0.2)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
-        .build();
+            .view(pane)
+            .scale(0.2, 0.2)
+            .onClick(e -> {
+              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+            })
+            .build();
   }
 
-    // this code is reused from peini's part
+  /**
+   * Card entity - spawns card of the specified color -.
+   *
+   * @param data card's color
+   * @return card
+   * @author Peini, Elea
+   */
   @Spawns("PlayerTokens")
   public Entity playerTokens(SpawnData data) {
-    StackPane mytokens = new StackPane();
+    final StackPane mytokens = new StackPane();
     Rectangle myRectangle = new Rectangle(110, 160, Color.GREY);
     myRectangle.setOpacity(0.5);
     TilePane tokens = new TilePane();
@@ -205,14 +285,20 @@ public class DeckFactory implements EntityFactory {
       myRectangle.setOpacity(0.7);
     });
     mytokens.setOnMouseExited(e -> {
-          myRectangle.setOpacity(0.5);
-        }
-    );//.at(getAppWidth()- 210, 10 )
+      myRectangle.setOpacity(0.5);
+    });
+    //.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder(data)
-        .view(mytokens)
-        .build();
+            .view(mytokens)
+            .build();
   }
 
+  /** Token Entity.
+   *
+   * @param tokens tokens
+   * @param textureName textureName
+   * @param amount amount
+   */
   private void addToken(TilePane tokens, String textureName, int amount) {
     // token (image)
     Texture token = FXGL.texture(textureName);
@@ -233,32 +319,46 @@ public class DeckFactory implements EntityFactory {
     tokens.getChildren().add(myToken);
   }
 
-
-    @Spawns("ReservedNobles")
+  /** Reserved Noble.
+   *
+   * @param data noble
+   * @return noble
+   */
+  @Spawns("ReservedNobles")
   public Entity reservedNobles(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
     pane.setOpacity(0.5);
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.1, 0.1)
-        .build();
+            .view(pane)
+            .scale(0.1, 0.1)
+            .build();
   }
 
-    @Spawns("ReservedCards")
+  /** Reserved Card entity - spawns card of the specified color -.
+   *
+   * @param data card
+   * @return card
+   */
+  @Spawns("ReservedCards")
   public Entity reservedCards(SpawnData data) {
     // get a pane for this card
     StackPane pane = getCard(0, "card.png");
     pane.setOpacity(0.5);
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.07, 0.07)
-        .build();
+            .view(pane)
+            .scale(0.07, 0.07)
+            .build();
   }
 
-    @Spawns("PlayersTurn")
+  /** To display the current player.
+   *
+   * @param data player whose turn it is
+   * @return player's turn
+   */
+  @Spawns("PlayersTurn")
   public Entity playersTurn(SpawnData data) {
     // current player's name TODO make this a variable
     Text text = new Text("Placeholder \n is playing");
@@ -272,9 +372,9 @@ public class DeckFactory implements EntityFactory {
     pane.getChildren().addAll(text);
     // build the entity
     return FXGL.entityBuilder(data)
-        .view(pane)
-        .scale(0.5, 0.5)
-        .build();
+            .view(pane)
+            .scale(0.5, 0.5)
+            .build();
   }
 
 }
