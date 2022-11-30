@@ -50,7 +50,7 @@ public class PlayerBank extends Bank {
 //
 //  public void purchaseCard() {
 //
-//  }
+//}
 
   @Override
   protected Hashtable<Gem, ArrayList<Token>> getBank() {

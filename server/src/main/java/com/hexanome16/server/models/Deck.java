@@ -54,6 +54,12 @@ public class Deck implements BroadcastContent {
     return cardList.isEmpty();
   }
 
+  /**
+   * Compares two deck to see if they have the same sequence of cards.
+   *
+   * @param otherDeck second deck used for comparison.
+   * @return true if same, else false.
+   */
   public boolean isSameDeck(Deck otherDeck) {
     if (otherDeck == null) {
       return false;
