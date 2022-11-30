@@ -19,6 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.DockerComposeContainer;
 
+/**
+ * This class tests the AuthController.
+ * These aren't exactly unit tests since they request the external Lobby Service
+ * but hey code coverage is code coverage :)
+ */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UrlUtils.class, AuthController.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
