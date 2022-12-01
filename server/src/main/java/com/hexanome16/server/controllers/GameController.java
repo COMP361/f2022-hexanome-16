@@ -21,6 +21,7 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 /**
  * Not implemented.
  */
+@Getter
 @RestController
 public class GameController {
 
@@ -51,10 +53,6 @@ public class GameController {
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
-  public Map<Long, Game> getGameMap() {
-    return gameMap;
-  }
-
   /**
    * Verify player by their access .
    *
@@ -69,7 +67,7 @@ public class GameController {
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
     System.out.println(username);
-    if (username.getStatusCode().is2xxSuccessful()) {
+    if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
     }

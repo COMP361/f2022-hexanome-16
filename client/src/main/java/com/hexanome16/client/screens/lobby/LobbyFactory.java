@@ -239,11 +239,17 @@ public class LobbyFactory implements EntityFactory {
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
-                    buttons.add(session.getLaunched() || !isOwn ? join : launch);
                     if (!session.getLaunched()) {
+                      if (isOwn && session.getPlayers().length
+                          >= session.getGameParameters().getMinSessionPlayers()) {
+                        buttons.add(launch);
+                      }
                       buttons.add(isOwn ? delete : leave);
+                    } else {
+                      buttons.add(join);
                     }
-                  } else if (!session.getLaunched()) {
+                  } else if (!session.getLaunched() && session.getPlayers().length
+                      < session.getGameParameters().getMaxSessionPlayers()) {
                     buttons.add(join);
                   }
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
@@ -407,7 +413,7 @@ public class LobbyFactory implements EntityFactory {
         "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> {
-      SettingsScreen.initUi(true);
+      SettingsScreen.initUi(false);
     });
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
