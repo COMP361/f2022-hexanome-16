@@ -186,7 +186,7 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     }
     // spawn the player's hands
-    PlayerDecks.generateAll(4);
+    PlayerDecks.generateAll(FXGL.getWorldProperties().getValue("players"));
   }
 
   // puts values necessary for game bank in the world properties
