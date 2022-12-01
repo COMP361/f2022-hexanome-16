@@ -80,50 +80,110 @@ public final class GameParams {
         getDisplayName(), getWebSupport());
   }
 
+  /**
+   * Gets game server location.
+   *
+   * @return the location
+   */
   public String getLocation() {
     return location;
   }
 
-  public int getMaxSessionPlayers() {
-    return maxSessionPlayers;
-  }
-
-  public int getMinSessionPlayers() {
-    return minSessionPlayers;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public String getWebSupport() {
-    return webSupport;
-  }
-
+  /**
+   * Sets location of the game server.
+   *
+   * @param location the location
+   */
   public void setLocation(String location) {
     this.location = location;
   }
 
+  /**
+   * Gets max number of players in session.
+   *
+   * @return the max session players
+   */
+  public int getMaxSessionPlayers() {
+    return maxSessionPlayers;
+  }
+
+  /**
+   * Sets max players per session.
+   *
+   * @param maxSessionPlayers the max session players
+   */
   public void setMaxSessionPlayers(int maxSessionPlayers) {
     this.maxSessionPlayers = maxSessionPlayers;
   }
 
+  /**
+   * Gets min number of players in session.
+   *
+   * @return the min session players
+   */
+  public int getMinSessionPlayers() {
+    return minSessionPlayers;
+  }
+
+  /**
+   * Sets min players per session.
+   *
+   * @param minSessionPlayers the min session players
+   */
   public void setMinSessionPlayers(int minSessionPlayers) {
     this.minSessionPlayers = minSessionPlayers;
   }
 
+  /**
+   * Gets name of the game server.
+   *
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Sets name of the game server.
+   *
+   * @param name the name
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * Gets display name of the game server.
+   *
+   * @return the display name
+   */
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  /**
+   * Sets display name of the game server.
+   *
+   * @param displayName the display name
+   */
   public void setDisplayName(String displayName) {
     this.displayName = displayName;
   }
 
+  /**
+   * Gets web support of the game server.
+   *
+   * @return the web support
+   */
+  public String getWebSupport() {
+    return webSupport;
+  }
+
+  /**
+   * Sets web support of the game server.
+   *
+   * @param webSupport the web support
+   */
   public void setWebSupport(String webSupport) {
     this.webSupport = webSupport;
   }

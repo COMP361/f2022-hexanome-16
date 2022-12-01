@@ -31,12 +31,12 @@ public interface PromptTypeInterface {
   PromptTypeInterface nullPromptType = new PromptTypeInterface() {
 
     @Override
-    public double width() {
+    public double getWidth() {
       return 100;
     }
 
     @Override
-    public double height() {
+    public double getHeight() {
       return 100;
     }
 
@@ -50,14 +50,14 @@ public interface PromptTypeInterface {
    *
    * @return The prompt's width.
    */
-  double width();
+  double getWidth();
 
   /**
    * Getter method to access prompt height.
    *
    * @return The prompt's height.
    */
-  double height();
+  double getHeight();
 
   /**
    * Method which populates the prompt with elements specific to the prompt type.

@@ -22,20 +22,38 @@ import javafx.scene.text.TextAlignment;
  * Class for Acquiring Tokens Choice: 2 tokens of the same color or 3 differently colored tokens.
  */
 public class TokenAcquiring implements PromptTypeInterface {
+  /**
+   * The width.
+   */
   double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
   double atHeight = getAppHeight() / 2.;
+  /**
+   * The button width.
+   */
   double atButtonWidth = atWidth / 3;
+  /**
+   * The button height.
+   */
   double atButtonHeight = atButtonWidth / 4;
+  /**
+   * The top left x.
+   */
   double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 

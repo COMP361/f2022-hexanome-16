@@ -6,16 +6,25 @@ package com.hexanome16.client.screens.game;
  */
 public class PurchaseMap extends PriceMap {
 
+  /**
+   * The amount of gold tokens.
+   */
   int goldAmount;
 
+  /**
+   * Instantiates a new Purchase map.
+   *
+   * @param rubyAmount     the amount of ruby tokens
+   * @param emeraldAmount  the amount of emerald tokens
+   * @param sapphireAmount the amount of sapphire tokens
+   * @param diamondAmount  the amount of diamond tokens
+   * @param onyxAmount     the amount of onyx tokens
+   * @param goldAmount     the amount of gold tokens
+   */
   public PurchaseMap(int rubyAmount, int emeraldAmount, int sapphireAmount, int diamondAmount,
                      int onyxAmount, int goldAmount) {
     super(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount);
     this.goldAmount = goldAmount;
-  }
-
-  public int getGoldAmount() {
-    return goldAmount;
   }
 
   /**
@@ -36,6 +45,20 @@ public class PurchaseMap extends PriceMap {
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
+  /**
+   * Gets amount of gold tokens.
+   *
+   * @return the gold amount
+   */
+  public int getGoldAmount() {
+    return goldAmount;
+  }
+
+  /**
+   * Returns the sum of non-gold tokens.
+   *
+   * @return the sum of non-gold tokens
+   */
   public int sumTokensNonJokers() {
     return rubyAmount + emeraldAmount + sapphireAmount + diamondAmount + onyxAmount;
   }

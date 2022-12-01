@@ -24,23 +24,46 @@ import javafx.scene.text.TextAlignment;
 public abstract class SeeReservedAbstract implements PromptTypeInterface {
 
 
+  /**
+   * The View able cards.
+   */
+  protected ArrayList<Texture> viewAbleCards;
+  /**
+   * The Hidden cards.
+   */
+  protected int hiddenCards;
+  /**
+   * The width.
+   */
   double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
   double atHeight = getAppHeight() / 2.;
+  /**
+   * The card width.
+   */
   double atCardWidth = atWidth / 4;
+  /**
+   * The card height.
+   */
   double atCardHeight = atCardWidth * 1.39;
+  /**
+   * The top left x.
+   */
   double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
 
-  protected ArrayList<Texture> viewAbleCards;
-  protected int hiddenCards;
-
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 
@@ -107,6 +130,11 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
    */
   protected abstract void promptOpened();
 
+  /**
+   * Prompt text string.
+   *
+   * @return the string
+   */
   protected abstract String promptText();
 
   /**

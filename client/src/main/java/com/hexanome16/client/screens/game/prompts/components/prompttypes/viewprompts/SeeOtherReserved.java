@@ -13,7 +13,6 @@ public class SeeOtherReserved extends SeeReservedAbstract {
   @Override
   protected void appendBehaviour(Texture t) {
     // we don't want to add behaviour for now
-    return;
   }
 
   @Override
