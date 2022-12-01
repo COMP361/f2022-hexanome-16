@@ -7,6 +7,8 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
@@ -14,10 +16,12 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 /**
  * Player's deck factory.
@@ -158,6 +162,8 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("PlayerTokens")
   public Entity playerTokens(SpawnData data) {
+
+
     final StackPane mytokens = new StackPane();
     Rectangle myRectangle = new Rectangle(110, 160, Color.GREY);
     myRectangle.setOpacity(0.5);
@@ -170,12 +176,13 @@ public class DeckFactory implements EntityFactory {
     tokens.setPrefRows(3);
     tokens.setPrefSize(110, 160);
 
-    addToken(tokens, "ruby.png", 1);
-    addToken(tokens, "emerald.png", 0);
-    addToken(tokens, "sapphire.png", 0);
-    addToken(tokens, "diamond.png", 2);
-    addToken(tokens, "onyx.png", 0);
-    addToken(tokens, "gold.png", 0);
+    String player = (String) data.getData().getOrDefault("player", "");
+    addToken(player, tokens, CurrencyType.RED_TOKENS, "ruby.png", 1);
+    addToken(player, tokens, CurrencyType.GREEN_TOKENS, "emerald.png", 0);
+    addToken(player, tokens, CurrencyType.BLUE_TOKENS, "sapphire.png", 0);
+    addToken(player, tokens, CurrencyType.WHITE_TOKENS, "diamond.png", 2);
+    addToken(player, tokens, CurrencyType.BLACK_TOKENS, "onyx.png", 0);
+    addToken(player, tokens, CurrencyType.GOLD_TOKENS, "gold.png", 0);
 
     mytokens.getChildren().addAll(myRectangle, tokens);
 
@@ -198,13 +205,19 @@ public class DeckFactory implements EntityFactory {
    * @param textureName textureName
    * @param amount      amount
    */
-  private void addToken(TilePane tokens, String textureName, int amount) {
+  private void addToken(
+      String ownerName, TilePane tokens, CurrencyType currencyType,
+                        String textureName, int amount) {
     // token (image)
     Texture token = FXGL.texture(textureName);
     token.setFitHeight(45);
     token.setFitWidth(45);
     // multiplicity (text)
-    Text number = new Text(Integer.toString(amount));
+    Text number = new Text();
+    number.textProperty().bind(
+        FXGL.getWorldProperties().intProperty(ownerName + "/" + currencyType.toString())
+            .asString()
+    );
     number.setFont(CURSIVE_FONT_FACTORY.newFont(28));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
@@ -281,16 +294,28 @@ public class DeckFactory implements EntityFactory {
   @Spawns("PlayersTurn")
   public Entity playersTurn(SpawnData data) {
     // current player's name
-    String name = (String) data.getData().getOrDefault("name", "Player");
-    Text text = new Text(name + "\n is playing");
-    text.setFont(CURSIVE_FONT_FACTORY.newFont(100));
-    text.setFill(Paint.valueOf("#FFFFFF"));
-    text.setStrokeWidth(2.);
-    text.setStroke(Paint.valueOf("#000000"));
-    text.setStyle("-fx-background-color: ffffff00; ");
+    Text currentPlayerName = new Text();
+    currentPlayerName.textProperty().bind(FXGL.getWorldProperties().stringProperty(
+        GameScreen.getSessionId() + "/" + "currentPlayer"));
+    currentPlayerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    currentPlayerName.setFill(Paint.valueOf("#FFFFFF"));
+    currentPlayerName.setStrokeWidth(2.);
+    currentPlayerName.setStroke(Paint.valueOf("#000000"));
+    currentPlayerName.setStyle("-fx-background-color: ffffff00; ");
+    currentPlayerName.textAlignmentProperty().setValue(TextAlignment.CENTER);
+    currentPlayerName.setWrappingWidth(FXGL.getAppWidth() / 3.);
+
+    Text currentPlayerText = new Text("Current Player : ");
+    currentPlayerText.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    currentPlayerText.setFill(Paint.valueOf("#FFFFFF"));
+    currentPlayerText.setStrokeWidth(2.);
+    currentPlayerText.setStroke(Paint.valueOf("#000000"));
+    currentPlayerText.setStyle("-fx-background-color: ffffff00; ");
+    currentPlayerText.setWrappingWidth(FXGL.getAppWidth() / 3.);
+
     // pane
-    StackPane pane = new StackPane();
-    pane.getChildren().addAll(text);
+    VBox pane = new VBox();
+    pane.getChildren().addAll(currentPlayerText, currentPlayerName);
     // build the entity
     return FXGL.entityBuilder(data)
             .view(pane)
