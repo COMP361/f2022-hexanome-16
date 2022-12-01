@@ -5,15 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
+import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.server.models.Level;
+import com.hexanome16.server.models.LevelCard;
+import com.hexanome16.server.models.PriceMap;
+import com.hexanome16.server.models.PurchaseMap;
+import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.Objects;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,8 +47,9 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingExcept
 public class GameControllerTest {
   private final String kim = "{\"name\":" + "\"kim\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
   private final String imad = "{\"name\":" + "\"imad\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
-  private final String creator = "imad";
+  private final String creator = "kim";
   private final String savegame = "";
+  private final Long sessionId = Long.valueOf(12345);
   private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   private final Map<String, Object> payload = new HashMap<String, Object>();
@@ -175,5 +186,66 @@ public class GameControllerTest {
             invalidAccessToken, hash);
     assertNull(response);
   }
+
+  @Test
+  public void testGetPlayerBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
+    ResponseEntity<String> response =
+        gameController.getPlayerBankInfo(sessionId, "imad");
+    String string = response.getBody().toString();
+    PurchaseMap myPM = objectMapper.readValue(string,
+        new TypeReference<PurchaseMap>() {
+        });
+
+    assertEquals(myPM.getRubyAmount(), 3);
+    assertEquals(myPM.getEmeraldAmount(), 3);
+    assertEquals(myPM.getSapphireAmount(), 3);
+    assertEquals(myPM.getDiamondAmount(), 3);
+    assertEquals(myPM.getOnyxAmount(), 3);
+    assertEquals(myPM.getGoldAmount(), 3);
+  }
+
+  @Test
+  public void testGetGameBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
+    ResponseEntity<String> response =
+        gameController.getGameBankInfo(sessionId);
+    String string = response.getBody().toString();
+    PurchaseMap myPM = objectMapper.readValue(string,
+        new TypeReference<PurchaseMap>() {
+        });
+
+    assertEquals(myPM.getRubyAmount(), 7);
+    assertEquals(myPM.getEmeraldAmount(), 7);
+    assertEquals(myPM.getSapphireAmount(), 7);
+    assertEquals(myPM.getDiamondAmount(), 7);
+    assertEquals(myPM.getOnyxAmount(), 7);
+    assertEquals(myPM.getGoldAmount(), 5);
+  }
+
+
+
+  @Test
+  public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+
+    LevelCard myCard =
+        new LevelCard(20, 0, "",
+            new TokenPrice(
+                new PriceMap(1, 1, 1,
+                    1, 0)),
+            Level.ONE);
+
+    gameController.getGameMap().get(sessionId).endCurrentPlayersTurn();
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    ResponseEntity<String> response =
+        gameController.buyCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
+            1, 1, 1, 0, 0, 1
+            );
+
+
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+  }
+
 }
 
