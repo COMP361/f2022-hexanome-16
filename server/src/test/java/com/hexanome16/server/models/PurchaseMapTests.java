@@ -17,11 +17,17 @@ public class PurchaseMapTests {
       1, 1, 1, 1, 1
   );
 
+  /**
+   * Test amount of tokens.
+   */
   @Test
   public void testAmountOfTokens() {
     assertEquals(purchaseMap.sumTokensNonJokers(), 5);
   }
 
+  /**
+   * Test buy.
+   */
   @Test
   public void testBuy() {
     assertFalse(purchaseMap.canBeUsedToBuy(null));

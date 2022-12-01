@@ -14,19 +14,33 @@ import org.junit.jupiter.api.Test;
 public class GameTest {
   private final Game game = new Game(12345, null, "", "");
 
+  /**
+   * Instantiates a new Game test.
+   *
+   * @throws IOException the io exception
+   */
   public GameTest() throws IOException {
   }
 
+  /**
+   * Test get deck.
+   */
   @Test
   public void testGetDeck() {
     assertNotNull(game.getDeck(Level.ONE));
   }
 
+  /**
+   * Test get on board deck.
+   */
   @Test
   public void testGetOnBoardDeck() {
     assertNotNull(game.getOnBoardDeck(Level.ONE));
   }
 
+  /**
+   * Test add on board card.
+   */
   @Test
   public void testAddOnBoardCard() {
     List cardList = game.getNobleDeck().getCardList();
@@ -34,6 +48,9 @@ public class GameTest {
     assertNotEquals(cardList.size() + 1, game.getOnBoardDeck(Level.ONE).getCardList().size());
   }
 
+  /**
+   * Test remove on board card.
+   */
   @Test
   public void testRemoveOnBoardCard() {
     List<DevelopmentCard> cardList = game.getDeck(Level.ONE).getCardList();

@@ -17,12 +17,11 @@ import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,19 +59,18 @@ public class GameControllerTest {
   private String invalidAccessToken;
   private String gameResponse;
 
-
   /**
    * Setup mock for game tests.
    *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException --
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @BeforeEach
   public void createGame() throws com.fasterxml.jackson.core.JsonProcessingException {
     ResponseEntity<TokensInfo> tokens = authController.login("kim", "123");
     authController.login("imad", "123");
-    accessToken = tokens.getBody().getAccessToken();
+    accessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
     tokens = authController.login("peini", "123");
-    invalidAccessToken = tokens.getBody().getAccessToken();
+    invalidAccessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
     List playerList = new ArrayList<String>();
     playerList.add(objectMapper.readValue(imad, Map.class));
     playerList.add(objectMapper.readValue(kim, Map.class));
@@ -82,11 +80,22 @@ public class GameControllerTest {
     gameResponse = gameController.createGame(12345, payload);
   }
 
+  /**
+   * Test create game.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testCreateGame() throws com.fasterxml.jackson.core.JsonProcessingException {
     assertEquals("success", gameResponse);
   }
 
+  /**
+   * Test update deck success.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateDeckSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -97,6 +106,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test update deck fail.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateDeckFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -107,6 +122,12 @@ public class GameControllerTest {
     assertNull(response);
   }
 
+  /**
+   * Test update nobles success.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateNoblesSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -116,6 +137,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test update nobles fail.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateNoblesFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -126,6 +153,12 @@ public class GameControllerTest {
     assertNull(response);
   }
 
+  /**
+   * Test current player success.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testCurrentPlayerSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -136,6 +169,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test current player fail.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testCurrentPlayerFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -146,42 +185,56 @@ public class GameControllerTest {
     assertNull(response);
   }
 
+  /**
+   * Test get player bank info.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testGetPlayerBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
     ResponseEntity<String> response =
         gameController.getPlayerBankInfo(sessionId, "imad");
     String string = response.getBody().toString();
-    PurchaseMap myPM = objectMapper.readValue(string,
+    PurchaseMap myPm = objectMapper.readValue(string,
         new TypeReference<PurchaseMap>() {
         });
 
-    assertEquals(myPM.getRubyAmount(), 3);
-    assertEquals(myPM.getEmeraldAmount(), 3);
-    assertEquals(myPM.getSapphireAmount(), 3);
-    assertEquals(myPM.getDiamondAmount(), 3);
-    assertEquals(myPM.getOnyxAmount(), 3);
-    assertEquals(myPM.getGoldAmount(), 3);
+    assertEquals(myPm.getRubyAmount(), 3);
+    assertEquals(myPm.getEmeraldAmount(), 3);
+    assertEquals(myPm.getSapphireAmount(), 3);
+    assertEquals(myPm.getDiamondAmount(), 3);
+    assertEquals(myPm.getOnyxAmount(), 3);
+    assertEquals(myPm.getGoldAmount(), 3);
   }
 
+  /**
+   * Test get game bank info.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testGetGameBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
     ResponseEntity<String> response =
         gameController.getGameBankInfo(sessionId);
     String string = response.getBody().toString();
-    PurchaseMap myPM = objectMapper.readValue(string,
+    PurchaseMap myPm = objectMapper.readValue(string,
         new TypeReference<PurchaseMap>() {
         });
 
-    assertEquals(myPM.getRubyAmount(), 7);
-    assertEquals(myPM.getEmeraldAmount(), 7);
-    assertEquals(myPM.getSapphireAmount(), 7);
-    assertEquals(myPM.getDiamondAmount(), 7);
-    assertEquals(myPM.getOnyxAmount(), 7);
-    assertEquals(myPM.getGoldAmount(), 5);
+    assertEquals(myPm.getRubyAmount(), 7);
+    assertEquals(myPm.getEmeraldAmount(), 7);
+    assertEquals(myPm.getSapphireAmount(), 7);
+    assertEquals(myPm.getDiamondAmount(), 7);
+    assertEquals(myPm.getOnyxAmount(), 7);
+    assertEquals(myPm.getGoldAmount(), 5);
   }
 
 
-
+  /**
+   * Test buy card.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
 

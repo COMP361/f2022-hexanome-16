@@ -30,9 +30,10 @@ public class InventoryController {
   /**
    * Controller for the Inventory.
    *
-   * @param gameController      controller for the whole game (used for helper)
-   * @param urlUtils            operations
    * @param restTemplateBuilder server
+   * @param urlUtils            operations
+   * @param gameController      controller for the whole game (used for helper)
+   * @param objectMapper        the object mapper
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
                              GameController gameController, ObjectMapper objectMapper) {
@@ -51,7 +52,7 @@ public class InventoryController {
     }
     // get the player from the session id and access token
     return gameController.findPlayerByToken(
-            gameController.getGameMap().get(sessionId), accessToken
+        gameController.getGameMap().get(sessionId), accessToken
     );
   }
 
@@ -59,7 +60,7 @@ public class InventoryController {
   private Player getValidPlayerByName(long sessionId, String username) {
 
     Player myPlayer = gameController.findPlayerByName(
-            gameController.getGameMap().get(sessionId), username
+        gameController.getGameMap().get(sessionId), username
     );
     if (myPlayer == null) {
       throw new IllegalArgumentException("Invalid Player.");
@@ -103,7 +104,7 @@ public class InventoryController {
    *
    * @param sessionId session id.
    * @param username  access token
-   * @return response.
+   * @return response cards
    * @throws JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
@@ -114,8 +115,8 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
-            objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
-            HttpStatus.OK
+        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+        HttpStatus.OK
     );
   }
 
@@ -135,9 +136,11 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
-            objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
-            HttpStatus.OK);
+        objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
+        HttpStatus.OK);
   }
+
+  // TODO : IMPLEMETNATIAAOSN
 
   /**
    * Get reserved Cards, with private cards.
@@ -150,8 +153,8 @@ public class InventoryController {
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
   public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
-                                                 @RequestParam String username,
-                                                 @RequestParam String accessToken)
+                                                        @RequestParam String username,
+                                                        @RequestParam String accessToken)
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
