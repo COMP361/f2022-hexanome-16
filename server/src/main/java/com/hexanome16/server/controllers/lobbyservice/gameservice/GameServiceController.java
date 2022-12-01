@@ -74,8 +74,6 @@ public class GameServiceController {
       this.restTemplate.put(url, entity);
     } catch (HttpClientErrorException.BadRequest e) {
       System.out.println("Game service already registered");
-    } catch (HttpClientErrorException.Unauthorized e) {
-
     }
     return ResponseEntity.ok().build();
   }
