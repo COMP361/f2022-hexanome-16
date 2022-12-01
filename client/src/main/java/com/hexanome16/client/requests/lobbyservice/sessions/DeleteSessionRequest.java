@@ -1,7 +1,6 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;

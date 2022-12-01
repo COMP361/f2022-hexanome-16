@@ -21,6 +21,7 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 /**
  * Not implemented.
  */
+@Getter
 @RestController
 public class GameController {
 
@@ -51,19 +53,6 @@ public class GameController {
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
-  public Map<Long, Game> getGameMap() {
-    return gameMap;
-  }
-
-  private Level getLevel(String level) {
-    return switch (level) {
-      case "ONE" -> Level.ONE;
-      case "TWO" -> Level.TWO;
-      case "THREE" -> Level.THREE;
-      default -> throw new IllegalArgumentException("Invalid level");
-    };
-  }
-
   /**
    * Verify player by their access .
    *
@@ -77,7 +66,8 @@ public class GameController {
       return false;
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
-    if (username.getStatusCode().is2xxSuccessful()) {
+    System.out.println(username);
+    if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
     }
@@ -94,7 +84,6 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
     try {
-      System.out.println(payload.get("players"));
       Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
       String creator = objectMapper.convertValue(payload.get("creator"), String.class);
       String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);

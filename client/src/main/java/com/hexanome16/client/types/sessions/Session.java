@@ -17,11 +17,11 @@ public final class Session {
   /**
    * Constructor.
    *
-   * @param creator The creator of the session.
+   * @param creator        The creator of the session.
    * @param gameParameters The game parameters of the session.
-   * @param launched Whether the session is launched.
-   * @param players The players in the session.
-   * @param savegameid The savegame id of the session (can be empty).
+   * @param launched       Whether the session is launched.
+   * @param players        The players in the session.
+   * @param savegameid     The savegame id of the session (can be empty).
    */
   public Session(String creator, GameParams gameParameters, boolean launched, String[] players,
                  String savegameid) {
@@ -64,50 +64,110 @@ public final class Session {
     return result;
   }
 
+  /**
+   * Gets creator of the session.
+   *
+   * @return the creator
+   */
   public String getCreator() {
     return creator;
   }
 
-  public GameParams getGameParameters() {
-    return gameParameters;
-  }
-
-  public boolean getLaunched() {
-    return launched;
-  }
-
-  public String[] getPlayers() {
-    return players;
-  }
-
-  public String getSaveGameId() {
-    return savegameid;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
+  /**
+   * Sets creator of the session.
+   *
+   * @param creator the creator
+   */
   public void setCreator(String creator) {
     this.creator = creator;
   }
 
+  /**
+   * Gets game parameters of the session.
+   *
+   * @return the game parameters
+   */
+  public GameParams getGameParameters() {
+    return gameParameters;
+  }
+
+  /**
+   * Sets game parameters of the session.
+   *
+   * @param gameParameters the game parameters
+   */
   public void setGameParameters(GameParams gameParameters) {
     this.gameParameters = gameParameters;
   }
 
+  /**
+   * Gets launch status of the session.
+   *
+   * @return the launched
+   */
+  public boolean getLaunched() {
+    return launched;
+  }
+
+  /**
+   * Sets launch status of the session.
+   *
+   * @param launched the launched
+   */
   public void setLaunched(boolean launched) {
     this.launched = launched;
   }
 
+  /**
+   * Get players of the session.
+   *
+   * @return the string [ ]
+   */
+  public String[] getPlayers() {
+    return players;
+  }
+
+  /**
+   * Sets players of the session.
+   *
+   * @param players the players
+   */
   public void setPlayers(String[] players) {
     this.players = players;
   }
 
+  /**
+   * Gets savegame ID of the session.
+   *
+   * @return the save game id
+   */
+  public String getSaveGameId() {
+    return savegameid;
+  }
+
+  /**
+   * Sets savegame ID of the session.
+   *
+   * @param savegameid the savegameid
+   */
   public void setSaveGameId(String savegameid) {
     this.savegameid = savegameid;
   }
 
+  /**
+   * Gets ID of the session.
+   *
+   * @return the id
+   */
+  public Long getId() {
+    return id;
+  }
+
+  /**
+   * Sets ID of the session.
+   *
+   * @param id the id
+   */
   public void setId(Long id) {
     this.id = id;
   }

@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -197,6 +198,7 @@ public class LobbyFactory implements EntityFactory {
                       fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
+                      FXGL.getWorldProperties().setValue("players", session.getPlayers());
                       GameScreen.initGame(session.getId());
                     } else {
                       JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
@@ -222,6 +224,7 @@ public class LobbyFactory implements EntityFactory {
                     fetchSessionsThread.interrupt();
                     fetchSessionsThread = null;
                     LobbyScreen.exitLobby();
+                    FXGL.getWorldProperties().setValue("players", session.getPlayers());
                     GameScreen.initGame(session.getId());
                   });
                   launch.setStyle(
@@ -236,11 +239,17 @@ public class LobbyFactory implements EntityFactory {
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
-                    buttons.add(session.getLaunched() || !isOwn ? join : launch);
                     if (!session.getLaunched()) {
+                      if (isOwn && session.getPlayers().length
+                          >= session.getGameParameters().getMinSessionPlayers()) {
+                        buttons.add(launch);
+                      }
                       buttons.add(isOwn ? delete : leave);
+                    } else {
+                      buttons.add(join);
                     }
-                  } else if (!session.getLaunched()) {
+                  } else if (!session.getLaunched() && session.getPlayers().length
+                      < session.getGameParameters().getMaxSessionPlayers()) {
                     buttons.add(join);
                   }
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
@@ -404,7 +413,7 @@ public class LobbyFactory implements EntityFactory {
         "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> {
-      SettingsScreen.initUi(true);
+      SettingsScreen.initUi(false);
     });
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
@@ -432,14 +441,41 @@ public class LobbyFactory implements EntityFactory {
    * Enum of possible entities in the lobby screen.
    */
   public enum Type {
+    /**
+     * Own session list.
+     */
     OWN_SESSION_LIST,
+    /**
+     * Other session list.
+     */
     OTHER_SESSION_LIST,
+    /**
+     * Create session button.
+     */
     CREATE_SESSION_BUTTON,
+    /**
+     * Close button.
+     */
     CLOSE_BUTTON,
+    /**
+     * Preferences button.
+     */
     PREFERENCES_BUTTON,
+    /**
+     * Logo.
+     */
     LOGO,
+    /**
+     * Own header.
+     */
     OWN_HEADER,
+    /**
+     * Other header.
+     */
     OTHER_HEADER,
+    /**
+     * Background.
+     */
     BACKGROUND
   }
 }

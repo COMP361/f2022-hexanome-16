@@ -18,7 +18,7 @@ public class AssociateBagCard extends BonusChoiceAbstract {
 
   @Override
   protected double promptTextSize() {
-    return height() / 6.;
+    return getHeight() / 6.;
   }
 
 

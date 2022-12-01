@@ -18,7 +18,6 @@ public class LogoutRequest {
 
   /**
    * Sends a request to log out the user and erase user token information.
-   *
    */
   public static void execute() {
     HttpClient client = RequestClient.getClient();

@@ -19,85 +19,54 @@ public class SettingsScreen {
    *
    * @return a UI singleton
    */
-  private static UI getUi() {
+  private static UI getUi(boolean mainMenu) {
     if (uiSingleton == null) {
       uiControllerSingleton = new SettingsScreenUiController();
       uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-      setupUi();
+      setupUi(mainMenu);
     }
     return uiSingleton;
   }
 
-  // more sorry
-  private static UI getUi(boolean x) {
-    if (uiSingleton == null) {
-      uiControllerSingleton = new SettingsScreenUiController();
-      uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-      setupUi(x);
-    }
-    return uiSingleton;
-  }
-
-  private static void setupUi() {
+  /**
+   * Setup settings screen ui and ui actions.
+   *
+   * @param mainMenu true if I need to re-render the mainMenu on close
+   */
+  private static void setupUi(boolean mainMenu) {
     uiControllerSingleton.doneButton.setOnAction((event) -> {
-      SettingsScreen.clearUi();
-      MainMenuScreen.initUi();
+      SettingsScreen.clearUi(mainMenu);
+      if (mainMenu) {
+        MainMenuScreen.initUi();
+      }
     });
   }
 
-  // final sorry :(
-  private static void setupUi(boolean x) {
-    uiControllerSingleton.doneButton.setOnAction((event) -> SettingsScreen.clearUi(x));
-  }
-
   /**
    * Adds UI layer on top of game screen.
+   *
+   * @param mainMenu true if I need to re-render mainMenu after closing
    */
-  public static void initUi() {
+  public static void initUi(boolean mainMenu) {
     if (isVisible) {
       return;
     }
 
-    getGameScene().addUI(getUi());
-    isVisible = true;
-  }
-
-  // please dont be mad tristan xoxo
-  /**
-   * Adds UI layer on top of game screen.
-   */
-  public static void initUi(boolean x) {
-    if (isVisible) {
-      return;
-    }
-
-    getGameScene().addUI(getUi(x));
+    getGameScene().addUI(getUi(mainMenu));
     isVisible = true;
   }
 
   /**
    * Removes UI layer on top of game screen.
+   *
+   * @param mainMenu true if I need to re-render mainMenu after closing
    */
-  public static void clearUi() {
+  public static void clearUi(boolean mainMenu) {
     if (!isVisible) {
       return;
     }
 
-    getGameScene().removeUI(getUi());
-
-    isVisible = false;
-  }
-
-  //sorry
-  /**
-   * Removes UI layer on top of game screen.
-   */
-  public static void clearUi(boolean x) {
-    if (!isVisible) {
-      return;
-    }
-
-    getGameScene().removeUI(getUi(x));
+    getGameScene().removeUI(getUi(mainMenu));
 
     isVisible = false;
   }

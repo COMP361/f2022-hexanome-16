@@ -17,6 +17,9 @@ public class NobleComponent extends Component {
   private ViewComponent view;
   private int gridX;
 
+  /**
+   * Reset noble grid.
+   */
   public static void reset() {
     grid = new boolean[5];
   }
