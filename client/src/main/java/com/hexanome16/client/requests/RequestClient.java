@@ -1,5 +1,8 @@
 package com.hexanome16.client.requests;
 
+import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -58,6 +61,9 @@ public class RequestClient {
       } catch (InterruptedException e) {
         System.out.println("Interrupted long polling");
       }
+      if (returnCode.get() >= 400 && returnCode.get() <= 403) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+      }
     }
     return new Pair<>(DigestUtils.md5Hex(response), response);
   }
@@ -86,6 +92,9 @@ public class RequestClient {
         e.printStackTrace();
       } catch (InterruptedException e) {
         System.out.println("Interrupted long polling");
+      }
+      if (returnCode.get() >= 400 && returnCode.get() <= 403) {
+        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
       }
     }
     return response;
