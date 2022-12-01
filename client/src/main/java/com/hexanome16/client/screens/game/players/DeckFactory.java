@@ -9,6 +9,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -59,14 +60,14 @@ public class DeckFactory implements EntityFactory {
     // current player's name
     String name = (String) data.getData().getOrDefault("name", "Player");
     Text playerName = new Text(name);
-    playerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    playerName.setFont(CURSIVE_FONT_FACTORY.newFont(200));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
     playerName.setStrokeWidth(2.);
     playerName.setStroke(Paint.valueOf("#000000"));
     playerName.setStyle("-fx-background-color: ffffff00; ");
     // current player's prestige points TODO make this a variable
     Text prestigePoints = new Text("10");
-    prestigePoints.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    prestigePoints.setFont(CURSIVE_FONT_FACTORY.newFont(150));
     prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
     prestigePoints.setStrokeWidth(2.);
     prestigePoints.setStroke(Paint.valueOf("#000000"));
@@ -84,9 +85,6 @@ public class DeckFactory implements EntityFactory {
     return FXGL.entityBuilder(data)
             .view(pane)
             .scale(0.2, 0.2)
-            .onClick(e -> {
-              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-            })
             .build();
   }
 
@@ -100,6 +98,7 @@ public class DeckFactory implements EntityFactory {
   public Entity card(SpawnData data) {
     // get a pane for this card
     String color = (String) data.getData().getOrDefault("color", "red");
+    String player = (String) data.getData().getOrDefault("player", "");
     StackPane pane = getCard(0, color + "card.png");
     // animation
     pane.setOnMouseEntered(e -> {
@@ -115,6 +114,7 @@ public class DeckFactory implements EntityFactory {
             .view(pane)
             .scale(0.25, 0.25)
             .onClick(e -> {
+              SeeCards.fetchCards(player);
               OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
             })
             .build();
