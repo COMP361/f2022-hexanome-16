@@ -33,7 +33,7 @@ public class ListSessionsRequest {
         .header("Content-Type", "application/json")
         .GET()
         .build();
-    Pair<String, String> response = RequestClient.longPoll(request);
+    Pair<String, String> response = RequestClient.longPollWithHash(request);
     Response res = new Gson().fromJson(response.getValue(), Response.class);
     if (res == null || res.sessions == null) {
       return new Pair<>("", null);
