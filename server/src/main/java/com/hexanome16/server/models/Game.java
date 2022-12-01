@@ -281,7 +281,6 @@ public class Game {
    * @param diamondAmount  amount to increase diamond stack by.
    * @param onyxAmount     amount to increase onyx stack by.
    * @param goldAmount     amount to increase gold stack by.
-   * @pre player is in game.
    */
   public void incGameBankFromPlayer(Player player, int rubyAmount, int emeraldAmount,
                                     int sapphireAmount, int diamondAmount, int onyxAmount,

@@ -290,7 +290,7 @@ public class GameScreen {
    */
   public static void exitGame() {
     level_one.clear();
-    level_three.clear();
+    level_two.clear();
     level_three.clear();
     CardComponent.reset();
     NobleComponent.reset();

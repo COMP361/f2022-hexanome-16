@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,9 +59,9 @@ public class GameControllerTest {
   public void createGame() throws com.fasterxml.jackson.core.JsonProcessingException {
     ResponseEntity<TokensInfo> tokens = authController.login("kim", "123");
     authController.login("imad", "123");
-    accessToken = tokens.getBody().getAccessToken();
+    accessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
     tokens = authController.login("peini", "123");
-    invalidAccessToken = tokens.getBody().getAccessToken();
+    invalidAccessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
     List playerList = new ArrayList<String>();
     playerList.add(objectMapper.readValue(imad, Map.class));
     playerList.add(objectMapper.readValue(kim, Map.class));

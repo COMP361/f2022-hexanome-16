@@ -37,9 +37,9 @@ public class CardComponent extends Component {
   private boolean fading = false;
   private boolean adding = false;
   private int gridX;
-  private String cardHash = "";
+  private final String cardHash;
 
-  private PriceMap priceMap = new PriceMap();
+  private final PriceMap priceMap;
 
   /**
    * Creates a new card fxgl component.
@@ -69,7 +69,7 @@ public class CardComponent extends Component {
   @Override
   public void onUpdate(double tpf) {
     if (fading) {
-      Double opacity = entity.getViewComponent().getOpacity();
+      double opacity = entity.getViewComponent().getOpacity();
       if (opacity > 0) {
         entity.getViewComponent().setOpacity(opacity - 0.1);
       } else {
@@ -92,16 +92,10 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     switch (level) {
-      default:
-      case ONE:
-        addToMat(level_one_grid);
-        break;
-      case TWO:
-        addToMat(level_two_grid);
-        break;
-      case THREE:
-        addToMat(level_three_grid);
-        break;
+      case ONE -> addToMat(level_one_grid);
+      case TWO -> addToMat(level_two_grid);
+      case THREE -> addToMat(level_three_grid);
+      default -> throw new IllegalArgumentException("Something is sussy about this.");
     }
   }
 
@@ -137,19 +131,11 @@ public class CardComponent extends Component {
    */
   public void removeFromMat() {
     this.fading = true;
-    CardComponent[] grid;
-    switch (level) {
-      default:
-      case ONE:
-        grid = level_one_grid;
-        break;
-      case TWO:
-        grid = level_two_grid;
-        break;
-      case THREE:
-        grid = level_three_grid;
-        break;
-    }
+    CardComponent[] grid = switch (level) {
+      case ONE -> level_one_grid;
+      case TWO -> level_two_grid;
+      case THREE -> level_three_grid;
+    };
     for (int i = 0; i < grid.length; i++) {
       if (grid[i] == this) {
         grid[i] = null;
