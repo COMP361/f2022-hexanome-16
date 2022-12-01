@@ -48,6 +48,11 @@ public class GameController {
   private final Map<String, BroadcastContentManager> broadcastContentManagerMap =
       new HashMap<String, BroadcastContentManager>();
 
+  /**
+   * Instantiates a new Game controller.
+   *
+   * @param authController the auth controller
+   */
   public GameController(AuthController authController) {
     this.authController = authController;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
@@ -79,6 +84,7 @@ public class GameController {
    * Create a new game as client requested.
    *
    * @param sessionId sessionId
+   * @param payload   the payload
    * @return error if present
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
@@ -141,6 +147,7 @@ public class GameController {
    *
    * @param sessionId   session id
    * @param accessToken access token
+   * @param hash        the hash
    * @return nobles present on the game board
    * @throws JsonProcessingException if json processing fails
    */
@@ -162,9 +169,9 @@ public class GameController {
   /**
    * Return the username of current player.
    *
-   * @param sessionId game id
+   * @param sessionId   game id
    * @param accessToken player access token
-   * @param hash hash for long polling
+   * @param hash        hash for long polling
    * @return current player username
    * @throws JsonProcessingException exception
    */
@@ -249,8 +256,11 @@ public class GameController {
    * @param diamondAmount       amount of diamond gems proposed.
    * @param onyxAmount          amount of onyx gems proposed.
    * @param goldAmount          amount of gold gems proposed.
-   * @return HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   * @return <p>
+   *     HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.
+   *     </p>
+   * @throws JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId,

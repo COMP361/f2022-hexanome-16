@@ -13,6 +13,16 @@ public class PurchaseMap extends PriceMap {
 
   private final int goldAmount;
 
+  /**
+   * Instantiates a new Purchase map.
+   *
+   * @param rubyAmount     the ruby amount
+   * @param emeraldAmount  the emerald amount
+   * @param sapphireAmount the sapphire amount
+   * @param diamondAmount  the diamond amount
+   * @param onyxAmount     the onyx amount
+   * @param goldAmount     the gold amount
+   */
   public PurchaseMap(int rubyAmount, int emeraldAmount, int sapphireAmount, int diamondAmount,
                      int onyxAmount, int goldAmount) {
     super(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount);
@@ -20,6 +30,7 @@ public class PurchaseMap extends PriceMap {
   }
 
   // TODO: TEST CASE
+
   /**
    * Makes a purchase map out of the input price map, sets gold amount in the new purchase
    * map to be 0.
@@ -38,12 +49,18 @@ public class PurchaseMap extends PriceMap {
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
+  /**
+   * Sum of non-gold cards.
+   *
+   * @return total amount
+   */
   public int sumTokensNonJokers() {
     return rubyAmount + emeraldAmount + sapphireAmount + diamondAmount + onyxAmount;
   }
 
 
   // TODO: TEST CASE
+
   /**
    * Checks if implied argument can be used instead of the parameter to commit a purchase.
    *

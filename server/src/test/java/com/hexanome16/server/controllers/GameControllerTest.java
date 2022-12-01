@@ -52,7 +52,7 @@ public class GameControllerTest {
   /**
    * Setup mock for game tests.
    *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException --
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @BeforeEach
   public void createGame() throws com.fasterxml.jackson.core.JsonProcessingException {
@@ -70,11 +70,22 @@ public class GameControllerTest {
     gameResponse = gameController.createGame(12345, payload);
   }
 
+  /**
+   * Test create game.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testCreateGame() throws com.fasterxml.jackson.core.JsonProcessingException {
     assertEquals("success", gameResponse);
   }
 
+  /**
+   * Test update deck success.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * @throws JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateDeckSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -85,6 +96,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test update deck fail.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * @throws JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateDeckFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -95,6 +112,12 @@ public class GameControllerTest {
     assertNull(response);
   }
 
+  /**
+   * Test update nobles success.
+   *
+   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateNoblesSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -104,6 +127,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test update nobles fail.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * @throws JsonProcessingException the json processing exception
+   */
   @Test
   public void testUpdateNoblesFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -114,6 +143,12 @@ public class GameControllerTest {
     assertNull(response);
   }
 
+  /**
+   * Test current player success.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * @throws JsonProcessingException the json processing exception
+   */
   @Test
   public void testCurrentPlayerSuccess()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
@@ -124,6 +159,12 @@ public class GameControllerTest {
     assertNotNull(response);
   }
 
+  /**
+   * Test current player fail.
+   *
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * @throws JsonProcessingException the json processing exception
+   */
   @Test
   public void testCurrentPlayerFail()
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {

@@ -28,6 +28,9 @@ import org.testcontainers.containers.DockerComposeContainer;
 @ContextConfiguration(classes = {UrlUtils.class, AuthController.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
 public class AuthControllerTests {
+  /**
+   * The Ls container.
+   */
   @ClassRule
   public static DockerComposeContainer<LobbyServiceContainer> lsContainer =
       LobbyServiceContainer.getInstance();
@@ -37,6 +40,9 @@ public class AuthControllerTests {
 
   private final String password = "abc123_ABC123";
 
+  /**
+   * Test valid login.
+   */
   @Test
   public void testValidLogin() {
     ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
@@ -46,6 +52,9 @@ public class AuthControllerTests {
     assertNotNull(tokens.getBody().getRefreshToken());
   }
 
+  /**
+   * Test invalid login.
+   */
   @Test
   public void testInvalidLogin() {
     try {
@@ -55,6 +64,9 @@ public class AuthControllerTests {
     }
   }
 
+  /**
+   * Test valid refresh.
+   */
   @Test
   public void testValidRefresh() {
     ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
@@ -68,6 +80,9 @@ public class AuthControllerTests {
     assertNotNull(tokens.getBody().getRefreshToken());
   }
 
+  /**
+   * Test invalid refresh.
+   */
   @Test
   public void testInvalidRefresh() {
     ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
@@ -81,6 +96,9 @@ public class AuthControllerTests {
     }
   }
 
+  /**
+   * Test valid logout.
+   */
   @Test
   public void testValidLogout() {
     ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
@@ -91,6 +109,9 @@ public class AuthControllerTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
+  /**
+   * Test invalid logout.
+   */
   @Test
   public void testInvalidLogout() {
     try {
@@ -100,6 +121,9 @@ public class AuthControllerTests {
     }
   }
 
+  /**
+   * Test valid get player.
+   */
   @Test
   public void testValidGetPlayer() {
     ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
@@ -111,6 +135,9 @@ public class AuthControllerTests {
     assertEquals("maex", response.getBody());
   }
 
+  /**
+   * Test invalid get player.
+   */
   @Test
   public void testInvalidGetPlayer() {
     try {

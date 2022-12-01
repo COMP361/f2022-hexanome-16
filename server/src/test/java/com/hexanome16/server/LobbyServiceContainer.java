@@ -3,6 +3,9 @@ package com.hexanome16.server;
 import java.io.File;
 import org.testcontainers.containers.DockerComposeContainer;
 
+/**
+ * The type Lobby service container.
+ */
 public class LobbyServiceContainer extends DockerComposeContainer<LobbyServiceContainer> {
   private static LobbyServiceContainer container;
 
@@ -10,6 +13,11 @@ public class LobbyServiceContainer extends DockerComposeContainer<LobbyServiceCo
     super(new File("src/test/resources/ls-compose.yml"));
   }
 
+  /**
+   * Gets instance.
+   *
+   * @return the instance
+   */
   public static LobbyServiceContainer getInstance() {
     if (container == null) {
       container = new LobbyServiceContainer();

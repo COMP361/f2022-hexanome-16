@@ -48,6 +48,9 @@ public class PlayerBank extends Bank {
     //    playerBank.replace(gem3, currentList3);
   }
 
+  /**
+   * Purchase card.
+   */
   public void purchaseCard() {
 
   }
