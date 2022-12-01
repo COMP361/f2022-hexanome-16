@@ -3,11 +3,11 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getEventBus;
+import static com.hexanome16.client.screens.game.UpdateGameInfo.fetchPlayerBank;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
@@ -22,9 +22,7 @@ import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -60,7 +58,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
   PriceMap atCardPriceMap;
   PurchaseMap atProposedOffer;
-  String playerName;
+
 
   // make true if card is reserved
   protected boolean cardIsReserved;
@@ -173,8 +171,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
   @Override
   public void populatePrompt(Entity entity) {
 
-
-    fetchPlayerBank(playerName);
+    String playerName = AuthUtils.getPlayer().getName();
+    fetchPlayerBank(GameScreen.getSessionId(), playerName, true);
 
     // initiate playerBank
     VBox playerBank = new VBox();
@@ -403,40 +401,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
-  private static void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
-    for (CurrencyType e : CurrencyType.values()) {
-      FXGL.getWorldProperties()
-          .setValue(BankType.PLAYER_BANK + "/" + e.toString(), playerInfo.get(e));
-    }
-  }
-
-  /**
-   * Fetch player bank and game bank from server and sets those to be visible from the
-   * UI.
-   *
-   * @param playerName name of player.
-   */
-  public static void fetchPlayerBank(String playerName) {
-    // gets sessionId and username
-    long promptSessionId = GameScreen.getSessionId();
-    String username = AuthUtils.getPlayer().getName();
-
-    // get string bank from server
-    String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
-
-    System.out.println(bankPriceMapAsString);
-
-    // set player info in the prompt to be whatever the server says
-    setPlayerInfo(toGemAmountMap(bankPriceMapAsString));
-
-    // request Game bank info post purchase
-    String newGameBankString = PromptsRequests.getNewGameBankInfo(promptSessionId);
-
-    // get game bank map from string
-    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
-    setGameBank(promptSessionId, gameBankMap);
-  }
-
 
 
 
@@ -453,44 +417,16 @@ public class BuyCardPrompt implements PromptTypeInterface {
         atProposedOffer);
 
     // request Game bank info post purchase
-    String newGameBankString = PromptsRequests.getNewGameBankInfo(promptSessionId);
+    String newGameBankString = PromptsRequests.getGameBankInfo(promptSessionId);
 
-    // get game bank map from string
-    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
-    setGameBank(promptSessionId, gameBankMap);
-    
+    //  get game bank map from string
+    //  Map<CurrencyType, Integer> gameBankMap = UpdateGameInfo.toGemAmountMap(newGameBankString);
+    //  setGameBank(promptSessionId, gameBankMap);
+
   }
 
-  private static void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
-    for (CurrencyType e : gameBankMap.keySet()) {
-      FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
-    }
-  }
 
-  /**
-   * Transforms String of bank retrieved from server to a Map .
-   *
-   * @param bankPriceMapAsString String of bank
-   * @return Map mapping CurrencyType to amount of each currency type in bank
-   */
-  public static Map<CurrencyType, Integer> toGemAmountMap(String bankPriceMapAsString) {
 
-    // parse through string and add values to prompt values
-    Gson myGson = new Gson();
-    Map<String, Double> stringPlayerBank = myGson.fromJson(bankPriceMapAsString, Map.class);
-    Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
-
-    // put each gem type with its value in the string
-    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("rubyAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("emeraldAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("sapphireAmount").intValue());
-    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("diamondAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("onyxAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("goldAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
-
-    return gemPlayerBank;
-  }
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 

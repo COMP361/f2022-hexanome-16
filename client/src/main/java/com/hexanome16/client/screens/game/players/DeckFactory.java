@@ -7,6 +7,8 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
@@ -170,12 +172,12 @@ public class DeckFactory implements EntityFactory {
     tokens.setPrefRows(3);
     tokens.setPrefSize(110, 160);
 
-    addToken(tokens, "ruby.png", 1);
-    addToken(tokens, "emerald.png", 0);
-    addToken(tokens, "sapphire.png", 0);
-    addToken(tokens, "diamond.png", 2);
-    addToken(tokens, "onyx.png", 0);
-    addToken(tokens, "gold.png", 0);
+    addToken(player, tokens, CurrencyType.RED_TOKENS, "ruby.png", 1);
+    addToken(player, tokens, CurrencyType.GREEN_TOKENS, "emerald.png", 0);
+    addToken(player, tokens, CurrencyType.BLUE_TOKENS,"sapphire.png", 0);
+    addToken(player, tokens, CurrencyType.WHITE_TOKENS,"diamond.png", 2);
+    addToken(player, tokens, CurrencyType.BLACK_TOKENS,"onyx.png", 0);
+    addToken(player, tokens, CurrencyType.GOLD_TOKENS,"gold.png", 0);
 
     mytokens.getChildren().addAll(myRectangle, tokens);
 
@@ -198,7 +200,9 @@ public class DeckFactory implements EntityFactory {
    * @param textureName textureName
    * @param amount      amount
    */
-  private void addToken(TilePane tokens, String textureName, int amount) {
+  private void addToken(
+      String ownerName, TilePane tokens, CurrencyType currencyType,
+                        String textureName, int amount) {
     // token (image)
     Texture token = FXGL.texture(textureName);
     token.setFitHeight(45);
@@ -281,8 +285,9 @@ public class DeckFactory implements EntityFactory {
   @Spawns("PlayersTurn")
   public Entity playersTurn(SpawnData data) {
     // current player's name
-    String name = (String) data.getData().getOrDefault("name", "Player");
-    Text text = new Text(name + "\n is playing");
+    Text text = new Text();
+    text.textProperty().bind(FXGL.getWorldProperties().stringProperty(
+        GameScreen.getSessionId() + "/" + "currentPlayer"));
     text.setFont(CURSIVE_FONT_FACTORY.newFont(100));
     text.setFill(Paint.valueOf("#FFFFFF"));
     text.setStrokeWidth(2.);
