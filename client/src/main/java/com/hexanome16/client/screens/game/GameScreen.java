@@ -139,7 +139,6 @@ public class GameScreen {
       updateCurrentPlayer = null;
 
       Platform.runLater(() -> {
-
         myNames = myGS.fromJson(currentPlayerJson, Map.class);
         currentPlayer = (String) myNames.get("username");
         UpdateGameInfo.fetchGameBank(getSessionId());
@@ -171,9 +170,6 @@ public class GameScreen {
     FXGL.spawn("LevelOneDeck");
     FXGL.spawn("LevelTwoDeck");
     FXGL.spawn("LevelThreeDeck");
-    FXGL.spawn("SacrificeCard");
-    FXGL.spawn("NobleReserveCard");
-    FXGL.spawn("BagCard");
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
@@ -336,9 +332,20 @@ public class GameScreen {
    * Resets every component and clears the game board when exit the game.
    */
   public static void exitGame() {
+    levelOneDeckJson = "";
+    levelTwoDeckJson = "";
+    levelThreeDeckJson = "";
+    nobleJson = "";
+    currentPlayerJson = "";
+    updateLevelOneDeck = null;
+    updateLevelTwoDeck = null;
+    updateLevelThreeDeck = null;
+    updateNobles = null;
+    updateCurrentPlayer = null;
     level_one.clear();
     level_two.clear();
     level_three.clear();
+    nobles.clear();
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
