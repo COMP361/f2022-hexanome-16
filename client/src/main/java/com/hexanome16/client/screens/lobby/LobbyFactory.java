@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -197,6 +198,7 @@ public class LobbyFactory implements EntityFactory {
                       fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
                       LobbyScreen.exitLobby();
+                      FXGL.getWorldProperties().setValue("players", session.getPlayers());
                       GameScreen.initGame(session.getId());
                     } else {
                       JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
@@ -222,6 +224,7 @@ public class LobbyFactory implements EntityFactory {
                     fetchSessionsThread.interrupt();
                     fetchSessionsThread = null;
                     LobbyScreen.exitLobby();
+                    FXGL.getWorldProperties().setValue("players", session.getPlayers());
                     GameScreen.initGame(session.getId());
                   });
                   launch.setStyle(
