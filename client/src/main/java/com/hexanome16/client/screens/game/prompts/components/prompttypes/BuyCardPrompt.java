@@ -14,6 +14,7 @@ import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.PurchaseMap;
+import com.hexanome16.client.screens.game.UpdateGameInfo;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -236,7 +237,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   public void populatePrompt(Entity entity) {
 
     String playerName = AuthUtils.getPlayer().getName();
-    fetchPlayerBank(playerName);
+    UpdateGameInfo.fetchPlayerBank(GameScreen.getSessionId(), playerName, true);
 
     // initiate playerBank
     VBox playerBank = new VBox();
@@ -429,60 +430,19 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setPrefHeight(atHeight);
     myPrompt.setMaxHeight(atHeight);
   }
-  private void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
-    for (CurrencyType e : CurrencyType.values()) {
-      FXGL.getWorldProperties()
-          .setValue(BankType.PLAYER_BANK + "/" + e.toString(), playerInfo.get(e));
-    }
-  }
-
-  // This also fetches Game Bank
-  private void fetchPlayerBank(String playerName) {
-    // gets sessionId and username
-    long promptSessionId = GameScreen.getSessionId();
-    String username = AuthUtils.getPlayer().getName();
-
-    // get string bank from server
-    String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
-
-    System.out.println(bankPriceMapAsString);
-
-    // set player info in the prompt to be whatever the server says
-    setPlayerInfo(toGemAmountMap(bankPriceMapAsString));
-
-    // request Game bank info post purchase
-    String newGameBankString = PromptsRequests.getGameBankInfo(promptSessionId);
-
-    // get game bank map from string
-    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
-    setGameBank(promptSessionId, gameBankMap);
-  }
 
   // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
-
-
     // sends a request to server telling it purchase information
     PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         authToken,
         atProposedOffer);
-
-    // request Game bank info post purchase
-    String newGameBankString = PromptsRequests.getGameBankInfo(promptSessionId);
-
-    // get game bank map from string
-    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
-    setGameBank(promptSessionId, gameBankMap);
   }
 
-  private void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
-    for (CurrencyType e : gameBankMap.keySet()) {
-      FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
-    }
-  }
+
 
   // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 

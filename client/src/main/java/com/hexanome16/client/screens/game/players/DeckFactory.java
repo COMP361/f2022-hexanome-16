@@ -16,10 +16,12 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 /**
  * Player's deck factory.
@@ -160,7 +162,7 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("PlayerTokens")
   public Entity playerTokens(SpawnData data) {
-    String player = (String) data.getData().getOrDefault("player", "");
+
 
     final StackPane mytokens = new StackPane();
     Rectangle myRectangle = new Rectangle(110, 160, Color.GREY);
@@ -174,12 +176,13 @@ public class DeckFactory implements EntityFactory {
     tokens.setPrefRows(3);
     tokens.setPrefSize(110, 160);
 
+    String player = (String) data.getData().getOrDefault("player", "");
     addToken(player, tokens, CurrencyType.RED_TOKENS, "ruby.png", 1);
     addToken(player, tokens, CurrencyType.GREEN_TOKENS, "emerald.png", 0);
-    addToken(player, tokens, CurrencyType.BLUE_TOKENS,"sapphire.png", 0);
-    addToken(player, tokens, CurrencyType.WHITE_TOKENS,"diamond.png", 2);
-    addToken(player, tokens, CurrencyType.BLACK_TOKENS,"onyx.png", 0);
-    addToken(player, tokens, CurrencyType.GOLD_TOKENS,"gold.png", 0);
+    addToken(player, tokens, CurrencyType.BLUE_TOKENS, "sapphire.png", 0);
+    addToken(player, tokens, CurrencyType.WHITE_TOKENS, "diamond.png", 2);
+    addToken(player, tokens, CurrencyType.BLACK_TOKENS, "onyx.png", 0);
+    addToken(player, tokens, CurrencyType.GOLD_TOKENS, "gold.png", 0);
 
     mytokens.getChildren().addAll(myRectangle, tokens);
 
@@ -210,7 +213,11 @@ public class DeckFactory implements EntityFactory {
     token.setFitHeight(45);
     token.setFitWidth(45);
     // multiplicity (text)
-    Text number = new Text(Integer.toString(amount));
+    Text number = new Text();
+    number.textProperty().bind(
+        FXGL.getWorldProperties().intProperty(ownerName + "/" + currencyType.toString())
+            .asString()
+    );
     number.setFont(CURSIVE_FONT_FACTORY.newFont(28));
     number.setFill(Paint.valueOf("#FFFFFF"));
     number.setStrokeWidth(2.);
@@ -287,17 +294,28 @@ public class DeckFactory implements EntityFactory {
   @Spawns("PlayersTurn")
   public Entity playersTurn(SpawnData data) {
     // current player's name
-    Text text = new Text();
-    text.textProperty().bind(FXGL.getWorldProperties().stringProperty(
+    Text currentPlayerName = new Text();
+    currentPlayerName.textProperty().bind(FXGL.getWorldProperties().stringProperty(
         GameScreen.getSessionId() + "/" + "currentPlayer"));
-    text.setFont(CURSIVE_FONT_FACTORY.newFont(100));
-    text.setFill(Paint.valueOf("#FFFFFF"));
-    text.setStrokeWidth(2.);
-    text.setStroke(Paint.valueOf("#000000"));
-    text.setStyle("-fx-background-color: ffffff00; ");
+    currentPlayerName.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    currentPlayerName.setFill(Paint.valueOf("#FFFFFF"));
+    currentPlayerName.setStrokeWidth(2.);
+    currentPlayerName.setStroke(Paint.valueOf("#000000"));
+    currentPlayerName.setStyle("-fx-background-color: ffffff00; ");
+    currentPlayerName.textAlignmentProperty().setValue(TextAlignment.CENTER);
+    currentPlayerName.setWrappingWidth(FXGL.getAppWidth() / 3.);
+
+    Text currentPlayerText = new Text("Current Player : ");
+    currentPlayerText.setFont(CURSIVE_FONT_FACTORY.newFont(100));
+    currentPlayerText.setFill(Paint.valueOf("#FFFFFF"));
+    currentPlayerText.setStrokeWidth(2.);
+    currentPlayerText.setStroke(Paint.valueOf("#000000"));
+    currentPlayerText.setStyle("-fx-background-color: ffffff00; ");
+    currentPlayerText.setWrappingWidth(FXGL.getAppWidth() / 3.);
+
     // pane
-    StackPane pane = new StackPane();
-    pane.getChildren().addAll(text);
+    VBox pane = new VBox();
+    pane.getChildren().addAll(currentPlayerText, currentPlayerName);
     // build the entity
     return FXGL.entityBuilder(data)
             .view(pane)

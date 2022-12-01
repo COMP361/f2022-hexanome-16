@@ -4,7 +4,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
-import com.hexanome16.client.types.sessions.Session;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,11 @@ public class UpdateGameInfo {
    * Fetch player bank and game bank from server and sets those to be visible from the
    * UI, mainly used for prompt.
    *
+   * @param sessionId Unique session identifier.
    * @param playerName name of player.
+   * @param withinPrompt True if call within prompt, (doesn't update same properties),
+   *                     false for any other context.
+   *
    */
   public static void fetchPlayerBank(long sessionId, String playerName, boolean withinPrompt) {
 
@@ -55,9 +58,12 @@ public class UpdateGameInfo {
     setGameBank(sessionId, toGemAmountMap(bankPriceMapAsString));
   }
 
-
-
-
+  /**
+   * Updates Current player text at top right of screen.
+   *
+   * @param sessionId unique session identifier for the game.
+   * @param currentPlayer username for player we would like to set as new current player.
+   */
   public static void setCurrentPlayer(long sessionId, String currentPlayer) {
     FXGL.getWorldProperties().setValue(
         sessionId + "/" + "currentPlayer", currentPlayer);
@@ -102,6 +108,7 @@ public class UpdateGameInfo {
   /**
    * Allows to set the bank information for a specific player.
    *
+   * @param playerName username of player we're fetching the information for.
    * @param playerInfo Map between Currency type and the new amount of each currency
    */
   public static void setPlayerBankInfoGlobal(String playerName,
@@ -119,9 +126,16 @@ public class UpdateGameInfo {
   }
 
 
-  // TODO
-  public static void initTokensAllPlayer() {
-
+  /**
+   * Initialize all tokens for all players.
+   *
+   * @param sessionId unique session identifier.
+   * @param usernames all players in the game.
+   */
+  public static void fetchAllPlayer(long sessionId, String[] usernames) {
+    for (String username : usernames) {
+      fetchPlayerBank(sessionId, username);
+    }
   }
 
   /**
