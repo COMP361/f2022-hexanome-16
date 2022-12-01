@@ -17,6 +17,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Data
 @NoArgsConstructor
 public class NoblesHash implements BroadcastContent {
+  /**
+   * The constant allNobles.
+   */
   public static Map<String, DevelopmentCard> allNobles = new HashMap<String, DevelopmentCard>();
 
   private final Map<String, DevelopmentCard> nobles = new HashMap<String, DevelopmentCard>();

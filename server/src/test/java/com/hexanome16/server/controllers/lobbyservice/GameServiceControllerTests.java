@@ -28,12 +28,18 @@ public class GameServiceControllerTests {
   @Autowired
   private GameServiceController gameServiceController;
 
+  /**
+   * Test create game service.
+   */
   @Test
   public void createGameService() {
     ResponseEntity<Void> response = gameServiceController.createGameService();
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
+  /**
+   * Test delete game service.
+   */
   @Test
   public void deleteGameService() {
     ResponseEntity<Void> response = gameServiceController.deleteGameService();

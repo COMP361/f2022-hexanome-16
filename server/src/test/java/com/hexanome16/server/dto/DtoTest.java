@@ -1,6 +1,8 @@
 package com.hexanome16.server.dto;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -21,21 +23,35 @@ public class DtoTest {
 
   private final PlayerJson playerJson = new PlayerJson("player");
 
+  /**
+   * Instantiates a new Dto test.
+   *
+   * @throws IOException the io exception
+   */
   public DtoTest() throws IOException {
   }
 
+  /**
+   * Test deck not empty.
+   */
   @Test
   public void testDeckEmpty() {
-    assertNotNull(deckHash.isEmpty());
+    assertFalse(deckHash.isEmpty());
   }
 
+  /**
+   * Test nobles not empty.
+   */
   @Test
-  public void testNoblesEmpty() {
-    assertNotNull(noblesHash.isEmpty());
+  public void testNoblesNotEmpty() {
+    assertFalse(noblesHash.isEmpty());
   }
 
+  /**
+   * Test player not empty.
+   */
   @Test
-  public void testPlayerEmpty() {
-    assertNotNull(playerJson.isEmpty());
+  public void testPlayerNotEmpty() {
+    assertFalse(playerJson.isEmpty());
   }
 }

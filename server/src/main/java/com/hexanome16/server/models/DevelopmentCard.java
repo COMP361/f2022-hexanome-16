@@ -1,10 +1,6 @@
 package com.hexanome16.server.models;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 /**
  * Development card class.
@@ -18,43 +14,18 @@ public abstract class DevelopmentCard {
   private final Price price;
 
   /**
-   * Creates a new card object with id, prestigePoint, texturePath and price.
+   * Add this card to the player's inventory.
    *
-   * @param id            card id
-   * @param prestigePoint card prestige point
-   * @param texturePath   card texture
-   * @param price         card price
+   * @param inventory the inventory
+   * @return true on success
    */
-  public DevelopmentCard(int id, int prestigePoint, String texturePath, Price price) {
-    this.id = id;
-    this.prestigePoint = prestigePoint;
-    this.price = price;
-    this.texturePath = texturePath;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public int getPrestigePoint() {
-    return prestigePoint;
-  }
-
-  public Price getPrice() {
-    return price;
-  }
-
-  public String getTexturePath() {
-    return texturePath;
-  }
-
-  /** Add this card to the player's inventory.
-   *
-   * @return true on success */
   abstract boolean addToInventory(Inventory inventory);
 
-  /** Reserve this card.
+  /**
+   * Reserve this card.
    *
-   * @return true on success */
+   * @param inventory the inventory
+   * @return true on success
+   */
   abstract boolean reserveCard(Inventory inventory);
 }

@@ -19,13 +19,16 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Data
 @NoArgsConstructor
 public class DeckHash implements BroadcastContent {
+  /**
+   * Map of all cards.
+   */
   public static Map<String, DevelopmentCard> allCards = new HashMap<String, DevelopmentCard>();
   private Map<String, DevelopmentCard> cards = new HashMap<String, DevelopmentCard>();
 
   /**
    * Create deck MD5.
    *
-   * @param game current game
+   * @param game  current game
    * @param level deck level
    * @throws JsonProcessingException exception
    */

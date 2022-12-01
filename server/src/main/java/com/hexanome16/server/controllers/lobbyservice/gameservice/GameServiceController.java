@@ -56,6 +56,8 @@ public class GameServiceController {
   /**
    * This method registers this server as a game service in Lobby Service.
    * It is called at the startup of the server.
+   *
+   * @return the response entity
    */
   @EventListener(ApplicationReadyEvent.class)
   public ResponseEntity<Void> createGameService() {
@@ -78,6 +80,8 @@ public class GameServiceController {
 
   /**
    * This method deletes the associated game service in Lobby Service.
+   *
+   * @return the response entity
    */
   public ResponseEntity<Void> deleteGameService() {
     ResponseEntity<TokensInfo> tokensInfo = authController.login(gsUsername, gsPassword);

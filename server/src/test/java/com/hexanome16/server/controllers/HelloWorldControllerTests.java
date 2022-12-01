@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
  */
 @WebMvcTest(HelloWorldController.class)
 public class HelloWorldControllerTests {
+  /**
+   * Test say hello.
+   */
   @Test
   public void testSayHello() {
     ResponseEntity<Greeting> response = new HelloWorldController().sayHello("World");

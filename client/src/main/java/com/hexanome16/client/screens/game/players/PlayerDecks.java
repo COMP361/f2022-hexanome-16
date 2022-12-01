@@ -182,10 +182,10 @@ public class PlayerDecks {
             verticalShift + 180 + vertical * scale)
         .setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
-            verticalShift + 240 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + +horizontal * scale + 95,
-            verticalShift + 300 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
+                    verticalShift + 240 + vertical * scale)
+            .setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+                    verticalShift + 300 + vertical * scale)
+            .setScaleUniform(0.07 * scale);
   }
 }

@@ -3,10 +3,6 @@ package com.hexanome16.server.models;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Player inventory class.
@@ -33,8 +29,14 @@ public class Inventory {
     reservedCards = new ArrayList<>();
   }
 
+  /**
+   * Acquire card boolean.
+   *
+   * @param card the card
+   * @return the boolean
+   */
   /* add methods ******************************************************************************/
-  public boolean aquireCard(LevelCard card) {
+  public boolean acquireCard(LevelCard card) {
     return ownedCards.add(card);
   }
 
@@ -52,10 +54,22 @@ public class Inventory {
     return reservedCards.add(card);
   }
 
-  public boolean aquireNoble(Noble noble) {
+  /**
+   * Acquire noble boolean.
+   *
+   * @param noble the noble
+   * @return the boolean
+   */
+  public boolean acquireNoble(Noble noble) {
     return ownedNobles.add(noble);
   }
 
+  /**
+   * Reserve noble boolean.
+   *
+   * @param noble the noble
+   * @return the boolean
+   */
   public boolean reserveNoble(Noble noble) {
     return reservedNobles.add(noble);
   }

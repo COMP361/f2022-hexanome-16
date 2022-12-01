@@ -27,6 +27,12 @@ public class AuthController {
   @Value("${ls.password}")
   private String lsPassword;
 
+  /**
+   * Instantiates a new Auth controller.
+   *
+   * @param restTemplateBuilder the rest template builder
+   * @param urlUtils            the url utils
+   */
   public AuthController(@Autowired RestTemplateBuilder restTemplateBuilder,
                         @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
@@ -57,11 +63,24 @@ public class AuthController {
     }
   }
 
+  /**
+   * Login response entity.
+   *
+   * @param username the username
+   * @param password the password
+   * @return the response entity
+   */
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String username, String password) {
     return login(username, password, null);
   }
 
+  /**
+   * Login response entity.
+   *
+   * @param refreshToken the refresh token
+   * @return the response entity
+   */
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String refreshToken) {
     return login(null, null, refreshToken);
@@ -90,6 +109,7 @@ public class AuthController {
    * This request logs out the user in LS associated with the access token.
    *
    * @param accessToken The access token.
+   * @return the response entity
    */
   public ResponseEntity<Void> logout(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);

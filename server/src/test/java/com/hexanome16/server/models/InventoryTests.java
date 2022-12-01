@@ -40,7 +40,7 @@ public class InventoryTests {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     Price price = new TokenPrice(priceMap);
     levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
-    inventory.aquireCard(levelCard);
+    inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
   }
 
@@ -68,7 +68,7 @@ public class InventoryTests {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
     Price price = new TokenPrice(priceMap);
     noble = new Noble(0, 3, "noble0.png", price);
-    inventory.aquireNoble(noble);
+    inventory.acquireNoble(noble);
     assertTrue(inventory.getOwnedNobles().contains(noble));
   }
 
