@@ -20,6 +20,38 @@ public class PlayerDecks {
   private static final List<String> cards =
       List.of("red", "green", "blue", "white", "black", "gold");
 
+  /** Generates the player decks.
+   *
+   * @param players players for this session
+   */
+  public static void generateAll(String[] players) {
+    // number of players for this session
+    int numOfPlayers = players.length;
+    // current decks
+    PlayerDecks decks = new PlayerDecks();
+    // spawn who is playing TODO animation
+    FXGL.spawn("PlayersTurn", 95, 60);
+    // spawn the players
+    int curr = 0;
+    // spawn the current player TODO here array of username
+    if (curr < numOfPlayers) {
+      decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
+    }
+    // spawn a player on the left
+    if (curr < numOfPlayers) {
+      decks.spawnLeftPlayer(players[curr++], 150.0, OPPONENT_SCALE);
+    }
+    // spawn a player at the top
+    if (curr < numOfPlayers) {
+      decks.spawnHorizontalPlayer(players[curr++], 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
+    }
+    // spawn a player at the right
+    if (curr < numOfPlayers) {
+      decks.spawnRightPlayer(players[curr], APP_WIDTH / 4.0 + 7 * horizontal + 10,
+          150.0, OPPONENT_SCALE);
+    }
+  }
+
   // helper
   private void spawnHorizontalPlayer(String name, double horizontal, double vertical,
                                      double scale) {
@@ -155,38 +187,5 @@ public class PlayerDecks {
     FXGL.spawn("ReservedCards", horizontalShift + +horizontal * scale + 95,
             verticalShift + 300 + vertical * scale)
         .setScaleUniform(0.07 * scale);
-  }
-
-  /**
-   * Generates the player decks.
-   *
-   * @param players players for this session
-   */
-  public static void generateAll(String[] players) {
-    // number of players for this session
-    int numOfPlayers = players.length;
-    // current decks
-    PlayerDecks decks = new PlayerDecks();
-    // spawn who is playing TODO animation
-    FXGL.spawn("PlayersTurn", 95, 60);
-    // spawn the players
-    int curr = 0;
-    // spawn the current player TODO here array of username
-    if (curr < numOfPlayers) {
-      decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
-    }
-    // spawn a player on the left
-    if (curr < numOfPlayers) {
-      decks.spawnLeftPlayer(players[curr++], 150.0, OPPONENT_SCALE);
-    }
-    // spawn a player at the top
-    if (curr < numOfPlayers) {
-      decks.spawnHorizontalPlayer(players[curr++], 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
-    }
-    // spawn a player at the right
-    if (curr < numOfPlayers) {
-      decks.spawnRightPlayer(players[curr], APP_WIDTH / 4.0 + 7 * horizontal + 10,
-          150.0, OPPONENT_SCALE);
-    }
   }
 }

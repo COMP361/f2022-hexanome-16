@@ -19,62 +19,125 @@ public class MainMenuScreenUiController implements UIController {
 
   private static final float EXPAND_SIZE = 1.1f;
   private static final float NORMAL_SIZE = 1f;
+  /**
+   * The Lobby section.
+   */
   @FXML
   VBox lobbySection;
+  /**
+   * The Rulebook section.
+   */
   @FXML
   VBox rulebookSection;
+  /**
+   * The Settings section.
+   */
   @FXML
   VBox settingsSection;
+  /**
+   * The Logout button.
+   */
   @FXML
   VBox logoutButton;
 
+  /**
+   * Click lobby event.
+   *
+   * @param event the event
+   */
   @FXML
   void clickLobby(MouseEvent event) {
     System.out.println("click");
   }
 
+  /**
+   * Click rulebook event.
+   *
+   * @param event the event
+   */
   @FXML
   void clickRulebook(MouseEvent event) {
 
   }
 
+  /**
+   * Click settings event.
+   *
+   * @param event the event
+   */
   @FXML
   void clickSettings(MouseEvent event) {
 
   }
 
+  /**
+   * Expand lobby event.
+   *
+   * @param event the event
+   */
   @FXML
   void expandLobby(MouseEvent event) {
     resize(lobbySection, EXPAND_SIZE);
   }
 
+  /**
+   * Expand rulebook event.
+   *
+   * @param event the event
+   */
   @FXML
   void expandRulebook(MouseEvent event) {
     resize(rulebookSection, EXPAND_SIZE);
   }
 
+  /**
+   * Expand settings event.
+   *
+   * @param event the event
+   */
   @FXML
   void expandSettings(MouseEvent event) {
     resize(settingsSection, EXPAND_SIZE);
   }
 
+  /**
+   * Shrink lobby event.
+   *
+   * @param event the event
+   */
   @FXML
   void shrinkLobby(MouseEvent event) {
     resize(lobbySection, NORMAL_SIZE);
   }
 
+  /**
+   * Shrink rulebook event.
+   *
+   * @param event the event
+   */
   @FXML
   void shrinkRulebook(MouseEvent event) {
     resize(rulebookSection, NORMAL_SIZE);
   }
 
+  /**
+   * Shrink settings event.
+   *
+   * @param event the event
+   */
   @FXML
   void shrinkSettings(MouseEvent event) {
     resize(settingsSection, NORMAL_SIZE);
   }
 
+  /**
+   * Click logout button.
+   *
+   * @param event the event
+   */
   @FXML
-  void clickLogoutButton(MouseEvent event) {}
+  void clickLogoutButton(MouseEvent event) {
+  }
 
   private void resize(Node n, float size) {
     ScaleTransition scale =
