@@ -8,12 +8,46 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import java.util.List;
 
+/**
+ * The type Player decks.
+ */
 public class PlayerDecks {
   // there are 4 players hence 4 decks
   private static final double xCardDist = 150;
   // horizontal distance between cards (this is for the current player)
   private static final double yCardDist = 180;
   // vertical distance between cards (this is for opponents)
+
+  /**
+   * Generate all player decks.
+   *
+   * @param numOfPlayers the num of players
+   */
+  public static void generateAll(int numOfPlayers) {
+    // current decks
+    PlayerDecks decks = new PlayerDecks();
+    // spawn who is playing TODO animation
+    FXGL.spawn("PlayersTurn", 95, 60);
+    // spawn the players
+    int curr = 0;
+    // spawn the current player
+    if (++curr <= numOfPlayers) {
+      decks.spawnHorizontalPlayer("Player " + curr, APP_WIDTH / 4.0, APP_HEIGHT - yCardDist, 1);
+    }
+    // spawn a player on the left
+    if (++curr <= numOfPlayers) {
+      decks.spawnLeftPlayer("Player " + curr, 150.0, OPPONENT_SCALE);
+    }
+    // spawn a player at the top
+    if (++curr <= numOfPlayers) {
+      decks.spawnHorizontalPlayer("Player " + curr, 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
+    }
+    // spawn a player at the right
+    if (++curr <= numOfPlayers) {
+      decks.spawnRightPlayer("Player " + curr, APP_WIDTH / 4.0 + 7 * xCardDist + 10, 150.0,
+          OPPONENT_SCALE);
+    }
+  }
 
   // helper
   private void spawnHorizontalPlayer(String name, double xpos, double ypos, double scale) {
@@ -105,32 +139,5 @@ public class PlayerDecks {
     FXGL.spawn("ReservedCards", xshift + +xCardDist * scale + 95,
             yshift + 300 + yCardDist * scale)
         .setScaleUniform(0.07 * scale);
-  }
-
-  // generates the player decks
-  public static void generateAll(int numOfPlayers) {
-    // current decks
-    PlayerDecks decks = new PlayerDecks();
-    // spawn who is playing TODO animation
-    FXGL.spawn("PlayersTurn", 95, 60);
-    // spawn the players
-    int curr = 0;
-    // spawn the current player
-    if (++curr <= numOfPlayers) {
-      decks.spawnHorizontalPlayer("Player " + curr, APP_WIDTH / 4.0, APP_HEIGHT - yCardDist, 1);
-    }
-    // spawn a player on the left
-    if (++curr <= numOfPlayers) {
-      decks.spawnLeftPlayer("Player " + curr, 150.0, OPPONENT_SCALE);
-    }
-    // spawn a player at the top
-    if (++curr <= numOfPlayers) {
-      decks.spawnHorizontalPlayer("Player " + curr, 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
-    }
-    // spawn a player at the right
-    if (++curr <= numOfPlayers) {
-      decks.spawnRightPlayer("Player " + curr, APP_WIDTH / 4.0 + 7 * xCardDist + 10, 150.0,
-          OPPONENT_SCALE);
-    }
   }
 }

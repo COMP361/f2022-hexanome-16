@@ -22,20 +22,38 @@ import javafx.scene.text.TextAlignment;
  */
 public class SeeCards implements PromptTypeInterface {
 
+  /**
+   * The width.
+   */
   double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
   double atHeight = getAppHeight() / 2.;
+  /**
+   * The card width.
+   */
   double atCardWidth = atWidth / 4;
+  /**
+   * The card height.
+   */
   double atCardHeight = atCardWidth * 1.39;
+  /**
+   * The top left x.
+   */
   double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 

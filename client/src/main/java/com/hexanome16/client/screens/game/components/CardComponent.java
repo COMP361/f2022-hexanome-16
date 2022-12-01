@@ -14,20 +14,29 @@ import javafx.scene.input.MouseEvent;
  * FXGL component for development cards on board.
  */
 public class CardComponent extends Component {
+  /**
+   * The constant level_one_grid.
+   */
   public static CardComponent[] level_one_grid = new CardComponent[4];
+  /**
+   * The constant level_two_grid.
+   */
   public static CardComponent[] level_two_grid = new CardComponent[4];
+  /**
+   * The constant level_three_grid.
+   */
   public static CardComponent[] level_three_grid = new CardComponent[4];
   private final Level level;
-
+  private final boolean purchased = false;
+  /**
+   * The Texture.
+   */
   public String texture;
   private ViewComponent view;
   private TransformComponent position;
   private boolean fading = false;
   private boolean adding = false;
   private int gridX;
-
-  private final boolean purchased = false;
-
   private String cardHash = "";
 
   private PriceMap priceMap = new PriceMap();
@@ -36,9 +45,9 @@ public class CardComponent extends Component {
   /**
    * Creates a new card fxgl component.
    *
-   * @param id card id
-   * @param level card level
-   * @param texture card texture
+   * @param id       card id
+   * @param level    card level
+   * @param texture  card texture
    * @param priceMap the price of the card
    * @param cardHash MD5 hash of the card
    */
@@ -150,10 +159,20 @@ public class CardComponent extends Component {
     }
   }
 
+  /**
+   * Gets price map.
+   *
+   * @return the price map
+   */
   public PriceMap getPriceMap() {
     return priceMap;
   }
 
+  /**
+   * Gets card hash.
+   *
+   * @return the card hash
+   */
   public String getCardHash() {
     return cardHash;
   }

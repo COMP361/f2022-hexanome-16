@@ -9,8 +9,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * This class provides methods to change the colour of the user.
@@ -51,8 +49,16 @@ public class ChangeColourRequest {
   }
 
   private static class Payload {
+    /**
+     * The player's new color.
+     */
     String colour;
 
+    /**
+     * Instantiates a new Payload.
+     *
+     * @param colour player's colour new color
+     */
     public Payload(String colour) {
       this.colour = colour;
     }
