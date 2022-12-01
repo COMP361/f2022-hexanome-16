@@ -28,11 +28,11 @@ public final class TokensInfo {
   /**
    * Constructor.
    *
-   * @param accessToken The access token.
+   * @param accessToken  The access token.
    * @param refreshToken The refresh token.
-   * @param tokenType The token type (should be "bearer").
-   * @param expiresIn The number of seconds before the access token expires.
-   * @param scope The scope of the access token.
+   * @param tokenType    The token type (should be "bearer").
+   * @param expiresIn    The number of seconds before the access token expires.
+   * @param scope        The scope of the access token.
    */
   public TokensInfo(String accessToken, String refreshToken, String tokenType, int expiresIn,
                     String scope) {

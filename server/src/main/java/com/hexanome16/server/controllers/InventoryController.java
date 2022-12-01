@@ -34,9 +34,10 @@ public class InventoryController {
   /**
    * Controller for the Inventory.
    *
-   * @param gameController      controller for the whole game (used for helper)
-   * @param urlUtils            operations
    * @param restTemplateBuilder server
+   * @param urlUtils            operations
+   * @param gameController      controller for the whole game (used for helper)
+   * @param objectMapper        the object mapper
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
                              GameController gameController, ObjectMapper objectMapper) {
@@ -80,13 +81,14 @@ public class InventoryController {
 
   /* POST methods *****************************************************************************/
 
-  /** Create a new inventory for the given player.
+  /**
+   * Create a new inventory for the given player.
    *
-   * @param sessionId ID of the current section
+   * @param sessionId   ID of the current section
    * @param accessToken access token for this request
    * @return {@link ResponseEntity} the inventory as a response entity
    * @throws JsonProcessingException com.fasterxml.jackson.core. json processing exception
-   * */
+   */
   @PostMapping(value = {"/games/{sessionId}/inventory"})
   public ResponseEntity<String> createInventory(@PathVariable long sessionId,
                                                 @RequestParam String accessToken)
@@ -105,7 +107,7 @@ public class InventoryController {
   /**
    * Delete inventory.
    *
-   * @param sessionId session
+   * @param sessionId   session
    * @param accessToken access token
    * @return response entity
    */
@@ -125,8 +127,8 @@ public class InventoryController {
    * get Cards.
    *
    * @param sessionId session id.
-   * @param username access token
-   * @return response.
+   * @param username  access token
+   * @return response. cards
    * @throws JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
@@ -146,7 +148,7 @@ public class InventoryController {
    * get Nobles.
    *
    * @param sessionId session id.
-   * @param username access token.
+   * @param username  access token.
    * @return response entity.
    * @throws JsonProcessingException if json doesnt work
    */
@@ -163,11 +165,12 @@ public class InventoryController {
   }
 
   // TODO : IMPLEMETNATIAAOSN
+
   /**
    * Get reserved Cards, with private cards.
    *
-   * @param sessionId session Id.
-   * @param username username.
+   * @param sessionId   session Id.
+   * @param username    username.
    * @param accessToken access Token.
    * @return get reserve nobles.
    * @throws JsonProcessingException if json doesnt work.
@@ -188,7 +191,7 @@ public class InventoryController {
    * get reserved nobles.
    *
    * @param sessionId session id.
-   * @param username access token.
+   * @param username  access token.
    * @return response entity.
    * @throws JsonProcessingException if json doesnt work.
    */

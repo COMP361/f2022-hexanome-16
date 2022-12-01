@@ -47,6 +47,12 @@ public abstract class Bank {
     return bank;
   }
 
+  /**
+   * Add tokens to list.
+   *
+   * @param list  the list to be added to
+   * @param toAdd the list of tokens to add
+   */
   void addTokensToList(ArrayList<Token> list, ArrayList<Token> toAdd) {
     for (int i = 0; i < toAdd.size(); i++) {
       list.add(toAdd.remove(i));
@@ -54,6 +60,13 @@ public abstract class Bank {
     }
   }
 
+  /**
+   * Remove token from list array list.
+   *
+   * @param list   the list to be removed from
+   * @param amount the amount of tokens to remove
+   * @return the array list
+   */
   ArrayList<Token> removeTokenFromList(ArrayList<Token> list, int amount) {
     ArrayList<Token> removed = new ArrayList<>();
 
@@ -74,16 +87,17 @@ public abstract class Bank {
 
 
   // TODO TEST
+
   /**
    * increments Player bank by the amount specified by each parameter for each of their
    * corresponding gem types.
    *
-   * @param rubyAmount amount to increase ruby stack by.
-   * @param emeraldAmount amount to increase emerald stack by.
+   * @param rubyAmount     amount to increase ruby stack by.
+   * @param emeraldAmount  amount to increase emerald stack by.
    * @param sapphireAmount amount to increase sapphire stack by.
-   * @param diamondAmount amount to increase diamond stack by.
-   * @param onyxAmount amount to increase onyx stack by.
-   * @param goldAmount amount to increase gold stack by.
+   * @param diamondAmount  amount to increase diamond stack by.
+   * @param onyxAmount     amount to increase onyx stack by.
+   * @param goldAmount     amount to increase gold stack by.
    */
   public void incBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
                       int diamondAmount, int onyxAmount, int goldAmount) {
@@ -138,16 +152,17 @@ public abstract class Bank {
   }
 
   // TODO: TEST CASE
+
   /**
    * Returns true if bank has at least specified amounts of each gem type in their bank, false
    * otherwise.
    *
-   * @param rubyAmount minimum amount or rubies player should have
-   * @param emeraldAmount minimum amount or emerald player should have
+   * @param rubyAmount     minimum amount or rubies player should have
+   * @param emeraldAmount  minimum amount or emerald player should have
    * @param sapphireAmount minimum amount or sapphire player should have
-   * @param diamondAmount minimum amount or diamond player should have
-   * @param onyxAmount minimum amount or onyx player should have
-   * @param goldAmount minimum amount or gold player should have
+   * @param diamondAmount  minimum amount or diamond player should have
+   * @param onyxAmount     minimum amount or onyx player should have
+   * @param goldAmount     minimum amount or gold player should have
    * @return true if bank has at least input amounts of each gem type, false otherwise.
    */
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,

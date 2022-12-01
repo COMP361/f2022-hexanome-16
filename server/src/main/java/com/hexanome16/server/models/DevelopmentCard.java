@@ -17,13 +17,19 @@ public abstract class DevelopmentCard {
   private final String texturePath;
   private final Price price;
 
-  /** Add this card to the player's inventory.
+  /**
+   * Add this card to the player's inventory.
    *
-   * @return true on success */
+   * @param inventory the inventory
+   * @return true on success
+   */
   abstract boolean addToInventory(Inventory inventory);
 
-  /** Reserve this card.
+  /**
+   * Reserve this card.
    *
-   * @return true on success */
+   * @param inventory the inventory
+   * @return true on success
+   */
   abstract boolean reserveCard(Inventory inventory);
 }

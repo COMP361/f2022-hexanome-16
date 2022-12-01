@@ -21,19 +21,33 @@ public class DtoTest {
 
   private final PlayerJson playerJson = new PlayerJson("player");
 
+  /**
+   * Instantiates a new Dto test.
+   *
+   * @throws IOException the io exception
+   */
   public DtoTest() throws IOException {
   }
 
+  /**
+   * Test deck empty.
+   */
   @Test
   public void testDeckEmpty() {
     assertNotNull(deckHash.isEmpty());
   }
 
+  /**
+   * Test nobles empty.
+   */
   @Test
   public void testNoblesEmpty() {
     assertNotNull(noblesHash.isEmpty());
   }
 
+  /**
+   * Test player empty.
+   */
   @Test
   public void testPlayerEmpty() {
     assertNotNull(playerJson.isEmpty());

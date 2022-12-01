@@ -25,11 +25,11 @@ public final class Session {
   /**
    * Constructor.
    *
-   * @param creator The creator of the session.
+   * @param creator        The creator of the session.
    * @param gameParameters The game parameters of the session.
-   * @param launched Whether the session is launched.
-   * @param players The players in the session.
-   * @param saveGameId The savegame id of the session (can be empty).
+   * @param launched       Whether the session is launched.
+   * @param players        The players in the session.
+   * @param saveGameId     The savegame id of the session (can be empty).
    */
   public Session(String creator, GameParams gameParameters, boolean launched, String[] players,
                  String saveGameId) {

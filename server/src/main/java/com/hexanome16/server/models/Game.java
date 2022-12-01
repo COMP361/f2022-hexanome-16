@@ -37,6 +37,9 @@ public class Game {
    * Game constructor, create a new with a unique session id.
    *
    * @param sessionId session id
+   * @param players   the players
+   * @param creator   the creator
+   * @param savegame  the savegame
    * @throws IOException exception
    */
   @JsonCreator
@@ -52,6 +55,11 @@ public class Game {
   }
 
 
+  /**
+   * Gets current player.
+   *
+   * @return the current player
+   */
   public Player getCurrentPlayer() {
     return getPlayers()[getCurrentPlayerIndex()];
   }
@@ -180,10 +188,22 @@ public class Game {
     this.onBoardNobles = nobleDeck;
   }
 
+  /**
+   * Gets deck.
+   *
+   * @param level deck level
+   * @return the deck
+   */
   public Deck getDeck(Level level) {
     return decks.get(level);
   }
 
+  /**
+   * Gets on board deck.
+   *
+   * @param level deck level
+   * @return the deck
+   */
   public Deck getOnBoardDeck(Level level) {
     return onBoardDecks.get(level);
   }
@@ -293,6 +313,11 @@ public class Game {
   }
 
 
+  /**
+   * Game bank to purchase map.
+   *
+   * @return the purchase map
+   */
   public PurchaseMap gameBankToPurchaseMap() {
     return getGameBank().toPurchaseMap();
   }
