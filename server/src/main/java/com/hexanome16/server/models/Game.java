@@ -3,8 +3,10 @@ package com.hexanome16.server.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.server.controllers.GameController;
 import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.NobleJson;
+import com.hexanome16.server.dto.PlayerJson;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -246,6 +248,8 @@ public class Game {
    */
   public void endCurrentPlayersTurn() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    GameController.getBroadcastContentManagerMap().get("player")
+        .updateBroadcastContent(new PlayerJson(getCurrentPlayer().getName()));
   }
 
   // TODO: TEST CASE

@@ -167,7 +167,7 @@ public class PromptsRequests {
    * @param sessionId Session ID of the game whose bank we want to retrieve.
    * @return PurchaseMap representation of the Bank's funds as a String
    */
-  public static String getNewGameBankInfo(long sessionId) {
+  public static String getGameBankInfo(long sessionId) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
             "/api/games/" + sessionId + "/gameBank", ""
