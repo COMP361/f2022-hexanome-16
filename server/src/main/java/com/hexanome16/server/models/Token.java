@@ -1,7 +1,15 @@
 package com.hexanome16.server.models;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 /**
  * Token class.
  */
-public record Token(Gem gem) {
+@AllArgsConstructor
+@Getter
+@EqualsAndHashCode
+public final class Token {
+  private final Gem gem;
 }
