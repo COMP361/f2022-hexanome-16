@@ -22,20 +22,38 @@ import javafx.scene.text.TextAlignment;
  */
 public class Pause implements PromptTypeInterface {
 
+  /**
+   * The width.
+   */
   double atWidth = FXGL.getAppWidth() / 6.;
+  /**
+   * The height.
+   */
   double atHeight = FXGL.getAppHeight() / 2.;
+  /**
+   * The top left x.
+   */
   double atTopLeftX = FXGL.getAppWidth() / 2. - atWidth / 2;
+  /**
+   * The top left y.
+   */
   double atTopLeftY = FXGL.getAppHeight() / 2. - atHeight / 2;
+  /**
+   * The button width.
+   */
   double atButtonWidth = atWidth * 0.75;
+  /**
+   * The button height.
+   */
   double atButtonHeight = atButtonWidth * 0.25;
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 
@@ -99,7 +117,13 @@ public class Pause implements PromptTypeInterface {
    * An enum for the possible buttons in the quick menu.
    */
   public enum ButtonType {
+    /**
+     * Settings button type.
+     */
     SETTINGS,
+    /**
+     * Exit button type.
+     */
     EXIT;
 
     /**

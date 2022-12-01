@@ -441,14 +441,41 @@ public class LobbyFactory implements EntityFactory {
    * Enum of possible entities in the lobby screen.
    */
   public enum Type {
+    /**
+     * Own session list.
+     */
     OWN_SESSION_LIST,
+    /**
+     * Other session list.
+     */
     OTHER_SESSION_LIST,
+    /**
+     * Create session button.
+     */
     CREATE_SESSION_BUTTON,
+    /**
+     * Close button.
+     */
     CLOSE_BUTTON,
+    /**
+     * Preferences button.
+     */
     PREFERENCES_BUTTON,
+    /**
+     * Logo.
+     */
     LOGO,
+    /**
+     * Own header.
+     */
     OWN_HEADER,
+    /**
+     * Other header.
+     */
     OTHER_HEADER,
+    /**
+     * Background.
+     */
     BACKGROUND
   }
 }

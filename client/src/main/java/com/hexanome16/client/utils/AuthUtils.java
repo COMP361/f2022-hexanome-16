@@ -37,15 +37,6 @@ public class AuthUtils {
   }
 
   /**
-   * Sets the player authentication information.
-   *
-   * @param auth The player authentication information.
-   */
-  public static void setAuth(TokensInfo auth) {
-    AuthUtils.auth = auth;
-  }
-
-  /**
    * Gets the player authentication information.
    *
    * @return The player authentication information.
@@ -55,12 +46,12 @@ public class AuthUtils {
   }
 
   /**
-   * Sets the player information.
+   * Sets the player authentication information.
    *
-   * @param player The player information.
+   * @param auth The player authentication information.
    */
-  public static void setPlayer(User player) {
-    AuthUtils.player = player;
+  public static void setAuth(TokensInfo auth) {
+    AuthUtils.auth = auth;
   }
 
   /**
@@ -70,5 +61,14 @@ public class AuthUtils {
    */
   public static User getPlayer() {
     return player;
+  }
+
+  /**
+   * Sets the player information.
+   *
+   * @param player The player information.
+   */
+  public static void setPlayer(User player) {
+    AuthUtils.player = player;
   }
 }

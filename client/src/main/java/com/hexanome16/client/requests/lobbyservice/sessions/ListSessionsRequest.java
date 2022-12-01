@@ -46,6 +46,9 @@ public class ListSessionsRequest {
   }
 
   private static class Response {
+    /**
+     * Map of sessions.
+     */
     public Map<String, Session> sessions;
   }
 }

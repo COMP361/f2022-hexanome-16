@@ -29,7 +29,7 @@ public class SettingsScreen {
   }
 
   /**
-   * Setup settings screen ui and ui actions
+   * Setup settings screen ui and ui actions.
    *
    * @param mainMenu true if I need to re-render the mainMenu on close
    */
