@@ -43,7 +43,7 @@ public class GameController {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
 
-  private final Map<String, BroadcastContentManager> broadcastContentManagerMap =
+  private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
       new HashMap<String, BroadcastContentManager>();
 
   public GameController(AuthController authController) {
@@ -53,6 +53,16 @@ public class GameController {
 
   public Map<Long, Game> getGameMap() {
     return gameMap;
+  }
+
+  /**
+   * gets broadcast content manager map. keys are : "noble", "ONE"
+   * "TWO", "THREE", "player"
+   *
+   * @return map.
+   */
+  public static Map<String, BroadcastContentManager> getBroadcastContentManagerMap() {
+    return broadcastContentManagerMap;
   }
 
   /**
@@ -68,7 +78,6 @@ public class GameController {
       return false;
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
-    System.out.println(username);
     if (username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
@@ -299,8 +308,7 @@ public class GameController {
       return new ResponseEntity<>("player not in game or bad deal",
           HttpStatus.BAD_REQUEST);
     }
-    System.out.println("PLAYER FOUND");
-    System.out.println(clientPlayer.getName());
+
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
@@ -335,6 +343,8 @@ public class GameController {
 
     // Ends players turn, which is current player
     game.endCurrentPlayersTurn();
+
+
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

@@ -403,15 +403,20 @@ public class BuyCardPrompt implements PromptTypeInterface {
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
-  private void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
+  private static void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
     for (CurrencyType e : CurrencyType.values()) {
       FXGL.getWorldProperties()
           .setValue(BankType.PLAYER_BANK + "/" + e.toString(), playerInfo.get(e));
     }
   }
 
-  // This also fetches Game Bank
-  private void fetchPlayerBank(String playerName) {
+  /**
+   * Fetch player bank and game bank from server and sets those to be visible from the
+   * UI.
+   *
+   * @param playerName name of player.
+   */
+  public static void fetchPlayerBank(String playerName) {
     // gets sessionId and username
     long promptSessionId = GameScreen.getSessionId();
     String username = AuthUtils.getPlayer().getName();
@@ -456,7 +461,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
     
   }
 
-  private void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
+  private static void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
     for (CurrencyType e : gameBankMap.keySet()) {
       FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
     }

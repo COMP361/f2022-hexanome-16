@@ -22,9 +22,9 @@ public class PlayerBank extends Bank {
    * @param gem = Gem type (RUBY, DIAMOND, etc) associated with the token.
    */
   public void acquireTokenSameColor(Gem gem) {
-//      ArrayList<Token> currentList = playerBank.get(gem);
-//      addTokensToList(currentList, Game.getGameMap().get(sessionId).
-//      playerBank.replace(gem, currentList);
+  //      ArrayList<Token> currentList = playerBank.get(gem);
+  //      addTokensToList(currentList, Game.getGameMap().get(sessionId).
+  //      playerBank.replace(gem, currentList);
   }
 
   /**
@@ -35,17 +35,17 @@ public class PlayerBank extends Bank {
    * @param gem3 = Gem type (RUBY, DIAMOND, etc) associated with the token.
    */
   public void acquireTokenDiffColor(Gem gem1, Gem gem2, Gem gem3) {
-//        ArrayList<Token> currentList1 = playerBank.get(gem1);
-//        currentList1 = initBank(currentList1, gem1, 1);
-//        playerBank.replace(gem1, currentList1);
-//
-//        ArrayList<Token> currentList2 = playerBank.get(gem2);
-//        currentList2 = initBank(currentList2, gem2, 1);
-//        playerBank.replace(gem2, currentList2);
-//
-//        ArrayList<Token> currentList3 = playerBank.get(gem3);
-//        currentList3 = initBank(currentList3, gem3, 1);
-//        playerBank.replace(gem3, currentList3);
+  //        ArrayList<Token> currentList1 = playerBank.get(gem1);
+  //        currentList1 = initBank(currentList1, gem1, 1);
+  //        playerBank.replace(gem1, currentList1);
+  //
+  //        ArrayList<Token> currentList2 = playerBank.get(gem2);
+  //        currentList2 = initBank(currentList2, gem2, 1);
+  //        playerBank.replace(gem2, currentList2);
+  //
+  //        ArrayList<Token> currentList3 = playerBank.get(gem3);
+  //        currentList3 = initBank(currentList3, gem3, 1);
+  //        playerBank.replace(gem3, currentList3);
   }
 
   public void purchaseCard() {
