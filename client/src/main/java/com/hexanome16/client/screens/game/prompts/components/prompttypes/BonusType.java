@@ -1,6 +1,5 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
-import java.util.EnumMap;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -8,24 +7,40 @@ import javafx.scene.paint.Paint;
  * Enum class which contains all the token bonus Types that can be taken directly from the bank.
  */
 public enum BonusType {
-  RED,
-  GREEN,
-  BLUE,
-  WHITE,
-  BLACK;
+  /**
+   * Red bonus type.
+   */
+  RED(Color.RED.darker()),
+  /**
+   * Green bonus type.
+   */
+  GREEN(Color.GREEN.darker()),
+  /**
+   * Blue bonus type.
+   */
+  BLUE(Color.BLUE.darker()),
+  /**
+   * White bonus type.
+   */
+  WHITE(Color.WHITE.darker()),
+  /**
+   * Black bonus type.
+   */
+  BLACK(Color.BLACK);
 
-  public static final EnumMap<BonusType, Color> m = new EnumMap<BonusType, Color>(BonusType.class);
+  private final Color color;
 
-  static {
-    m.put(RED, Color.RED.darker());
-    m.put(GREEN, Color.GREEN.darker());
-    m.put(BLUE, Color.BLUE.darker());
-    m.put(WHITE, Color.WHITE.darker());
-    m.put(BLACK, Color.BLACK);
+  BonusType(Color color) {
+    this.color = color;
   }
 
+  /**
+   * Gets color.
+   *
+   * @return the color
+   */
   public Paint getColor() {
-    return m.get(this);
+    return this.color;
   }
 
   /**

@@ -17,13 +17,13 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
 
   @Override
   protected double promptTextSize() {
-    return height() / 6;
+    return getHeight() / 6;
   }
 
   @Override
   protected void handlePromptForceQuit() {
-    atMyNodes = new ArrayList<>();
-    atAvailableBonuses = new ArrayList<>();
+    myNodesAttribute = new ArrayList<>();
+    availableBonusesAttribute = new ArrayList<>();
     chosenBonus = null;
   }
 

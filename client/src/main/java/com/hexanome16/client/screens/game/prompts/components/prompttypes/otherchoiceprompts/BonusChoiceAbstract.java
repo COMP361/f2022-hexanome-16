@@ -15,22 +15,34 @@ import javafx.scene.shape.Circle;
  * Abstract class representing the basics of token Acquiring, used for code reuse.
  */
 public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
+  /**
+   * The Chosen bonus.
+   */
   protected BonusType chosenBonus;
-  double atTokenRadius = width() / 20;
-  ArrayList<BonusType> atAvailableBonuses = new ArrayList<>();
-  ArrayList<Node> atMyNodes = new ArrayList<>();
+  /**
+   * The Token radius attribute.
+   */
+  double tokenRadiusAttribute = getWidth() / 20;
+  /**
+   * The Available bonuses attribute.
+   */
+  ArrayList<BonusType> availableBonusesAttribute = new ArrayList<>();
+  /**
+   * The nodes attribute.
+   */
+  ArrayList<Node> myNodesAttribute = new ArrayList<>();
 
   @Override
   protected void promptOpens() {
-    atAvailableBonuses = getAvailableBonuses();
+    availableBonusesAttribute = getAvailableBonuses();
   }
 
 
   @Override
   protected void addToLayout(HBox paLayout) {
-    paLayout.setSpacing(atTokenRadius / 4.);
+    paLayout.setSpacing(tokenRadiusAttribute / 4.);
     // add choices to the layout
-    for (BonusType t : atAvailableBonuses) {
+    for (BonusType t : availableBonusesAttribute) {
       ArrayList<Node> bonusNodesList = makeBonusType(t);
       Node bonusType = addToBonusType(bonusNodesList, t);
       paLayout.getChildren().add(bonusType);
@@ -40,15 +52,15 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
   private ArrayList<Node> makeBonusType(BonusType bonusType) {
 
     // initialize and set up actual circle
-    Circle bonusCircle = new Circle(atTokenRadius, bonusType.getColor());
-    bonusCircle.setStrokeWidth(atTokenRadius * 0.2);
+    Circle bonusCircle = new Circle(tokenRadiusAttribute, bonusType.getColor());
+    bonusCircle.setStrokeWidth(tokenRadiusAttribute * 0.2);
     bonusCircle.setStroke(bonusType.getStrokeColor());
 
     // initialize and set up the glowing around the circle
     // (also, add it to the list of all the glowing circles in the prompt)
-    Circle selectionCircle = new Circle(atTokenRadius * 1.4, Color.WHITE);
+    Circle selectionCircle = new Circle(tokenRadiusAttribute * 1.4, Color.WHITE);
     selectionCircle.setOpacity(0.5);
-    atMyNodes.add(selectionCircle);
+    myNodesAttribute.add(selectionCircle);
 
     // initialize and set up bonus layout
     StackPane myBonus = new StackPane();
@@ -57,8 +69,7 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
     // add onHover effect if condition is true
     // (condition is the 4th argument, a predicate object which
     // tests the last argument to the function)
-    PromptTypeInterface.setOnHoverEffectOpacity(myBonus, selectionCircle,
-        0.5, 0.7,
+    PromptTypeInterface.setOnHoverEffectOpacity(myBonus, selectionCircle, 0.5, 0.7,
         e -> ((Circle) e).getOpacity() != 1, selectionCircle);
 
 
@@ -68,9 +79,12 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
   /**
    * Adds behaviour to Node before returning it, has access to all its children.
    *
-   *  @param bonusNode a List containing 3 elements, the first one being the stackPane,
+   * @param bonusNode <p>
+   *                  list containing 3 elements, first one being the stackPane,
    *                  the second one is the selectionCircle and the third one is
-   *                  the actual bonusCircle.
+   *                  the actual bonusCircle
+   *                  </p>
+   * @param bonusType the bonus type
    * @return a Modified version of the first element from the input
    */
   protected Node addToBonusType(ArrayList<Node> bonusNode, BonusType bonusType) {
@@ -81,7 +95,7 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
 
     // adds the desired behaviour
     wholeButton.setOnMouseClicked(e -> {
-      for (Node n : atMyNodes) {
+      for (Node n : myNodesAttribute) {
         n.setOpacity(0.5);
       }
       selectionCircle.setOpacity(1);
@@ -95,8 +109,8 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
 
   @Override
   protected void handlePromptForceQuit() {
-    atMyNodes = new ArrayList<>();
-    atAvailableBonuses = new ArrayList<>();
+    myNodesAttribute = new ArrayList<>();
+    availableBonusesAttribute = new ArrayList<>();
     chosenBonus = null;
   }
 

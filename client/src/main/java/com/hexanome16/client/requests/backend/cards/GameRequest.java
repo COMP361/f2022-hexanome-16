@@ -17,6 +17,7 @@ public class GameRequest {
    *
    * @param sessionId session ID.
    * @param level     level.
+   * @param hash      the hash
    * @return string representation of deck.
    */
   public static String updateDeck(long sessionId, Level level, String hash) {
@@ -29,15 +30,14 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    String response = RequestClient.longPollAlt(request);
-    return response;
+    return RequestClient.longPollAlt(request);
   }
 
   /**
    * Sends request to server for any noble update.
    *
    * @param sessionId game id
-   * @param hash long polling hash
+   * @param hash      long polling hash
    * @return noble json
    */
   public static String updateNoble(long sessionId, String hash) {
@@ -50,15 +50,14 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    String response = RequestClient.longPollAlt(request);
-    return response;
+    return RequestClient.longPollAlt(request);
   }
 
   /**
    * Requests current player username from server.
    *
    * @param sessionId game id
-   * @param hash long polling hash
+   * @param hash      long polling hash
    * @return current player username
    */
   public static String updateCurrentPlayer(long sessionId, String hash) {
@@ -71,7 +70,6 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    String response = RequestClient.longPollAlt(request);
-    return response;
+    return RequestClient.longPollAlt(request);
   }
 }

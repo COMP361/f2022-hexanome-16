@@ -9,7 +9,6 @@ import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.screens.startup.StartupScreen;
-import com.hexanome16.client.utils.AuthUtils;
 
 /**
  * UI Screen Main Menu Screen after logging in.

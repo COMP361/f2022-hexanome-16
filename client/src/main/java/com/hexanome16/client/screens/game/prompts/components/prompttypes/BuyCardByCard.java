@@ -34,30 +34,72 @@ import javafx.scene.text.TextAlignment;
  */
 public class BuyCardByCard implements PromptTypeInterface {
 
+  /**
+   * The width.
+   */
   double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
   double atHeight = getAppHeight() / 2.;
+  /**
+   * The main card height.
+   */
   double atMainCardHeight = atHeight * 0.7;
+  /**
+   * The main card width.
+   */
   double atMainCardWidth = atMainCardHeight * 0.72;
+  /**
+   * The scroll card width.
+   */
   double atScrollCardWidth = atMainCardHeight * 0.4;
+  /**
+   * The scroll card height.
+   */
   double atScrollCardHeight = atScrollCardWidth * 1.4;
+  /**
+   * The top left x.
+   */
   double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  /**
+   * The Button area width.
+   */
   double buttonAreaWidth = atWidth / 4;
+  /**
+   * The Button height.
+   */
   double buttonHeight = atHeight / 8;
-  double buttonWidth = 3 * atWidth / 14;
+  /**
+   * The Button spacing.
+   */
   double buttonSpacing = buttonHeight / 2;
+  /**
+   * The Button width.
+   */
+  double buttonWidth = 3 * atWidth / 14;
+  /**
+   * The Element spacing.
+   */
   double elementSpacing = (atWidth - 2 * atScrollCardWidth - buttonAreaWidth - buttonWidth) / 5;
 
+  /**
+   * The Cards chosen.
+   */
   int cardsChosen = 0;
 
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 
@@ -247,8 +289,8 @@ public class BuyCardByCard implements PromptTypeInterface {
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
       if (FXGL.getWorldProperties()
-              .getInt(BuyCardPrompt.BankType.GAME_BANK
-                  + "/" + CurrencyType.BONUS_GOLD_CARDS)
+          .getInt(BuyCardPrompt.BankType.GAME_BANK
+              + "/" + CurrencyType.BONUS_GOLD_CARDS)
           >= 2) {
         buy.setOpacity(1);
       } else {

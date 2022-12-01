@@ -13,8 +13,17 @@ import javafx.scene.shape.Circle;
  */
 public class TokenAcquiringThree extends BonusChoiceAbstract {
 
+  /**
+   * The At available bonuses.
+   */
   ArrayList<BonusType> atAvailableBonuses = new ArrayList<>();
+  /**
+   * The Selected token types.
+   */
   ArrayList<BonusType> selectedTokenTypes = new ArrayList<>();
+  /**
+   * The nodes.
+   */
   ArrayList<Node> myNodes = new ArrayList<>();
 
   // to modify
@@ -31,7 +40,7 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
 
   @Override
   protected double promptTextSize() {
-    return height() / 6;
+    return getHeight() / 6;
   }
 
   @Override

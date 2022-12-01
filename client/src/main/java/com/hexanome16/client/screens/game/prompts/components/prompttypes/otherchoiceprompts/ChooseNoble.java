@@ -18,7 +18,7 @@ public class ChooseNoble extends NobleChoiceAbstract {
 
   @Override
   protected double promptTextSize() {
-    return height() / 6.;
+    return getHeight() / 6.;
   }
 
   @Override

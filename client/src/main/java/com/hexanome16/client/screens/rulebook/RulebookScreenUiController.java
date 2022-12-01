@@ -12,6 +12,9 @@ import javafx.scene.control.Button;
  * </p>
  */
 public class RulebookScreenUiController implements UIController {
+  /**
+   * The Close button.
+   */
   @FXML
   Button closeButton; //Package private to expose it to the SettingScreen
 

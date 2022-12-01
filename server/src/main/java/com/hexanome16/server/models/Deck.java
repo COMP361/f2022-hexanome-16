@@ -74,6 +74,4 @@ public class Deck implements BroadcastContent {
     }
     return true;
   }
-
-
 }
