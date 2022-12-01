@@ -160,6 +160,8 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("PlayerTokens")
   public Entity playerTokens(SpawnData data) {
+    String player = (String) data.getData().getOrDefault("player", "");
+
     final StackPane mytokens = new StackPane();
     Rectangle myRectangle = new Rectangle(110, 160, Color.GREY);
     myRectangle.setOpacity(0.5);
