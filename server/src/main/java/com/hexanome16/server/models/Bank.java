@@ -193,7 +193,7 @@ public abstract class Bank {
           checkResult = checkResult && tokenListForGem.size() >= goldAmount;
         }
         default -> {
-          continue;
+          throw new IllegalArgumentException("Something is sussy here");
         }
       }
     }
