@@ -43,10 +43,10 @@ public class GameScreen {
 
   private static Thread updateCurrentPlayer;
 
+  private static String[] usernames;
 
   private static Gson myGS = new Gson();
   private static Map<String, Object> myNames;
-  private static String lastPlayer = null;
   private static String currentPlayer;
 
   private static void fetchLevelOneDeckThread() {
@@ -137,17 +137,16 @@ public class GameScreen {
 
     updateCurrentPlayerTask.setOnSucceeded(e -> {
       updateCurrentPlayer = null;
-      //////////////////////////////////////////////////////////////////////
+
       Platform.runLater(() -> {
 
         myNames = myGS.fromJson(currentPlayerJson, Map.class);
         currentPlayer = (String) myNames.get("username");
-        lastPlayer = lastPlayerToPlay(currentPlayer);
         UpdateGameInfo.fetchGameBank(getSessionId());
-        UpdateGameInfo.fetchPlayerBank(getSessionId(), lastPlayer);
+        UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
         UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
       });
-      //////////////////////////////////////////////////////////////////////
+
       fetchCurrentPlayerThread();
     });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
@@ -155,21 +154,6 @@ public class GameScreen {
     updateCurrentPlayer.start();
   }
 
-  // I don't get it neither, if bugs, look here first.
-  private static String lastPlayerToPlay(String paraCurrentPlayer) {
-    if (lastPlayer == null) {
-      lastPlayer = paraCurrentPlayer;
-      currentPlayer = paraCurrentPlayer;
-      return lastPlayer;
-    }
-    if (lastPlayer == currentPlayer) {
-      currentPlayer = paraCurrentPlayer;
-      return lastPlayer;
-    }
-    lastPlayer = currentPlayer;
-    currentPlayer = paraCurrentPlayer;
-    return lastPlayer;
-  }
 
   /**
    * Adds background, mat, cards, nobles, game bank,
@@ -209,9 +193,10 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     }
     UpdateGameInfo.initPlayerTurn();
-    UpdateGameInfo.initTokensAllPlayer();
+    usernames = FXGL.getWorldProperties().getValue("players");
+    UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
-    PlayerDecks.generateAll(FXGL.getWorldProperties().getValue("players"));
+    PlayerDecks.generateAll(usernames);
   }
 
   // puts values necessary for game bank in the world properties
