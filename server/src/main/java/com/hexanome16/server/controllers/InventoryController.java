@@ -3,17 +3,13 @@ package com.hexanome16.server.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.models.Inventory;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.util.UrlUtils;
-import java.util.Optional;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -79,47 +75,27 @@ public class InventoryController {
     return objectMapper.readTree(inventoryString);
   }
 
-  /* POST methods *****************************************************************************/
-
-  /**
-   * Create a new inventory for the given player.
-   *
-   * @param sessionId   ID of the current section
-   * @param accessToken access token for this request
-   * @return {@link ResponseEntity} the inventory as a response entity
-   * @throws JsonProcessingException com.fasterxml.jackson.core. json processing exception
-   */
-  @PostMapping(value = {"/games/{sessionId}/inventory"})
-  public ResponseEntity<String> createInventory(@PathVariable long sessionId,
-                                                @RequestParam String accessToken)
-          throws JsonProcessingException {
-    // get the player (if valid) from the session id and access token
-    Player player = getValidPlayer(sessionId, accessToken);
-    // create a new inventory
-    player.setInventory(new Inventory());
-    // return the inventory as a response entity
-    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()),
-        HttpStatus.CREATED);
-  }
-
-  /* DELETE methods ************************************************************************/
-
-  /**
-   * Delete inventory.
-   *
-   * @param sessionId   session
-   * @param accessToken access token
-   * @return response entity
-   */
-  @DeleteMapping(value = {"/games/{sessionId}/inventory"})
-  public ResponseEntity<Void> deleteInventory(@PathVariable long sessionId,
-                                              @RequestParam String accessToken) {
-    // get the player (if valid) from the session id and access token
-    Player player = getValidPlayer(sessionId, accessToken);
-    // delete the inventory and return the success
-    player.deleteInventory();
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
+  //  /* POST methods *****************************************************************************/
+  //
+  //  /** Create a new inventory for the given player.
+  //   *
+  //   * @param sessionId ID of the current section
+  //   * @param accessToken access token for this request
+  //   * @return {@link ResponseEntity} the inventory as a response entity
+  //   * @throws JsonProcessingException com.fasterxml.jackson.core. json processing exception
+  //   * */
+  //  @PostMapping(value = {"/games/{sessionId}/inventory"})
+  //  public ResponseEntity<String> createInventory(@PathVariable long sessionId,
+  //                                                @RequestParam String accessToken)
+  //          throws JsonProcessingException {
+  //    // get the player (if valid) from the session id and access token
+  //    Player player = getValidPlayer(sessionId, accessToken);
+  //    // create a new inventory
+  //    player.setInventory(new Inventory());
+  //    // return the inventory as a response entity
+  //    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()),
+  //        HttpStatus.CREATED);
+  //  }
 
   /* GET methods ******************************************************************************/
 
@@ -128,7 +104,7 @@ public class InventoryController {
    *
    * @param sessionId session id.
    * @param username  access token
-   * @return response. cards
+   * @return response cards
    * @throws JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
@@ -182,6 +158,14 @@ public class InventoryController {
           throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
+
+    /* ( handled in the client )
+    * if this player is the current player :
+    *     show the cards face up
+    * else
+    *     show the cards face down
+    * */
+
     // return the reserved level cards in the inventory as a response entity
     JsonNode node = getInventoryNode(player);
     return new ResponseEntity<>(node.get("reservedCards").asText(), HttpStatus.OK);
