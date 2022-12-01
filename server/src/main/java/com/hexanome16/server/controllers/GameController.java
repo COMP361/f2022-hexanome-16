@@ -21,7 +21,6 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +34,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 /**
  * Not implemented.
  */
-@Getter
 @RestController
 public class GameController {
 
@@ -45,12 +43,26 @@ public class GameController {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
 
-  private final Map<String, BroadcastContentManager> broadcastContentManagerMap =
+  private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
       new HashMap<String, BroadcastContentManager>();
 
   public GameController(AuthController authController) {
     this.authController = authController;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  }
+
+  public Map<Long, Game> getGameMap() {
+    return gameMap;
+  }
+
+  /**
+   * gets broadcast content manager map. keys are : "noble", "ONE"
+   * "TWO", "THREE", "player"
+   *
+   * @return map.
+   */
+  public static Map<String, BroadcastContentManager> getBroadcastContentManagerMap() {
+    return broadcastContentManagerMap;
   }
 
   /**
@@ -66,7 +78,6 @@ public class GameController {
       return false;
     }
     ResponseEntity<String> username = authController.getPlayer(accessToken);
-    System.out.println(username);
     if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));

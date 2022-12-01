@@ -9,7 +9,6 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
@@ -31,6 +30,9 @@ public class GameScreen {
   private static String levelThreeDeckJson = "";
 
   private static String nobleJson = "";
+
+  private static String currentPlayerJson = "";
+
   private static long sessionId = -1;
 
   private static Thread updateLevelOneDeck;
@@ -38,6 +40,14 @@ public class GameScreen {
   private static Thread updateLevelThreeDeck;
 
   private static Thread updateNobles;
+
+  private static Thread updateCurrentPlayer;
+
+  private static String[] usernames;
+
+  private static Gson myGS = new Gson();
+  private static Map<String, Object> myNames;
+  private static String currentPlayer;
 
   private static void fetchLevelOneDeckThread() {
     Task<Void> updateDeckTask = new Task<>() {
@@ -114,6 +124,37 @@ public class GameScreen {
     updateNobles.start();
   }
 
+
+  private static void fetchCurrentPlayerThread() {
+    Task<Void> updateCurrentPlayerTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        currentPlayerJson =
+            GameRequest.updateCurrentPlayer(sessionId, DigestUtils.md5Hex(currentPlayerJson));
+        return null;
+      }
+    };
+
+    updateCurrentPlayerTask.setOnSucceeded(e -> {
+      updateCurrentPlayer = null;
+
+      Platform.runLater(() -> {
+
+        myNames = myGS.fromJson(currentPlayerJson, Map.class);
+        currentPlayer = (String) myNames.get("username");
+        UpdateGameInfo.fetchGameBank(getSessionId());
+        UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
+        UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+      });
+
+      fetchCurrentPlayerThread();
+    });
+    updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
+    updateCurrentPlayer.setDaemon(true);
+    updateCurrentPlayer.start();
+  }
+
+
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
@@ -148,14 +189,20 @@ public class GameScreen {
     if (updateNobles == null) {
       fetchNoblesThread();
     }
+    if (updateCurrentPlayer == null) {
+      fetchCurrentPlayerThread();
+    }
+    UpdateGameInfo.initPlayerTurn();
+    usernames = FXGL.getWorldProperties().getValue("players");
+    UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
-    PlayerDecks.generateAll(FXGL.getWorldProperties().getValue("players"));
+    PlayerDecks.generateAll(usernames);
   }
 
   // puts values necessary for game bank in the world properties
   private static void initializeBankGameVars(long id) {
-    String gameBankString = PromptsRequests.getNewGameBankInfo(id);
-    Map<CurrencyType, Integer> gameBankMap = BuyCardPrompt.toGemAmountMap(gameBankString);
+    String gameBankString = PromptsRequests.getGameBankInfo(id);
+    Map<CurrencyType, Integer> gameBankMap = UpdateGameInfo.toGemAmountMap(gameBankString);
     for (CurrencyType e : gameBankMap.keySet()) {
       FXGL.getWorldProperties().setValue(id + e.toString(), gameBankMap.get(e));
     }
