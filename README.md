@@ -2,6 +2,11 @@
 
  > See also [my video instructions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
+## Notes for TAs/Teacher (as of milestone 5)
+ * Javadocs aren't generated in the proper place, no matter which value we've tried for ```reportOutputDirectory``` they weren't moving to the docs folder. They end up in src/client/client and src/server/server respectively.
+ * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in the "All in server" run config in IntelliJ, so please use that to verify code coverage (should be 85%).
+ * If you want to try playing the game, use the Splendor Prod IntelliJ run config (equivalent to ```PROFILE_ID=prod mvn clean package javafx:run```), since that one is connected to the remote server.
+
 ## Setup CheckStyle in IntelliJ
  * Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
  * Go to `Settings > Tools > CheckStyle`, select latest CheckStyle version, set Scope to `Only Java sources (including tests)` and click `Apply`.
