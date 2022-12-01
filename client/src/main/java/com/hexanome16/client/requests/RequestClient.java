@@ -1,5 +1,7 @@
 package com.hexanome16.client.requests;
 
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.utils.AuthUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -39,26 +41,8 @@ public class RequestClient {
    * @param request The request to send.
    * @return (response hash code, response body as string) pair
    */
-  public static Pair<String, String> longPoll(HttpRequest request) {
-    String response = "";
-    AtomicInteger returnCode = new AtomicInteger(408);
-    while (returnCode.get() == 408) {
-      try {
-        CompletableFuture<HttpResponse<String>> res =
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        response = res.thenApply(HttpResponse::statusCode)
-            .thenCombine(res.thenApply(HttpResponse::body), (statusCode, body) -> {
-              if (statusCode == 200) {
-                returnCode.set(200);
-              }
-              return body;
-            }).get();
-      } catch (ExecutionException e) {
-        e.printStackTrace();
-      } catch (InterruptedException e) {
-        System.out.println("Interrupted long polling");
-      }
-    }
+  public static Pair<String, String> longPollWithHash(HttpRequest request) {
+    String response = longPoll(request);
     return new Pair<>(DigestUtils.md5Hex(response), response);
   }
 
@@ -68,7 +52,7 @@ public class RequestClient {
    * @param request http request to send
    * @return response as string
    */
-  public static String longPollAlt(HttpRequest request) {
+  public static String longPoll(HttpRequest request) {
     String response = "";
     AtomicInteger returnCode = new AtomicInteger(408);
     while (returnCode.get() == 408) {
@@ -79,6 +63,8 @@ public class RequestClient {
             .thenCombine(res.thenApply(HttpResponse::body), (statusCode, body) -> {
               if (statusCode == 200) {
                 returnCode.set(200);
+              } else if (statusCode >= 400 && statusCode <= 403) {
+                TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
               }
               return body;
             }).get();

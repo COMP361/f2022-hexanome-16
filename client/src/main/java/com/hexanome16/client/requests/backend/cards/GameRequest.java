@@ -30,7 +30,7 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    return RequestClient.longPollAlt(request);
+    return RequestClient.longPoll(request);
   }
 
   /**
@@ -50,7 +50,7 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    return RequestClient.longPollAlt(request);
+    return RequestClient.longPoll(request);
   }
 
   /**
@@ -70,6 +70,6 @@ public class GameRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    return RequestClient.longPollAlt(request);
+    return RequestClient.longPoll(request);
   }
 }
