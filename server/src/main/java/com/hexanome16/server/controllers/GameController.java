@@ -56,6 +56,11 @@ public class GameController {
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
+  /**
+   * Gets game map.
+   *
+   * @return the game map
+   */
   public Map<Long, Game> getGameMap() {
     return gameMap;
   }
@@ -64,7 +69,7 @@ public class GameController {
    * gets broadcast content manager map. keys are : "noble", "ONE"
    * "TWO", "THREE", "player"
    *
-   * @return map.
+   * @return map. broadcast content manager map
    */
   public static Map<String, BroadcastContentManager> getBroadcastContentManagerMap() {
     return broadcastContentManagerMap;
@@ -267,10 +272,9 @@ public class GameController {
    * @param diamondAmount       amount of diamond gems proposed.
    * @param onyxAmount          amount of onyx gems proposed.
    * @param goldAmount          amount of gold gems proposed.
-   * @return <p>
-   *     HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.
-   *     </p>
+   * @return <p>     HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *      HTTP BAD_REQUEST otherwise.
+   *      </p>
    * @throws JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
