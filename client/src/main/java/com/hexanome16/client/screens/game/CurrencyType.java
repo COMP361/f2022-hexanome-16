@@ -1,7 +1,5 @@
 package com.hexanome16.client.screens.game;
 
-import java.util.HashMap;
-import java.util.Map;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -9,23 +7,42 @@ import javafx.scene.paint.Paint;
  * An enum of the possible currency types in a card purchase.
  */
 public enum CurrencyType {
-  RED_TOKENS,
-  GREEN_TOKENS,
-  BLUE_TOKENS,
-  WHITE_TOKENS,
-  BLACK_TOKENS,
-  GOLD_TOKENS,
-  BONUS_GOLD_CARDS;
-  static final Map<CurrencyType, Color> colorType = new HashMap<>();
+  /**
+   * Red tokens currency type.
+   */
+  RED_TOKENS(Color.DARKRED),
+  /**
+   * Green tokens currency type.
+   */
+  GREEN_TOKENS(Color.DARKGREEN),
+  /**
+   * Blue tokens currency type.
+   */
+  BLUE_TOKENS(Color.DARKBLUE),
+  /**
+   * White tokens currency type.
+   */
+  WHITE_TOKENS(Color.WHITE.darker()),
+  /**
+   * Black tokens currency type.
+   */
+  BLACK_TOKENS(Color.BLACK),
+  /**
+   * Gold tokens currency type.
+   */
+  GOLD_TOKENS(Color.GOLD.darker()),
+  /**
+   * Bonus gold cards currency type.
+   */
+  BONUS_GOLD_CARDS(Color.GOLD.darker());
+  /**
+   * The Color type.
+   */
 
-  static {
-    colorType.put(RED_TOKENS, Color.DARKRED);
-    colorType.put(GREEN_TOKENS, Color.DARKGREEN);
-    colorType.put(BLUE_TOKENS, Color.DARKBLUE);
-    colorType.put(WHITE_TOKENS, Color.WHITE.darker());
-    colorType.put(BLACK_TOKENS, Color.BLACK);
-    colorType.put(GOLD_TOKENS, Color.GOLD.darker());
-    colorType.put(BONUS_GOLD_CARDS, Color.GOLD.darker());
+  private final Color color;
+
+  CurrencyType(Color color) {
+    this.color = color;
   }
 
   /**
@@ -34,7 +51,7 @@ public enum CurrencyType {
    * @return the color of the implied argument.
    */
   public Paint getColor() {
-    return colorType.get(this);
+    return this.color;
   }
 
   /**
