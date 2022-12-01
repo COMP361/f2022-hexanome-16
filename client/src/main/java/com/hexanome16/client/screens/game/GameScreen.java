@@ -9,8 +9,6 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
-import com.hexanome16.client.utils.AuthUtils;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
@@ -48,6 +46,7 @@ public class GameScreen {
 
   private static Gson myGS = new Gson();
   private static Map<String, Object> myNames;
+  private static String lastPlayer = null;
   private static String currentPlayer;
 
   private static void fetchLevelOneDeckThread() {
@@ -135,19 +134,41 @@ public class GameScreen {
         return null;
       }
     };
+
     updateCurrentPlayerTask.setOnSucceeded(e -> {
       updateCurrentPlayer = null;
+      //////////////////////////////////////////////////////////////////////
       Platform.runLater(() -> {
-      myNames = myGS.fromJson(currentPlayerJson, Map.class);
-      currentPlayer = (String) myNames.get("username");
-      lastPlayerToPlay(currentPlayer);
-      BuyCardPrompt.fetchPlayerBank(AuthUtils.getPlayer().getName());
+
+        myNames = myGS.fromJson(currentPlayerJson, Map.class);
+        currentPlayer = (String) myNames.get("username");
+        lastPlayer = lastPlayerToPlay(currentPlayer);
+        UpdateGameInfo.fetchGameBank(getSessionId());
+        UpdateGameInfo.fetchPlayerBank(getSessionId(), lastPlayer);
+        UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
       });
+      //////////////////////////////////////////////////////////////////////
       fetchCurrentPlayerThread();
     });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
     updateCurrentPlayer.setDaemon(true);
     updateCurrentPlayer.start();
+  }
+
+  // I don't get it neither, if bugs, look here first.
+  private static String lastPlayerToPlay(String paraCurrentPlayer) {
+    if (lastPlayer == null) {
+      lastPlayer = paraCurrentPlayer;
+      currentPlayer = paraCurrentPlayer;
+      return lastPlayer;
+    }
+    if (lastPlayer == currentPlayer) {
+      currentPlayer = paraCurrentPlayer;
+      return lastPlayer;
+    }
+    lastPlayer = currentPlayer;
+    currentPlayer = paraCurrentPlayer;
+    return lastPlayer;
   }
 
   /**
@@ -185,14 +206,16 @@ public class GameScreen {
     if (updateCurrentPlayer == null) {
       fetchCurrentPlayerThread();
     }
+    UpdateGameInfo.initPlayerTurn();
+    UpdateGameInfo.initTokensAllPlayer();
     // spawn the player's hands
     PlayerDecks.generateAll(FXGL.getWorldProperties().getValue("players"));
   }
 
   // puts values necessary for game bank in the world properties
   private static void initializeBankGameVars(long id) {
-    String gameBankString = PromptsRequests.getNewGameBankInfo(id);
-    Map<CurrencyType, Integer> gameBankMap = BuyCardPrompt.toGemAmountMap(gameBankString);
+    String gameBankString = PromptsRequests.getGameBankInfo(id);
+    Map<CurrencyType, Integer> gameBankMap = UpdateGameInfo.toGemAmountMap(gameBankString);
     for (CurrencyType e : gameBankMap.keySet()) {
       FXGL.getWorldProperties().setValue(id + e.toString(), gameBankMap.get(e));
     }
