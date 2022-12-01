@@ -139,7 +139,6 @@ public class GameScreen {
       updateCurrentPlayer = null;
 
       Platform.runLater(() -> {
-
         myNames = myGS.fromJson(currentPlayerJson, Map.class);
         currentPlayer = (String) myNames.get("username");
         UpdateGameInfo.fetchGameBank(getSessionId());
@@ -337,6 +336,7 @@ public class GameScreen {
     levelTwoDeckJson = "";
     levelThreeDeckJson = "";
     nobleJson = "";
+    currentPlayerJson = "";
     updateLevelOneDeck = null;
     updateLevelTwoDeck = null;
     updateLevelThreeDeck = null;
