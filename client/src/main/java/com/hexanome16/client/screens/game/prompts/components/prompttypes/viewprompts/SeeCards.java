@@ -6,7 +6,13 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.google.gson.Gson;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -22,12 +28,15 @@ import javafx.scene.text.TextAlignment;
  */
 public class SeeCards implements PromptTypeInterface {
 
+  private static List<String> cardPaths = new ArrayList<>();
   double atWidth = getAppWidth() / 2.;
   double atHeight = getAppHeight() / 2.;
   double atCardWidth = atWidth / 4;
   double atCardHeight = atCardWidth * 1.39;
   double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  //List<String> cards = List.of("card1.png", "card2.png");
+
 
   @Override
   public double width() {
@@ -65,16 +74,46 @@ public class SeeCards implements PromptTypeInterface {
     TilePane myCards = new TilePane();
     myScrollPane.setContent(myCards);
 
-    // add cards to player's hand
-    for (int i = 0; i < 2; i++) {
-      Texture myCard = FXGL.texture("card1.png");
-      myCard.setFitWidth(atCardWidth);
-      myCard.setFitHeight(atCardHeight);
-      myCards.getChildren().add(myCard);
+    // add cards to player's hand TODO this
+    for (String card : cardPaths) {
+      myCards.getChildren().add(cardFromName(card));
     }
+
     myCards.setPrefWidth(atWidth);
 
     entity.getViewComponent().addChild(myBorderPane);
   }
 
+  /**
+   *  Fetches cards in the provided player's inventory.
+   *
+   * @param player player
+   */
+  public static void fetchCards(String player) {
+    // make a call to the server
+    long sessionId = GameScreen.getSessionId();
+    String response = PromptsRequests.getCards(sessionId, player);
+    // convert it to a list of maps
+    Gson myGson = new Gson();
+    List<Map<String, String>> cards = myGson.fromJson(response, List.class);
+    // add the paths to our list
+    cardPaths = new ArrayList<>();
+    for (Map<String, String> card : cards) {
+      cardPaths.add(card.get("texturePath") + ".png");
+    }
+  }
+
+
+  /**
+   * Get the card as a texture from its name.
+   *
+   * @param cardName cardName
+   * @return card as a texture
+   */
+  private Texture cardFromName(String cardName) {
+    Texture card = FXGL.texture(cardName);
+    card.setFitWidth(atCardWidth);
+    card.setFitHeight(atCardHeight);
+    return card;
+  }
 }
