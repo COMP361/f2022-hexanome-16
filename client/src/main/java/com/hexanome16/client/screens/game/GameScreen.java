@@ -10,6 +10,7 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.utils.AuthUtils;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
@@ -31,6 +32,9 @@ public class GameScreen {
   private static String levelThreeDeckJson = "";
 
   private static String nobleJson = "";
+
+  private static String currentPlayerJson = "";
+
   private static long sessionId = -1;
 
   private static Thread updateLevelOneDeck;
@@ -38,6 +42,13 @@ public class GameScreen {
   private static Thread updateLevelThreeDeck;
 
   private static Thread updateNobles;
+
+  private static Thread updateCurrentPlayer;
+
+
+  private static Gson myGS = new Gson();
+  private static Map<String, Object> myNames;
+  private static String currentPlayer;
 
   private static void fetchLevelOneDeckThread() {
     Task<Void> updateDeckTask = new Task<>() {
@@ -114,6 +125,31 @@ public class GameScreen {
     updateNobles.start();
   }
 
+
+  private static void fetchCurrentPlayerThread() {
+    Task<Void> updateCurrentPlayerTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        currentPlayerJson =
+            GameRequest.updateCurrentPlayer(sessionId, DigestUtils.md5Hex(currentPlayerJson));
+        return null;
+      }
+    };
+    updateCurrentPlayerTask.setOnSucceeded(e -> {
+      updateCurrentPlayer = null;
+      Platform.runLater(() -> {
+      myNames = myGS.fromJson(currentPlayerJson, Map.class);
+      currentPlayer = (String) myNames.get("username");
+      lastPlayerToPlay(currentPlayer);
+      BuyCardPrompt.fetchPlayerBank(AuthUtils.getPlayer().getName());
+      });
+      fetchCurrentPlayerThread();
+    });
+    updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
+    updateCurrentPlayer.setDaemon(true);
+    updateCurrentPlayer.start();
+  }
+
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
@@ -145,6 +181,9 @@ public class GameScreen {
     }
     if (updateNobles == null) {
       fetchNoblesThread();
+    }
+    if (updateCurrentPlayer == null) {
+      fetchCurrentPlayerThread();
     }
     // spawn the player's hands
     PlayerDecks.generateAll(4);
