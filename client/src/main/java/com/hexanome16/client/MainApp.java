@@ -12,18 +12,21 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.GameFactory;
-import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.prompts.PromptFactory;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import com.hexanome16.client.screens.startup.StartupScreenFactory;
-import java.util.Map;
 
 /**
  * FXGL Game Application, Game's entry point.
  */
 public class MainApp extends GameApplication {
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
   public static void main(String[] args) {
     launch(args);
   }

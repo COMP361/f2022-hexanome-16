@@ -2,7 +2,6 @@ package com.hexanome16.client.requests.backend.prompts;
 
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.screens.game.PurchaseMap;
-import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -19,15 +18,15 @@ public class PromptsRequests {
   /**
    * Sends a request to the server to buy a card.
    *
-   * @param sessionId id of the game request is sent from.
-   * @param cardMd5 Hash value of the card we're sending.
-   * @param authToken username of player trying to buy card.
+   * @param sessionId    id of the game request is sent from.
+   * @param cardMd5      Hash value of the card we're sending.
+   * @param authToken    username of player trying to buy card.
    * @param proposedDeal deal proposed by the player.
    */
-  public static void buyCard(long  sessionId,
-                               String cardMd5,
-                               String authToken,
-                               PurchaseMap proposedDeal) {
+  public static void buyCard(long sessionId,
+                             String cardMd5,
+                             String authToken,
+                             PurchaseMap proposedDeal) {
     try {
 
       HttpClient client = RequestClient.getClient();
@@ -58,10 +57,10 @@ public class PromptsRequests {
    * Gets player bank of player with username "username" in session with session id "sessionId".
    *
    * @param sessionId Session ID.
-   * @param username username of player.
+   * @param username  username of player.
    * @return PurchaseMap representation of the player's funds as a String
    */
-  public static String getPlayerBank(long  sessionId, String username) {
+  public static String getPlayerBank(long sessionId, String username) {
     try {
       HttpClient client = RequestClient.getClient();
       URI uri = UrlUtils.createGameServerUri(

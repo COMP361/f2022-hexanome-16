@@ -41,6 +41,9 @@ public class RoleRequest {
   }
 
   private static class Response {
+    /**
+     * User's role.
+     */
     String authority;
   }
 }

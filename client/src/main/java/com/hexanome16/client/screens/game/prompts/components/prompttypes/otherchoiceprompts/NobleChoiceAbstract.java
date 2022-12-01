@@ -14,17 +14,31 @@ import javafx.scene.shape.Rectangle;
  * Abstract class representing the basics of Noble choice.
  */
 public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
+  /**
+   * The Nobles selection box.
+   */
   protected ArrayList<Node> noblesSelectionBox = new ArrayList<>();
+  /**
+   * The Nobles to select.
+   */
   protected ArrayList<Texture> noblesToSelect = new ArrayList<>();
+  /**
+   * The Chosen noble index.
+   */
   protected int chosenNobleIndex;
+  /**
+   * The Noble width.
+   */
   protected double nobleWidth;
+  /**
+   * The Noble spacing.
+   */
   protected double nobleSpacing;
 
   @Override
   protected void promptOpens() {
     noblesToSelect = getChoiceNobles();
   }
-
 
 
   @Override
@@ -35,12 +49,12 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
   }
 
 
-
   @Override
   protected void addToLayout(HBox choicesLayout) {
-    nobleWidth = width() / (noblesToSelect.size() * 2);
-    nobleSpacing =
-        ((6 * width() / 10.) - (nobleWidth * noblesToSelect.size())) / (noblesToSelect.size() + 1);
+    nobleWidth = getWidth() / (noblesToSelect.size() * 2);
+    nobleSpacing = ((6 * getWidth() / 10.)
+        - (nobleWidth * noblesToSelect.size()))
+        / (noblesToSelect.size() + 1);
     choicesLayout.setSpacing(nobleSpacing);
     // add choices to the layout
     for (Texture t : noblesToSelect) {
@@ -62,8 +76,7 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
     // set up layout of noble and add behaviour
     StackPane myNoble = new StackPane();
     myNoble.getChildren().addAll(selectionRectangle, texture);
-    PromptTypeInterface.setOnHoverEffectOpacity(myNoble, selectionRectangle,
-        0.5, 0.7,
+    PromptTypeInterface.setOnHoverEffectOpacity(myNoble, selectionRectangle, 0.5, 0.7,
         e -> ((Rectangle) e).getOpacity() != 1, selectionRectangle);
 
     myNoble.setOnMouseClicked(e -> {

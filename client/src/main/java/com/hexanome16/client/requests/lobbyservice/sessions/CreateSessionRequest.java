@@ -10,8 +10,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * This class provides methods to create a session in Lobby Service.
@@ -64,10 +62,26 @@ public class CreateSessionRequest {
   }
 
   private static class Payload {
+    /**
+     * The Creator of the session.
+     */
     String creator;
+    /**
+     * The Game of the session.
+     */
     String game;
+    /**
+     * The Savegame of the session.
+     */
     String savegame;
 
+    /**
+     * Instantiates a new Payload.
+     *
+     * @param creator  the creator
+     * @param game     the game
+     * @param savegame the savegame
+     */
     public Payload(String creator, String game, String savegame) {
       this.creator = creator;
       this.game = game;

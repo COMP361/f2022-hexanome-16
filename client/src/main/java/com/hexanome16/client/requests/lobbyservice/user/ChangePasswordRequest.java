@@ -9,8 +9,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * This class provides methods to change the password of the user.
@@ -52,9 +50,21 @@ public class ChangePasswordRequest {
   }
 
   private static class Payload {
+    /**
+     * The player's old password.
+     */
     String oldPassword;
+    /**
+     * The player's new password.
+     */
     String nextPassword;
 
+    /**
+     * Instantiates a new Payload.
+     *
+     * @param oldPassword the old password
+     * @param newPassword the new password
+     */
     public Payload(String oldPassword, String newPassword) {
       this.oldPassword = oldPassword;
       this.nextPassword = newPassword;

@@ -19,7 +19,7 @@ public class SessionDetailsRequest {
    * Sends a request to get details about a session in Lobby Service.
    *
    * @param sessionId The id of the session to get details about.
-   * @param hash A hashcode used for long polling (to check if the session details have changed).
+   * @param hash      A hashcode used for long polling (check session details have changed)
    * @return The session details.
    */
   public static Pair<String, Session> execute(long sessionId, String hash) {
