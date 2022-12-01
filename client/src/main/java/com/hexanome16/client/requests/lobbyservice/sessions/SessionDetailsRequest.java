@@ -30,7 +30,7 @@ public class SessionDetailsRequest {
         )).header("Content-Type", "application/json")
         .GET()
         .build();
-    Pair<String, String> response = RequestClient.longPoll(request);
+    Pair<String, String> response = RequestClient.longPollWithHash(request);
     return new Pair<>(response.getKey(), new Gson().fromJson(response.getValue(), Session.class));
   }
 }
