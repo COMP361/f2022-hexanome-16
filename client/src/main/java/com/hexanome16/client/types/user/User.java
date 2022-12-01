@@ -16,8 +16,8 @@ public final class User {
    *
    * @param name            The name of the user.
    * @param password        The password of the user.
-   * @param preferredColour The preferred colour of the user.
    * @param role            The role of the user.
+   * @param preferredColour The preferred colour of the user.
    */
   public User(String name, String password, String role, String preferredColour) {
     this.name = name;
@@ -35,22 +35,47 @@ public final class User {
         + ", role='" + role + '\'' + '}';
   }
 
+  /**
+   * Gets name of the user.
+   *
+   * @return the name
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Gets password of the user.
+   *
+   * @return the password
+   */
   public String getPassword() {
     return password;
   }
 
+  /**
+   * Gets role of the user.
+   *
+   * @return the role
+   */
   public String getRole() {
     return role;
   }
 
+  /**
+   * Gets preferred colour.
+   *
+   * @return the preferred colour
+   */
   public String getPreferredColour() {
     return preferredColour;
   }
 
+  /**
+   * Sets preferred colour.
+   *
+   * @param preferredColour the preferred colour
+   */
   public void setPreferredColour(String preferredColour) {
     this.preferredColour = preferredColour;
   }

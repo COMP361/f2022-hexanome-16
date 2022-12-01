@@ -27,22 +27,40 @@ import javafx.scene.text.TextAlignment;
  */
 public abstract class ChoicePromptAbstract implements PromptTypeInterface {
 
+  /**
+   * The width.
+   */
   protected final double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
   protected final double atHeight = getAppHeight() / 2.;
+  /**
+   * The top left x.
+   */
   protected final double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
+  /**
+   * The top left y.
+   */
   protected final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
 
+  /**
+   * The confirm button.
+   */
   protected StackPane atConfirmButton;
+  /**
+   * The confirmation circle.
+   */
   protected Circle atConfirmCircle;
 
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 
@@ -103,8 +121,8 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
 
 
     // Choice  /////////////////////////////////////////////////////////////////////////////////////
-    double maxWidthChoice = (width() * 6 / 10);
-    double maxHeightChoice = (height() * 3 / 4);
+    double maxWidthChoice = (getWidth() * 6 / 10);
+    double maxHeightChoice = (getHeight() * 3 / 4);
     Node centerNode = promptChoice(maxWidthChoice, maxHeightChoice);
     myPrompt.setCenter(centerNode);
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +145,8 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
    * Builds a Node which will be the center of the prompt, preferably of width 6/10 atWidth
    * and height 3/4 atHeight.
    *
+   * @param choiceWidth  the choice width
+   * @param choiceHeight the choice height
    * @return a Node in which the choice will happen.
    */
   protected Node promptChoice(double choiceWidth, double choiceHeight) {
@@ -145,7 +165,8 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * To override if there is a need to do something when prompt opens.
    */
-  protected void promptOpens(){}
+  protected void promptOpens() {
+  }
 
   /**
    * Gets the Prompt Text.

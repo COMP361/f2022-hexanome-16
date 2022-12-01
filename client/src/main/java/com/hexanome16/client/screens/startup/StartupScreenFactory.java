@@ -38,6 +38,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the image of the full startup screen.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("mainScreen")
   public Entity mainScreen(SpawnData data) {
@@ -50,6 +53,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the button over the diamond.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("diamond")
   public Entity diamond(SpawnData data) {
@@ -62,6 +68,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the message telling the user to click on the diamond.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("message")
   public Entity text(SpawnData data) {
@@ -78,6 +87,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the login screen rectangle.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("loginScreen")
   public Entity loginScreen(SpawnData data) {
@@ -91,6 +103,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the login title at the top of the login screen.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("login")
   public Entity login(SpawnData data) {
@@ -104,6 +119,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the username text.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("userText")
   public Entity userText(SpawnData data) {
@@ -118,6 +136,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the password text.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("passwordText")
   public Entity passwordText(SpawnData data) {
@@ -132,6 +153,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the username TextField.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("username")
   public Entity username(SpawnData data) {
@@ -148,6 +172,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the password PasswordField.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("password")
   public Entity password(SpawnData data) {
@@ -164,6 +191,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the login button.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("loginButton")
   public Entity loginButton(SpawnData data) {
@@ -188,6 +218,9 @@ public class StartupScreenFactory implements EntityFactory {
 
   /**
    * Returns the cancel button.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("cancelButton")
   public Entity cancelButton(SpawnData data) {
@@ -206,6 +239,9 @@ public class StartupScreenFactory implements EntityFactory {
   /**
    * Returns a transparent button similar to the cancel button that allows the user to go back to
    * the startup screen by clicking on a blank area outside the login window.
+   *
+   * @param data the data
+   * @return the entity
    */
   @Spawns("blankSpace")
   public Entity blackSpace(SpawnData data) {
@@ -250,13 +286,13 @@ public class StartupScreenFactory implements EntityFactory {
     // TODO: set background colour to a better looking one
     button.setOnMouseEntered(e -> {
       button.setStyle("-fx-background-color: #000000;"
-              + "-fx-background-radius: 25px;"
-              + "-fx-text-fill: #fff;");
+          + "-fx-background-radius: 25px;"
+          + "-fx-text-fill: #fff;");
     });
     button.setOnMouseExited(e -> {
       button.setStyle("-fx-background-color: #603232;"
-              + "-fx-background-radius: 25px;"
-              + "-fx-text-fill: #fff;");
+          + "-fx-background-radius: 25px;"
+          + "-fx-text-fill: #fff;");
     });
     button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);

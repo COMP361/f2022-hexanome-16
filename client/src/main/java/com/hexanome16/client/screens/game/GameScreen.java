@@ -174,6 +174,8 @@ public class GameScreen {
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
+   *
+   * @param id game id
    */
   public static void initGame(long id) {
     initializeBankGameVars(id);

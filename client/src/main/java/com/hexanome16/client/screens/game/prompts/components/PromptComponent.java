@@ -26,15 +26,45 @@ import javafx.scene.text.Text;
  */
 public class PromptComponent extends Component {
 
+  /**
+   * The prompt type.
+   */
   PromptTypeInterface atPromptType;
+  /**
+   * The width.
+   */
   double atWidth;
+  /**
+   * The height.
+   */
   double atHeight;
+  /**
+   * The top left x.
+   */
   double atTopLeftX;
+  /**
+   * The top left y.
+   */
   double atTopLeftY;
+  /**
+   * The prompt brim.
+   */
   double atPromptBrim;
+  /**
+   * The button width.
+   */
   double atButtonWidth;
+  /**
+   * The button font size.
+   */
   double atButtonFontSize;
+  /**
+   * The button added height.
+   */
   double atButtonAddedHeight;
+  /**
+   * The card entity.
+   */
   Entity atCardEntity;
 
   /**
@@ -56,8 +86,8 @@ public class PromptComponent extends Component {
    */
   public PromptComponent(PromptTypeInterface promptType) {
     atPromptType = promptType;
-    atWidth = promptType.width();
-    atHeight = promptType.height();
+    atWidth = promptType.getWidth();
+    atHeight = promptType.getHeight();
     atTopLeftX = getAppWidth() / 2. - (atWidth / 2);
     atTopLeftY = getAppHeight() / 2. - (atHeight / 2);
     // The following numbers are simply what looks best.
@@ -67,7 +97,15 @@ public class PromptComponent extends Component {
     atButtonAddedHeight = atButtonFontSize / 2.;
   }
 
+  /**
+   * Closes all open prompts and fires an Event CustomEvent.CLOSING.
+   */
+  public static void closePrompts() {
 
+    FXGL.getGameWorld()
+        .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
+    FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.CLOSING));
+  }
 
   /**
    * Builds prompt and its different parts.
@@ -163,16 +201,6 @@ public class PromptComponent extends Component {
     button.getChildren().addAll(myBox, myX);
     entity.getViewComponent().addChild(button);
     ////////////////////////////////////////////////////////////////////////////////////////////////
-  }
-
-  /**
-   * Closes all open prompts and fires an Event CustomEvent.CLOSING.
-   */
-  public static void closePrompts() {
-
-    FXGL.getGameWorld()
-        .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
-    FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.CLOSING));
   }
 
 }

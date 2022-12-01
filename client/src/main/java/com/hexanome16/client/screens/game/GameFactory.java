@@ -27,7 +27,13 @@ import javafx.scene.text.Text;
  * FXGL factory for the game board.
  */
 public class GameFactory implements EntityFactory {
+  /**
+   * The constant matCoordsX.
+   */
   public static final int matCoordsX = 400;
+  /**
+   * The constant matCoordsY.
+   */
   public static final int matCoordsY = 150;
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
       .loadFont("BrushScriptMT.ttf");
@@ -346,28 +352,46 @@ public class GameFactory implements EntityFactory {
   }
 
   private enum CircleType {
-    RUBY,
-    EMERALD,
-    SAPPHIRE,
-    DIAMOND,
-    ONYX,
-    GOLD;
+    /**
+     * Ruby circle type.
+     */
+    RUBY(Color.RED),
+    /**
+     * Emerald circle type.
+     */
+    EMERALD(Color.GREEN),
+    /**
+     * Sapphire circle type.
+     */
+    SAPPHIRE(Color.BLUE),
+    /**
+     * Diamond circle type.
+     */
+    DIAMOND(Color.WHITE),
+    /**
+     * Onyx circle type.
+     */
+    ONYX(Color.BLACK),
+    /**
+     * Gold circle type.
+     */
+    GOLD(Color.GOLD);
 
-    private Color getColor() {
-      if (this == RUBY) {
-        return Color.RED;
-      } else if (this == EMERALD) {
-        return Color.GREEN;
-      } else if (this == SAPPHIRE) {
-        return Color.BLUE;
-      } else if (this == DIAMOND) {
-        return Color.WHITE;
-      } else if (this == ONYX) {
-        return Color.BLACK;
-      }
-      return Color.GOLD;
+    private final Color color;
+
+    CircleType(Color color) {
+      this.color = color;
     }
 
+    private Color getColor() {
+      return this.color;
+    }
+
+    /**
+     * Gets stroke color.
+     *
+     * @return the stroke color
+     */
     public Color getStrokeColor() {
       if (this == ONYX) {
         return Color.WHITE;

@@ -54,7 +54,7 @@ public abstract class Bank {
     }
   }
 
-  ArrayList<Token> removeTokenFromList(ArrayList<Token> list, int amount) {
+  ArrayList<Token> removeTokensFromList(ArrayList<Token> list, int amount) {
     ArrayList<Token> removed = new ArrayList<>();
 
 
@@ -133,7 +133,7 @@ public abstract class Bank {
 
     // else remove tokens from list
     } else if (incrementAmount < 0) {
-      ArrayList<Token> removedTokens = removeTokenFromList(tokenList, -incrementAmount);
+      ArrayList<Token> removedTokens = removeTokensFromList(tokenList, -incrementAmount);
     }
   }
 

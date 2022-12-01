@@ -3,11 +3,11 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getEventBus;
-import static com.hexanome16.client.screens.game.UpdateGameInfo.fetchPlayerBank;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
@@ -22,7 +22,9 @@ import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -44,122 +46,184 @@ import javafx.scene.text.TextAlignment;
  */
 public class BuyCardPrompt implements PromptTypeInterface {
 
-  double atWidth = getAppWidth() / 2.;
-  double atHeight = getAppHeight() / 2.;
-  double atCardHeight = atHeight * 0.7;
-  double atCardWidth = atCardHeight * 0.72;
-  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
-  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
-  double atBankBoxesWidth = atWidth / 5;
-  double atButtonAreaWidth = atWidth / 4;
-  double atButtonHeight = atHeight / 8;
-  double atButtonWidth = 3 * atWidth / 14;
-  double atButtonSpacing = atButtonHeight / 2;
-  double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
-  PriceMap atCardPriceMap;
-  PurchaseMap atProposedOffer;
-
-
-  // make true if card is reserved
-  protected boolean cardIsReserved;
-  // image
-  protected Texture cardImage;
-  // card
-  protected Entity atCardEntity;
-
   /**
-   * An enum of the possible bank types in a card purchase.
+   * The Card is reserved.
    */
-  public enum BankType {
-    PLAYER_BANK,
-    GAME_BANK;
+  protected boolean cardIsReserved;
+  /**
+   * The Card image.
+   */
+  protected Texture cardImage;
+  /**
+   * The card entity.
+   */
+  protected Entity atCardEntity;
+  /**
+   * The width.
+   */
+  double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
+  double atHeight = getAppHeight() / 2.;
+  /**
+   * The card height.
+   */
+  double atCardHeight = atHeight * 0.7;
+  /**
+   * The card width.
+   */
+  double atCardWidth = atCardHeight * 0.72;
+  /**
+   * The top left x.
+   */
+  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
+  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  /**
+   * The bank boxes width.
+   */
+  double atBankBoxesWidth = atWidth / 5;
+  /**
+   * The button area width.
+   */
+  double atButtonAreaWidth = atWidth / 4;
+  /**
+   * The surplus width.
+   */
+  double atSurplusWidth = (atWidth - 2 * atBankBoxesWidth - atButtonAreaWidth - atCardWidth) / 3;
+  /**
+   * The button height.
+   */
+  double atButtonHeight = atHeight / 8;
+  /**
+   * The button spacing.
+   */
+  double atButtonSpacing = atButtonHeight / 2;
+  /**
+   * The button width.
+   */
+  double atButtonWidth = 3 * atWidth / 14;
+  /**
+   * The card price map.
+   */
+  PriceMap atCardPriceMap;
+  /**
+   * The proposed offer.
+   */
+  PurchaseMap atProposedOffer;
+  /**
+   * The Player name.
+   */
+  String playerName;
 
-    /**
-     * Gets the other element of this type.
-     *
-     * @return The BankType object other than this.
-     */
-    public BankType other() {
-      if (this == PLAYER_BANK) {
-        return GAME_BANK;
-      } else {
-        return PLAYER_BANK;
+  private static PurchaseMap getPurchaseMapOfCurrentInput() {
+    int rubyAmount = 0;
+    int emeraldAmount = 0;
+    int sapphireAmount = 0;
+    int diamondAmount = 0;
+    int onyxAmount = 0;
+    int goldAmount = 0;
+    int amountInBank;
+    // go through every currently supported currency and modify the value of the
+    // variable associated to it
+    for (CurrencyType e : CurrencyType.values()) {
+      amountInBank = FXGL.getWorldProperties()
+          .getInt(BankType.GAME_BANK + "/" + e);
+      switch (e) {
+        case RED_TOKENS:
+          rubyAmount = amountInBank;
+          break;
+        case GREEN_TOKENS:
+          emeraldAmount = amountInBank;
+          break;
+        case BLUE_TOKENS:
+          sapphireAmount = amountInBank;
+          break;
+        case WHITE_TOKENS:
+          diamondAmount = amountInBank;
+          break;
+        case BLACK_TOKENS:
+          onyxAmount = amountInBank;
+          break;
+        case GOLD_TOKENS:
+          goldAmount = amountInBank;
+          break;
+        default:
+          continue;
       }
     }
+    // Creates a Purchase map of the current amounts in the Transaction bank
+    return new PurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
   // -------------------------------------------------------------------------------------------- //
+
   /**
-   * An enum of the possible button types in a card purchase.
+   * Transforms String of bank retrieved from server to a Map .
+   *
+   * @param bankPriceMapAsString String of bank
+   * @return Map mapping CurrencyType to amount of each currency type in bank
    */
-  public enum ButtonType {
-    RESERVE, BUY;
+  public static Map<CurrencyType, Integer> toGemAmountMap(String bankPriceMapAsString) {
 
-    /**
-     * Adds behaviour to the node t, supposed to be a button.
-     *
-     * @param buyCardPrompt Object that allows access to instance method cardBought.
-     * @param t             the Node we want to add button like behaviour to.
-     */
-    public void setBehaviour(BuyCardPrompt buyCardPrompt, Node t) {
-      if (this == RESERVE) {
-        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-          // add behaviour here
-          closeBuyPrompt();
-          cardReservation();
-          e.consume();
-        });
-      } else if (this == BUY) {
-        t.setOpacity(0.5);
+    // parse through string and add values to prompt values
+    Gson myGson = new Gson();
+    Map<String, Double> stringPlayerBank = myGson.fromJson(bankPriceMapAsString, Map.class);
+    Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
 
-        FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
-          if (canBuy(buyCardPrompt)) {
-            t.setOpacity(1);
-          } else {
-            t.setOpacity(0.5);
-          }
-        });
+    // put each gem type with its value in the string
+    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("rubyAmount").intValue());
+    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("emeraldAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("sapphireAmount").intValue());
+    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("diamondAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("onyxAmount").intValue());
+    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("goldAmount").intValue());
+    gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
 
-        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-          if (t.getOpacity() == 1) {
-            buyCardPrompt.atProposedOffer = getPurchaseMapOfCurrentInput();
-            closeBuyPrompt();
-            buyCardPrompt.cardBought();
-            buyCardPrompt.notifyServer();
-            e.consume();
-          }
-        });
+    return gemPlayerBank;
+  }
+
+  /**
+   * Close buy prompt.
+   */
+  protected static void closeBuyPrompt() {
+    PromptComponent.closePrompts();
+
+    for (CurrencyType e : CurrencyType.values()) {
+      int gemsInBank =
+          FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
+      if (gemsInBank != 0) {
+        FXGL.getWorldProperties()
+            .increment(BankType.PLAYER_BANK + "/" + e, gemsInBank);
+        FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
       }
-    }
-
-
-    // allows to check if card can be bought with current amount of tokens in trade bank
-    private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
-      PurchaseMap amountInBankMap = getPurchaseMapOfCurrentInput();
-      // Creates a purchase map of what the price map of the current card
-      PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
-      // check if we can buy card with the gems we put down.
-      return amountInBankMap.canBeUsedToBuy(priceToMeet);
     }
   }
 
-
-
+  /**
+   * Do something if someone reserves a card.
+   */
+  protected static void cardReservation() {
+  }
 
   @Override
-  public double width() {
+  public double getWidth() {
     return atWidth;
   }
 
   @Override
-  public double height() {
+  public double getHeight() {
     return atHeight;
   }
 
   /**
    * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
    *
-   * @param entity Prompt entity.
+   * @param entity     Prompt entity.
    * @param cardEntity card entity.
    */
   public void populatePrompt(Entity entity, Entity cardEntity) {
@@ -172,7 +236,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   public void populatePrompt(Entity entity) {
 
     String playerName = AuthUtils.getPlayer().getName();
-    fetchPlayerBank(GameScreen.getSessionId(), playerName, true);
+    fetchPlayerBank(playerName);
 
     // initiate playerBank
     VBox playerBank = new VBox();
@@ -265,6 +329,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
     return tokens.values();
   }
 
+  /**
+   * Create reserve buy collection.
+   *
+   * @param buttonWidth  the button width
+   * @param buttonHeight the button height
+   * @return the collection
+   */
   protected Collection<StackPane> createReserveBuy(double buttonWidth, double buttonHeight) {
 
     // buttons container, will contain all the button that we create
@@ -309,7 +380,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
     Text tokensAmount = new Text();
     tokensAmount.textProperty().bind(
         FXGL.getWorldProperties()
-                .intProperty(tokenOwner.toString() + "/" + tokenType)
+            .intProperty(tokenOwner.toString() + "/" + tokenType)
             .asString());
     tokensAmount.setFill(tokenType.getTextColor());
     tokensAmount.setFont(Font.font(atHeight / 20));
@@ -358,51 +429,34 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setPrefHeight(atHeight);
     myPrompt.setMaxHeight(atHeight);
   }
-
-
-  private static PurchaseMap getPurchaseMapOfCurrentInput() {
-    int rubyAmount = 0;
-    int emeraldAmount = 0;
-    int sapphireAmount = 0;
-    int diamondAmount = 0;
-    int onyxAmount = 0;
-    int goldAmount = 0;
-    int amountInBank;
-    // go through every currently supported currency and modify the value of the
-    // variable associated to it
+  private void setPlayerInfo(Map<CurrencyType, Integer> playerInfo) {
     for (CurrencyType e : CurrencyType.values()) {
-      amountInBank = FXGL.getWorldProperties()
-          .getInt(BankType.GAME_BANK + "/" + e);
-      switch (e) {
-        case RED_TOKENS:
-          rubyAmount = amountInBank;
-          break;
-        case GREEN_TOKENS:
-          emeraldAmount = amountInBank;
-          break;
-        case BLUE_TOKENS:
-          sapphireAmount = amountInBank;
-          break;
-        case WHITE_TOKENS:
-          diamondAmount = amountInBank;
-          break;
-        case BLACK_TOKENS:
-          onyxAmount = amountInBank;
-          break;
-        case GOLD_TOKENS:
-          goldAmount = amountInBank;
-          break;
-        default:
-          continue;
-      }
+      FXGL.getWorldProperties()
+          .setValue(BankType.PLAYER_BANK + "/" + e.toString(), playerInfo.get(e));
     }
-    // Creates a Purchase map of the current amounts in the Transaction bank
-    return new PurchaseMap(rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
+  // This also fetches Game Bank
+  private void fetchPlayerBank(String playerName) {
+    // gets sessionId and username
+    long promptSessionId = GameScreen.getSessionId();
+    String username = AuthUtils.getPlayer().getName();
 
+    // get string bank from server
+    String bankPriceMapAsString = PromptsRequests.getPlayerBank(promptSessionId, username);
 
+    System.out.println(bankPriceMapAsString);
+
+    // set player info in the prompt to be whatever the server says
+    setPlayerInfo(toGemAmountMap(bankPriceMapAsString));
+
+    // request Game bank info post purchase
+    String newGameBankString = PromptsRequests.getGameBankInfo(promptSessionId);
+
+    // get game bank map from string
+    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
+    setGameBank(promptSessionId, gameBankMap);
+  }
 
   // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
@@ -419,40 +473,18 @@ public class BuyCardPrompt implements PromptTypeInterface {
     // request Game bank info post purchase
     String newGameBankString = PromptsRequests.getGameBankInfo(promptSessionId);
 
-    //  get game bank map from string
-    //  Map<CurrencyType, Integer> gameBankMap = UpdateGameInfo.toGemAmountMap(newGameBankString);
-    //  setGameBank(promptSessionId, gameBankMap);
-
+    // get game bank map from string
+    Map<CurrencyType, Integer> gameBankMap = toGemAmountMap(newGameBankString);
+    setGameBank(promptSessionId, gameBankMap);
   }
 
-
-
-
-  // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
-
-  protected static void closeBuyPrompt() {
-    PromptComponent.closePrompts();
-
-    for (CurrencyType e : CurrencyType.values()) {
-      int gemsInBank =
-          FXGL.getWorldProperties().getInt(BankType.GAME_BANK + "/" + e.toString());
-      if (gemsInBank != 0) {
-        FXGL.getWorldProperties()
-            .increment(BankType.PLAYER_BANK + "/" + e, gemsInBank);
-        FXGL.getWorldProperties().setValue(BankType.GAME_BANK + "/" + e, 0);
-      }
+  private void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
+    for (CurrencyType e : gameBankMap.keySet()) {
+      FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
     }
   }
 
-
-
-  // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Do something if someone reserves a card.
-   */
-  protected static void cardReservation() {
-  }
+  // STATIC METHODS ////////////////////////////////////////////////////////////////////////////////
 
   /**
    * Need to override to have a different image.
@@ -466,6 +498,9 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
     cardImage = FXGL.texture("card1.png");
   }
+
+
+  // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////
 
   /**
    * Need to override to not have a ReserveButton, set cardIsReserved to true to do so.
@@ -484,6 +519,92 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
   }
 
+  /**
+   * An enum of the possible bank types in a card purchase.
+   */
+  public enum BankType {
+    /**
+     * Player bank type.
+     */
+    PLAYER_BANK,
+    /**
+     * Game bank type.
+     */
+    GAME_BANK;
+
+    /**
+     * Gets the other element of this type.
+     *
+     * @return The BankType object other than this.
+     */
+    public BankType other() {
+      if (this == PLAYER_BANK) {
+        return GAME_BANK;
+      } else {
+        return PLAYER_BANK;
+      }
+    }
+  }
+
+  /**
+   * An enum of the possible button types in a card purchase.
+   */
+  public enum ButtonType {
+    /**
+     * Reserve button type.
+     */
+    RESERVE,
+    /**
+     * Buy button type.
+     */
+    BUY;
+
+    // allows to check if card can be bought with current amount of tokens in trade bank
+    private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
+      PurchaseMap amountInBankMap = getPurchaseMapOfCurrentInput();
+      // Creates a purchase map of what the price map of the current card
+      PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
+      // check if we can buy card with the gems we put down.
+      return amountInBankMap.canBeUsedToBuy(priceToMeet);
+    }
+
+    /**
+     * Adds behaviour to the node t, supposed to be a button.
+     *
+     * @param buyCardPrompt Object that allows access to instance method cardBought.
+     * @param t             the Node we want to add button like behaviour to.
+     */
+    public void setBehaviour(BuyCardPrompt buyCardPrompt, Node t) {
+      if (this == RESERVE) {
+        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+          // add behaviour here
+          closeBuyPrompt();
+          cardReservation();
+          e.consume();
+        });
+      } else if (this == BUY) {
+        t.setOpacity(0.5);
+
+        FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {
+          if (canBuy(buyCardPrompt)) {
+            t.setOpacity(1);
+          } else {
+            t.setOpacity(0.5);
+          }
+        });
+
+        t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+          if (t.getOpacity() == 1) {
+            buyCardPrompt.atProposedOffer = getPurchaseMapOfCurrentInput();
+            closeBuyPrompt();
+            buyCardPrompt.cardBought();
+            buyCardPrompt.notifyServer();
+            e.consume();
+          }
+        });
+      }
+    }
+  }
 
 
 }

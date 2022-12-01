@@ -24,6 +24,11 @@ public class RequestClient {
     super();
   }
 
+  /**
+   * Gets client.
+   *
+   * @return the client
+   */
   public static HttpClient getClient() {
     return client;
   }
@@ -32,7 +37,7 @@ public class RequestClient {
    * Sends a request using long polling.
    *
    * @param request The request to send.
-   * @return (response hash code, response body as string)
+   * @return (response hash code, response body as string) pair
    */
   public static Pair<String, String> longPoll(HttpRequest request) {
     String response = "";
