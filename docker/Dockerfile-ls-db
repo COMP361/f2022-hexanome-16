@@ -2,4 +2,4 @@ FROM mysql/mysql-server:5.7 AS database
 MAINTAINER maximilian schiedermeier
 LABEL org.opencontainers.image.source=https://github.com/COMP361/f2022-hexanome-16
 ENV MYSQL_ROOT_PASSWORD=OojeeWood1ae
-COPY ls-db-setup.sql /docker-entrypoint-initdb.d/
+COPY docker/ls-db-setup.sql /docker-entrypoint-initdb.d/
