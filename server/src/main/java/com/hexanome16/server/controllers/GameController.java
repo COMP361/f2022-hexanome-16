@@ -37,14 +37,13 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameController {
 
+  private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
+      new HashMap<String, BroadcastContentManager>();
   //store all the games here
   private final Map<Long, Game> gameMap = new HashMap<>();
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthController authController;
-
-  private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
-      new HashMap<String, BroadcastContentManager>();
 
   /**
    * Instantiates a new Game controller.
@@ -57,15 +56,6 @@ public class GameController {
   }
 
   /**
-   * Gets game map.
-   *
-   * @return the game map
-   */
-  public Map<Long, Game> getGameMap() {
-    return gameMap;
-  }
-
-  /**
    * gets broadcast content manager map. keys are : "noble", "ONE"
    * "TWO", "THREE", "player"
    *
@@ -73,6 +63,15 @@ public class GameController {
    */
   public static Map<String, BroadcastContentManager> getBroadcastContentManagerMap() {
     return broadcastContentManagerMap;
+  }
+
+  /**
+   * Gets game map.
+   *
+   * @return the game map
+   */
+  public Map<Long, Game> getGameMap() {
+    return gameMap;
   }
 
   /**
@@ -272,7 +271,7 @@ public class GameController {
    * @param diamondAmount       amount of diamond gems proposed.
    * @param onyxAmount          amount of onyx gems proposed.
    * @param goldAmount          amount of gold gems proposed.
-   * @return <p>     HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *      HTTP BAD_REQUEST otherwise.
    *      </p>
    * @throws JsonProcessingException the json processing exception

@@ -2,10 +2,6 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Player class.

@@ -20,7 +20,8 @@ public class PlayerDecks {
   private static final List<String> cards =
       List.of("red", "green", "blue", "white", "black", "gold");
 
-  /** Generates the player decks.
+  /**
+   * Generates the player decks.
    *
    * @param players players for this session
    */
@@ -182,10 +183,10 @@ public class PlayerDecks {
             verticalShift + 180 + vertical * scale)
         .setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
-                    verticalShift + 240 + vertical * scale)
-            .setScaleUniform(0.07 * scale);
+            verticalShift + 240 + vertical * scale)
+        .setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
-                    verticalShift + 300 + vertical * scale)
-            .setScaleUniform(0.07 * scale);
+            verticalShift + 300 + vertical * scale)
+        .setScaleUniform(0.07 * scale);
   }
 }

@@ -34,11 +34,9 @@ public class AuthControllerTests {
   @ClassRule
   public static DockerComposeContainer<LobbyServiceContainer> lsContainer =
       LobbyServiceContainer.getInstance();
-
+  private final String password = "abc123_ABC123";
   @Autowired
   private AuthController authController;
-
-  private final String password = "abc123_ABC123";
 
   /**
    * Test valid login.

@@ -1,7 +1,6 @@
 package com.hexanome16.server.models.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

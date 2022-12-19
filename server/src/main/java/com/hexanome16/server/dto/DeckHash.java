@@ -8,7 +8,6 @@ import com.hexanome16.server.models.Level;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;

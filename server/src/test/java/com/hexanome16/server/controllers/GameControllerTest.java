@@ -93,7 +93,7 @@ public class GameControllerTest {
   /**
    * Test update deck success.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -109,7 +109,7 @@ public class GameControllerTest {
   /**
    * Test update deck fail.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -125,7 +125,7 @@ public class GameControllerTest {
   /**
    * Test update nobles success.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -140,7 +140,7 @@ public class GameControllerTest {
   /**
    * Test update nobles fail.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -156,7 +156,7 @@ public class GameControllerTest {
   /**
    * Test current player success.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -172,7 +172,7 @@ public class GameControllerTest {
   /**
    * Test current player fail.
    *
-   * @throws JsonProcessingException the json processing exception
+   * @throws JsonProcessingException                            the json processing exception
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
@@ -253,7 +253,7 @@ public class GameControllerTest {
         gameController.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
             1, 1, 1, 0, 0, 1
-            );
+        );
 
 
     assertEquals(response.getStatusCode(), HttpStatus.OK);
