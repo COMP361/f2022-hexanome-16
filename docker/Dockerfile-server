@@ -3,12 +3,12 @@ WORKDIR /app
 
 # Download all the dependencies first so we can cache them
 # (thank you https://stackoverflow.com/a/71066133)
-COPY server/pom.xml .
+COPY ../server/pom.xml .
 RUN mvn -Ddocker.build.skip=true -Ddocker.javadoc.skip=true -Ddocker.test.skip=true package test
 
 # Copy the source code and Checkstyle config
-COPY server/src ./src
-COPY server/google_checks.xml .
+COPY ../server/src ./src
+COPY ../server/google_checks.xml .
 
 # Adjust application.properties to use the correct hostnames for Docker
 RUN apk add --no-cache sed
@@ -32,8 +32,8 @@ RUN chmod +x /wait
 COPY --from=build /app/target/server-0.0.1-SNAPSHOT.jar /app/splendor.jar
 
 #Copy the json file
-COPY ./server/src/main/resources/cards.json /app
-COPY ./server/src/main/resources/nobles.json /app
+COPY ../server/src/main/resources/cards.json /app
+COPY ../server/src/main/resources/nobles.json /app
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed

@@ -5,8 +5,8 @@ services:
     container_name: ls-db
     image: ghcr.io/comp361/f2022-hexanome-16/database:latest
     build:
-      context: .
-      dockerfile: Dockerfile-ls-db
+      context: ..
+      dockerfile: docker/Dockerfile-ls-db
     ulimits:
       nofile:
         soft: 262144
@@ -18,8 +18,8 @@ services:
     container_name: ls-api
     image: ghcr.io/comp361/f2022-hexanome-16/lobby-service:latest
     build:
-      context: .
-      dockerfile: Dockerfile-ls-api
+      context: ..
+      dockerfile: docker/Dockerfile-ls-api
     ports:
       - "4242:4242"
     depends_on:
@@ -36,8 +36,8 @@ services:
     profiles: ["with-server"]
     image: ghcr.io/comp361/f2022-hexanome-16/splendor-server:latest
     build:
-      context: .
-      dockerfile: Dockerfile-server
+      context: ..
+      dockerfile: docker/Dockerfile-server
     ports:
       - "4243:4243"
     depends_on:
