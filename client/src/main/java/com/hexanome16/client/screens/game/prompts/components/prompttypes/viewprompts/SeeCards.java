@@ -56,6 +56,24 @@ public class SeeCards implements PromptTypeInterface {
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
   //List<String> cards = List.of("card1.png", "card2.png");
 
+  /**
+   * Fetches cards in the provided player's inventory.
+   *
+   * @param player player
+   */
+  public static void fetchCards(String player) {
+    // make a call to the server
+    long sessionId = GameScreen.getSessionId();
+    String response = PromptsRequests.getCards(sessionId, player);
+    // convert it to a list of maps
+    Gson myGson = new Gson();
+    List<Map<String, String>> cards = myGson.fromJson(response, List.class);
+    // add the paths to our list
+    cardPaths = new ArrayList<>();
+    for (Map<String, String> card : cards) {
+      cardPaths.add(card.get("texturePath") + ".png");
+    }
+  }
 
   @Override
   public double getWidth() {
@@ -102,26 +120,6 @@ public class SeeCards implements PromptTypeInterface {
 
     entity.getViewComponent().addChild(myBorderPane);
   }
-
-  /**
-   *  Fetches cards in the provided player's inventory.
-   *
-   * @param player player
-   */
-  public static void fetchCards(String player) {
-    // make a call to the server
-    long sessionId = GameScreen.getSessionId();
-    String response = PromptsRequests.getCards(sessionId, player);
-    // convert it to a list of maps
-    Gson myGson = new Gson();
-    List<Map<String, String>> cards = myGson.fromJson(response, List.class);
-    // add the paths to our list
-    cardPaths = new ArrayList<>();
-    for (Map<String, String> card : cards) {
-      cardPaths.add(card.get("texturePath") + ".png");
-    }
-  }
-
 
   /**
    * Get the card as a texture from its name.

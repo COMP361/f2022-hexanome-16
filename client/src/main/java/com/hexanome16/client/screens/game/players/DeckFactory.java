@@ -31,7 +31,7 @@ import javafx.scene.text.TextAlignment;
 public class DeckFactory implements EntityFactory {
 
   private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-          .loadFont("BrushScriptMT.ttf");
+      .loadFont("BrushScriptMT.ttf");
 
   // (helper) return a pane with a card and a label
   private StackPane getCard(int multiplicity, String cardName) {
@@ -87,9 +87,9 @@ public class DeckFactory implements EntityFactory {
     pane.setCenter(icon);
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.2, 0.2)
-            .build();
+        .view(pane)
+        .scale(0.2, 0.2)
+        .build();
   }
 
   /**
@@ -115,13 +115,13 @@ public class DeckFactory implements EntityFactory {
     });
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.25, 0.25)
-            .onClick(e -> {
-              SeeCards.fetchCards(player);
-              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-            })
-            .build();
+        .view(pane)
+        .scale(0.25, 0.25)
+        .onClick(e -> {
+          SeeCards.fetchCards(player);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+        })
+        .build();
   }
 
   /**
@@ -145,12 +145,12 @@ public class DeckFactory implements EntityFactory {
     });
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.2, 0.2)
-            .onClick(e -> {
-              OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-            })
-            .build();
+        .view(pane)
+        .scale(0.2, 0.2)
+        .onClick(e -> {
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+        })
+        .build();
   }
 
   /**
@@ -194,8 +194,8 @@ public class DeckFactory implements EntityFactory {
     });
     //.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder(data)
-            .view(mytokens)
-            .build();
+        .view(mytokens)
+        .build();
   }
 
   /**
@@ -207,7 +207,7 @@ public class DeckFactory implements EntityFactory {
    */
   private void addToken(
       String ownerName, TilePane tokens, CurrencyType currencyType,
-                        String textureName, int amount) {
+      String textureName, int amount) {
     // token (image)
     Texture token = FXGL.texture(textureName);
     token.setFitHeight(45);
@@ -253,9 +253,9 @@ public class DeckFactory implements EntityFactory {
     });
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.1, 0.1)
-            .build();
+        .view(pane)
+        .scale(0.1, 0.1)
+        .build();
   }
 
   /**
@@ -280,9 +280,9 @@ public class DeckFactory implements EntityFactory {
     });
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.07, 0.07)
-            .build();
+        .view(pane)
+        .scale(0.07, 0.07)
+        .build();
   }
 
   /**
@@ -318,9 +318,9 @@ public class DeckFactory implements EntityFactory {
     pane.getChildren().addAll(currentPlayerText, currentPlayerName);
     // build the entity
     return FXGL.entityBuilder(data)
-            .view(pane)
-            .scale(0.5, 0.5)
-            .build();
+        .view(pane)
+        .scale(0.5, 0.5)
+        .build();
   }
 
 }

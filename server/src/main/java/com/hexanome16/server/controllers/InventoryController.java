@@ -110,7 +110,7 @@ public class InventoryController {
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
   public ResponseEntity<String> getCards(@PathVariable long sessionId,
                                          @RequestParam String username)
-          throws JsonProcessingException {
+      throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
@@ -131,7 +131,7 @@ public class InventoryController {
   @GetMapping(value = {"/games/{sessionId}/inventory/nobles"})
   public ResponseEntity<String> getNobles(@PathVariable long sessionId,
                                           @RequestParam String username)
-          throws JsonProcessingException {
+      throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
@@ -153,18 +153,18 @@ public class InventoryController {
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
   public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
-                                                        @RequestParam String username,
-                                                        @RequestParam String accessToken)
-          throws JsonProcessingException {
+                                                 @RequestParam String username,
+                                                 @RequestParam String accessToken)
+      throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayer(sessionId, accessToken);
 
     /* ( handled in the client )
-    * if this player is the current player :
-    *     show the cards face up
-    * else
-    *     show the cards face down
-    * */
+     * if this player is the current player :
+     *     show the cards face up
+     * else
+     *     show the cards face down
+     * */
 
     // return the reserved level cards in the inventory as a response entity
     JsonNode node = getInventoryNode(player);
@@ -182,7 +182,7 @@ public class InventoryController {
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedNobles"})
   public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,
                                                   @RequestParam String username)
-          throws JsonProcessingException {
+      throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity

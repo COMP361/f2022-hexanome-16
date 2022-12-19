@@ -28,6 +28,8 @@ public class CardComponent extends Component {
   public static CardComponent[] level_three_grid = new CardComponent[4];
   private final Level level;
   private final boolean purchased = false;
+  private final String cardHash;
+  private final PriceMap priceMap;
   /**
    * The Texture.
    */
@@ -37,9 +39,6 @@ public class CardComponent extends Component {
   private boolean fading = false;
   private boolean adding = false;
   private int gridX;
-  private final String cardHash;
-
-  private final PriceMap priceMap;
 
   /**
    * Creates a new card fxgl component.

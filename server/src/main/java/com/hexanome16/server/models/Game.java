@@ -28,12 +28,11 @@ public class Game {
   private final Player[] players;
   private final String creator;
   private final String savegame;
+  private final GameBank gameBank;
   @Setter
   private int currentPlayerIndex = 0;
   private Deck nobleDeck = new Deck();
-
   private Deck onBoardNobles = new Deck();
-  private final GameBank gameBank;
 
   /**
    * Game constructor, create a new with a unique session id.
