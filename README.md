@@ -16,13 +16,6 @@
  * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
  * Fix all the errors and warnings that appear :)
 
-## Setup Git CheckStyle hook
- * Install Maven globally on your computer ([instructions](https://maven.apache.org/install.html)).
- * Using IntelliJ "Run Anything" (can be opened with double Ctrl), run "mvn -Phusky install" to install the git hook.
- * Commit hook is added :)
- * When you commit, the hook will run CheckStyle and prevent you from committing if there are any errors or warnings.
- * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
-
 ## How to run the project (development)
   * Start the server and Lobby Service by running "Server + LS" run config in IntelliJ.
     * If you'd like to run this manually, do ```docker-compose --profile with-server up -d --build --force-recreate --remove-orphans```.
