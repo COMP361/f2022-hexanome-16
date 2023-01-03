@@ -33,8 +33,7 @@ public class DeckHash implements BroadcastContent {
    */
   public DeckHash(Game game, Level level) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    for (DevelopmentCard card : game.getOnBoardDeck(level)
-        .getCardList()) {
+    for (DevelopmentCard card : game.getOnBoardDeck(level).getCardList()) {
       cards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
       allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
