@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="Server Dev" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -12,7 +12,8 @@
             <list>
               <option value="clean" />
               <option value="package" />
-              <option value="spring-boot:run-Ddocker.javadoc.skip=true" />
+              <option value="spring-boot:run" />
+              <option value="-Ddocker.javadoc.skip=true" />
             </list>
           </option>
           <option name="pomFileName" />

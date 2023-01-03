@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All in server" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="Server Tests" type="JUnit" factoryName="JUnit">
     <module name="server" />
     <extension name="coverage" runner="jacoco" />
     <extension name="net.ashald.envfile">
