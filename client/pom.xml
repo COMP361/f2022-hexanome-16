@@ -217,10 +217,8 @@
                 <configuration>
                     <source>17</source>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    <reportOutputDirectory>
-                        ${project.reporting.outputDirectory}../../../docs
-                    </reportOutputDirectory>
-                    <destDir>client</destDir>
+                    <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+                    <destDir>../docs/client</destDir>
                 </configuration>
                 <executions>
                     <execution>

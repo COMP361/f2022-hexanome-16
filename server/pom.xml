@@ -163,10 +163,8 @@
                 <configuration>
                     <source>17</source>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    <reportOutputDirectory>
-                        ${project.reporting.outputDirectory}../../../docs
-                    </reportOutputDirectory>
-                    <destDir>server</destDir>
+                    <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+                    <destDir>../docs/server</destDir>
                     <skip>${docker.javadoc.skip}</skip>
                 </configuration>
                 <executions>
