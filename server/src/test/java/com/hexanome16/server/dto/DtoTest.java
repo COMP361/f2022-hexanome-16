@@ -1,8 +1,6 @@
 package com.hexanome16.server.dto;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;

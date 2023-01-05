@@ -145,7 +145,7 @@ public abstract class Bank {
       }
       addTokensToList(tokenList, additionalTokens);
 
-    // else remove tokens from list
+      // else remove tokens from list
     } else if (incrementAmount < 0) {
       ArrayList<Token> removedTokens = removeTokensFromList(tokenList, -incrementAmount);
     }

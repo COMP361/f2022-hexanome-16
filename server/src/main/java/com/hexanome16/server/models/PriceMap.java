@@ -1,12 +1,7 @@
 package com.hexanome16.server.models;
 
-import javax.websocket.server.ServerEndpoint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Holds the token price for a development card.

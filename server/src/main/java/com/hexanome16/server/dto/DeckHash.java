@@ -8,7 +8,6 @@ import com.hexanome16.server.models.Level;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -34,8 +33,7 @@ public class DeckHash implements BroadcastContent {
    */
   public DeckHash(Game game, Level level) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    for (DevelopmentCard card : game.getOnBoardDeck(level)
-        .getCardList()) {
+    for (DevelopmentCard card : game.getOnBoardDeck(level).getCardList()) {
       cards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
       allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }

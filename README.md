@@ -2,9 +2,8 @@
 
  > See also [my video instructions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
-## Notes for TAs/Teacher (as of milestone 5)
- * Javadocs aren't generated in the proper place, no matter which value we've tried for ```reportOutputDirectory``` they weren't moving to the docs folder. They end up in src/client/client and src/server/server respectively.
- * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in the "All in server" run config in IntelliJ, so please use that to verify code coverage (should be 85%).
+## Notes for TAs/Teacher (as of January 3 2023)
+ * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in the "Server Tests" run config in IntelliJ, so please use that to verify code coverage (should be 85%).
  * Some server tests require a local Lobby Service to be running.
  * If you want to try playing the game, use the Splendor Prod IntelliJ run config (equivalent to ```PROFILE_ID=prod mvn clean package javafx:run```), since that one is connected to the remote server.
 
@@ -15,13 +14,6 @@
  * Click Ok to save settings.
  * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
  * Fix all the errors and warnings that appear :)
-
-## Setup Git CheckStyle hook
- * Install Maven globally on your computer ([instructions](https://maven.apache.org/install.html)).
- * Using IntelliJ "Run Anything" (can be opened with double Ctrl), run "mvn -Phusky install" to install the git hook.
- * Commit hook is added :)
- * When you commit, the hook will run CheckStyle and prevent you from committing if there are any errors or warnings.
- * If you want to skip the hook (please don't if you can), use `git commit --no-verify -m "<your message>"`.
 
 ## How to run the project (development)
   * Start the server and Lobby Service by running "Server + LS" run config in IntelliJ.
