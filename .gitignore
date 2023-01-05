@@ -141,4 +141,8 @@ system/
 ## Husky ##
 node_modules/
 
+## Docs folders ##
+client/client
+server/server
+
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,java,vim

@@ -22,10 +22,10 @@ public class PromptsRequests {
     try {
       HttpClient client = RequestClient.getClient();
       HttpRequest request = HttpRequest.newBuilder()
-              .uri(uri).GET()
-              .build();
+          .uri(uri).GET()
+          .build();
       CompletableFuture<HttpResponse<String>> response =
-              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
       return response.thenApply(HttpResponse::body).get();
     } catch (Exception e) {
       e.printStackTrace();
@@ -45,8 +45,8 @@ public class PromptsRequests {
   public static String getCards(long sessionId, String username) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/inventory/cards",
-            "username=" + username
+        "/api/games/" + sessionId + "/inventory/cards",
+        "username=" + username
     );
     // return the request
     return uriToRequest(uri);
@@ -63,8 +63,8 @@ public class PromptsRequests {
   public static String getNobles(long sessionId, String username) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/inventory/nobles",
-            "username=" + username
+        "/api/games/" + sessionId + "/inventory/nobles",
+        "username=" + username
     );
     // return the request
     return uriToRequest(uri);
@@ -73,8 +73,8 @@ public class PromptsRequests {
   /**
    * Get reserved cards of the player with provided username and session id.
    *
-   * @param sessionId Session ID.
-   * @param username  username of player.
+   * @param sessionId   Session ID.
+   * @param username    username of player.
    * @param accessToken access Token.
    * @return PurchaseMap representation of the player's funds as a String
    * @author Elea
@@ -82,8 +82,8 @@ public class PromptsRequests {
   public static String getReservedCards(long sessionId, String username, String accessToken) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/inventory/reservedCards",
-            "username=" + username + "&accessToken=" + accessToken
+        "/api/games/" + sessionId + "/inventory/reservedCards",
+        "username=" + username + "&accessToken=" + accessToken
     );
     // return the request
     return uriToRequest(uri);
@@ -100,8 +100,8 @@ public class PromptsRequests {
   public static String getReservedNobles(long sessionId, String username) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/inventory/reservedNobles",
-            "username=" + username
+        "/api/games/" + sessionId + "/inventory/reservedNobles",
+        "username=" + username
     );
     // return the request
     return uriToRequest(uri);
@@ -124,14 +124,14 @@ public class PromptsRequests {
       HttpClient client = RequestClient.getClient();
 
       HttpRequest request = HttpRequest.newBuilder()
-              .uri(UrlUtils.createGameServerUri(
-                      "/api/games/" + sessionId + "/" + cardMd5,
-                      requestParam(authToken, proposedDeal)
-              )).PUT(HttpRequest.BodyPublishers.noBody())
-              .build();
+          .uri(UrlUtils.createGameServerUri(
+              "/api/games/" + sessionId + "/" + cardMd5,
+              requestParam(authToken, proposedDeal)
+          )).PUT(HttpRequest.BodyPublishers.noBody())
+          .build();
 
       CompletableFuture<HttpResponse<String>> response =
-              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
 
       System.out.println("BuyCard Called");
@@ -154,8 +154,8 @@ public class PromptsRequests {
   public static String getPlayerBank(long sessionId, String username) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/playerBank",
-            "username=" + username
+        "/api/games/" + sessionId + "/playerBank",
+        "username=" + username
     );
     // return the request
     return uriToRequest(uri);
@@ -170,7 +170,7 @@ public class PromptsRequests {
   public static String getGameBankInfo(long sessionId) {
     // create a URI
     URI uri = UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/gameBank", ""
+        "/api/games/" + sessionId + "/gameBank", ""
     );
     // return the request
     return uriToRequest(uri);

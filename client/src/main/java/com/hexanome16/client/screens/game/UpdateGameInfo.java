@@ -16,7 +16,7 @@ public class UpdateGameInfo {
   /**
    * In any other Context than Prompts, update game variables.
    *
-   * @param sessionId unique session identifier.
+   * @param sessionId  unique session identifier.
    * @param playerName name of player whose bank will get updated.
    */
   public static void fetchPlayerBank(long sessionId, String playerName) {
@@ -28,11 +28,10 @@ public class UpdateGameInfo {
    * Fetch player bank and game bank from server and sets those to be visible from the
    * UI, mainly used for prompt.
    *
-   * @param sessionId Unique session identifier.
-   * @param playerName name of player.
+   * @param sessionId    Unique session identifier.
+   * @param playerName   name of player.
    * @param withinPrompt True if call within prompt, (doesn't update same properties),
    *                     false for any other context.
-   *
    */
   public static void fetchPlayerBank(long sessionId, String playerName, boolean withinPrompt) {
 
@@ -61,7 +60,7 @@ public class UpdateGameInfo {
   /**
    * Updates Current player text at top right of screen.
    *
-   * @param sessionId unique session identifier for the game.
+   * @param sessionId     unique session identifier for the game.
    * @param currentPlayer username for player we would like to set as new current player.
    */
   public static void setCurrentPlayer(long sessionId, String currentPlayer) {
@@ -80,6 +79,7 @@ public class UpdateGameInfo {
 
 
   ////// Public Helper /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Transforms String of bank retrieved from server to a Map .
    *
