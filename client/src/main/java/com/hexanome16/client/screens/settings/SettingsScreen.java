@@ -23,8 +23,8 @@ public class SettingsScreen {
     if (uiSingleton == null) {
       uiControllerSingleton = new SettingsScreenUiController();
       uiSingleton = getAssetLoader().loadUI("SettingsScreen.fxml", uiControllerSingleton);
-      setupUi(mainMenu);
     }
+    setupUi(mainMenu);
     return uiSingleton;
   }
 
