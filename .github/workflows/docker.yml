@@ -1,3 +1,4 @@
+# Action: https://github.com/marketplace/actions/publish-docker
 name: Publish Docker Server Image
 on:
   push:
