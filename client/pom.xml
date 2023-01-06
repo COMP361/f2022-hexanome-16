@@ -144,7 +144,7 @@
                 </dependencies>
                 <configuration>
                     <!-- the checkstyle plugin can be configured here       -->
-                    <configLocation>${project.basedir}/google_checks.xml</configLocation>
+                    <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <violationSeverity>warning</violationSeverity>
                     <failOnViolation>true</failOnViolation>
