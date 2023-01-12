@@ -1,0 +1,47 @@
+[
+{
+   "id": 0,
+   "bonus": "diamond",
+   "onyxAmount": 0,
+   "sapphireAmount": 6,
+   "emeraldAmount": 3,
+   "rubyAmount": 0,
+   "diamondAmount": 1
+ },
+{
+   "id": 1,
+   "bonus": "sapphire",
+   "onyxAmount": 0,
+   "sapphireAmount": 1,
+   "emeraldAmount": 6,
+   "rubyAmount": 3,
+   "diamondAmount": 0
+ },
+{
+   "id": 2,
+   "bonus": "emerald",
+   "onyxAmount": 3,
+   "sapphireAmount": 0,
+   "emeraldAmount": 1,
+   "rubyAmount": 6,
+   "diamondAmount": 0
+ },
+{
+   "id": 3,
+   "bonus": "ruby",
+   "onyxAmount": 6,
+   "sapphireAmount": 0,
+   "emeraldAmount": 0,
+   "rubyAmount": 1,
+   "diamondAmount": 3
+ },
+{
+   "id": 4,
+   "bonus": "onyx",
+   "onyxAmount": 1,
+   "sapphireAmount": 3,
+   "emeraldAmount": 0,
+   "rubyAmount": 0,
+   "diamondAmount": 6
+ }
+]

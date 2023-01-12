@@ -1,0 +1,29 @@
+[
+{
+   "id": 0,
+   "bonus": "diamond",
+   "onyxAmount": 2,
+   "sapphireAmount": 2,
+   "emeraldAmount": 2,
+   "rubyAmount": 2,
+   "diamondAmount": 0
+ },
+{
+   "id": 1,
+   "bonus": "emerald",
+   "onyxAmount": 2,
+   "sapphireAmount": 2,
+   "emeraldAmount": 0,
+   "rubyAmount": 2,
+   "diamondAmount": 2
+ },
+{
+   "id": 2,
+   "bonus": "ruby",
+   "onyxAmount": 2,
+   "sapphireAmount": 2,
+   "emeraldAmount": 2,
+   "rubyAmount": 0,
+   "diamondAmount": 2
+ }
+]
