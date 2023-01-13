@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
@@ -16,6 +15,8 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.services.auth.AuthService;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
@@ -39,19 +40,23 @@ public class GameController {
 
   private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
       new HashMap<String, BroadcastContentManager>();
+
+  /**
+   * A mapping from ID's to their associated games.
+   */
   //store all the games here
   private final Map<Long, Game> gameMap = new HashMap<>();
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private final AuthController authController;
+  private final AuthServiceInterface authService;
 
   /**
    * Instantiates a new Game controller.
    *
-   * @param authController the auth controller
+   * @param authService the authentication service
    */
-  public GameController(AuthController authController) {
-    this.authController = authController;
+  public GameController(AuthService authService) {
+    this.authService = authService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
@@ -86,7 +91,7 @@ public class GameController {
     if (game == null) {
       return false;
     }
-    ResponseEntity<String> username = authController.getPlayer(accessToken);
+    ResponseEntity<String> username = authService.getPlayer(accessToken);
     if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
           .anyMatch(player -> player.getName().equals(username.getBody()));
@@ -397,7 +402,7 @@ public class GameController {
     if (game == null) {
       return null;
     }
-    ResponseEntity<String> usernameEntity = authController.getPlayer(authenticationToken);
+    ResponseEntity<String> usernameEntity = authService.getPlayer(authenticationToken);
 
     String username = usernameEntity.getBody();
 
