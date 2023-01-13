@@ -1,8 +1,8 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.GameParams;
+import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 public class GameServiceController {
   private final RestTemplate restTemplate;
 
-  private final AuthController authController;
+  private final AuthService authService;
   private final UrlUtils urlUtils;
   private final GameParams gameParams;
   @Value("${gs.username}")
@@ -40,16 +40,16 @@ public class GameServiceController {
    * Constructor.
    *
    * @param restTemplateBuilder The RestTemplateBuilder.
-   * @param authController      The AuthController.
+   * @param authService         The AuthController.
    * @param urlUtils            The UrlUtils.
    * @param gameParams          The GameParams.
    */
   public GameServiceController(RestTemplateBuilder restTemplateBuilder,
-                               AuthController authController, UrlUtils urlUtils,
+                               AuthService authService, UrlUtils urlUtils,
                                GameParams gameParams) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
-    this.authController = authController;
+    this.authService = authService;
     this.gameParams = gameParams;
   }
 
@@ -61,7 +61,7 @@ public class GameServiceController {
    */
   @EventListener(ApplicationReadyEvent.class)
   public ResponseEntity<Void> createGameService() {
-    ResponseEntity<TokensInfo> tokensInfo = authController.login(gsUsername, gsPassword);
+    ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
@@ -84,7 +84,7 @@ public class GameServiceController {
    * @return the response entity
    */
   public ResponseEntity<Void> deleteGameService() {
-    ResponseEntity<TokensInfo> tokensInfo = authController.login(gsUsername, gsPassword);
+    ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());

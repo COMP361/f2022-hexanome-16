@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
@@ -16,6 +15,7 @@ import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.auth.TokensInfo;
+import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingExcept
  * Tests for {@link GameController}.
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {GameController.class, AuthController.class, UrlUtils.class})
+@ContextConfiguration(classes = {GameController.class, AuthService.class, UrlUtils.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
 public class GameControllerTest {
   private final String kim = "{\"name\":" + "\"kim\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
@@ -54,7 +54,7 @@ public class GameControllerTest {
   @Autowired
   private GameController gameController;
   @Autowired
-  private AuthController authController;
+  private AuthService authService;
   private String accessToken;
   private String invalidAccessToken;
   private String gameResponse;
@@ -66,10 +66,10 @@ public class GameControllerTest {
    */
   @BeforeEach
   public void createGame() throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<TokensInfo> tokens = authController.login("kim", "123");
-    authController.login("imad", "123");
+    ResponseEntity<TokensInfo> tokens = authService.login("kim", "123");
+    authService.login("imad", "123");
     accessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
-    tokens = authController.login("peini", "123");
+    tokens = authService.login("peini", "123");
     invalidAccessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
     List playerList = new ArrayList<String>();
     playerList.add(objectMapper.readValue(imad, Map.class));

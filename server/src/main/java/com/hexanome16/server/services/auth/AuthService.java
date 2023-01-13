@@ -1,9 +1,12 @@
-package com.hexanome16.server.controllers.lobbyservice.auth;
+package com.hexanome16.server.services.auth;
 
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -19,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
  * This service is responsible for sending authentication related requests to Lobby Service.
  */
 @Service
-public class AuthController {
+public class AuthService implements AuthServiceInterface {
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
   @Value("${ls.username}")
@@ -33,8 +36,8 @@ public class AuthController {
    * @param restTemplateBuilder the rest template builder
    * @param urlUtils            the url utils
    */
-  public AuthController(@Autowired RestTemplateBuilder restTemplateBuilder,
-                        @Autowired UrlUtils urlUtils) {
+  public AuthService(@Autowired RestTemplateBuilder restTemplateBuilder,
+                     @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
   }
@@ -63,35 +66,19 @@ public class AuthController {
     }
   }
 
-  /**
-   * Login response entity.
-   *
-   * @param username the username
-   * @param password the password
-   * @return the response entity
-   */
+  @Override
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String username, String password) {
     return login(username, password, null);
   }
 
-  /**
-   * Login response entity.
-   *
-   * @param refreshToken the refresh token
-   * @return the response entity
-   */
+  @Override
   @ResponseBody
   public ResponseEntity<TokensInfo> login(String refreshToken) {
     return login(null, null, refreshToken);
   }
 
-  /**
-   * Sends a request to Lobby Service to get the username associated with the passed access token.
-   *
-   * @param accessToken The access token of the user.
-   * @return The username associated with the passed access token.
-   */
+  @Override
   @ResponseBody
   public ResponseEntity<String> getPlayer(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
@@ -105,12 +92,7 @@ public class AuthController {
     }
   }
 
-  /**
-   * This request logs out the user in LS associated with the access token.
-   *
-   * @param accessToken The access token.
-   * @return the response entity
-   */
+  @Override
   public ResponseEntity<Void> logout(String accessToken) {
     URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
     try {
@@ -119,5 +101,19 @@ public class AuthController {
       e.printStackTrace();
     }
     return ResponseEntity.ok().build();
+  }
+
+  @Override
+  public boolean verifyPlayer(long sessionId, String accessToken, Map<Long, Game> gameMap) {
+    Game game = gameMap.get(sessionId);
+    if (game == null) {
+      return false;
+    }
+    ResponseEntity<String> username = getPlayer(accessToken);
+    if (username != null && username.getStatusCode().is2xxSuccessful()) {
+      return Arrays.stream(game.getPlayers())
+          .anyMatch(player -> player.getName().equals(username.getBody()));
+    }
+    return false;
   }
 }
