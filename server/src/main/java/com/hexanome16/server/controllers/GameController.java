@@ -22,6 +22,7 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,7 @@ public class GameController {
    *
    * @param authService the authentication service
    */
-  public GameController(AuthService authService) {
+  public GameController(@Autowired AuthServiceInterface authService) {
     this.authService = authService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
