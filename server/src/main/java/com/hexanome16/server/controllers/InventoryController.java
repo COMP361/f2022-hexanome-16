@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class InventoryController {
   private final GameController gameController;
   private final ObjectMapper objectMapper;
 
+  private final AuthServiceInterface authService;
+
   /**
    * Controller for the Inventory.
    *
@@ -34,20 +38,23 @@ public class InventoryController {
    * @param urlUtils            operations
    * @param gameController      controller for the whole game (used for helper)
    * @param objectMapper        the object mapper
+   * @param authService         the authentication service
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             GameController gameController, ObjectMapper objectMapper) {
+                             GameController gameController, ObjectMapper objectMapper, @Autowired
+                             AuthServiceInterface authService) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.gameController = gameController;
     this.objectMapper = objectMapper;
+    this.authService = authService;
   }
 
   /* helper methods ***************************************************************************/
 
   private Player getValidPlayer(long sessionId, String accessToken) {
     // verify that the request is valid
-    if (!gameController.verifyPlayer(sessionId, accessToken)) {
+    if (!authService.verifyPlayer(sessionId, accessToken, gameController.getGameMap())) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token

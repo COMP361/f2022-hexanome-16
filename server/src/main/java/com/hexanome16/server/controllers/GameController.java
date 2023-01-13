@@ -15,11 +15,9 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
-import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,25 +78,25 @@ public class GameController {
     return gameMap;
   }
 
-  /**
-   * Verify player by their access .
-   *
-   * @param sessionId   session id we desire to verify.
-   * @param accessToken access token we're looking for
-   * @return true if access Token is in game with session ID, false otherwise.
-   */
-  public boolean verifyPlayer(long sessionId, String accessToken) {
-    Game game = gameMap.get(sessionId);
-    if (game == null) {
-      return false;
-    }
-    ResponseEntity<String> username = authService.getPlayer(accessToken);
-    if (username != null && username.getStatusCode().is2xxSuccessful()) {
-      return Arrays.stream(game.getPlayers())
-          .anyMatch(player -> player.getName().equals(username.getBody()));
-    }
-    return false;
-  }
+//  /**
+//   * Verify player by their access .
+//   *
+//   * @param sessionId   session id we desire to verify.
+//   * @param accessToken access token we're looking for
+//   * @return true if access Token is in game with session ID, false otherwise.
+//   */
+//  public boolean verifyPlayer(long sessionId, String accessToken) {
+//    Game game = gameMap.get(sessionId);
+//    if (game == null) {
+//      return false;
+//    }
+//    ResponseEntity<String> username = authService.getPlayer(accessToken);
+//    if (username != null && username.getStatusCode().is2xxSuccessful()) {
+//      return Arrays.stream(game.getPlayers())
+//          .anyMatch(player -> player.getName().equals(username.getBody()));
+//    }
+//    return false;
+//  }
 
 
   /**
@@ -154,7 +152,7 @@ public class GameController {
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result =
           ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get(level), hash);
@@ -177,7 +175,7 @@ public class GameController {
                                                           @RequestParam String accessToken,
                                                           @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
           broadcastContentManagerMap.get("noble"), hash);
@@ -201,7 +199,7 @@ public class GameController {
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get("player"),
           hash);
@@ -300,7 +298,7 @@ public class GameController {
     }
 
     // Verify player is who they claim to be
-    if (!verifyPlayer(sessionId, authenticationToken)) {
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
