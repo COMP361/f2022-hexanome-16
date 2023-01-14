@@ -78,27 +78,6 @@ public class GameController {
     return gameMap;
   }
 
-//  /**
-//   * Verify player by their access .
-//   *
-//   * @param sessionId   session id we desire to verify.
-//   * @param accessToken access token we're looking for
-//   * @return true if access Token is in game with session ID, false otherwise.
-//   */
-//  public boolean verifyPlayer(long sessionId, String accessToken) {
-//    Game game = gameMap.get(sessionId);
-//    if (game == null) {
-//      return false;
-//    }
-//    ResponseEntity<String> username = authService.getPlayer(accessToken);
-//    if (username != null && username.getStatusCode().is2xxSuccessful()) {
-//      return Arrays.stream(game.getPlayers())
-//          .anyMatch(player -> player.getName().equals(username.getBody()));
-//    }
-//    return false;
-//  }
-
-
   /**
    * Create a new game as client requested.
    *
