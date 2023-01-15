@@ -132,6 +132,24 @@ public class GameFactory implements EntityFactory {
   }
 
   /**
+   * Adds a red level-one card from the red level-one deck to the game board.
+   *
+   * @param data spawn data
+   * @return card entity
+   */
+  @Spawns("RedLevelOneCard")
+  public Entity newRedLevelOneCard(SpawnData data) {
+    return FXGL.entityBuilder()
+        .at(matCoordsX + 800, matCoordsY + 565)
+        .view(data.getData().get("texture") + ".png")
+        .scale(0.15, 0.15)
+        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDONE,
+            data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
+            (String) data.getData().get("MD5")))
+        .build();
+  }
+
+  /**
    * Adds a sacrifice card to the game board.
    *
    * @param data spawn data

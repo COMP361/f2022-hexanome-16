@@ -374,7 +374,7 @@ public class Game {
     Deck redOneDeck = new Deck();
     Deck redTwoDeck = new Deck();
     Deck redThreeDeck = new Deck();
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
       redOneDeck.addCard(redDecks.get(Level.REDONE).nextCard());
       redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
       redThreeDeck.addCard(redDecks.get(Level.REDTHREE).nextCard());
