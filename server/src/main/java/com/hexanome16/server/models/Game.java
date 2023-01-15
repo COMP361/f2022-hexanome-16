@@ -60,6 +60,7 @@ public class Game {
     gameBank = new GameBank();
     createDecks();
     createOnBoardDecks();
+    createOnBoardRedDecks();
   }
 
 
@@ -125,6 +126,48 @@ public class Game {
               });
     }
     createBagDeck(bagJsonList);
+
+    createGoldDeck();
+
+    List<DoubleJson> doubleJsonList;
+    try {
+      doubleJsonList =
+          objectMapper.readValue(new File(
+                  "/app/double.json"),
+              new TypeReference<List<DoubleJson>>() {
+              });
+    } catch (Exception e) {
+      File file = new File(".");
+      doubleJsonList =
+          objectMapper.readValue(new File(
+                  "./src/main/resources/double.json"),
+              new TypeReference<List<DoubleJson>>() {
+              });
+    }
+    createDoubleDeck(doubleJsonList);
+
+    createNobleReserveDeck();
+
+    createBagCascadeDeck();
+
+    createSacrificeDeck();
+
+    List<CascadeTwoJson> cascadeTwoJsonList;
+    try {
+      cascadeTwoJsonList =
+          objectMapper.readValue(new File(
+                  "/app/cascade_two.json"),
+              new TypeReference<List<CascadeTwoJson>>() {
+              });
+    } catch (Exception e) {
+      File file = new File(".");
+      cascadeTwoJsonList =
+          objectMapper.readValue(new File(
+                  "./src/main/resources/cascade_two.json"),
+              new TypeReference<List<CascadeTwoJson>>() {
+              });
+    }
+    createCascadeTwoDeck(cascadeTwoJsonList);
   }
 
   private void createBaseLevelOneDeck(List<CardJson> cardJsonList) {
@@ -204,15 +247,15 @@ public class Game {
       LevelCard bag = new LevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           new TokenPrice(priceMap),
-          Level.ONE);
+          Level.REDONE);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.ONE, deck);
+    redDecks.put(Level.REDONE, deck);
   }
 
   private void createGoldDeck() {
-    Deck deck = redDecks.get(Level.ONE);
+    Deck deck = redDecks.get(Level.REDONE);
     int[][] prices =
           {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
     for (int i = 0; i < 4; i++) {
@@ -221,11 +264,11 @@ public class Game {
       LevelCard gold = new LevelCard(i, 0,
           "gold" + i,
           new TokenPrice(priceMap),
-          Level.ONE);
+          Level.REDONE);
       deck.addCard(gold);
     }
     deck.shuffle();
-    redDecks.put(Level.ONE, deck);
+    redDecks.put(Level.REDONE, deck);
   }
 
   private void createDoubleDeck(List<DoubleJson> doubleJsonList) {
@@ -238,15 +281,15 @@ public class Game {
       LevelCard bag = new LevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
           new TokenPrice(priceMap),
-          Level.TWO);
+          Level.REDTWO);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.TWO, deck);
+    redDecks.put(Level.REDTWO, deck);
   }
 
   private void createNobleReserveDeck() {
-    Deck deck = redDecks.get(Level.TWO);
+    Deck deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{2, 2, 2, 0, 2}, {2, 0, 2, 2, 2}, {0, 2, 2, 2, 2}};
     for (int i = 0; i < 2; i++) {
       PriceMap priceMap =
@@ -254,15 +297,15 @@ public class Game {
       LevelCard bag = new LevelCard(i, 1,
           "noble_reserve" + i,
           new TokenPrice(priceMap),
-          Level.TWO);
+          Level.REDTWO);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.TWO, deck);
+    redDecks.put(Level.REDTWO, deck);
   }
 
   private void createBagCascadeDeck() {
-    Deck deck = redDecks.get(Level.TWO);
+    Deck deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{3, 4, 0, 0, 1}, {0, 0, 3, 4, 1}};
     for (int i = 0; i < 1; i++) {
       PriceMap priceMap =
@@ -270,11 +313,11 @@ public class Game {
       LevelCard bag = new LevelCard(i, 0,
           "bag_cascade" + i,
           new TokenPrice(priceMap),
-          Level.TWO);
+          Level.REDTWO);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.TWO, deck);
+    redDecks.put(Level.REDTWO, deck);
   }
 
   private void createSacrificeDeck() {
@@ -285,15 +328,15 @@ public class Game {
       LevelCard bag = new LevelCard(i, 3,
           "sacrifice" + i,
           price,
-          Level.THREE);
+          Level.REDTHREE);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.THREE, deck);
+    redDecks.put(Level.REDTHREE, deck);
   }
 
   private void createCascadeTwoDeck(List<CascadeTwoJson> cascadeTwoJsonList) {
-    Deck deck = redDecks.get(Level.THREE);
+    Deck deck = redDecks.get(Level.REDTHREE);
     for (int i = 0; i < 4; i++) {
       CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList.get(i);
       PriceMap priceMap =
@@ -303,11 +346,11 @@ public class Game {
       LevelCard bag = new LevelCard(cascadeTwoJson.getId(), 0,
           "cascade_two" + cascadeTwoJson.getId(),
           new TokenPrice(priceMap),
-          Level.THREE);
+          Level.REDTHREE);
       deck.addCard(bag);
     }
     deck.shuffle();
-    redDecks.put(Level.THREE, deck);
+    redDecks.put(Level.REDTHREE, deck);
   }
 
   private void createOnBoardDecks() {
@@ -327,6 +370,20 @@ public class Game {
       nobleDeck.addCard(this.nobleDeck.nextCard());
     }
     this.onBoardNobles = nobleDeck;
+  }
+
+  private void createOnBoardRedDecks() {
+    Deck redOneDeck = new Deck();
+    Deck redTwoDeck = new Deck();
+    Deck redThreeDeck = new Deck();
+    for (int i = 0; i < 1; i++) {
+      redOneDeck.addCard(redDecks.get(Level.REDONE).nextCard());
+      redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
+      redThreeDeck.addCard(redDecks.get(Level.REDTHREE).nextCard());
+    }
+    this.onBoardRedDecks.put(Level.REDONE, redOneDeck);
+    this.onBoardRedDecks.put(Level.REDTWO, redTwoDeck);
+    this.onBoardRedDecks.put(Level.REDTHREE, redThreeDeck);
   }
 
   /**
