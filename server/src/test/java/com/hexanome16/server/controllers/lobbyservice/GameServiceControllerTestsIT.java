@@ -24,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {UrlUtils.class, GameParams.class, AuthService.class,
     GameServiceController.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class GameServiceControllerTests {
+public class GameServiceControllerTestsIT {
   @Autowired
   private GameServiceController gameServiceController;
 
