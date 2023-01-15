@@ -27,7 +27,7 @@ import org.testcontainers.containers.DockerComposeContainer;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UrlUtils.class, AuthService.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class AuthServiceTests {
+public class AuthServiceTestsIT {
   /**
    * The Ls container.
    */
