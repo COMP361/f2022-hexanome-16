@@ -2,11 +2,12 @@ package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.GameParams;
-import com.hexanome16.server.services.auth.AuthService;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,19 +17,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * This controller is used for Game Service operations related to Lobby Service.
  */
-@RestController
 @Service
 public class GameServiceController {
   private final RestTemplate restTemplate;
 
-  private final AuthService authService;
+  private final AuthServiceInterface authService;
   private final UrlUtils urlUtils;
   private final GameParams gameParams;
   @Value("${gs.username}")
@@ -44,9 +43,10 @@ public class GameServiceController {
    * @param urlUtils            The UrlUtils.
    * @param gameParams          The GameParams.
    */
-  public GameServiceController(RestTemplateBuilder restTemplateBuilder,
-                               AuthService authService, UrlUtils urlUtils,
-                               GameParams gameParams) {
+  public GameServiceController(@Autowired RestTemplateBuilder restTemplateBuilder,
+                               @Autowired AuthServiceInterface authService,
+                               @Autowired UrlUtils urlUtils,
+                               @Autowired GameParams gameParams) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authService = authService;
@@ -72,10 +72,11 @@ public class GameServiceController {
     HttpEntity<GameParams> entity = new HttpEntity<>(gameParams, headers);
     try {
       this.restTemplate.put(url, entity);
+      return ResponseEntity.ok().build();
     } catch (HttpClientErrorException.BadRequest e) {
       System.out.println("Game service already registered");
+      return ResponseEntity.badRequest().build();
     }
-    return ResponseEntity.ok().build();
   }
 
   /**
@@ -91,9 +92,10 @@ public class GameServiceController {
     assert url != null;
     try {
       this.restTemplate.delete(url);
+      return ResponseEntity.ok().build();
     } catch (HttpClientErrorException.BadRequest e) {
       System.out.println("Game service not deleted");
+      return ResponseEntity.badRequest().build();
     }
-    return ResponseEntity.ok().build();
   }
 }
