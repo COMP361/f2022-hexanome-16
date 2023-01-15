@@ -116,6 +116,12 @@ public class GameController {
           new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.TWO));
       BroadcastContentManager<DeckHash> broadcastContentManagerThree =
           new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.THREE));
+      BroadcastContentManager<DeckHash> broadcastContentManagerRedOne =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDONE));
+      BroadcastContentManager<DeckHash> broadcastContentManagerRedTwo =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDTWO));
+      BroadcastContentManager<DeckHash> broadcastContentManagerRedThree =
+          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDTHREE));
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
           new BroadcastContentManager<PlayerJson>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
@@ -124,6 +130,9 @@ public class GameController {
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
       broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
       broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
+      broadcastContentManagerMap.put("REDONE", broadcastContentManagerRedOne);
+      broadcastContentManagerMap.put("REDTWO", broadcastContentManagerRedTwo);
+      broadcastContentManagerMap.put("REDTHREE", broadcastContentManagerRedThree);
       broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
       broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
     } catch (Exception e) {

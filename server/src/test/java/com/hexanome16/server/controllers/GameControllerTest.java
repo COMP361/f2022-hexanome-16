@@ -101,8 +101,9 @@ public class GameControllerTest {
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getDeck(12345, "ONE", accessToken, hash)
+        (ResponseEntity<String>) gameController.getDeck(12345, "REDTHREE", accessToken, hash)
             .getResult();
+    System.out.println(response.getBody());
     assertNotNull(response);
   }
 

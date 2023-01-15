@@ -28,8 +28,6 @@ public class Game {
   private final Map<Level, Deck> redDecks = new HashMap<>();
   private final Map<Level, Deck> onBoardDecks = new HashMap<>();
 
-  private final Map<Level, Deck> onBoardRedDecks = new HashMap<>();
-
   private final long sessionId;
 
   private final Player[] players;
@@ -381,9 +379,9 @@ public class Game {
       redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
       redThreeDeck.addCard(redDecks.get(Level.REDTHREE).nextCard());
     }
-    this.onBoardRedDecks.put(Level.REDONE, redOneDeck);
-    this.onBoardRedDecks.put(Level.REDTWO, redTwoDeck);
-    this.onBoardRedDecks.put(Level.REDTHREE, redThreeDeck);
+    this.onBoardDecks.put(Level.REDONE, redOneDeck);
+    this.onBoardDecks.put(Level.REDTWO, redTwoDeck);
+    this.onBoardDecks.put(Level.REDTHREE, redThreeDeck);
   }
 
   /**
