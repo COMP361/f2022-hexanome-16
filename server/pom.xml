@@ -203,6 +203,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${docker.test.skip}</skip>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
