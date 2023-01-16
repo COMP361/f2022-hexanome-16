@@ -27,6 +27,8 @@ public class GameParams {
 
   /**
    * Default params used for testing/UI demo.
+   *
+   * @throws UnknownHostException if the host is unknown
    */
   @PostConstruct
   public void init() throws UnknownHostException {

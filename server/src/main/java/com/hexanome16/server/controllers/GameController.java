@@ -227,6 +227,8 @@ public class GameController {
 
   /**
    * Ends current player's turn and starts next player's turn.
+   *
+   * @param game the game the player is in
    */
   public void endCurrentPlayersTurn(Game game) {
     game.setCurrentPlayerIndex((game.getCurrentPlayerIndex() + 1) % game.getPlayers().length);
