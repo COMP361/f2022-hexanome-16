@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import java.util.Map;
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -36,8 +37,7 @@ public interface GameServiceInterface {
    * @param hash        hash used for long polling
    * @return updated game deck
    */
-  DeferredResult<ResponseEntity<String>> getDeck(long sessionId,
-                                                 String level,
+  DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
                                                  String accessToken,
                                                  String hash);
 
@@ -129,14 +129,14 @@ public interface GameServiceInterface {
    * @param username name of player.
    * @return Player with that username in that game, null if no such player.
    */
-  Player findPlayerByName(Game game, String username);
+  Player findPlayerByName(@NonNull Game game, String username);
 
   /**
    * Finds player with that authentication token in the game.
    *
    * @param game                game to search.
-   * @param authenticationToken token associated to player
+   * @param accessToken token associated to player
    * @return player with that token, null if no such player
    */
-  Player findPlayerByToken(Game game, String authenticationToken);
+  Player findPlayerByToken(@NonNull Game game, String accessToken);
 }
