@@ -2,8 +2,7 @@ package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.services.GameService;
-import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
+import com.hexanome16.server.services.GameServiceInterface;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,15 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameController {
 
-  private final GameService gameService = new GameService();
+  private final GameServiceInterface gameServiceInterface;
 
   /**
    * Instantiates a new Game controller.
+   *
+   * @param gameServiceInterface game service to use for backend manipulations
    */
   public GameController(@Autowired GameServiceInterface gameServiceInterface) {
-    this.gameService = gameServiceInterface;
+    this.gameServiceInterface = gameServiceInterface;
   }
 
   /**
@@ -36,7 +37,7 @@ public class GameController {
    * @return the game map
    */
   public Map<Long, Game> getGameMap() {
-    return gameService.getGameMap();
+    return gameServiceInterface.getGameMap();
   }
 
   /**
@@ -48,7 +49,7 @@ public class GameController {
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
-    return gameService.createGame(sessionId, payload);
+    return gameServiceInterface.createGame(sessionId, payload);
   }
 
   /**
@@ -65,30 +66,23 @@ public class GameController {
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash) {
-    return gameService.getDeck(sessionId, level, accessToken, hash);
+    return gameServiceInterface.getDeck(sessionId, level, accessToken, hash);
   }
 
-//  /**
-//   * Returns nobles present on the game board.
-//   *
-//   * @param sessionId   session id
-//   * @param accessToken access token
-//   * @param hash        the hash
-//   * @return nobles present on the game board
-//   */
-//  @GetMapping(value = "/games/{sessionId}/nobles", produces = "application/json; charset=utf-8")
-//  public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
-//                                                          @RequestParam String accessToken,
-//                                                          @RequestParam String hash) {
-//    if (gameService.authService.verifyPlayer(sessionId, accessToken, gameService.getGameMap())) {
-//      DeferredResult<ResponseEntity<String>> result;
-//      result = ResponseGenerator.getHashBasedUpdate(10000,
-//          gameService.broadcastContentManagerMap.get("noble"), hash);
-//      return result;
-//    }
-//    return null;
-//
-//  }
+  /**
+   * Returns nobles present on the game board.
+   *
+   * @param sessionId   session id
+   * @param accessToken access token
+   * @param hash        the hash
+   * @return nobles present on the game board
+   */
+  @GetMapping(value = "/games/{sessionId}/nobles", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
+                                                          @RequestParam String accessToken,
+                                                          @RequestParam String hash) {
+    return gameServiceInterface.getNobles(sessionId, accessToken, hash);
+  }
 
   /**
    * Return the username of current player.
@@ -102,7 +96,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
-    return gameService.getCurrentPlayer(sessionId, accessToken, hash);
+    return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
   }
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
@@ -119,7 +113,7 @@ public class GameController {
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
-    return gameService.getPlayerBankInfo(sessionId, username);
+    return gameServiceInterface.getPlayerBankInfo(sessionId, username);
   }
 
   /**
@@ -132,7 +126,7 @@ public class GameController {
   @GetMapping(value = {"/games/{sessionId}/gameBank", "/games/{sessionId}/gameBank/"})
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
-    return gameService.getGameBankInfo(sessionId);
+    return gameServiceInterface.getGameBankInfo(sessionId);
   }
 
   /**
@@ -141,7 +135,7 @@ public class GameController {
    * @param game the game the player is in
    */
   public void endCurrentPlayersTurn(Game game) {
-    gameService.endCurrentPlayersTurn(game);
+    gameServiceInterface.endCurrentPlayersTurn(game);
   }
 
   /**
@@ -157,8 +151,8 @@ public class GameController {
    * @param onyxAmount          amount of onyx gems proposed.
    * @param goldAmount          amount of gold gems proposed.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.
-   * </p>
+   *          HTTP BAD_REQUEST otherwise.
+   *         </p>
    * @throws JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
@@ -172,9 +166,8 @@ public class GameController {
                                         @RequestParam int onyxAmount,
                                         @RequestParam int goldAmount)
       throws JsonProcessingException {
-    return gameService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount, emeraldAmount,
+    return gameServiceInterface.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
+        emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 }
-
-
