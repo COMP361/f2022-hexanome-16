@@ -90,14 +90,14 @@ public class CardComponent extends Component {
         entity.removeFromWorld();
       }
     } else if (adding) {
-      if(level == Level.ONE || level == Level.TWO || level == Level.THREE) {
-        if((matCoordsX + 140 + 138 * gridX) - position.getX() > 0) {
+      if (level == Level.ONE || level == Level.TWO || level == Level.THREE) {
+        if ((matCoordsX + 140 + 138 * gridX) - position.getX() > 0) {
           position.translateX(5);
         } else {
           adding = false;
         }
       } else {
-        if(position.getX() - (matCoordsX + 850 - 138 * gridX) > 0) {
+        if (position.getX() - (matCoordsX + 850 - 138 * gridX) > 0) {
           position.translateX(-5);
         } else {
           adding = false;
