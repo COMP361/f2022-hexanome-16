@@ -97,7 +97,7 @@ public class CardComponent extends Component {
           adding = false;
         }
       } else {
-        if((matCoordsX + 800 - 138 * gridX) - position.getX() < 0) {
+        if(position.getX() - (matCoordsX + 850 - 138 * gridX) > 0) {
           position.translateX(-5);
         } else {
           adding = false;
