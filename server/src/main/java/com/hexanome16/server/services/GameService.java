@@ -21,6 +21,7 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,8 @@ public class GameService implements GameServiceInterface {
   public Map<Long, Game> getGameMap() {
     return gameMap;
   }
+
+  //TODO: probably need to make a better test for this.
 
   @Override
   public String createGame(long sessionId, Map<String, Object> payload) {
@@ -101,10 +104,8 @@ public class GameService implements GameServiceInterface {
   public DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
                                                         String accessToken, String hash) {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
-      DeferredResult<ResponseEntity<String>> result;
-      result =
-          ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get(level), hash);
-      return result;
+      return ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get(level),
+          hash);
     }
     return null;
   }
@@ -256,11 +257,7 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Player findPlayerByName(Game game, String username) {
-
-    if (game == null) {
-      return null;
-    }
+  public Player findPlayerByName(@NonNull Game game, String username) {
     for (Player e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;
@@ -270,12 +267,8 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Player findPlayerByToken(Game game, String authenticationToken) {
-
-    if (game == null) {
-      return null;
-    }
-    ResponseEntity<String> usernameEntity = authService.getPlayer(authenticationToken);
+  public Player findPlayerByToken(@NonNull Game game, String accessToken) {
+    ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();
 
