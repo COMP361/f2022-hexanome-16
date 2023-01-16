@@ -143,6 +143,7 @@
                     <failOnViolation>true</failOnViolation>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <skip>${docker.build.skip}</skip>
                 </configuration>
                 <executions>

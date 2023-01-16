@@ -24,18 +24,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {UrlUtils.class, GameParams.class, AuthService.class,
     GameServiceController.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class GameServiceControllerTestsIT {
+public class GameServiceControllerIT {
   @Autowired
   private GameServiceController gameServiceController;
-
-  /**
-   * Test create game service.
-   */
-  @Test
-  public void createGameService() {
-    ResponseEntity<Void> response = gameServiceController.createGameService();
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-  }
 
   /**
    * Test delete game service.
@@ -43,6 +34,15 @@ public class GameServiceControllerTestsIT {
   @Test
   public void deleteGameService() {
     ResponseEntity<Void> response = gameServiceController.deleteGameService();
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
+  /**
+   * Test create game service.
+   */
+  @Test
+  public void createGameService() {
+    ResponseEntity<Void> response = gameServiceController.createGameService();
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 }

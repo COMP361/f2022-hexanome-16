@@ -16,6 +16,7 @@ import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.util.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.HashMap;
@@ -37,8 +38,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameController {
 
-  private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
-      new HashMap<String, BroadcastContentManager>();
+  private final BroadcastMap broadcastContentManagerMap = new BroadcastMap();
 
   /**
    * A mapping from ID's to their associated games.
@@ -57,16 +57,6 @@ public class GameController {
   public GameController(@Autowired AuthServiceInterface authService) {
     this.authService = authService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  }
-
-  /**
-   * gets broadcast content manager map. keys are : "noble", "ONE"
-   * "TWO", "THREE", "player"
-   *
-   * @return map. broadcast content manager map
-   */
-  public static Map<String, BroadcastContentManager> getBroadcastContentManagerMap() {
-    return broadcastContentManagerMap;
   }
 
   /**
@@ -94,23 +84,23 @@ public class GameController {
       Game game = new Game(sessionId, players, creator, savegame);
       gameMap.put(sessionId, game);
       BroadcastContentManager<DeckHash> broadcastContentManagerOne =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.ONE));
+          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.ONE));
       BroadcastContentManager<DeckHash> broadcastContentManagerTwo =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.TWO));
+          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.TWO));
       BroadcastContentManager<DeckHash> broadcastContentManagerThree =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.THREE));
+          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.THREE));
       BroadcastContentManager<DeckHash> broadcastContentManagerRedOne =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDONE));
+          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.REDONE));
       BroadcastContentManager<DeckHash> broadcastContentManagerRedTwo =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDTWO));
+          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.REDTWO));
       BroadcastContentManager<DeckHash> broadcastContentManagerRedThree =
-          new BroadcastContentManager<DeckHash>(
+          new BroadcastContentManager<>(
               new DeckHash(gameMap.get(sessionId), Level.REDTHREE));
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          new BroadcastContentManager<PlayerJson>(
+          new BroadcastContentManager<>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
       BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
-          new BroadcastContentManager<NoblesHash>(new NoblesHash(gameMap.get(sessionId)));
+          new BroadcastContentManager<>(new NoblesHash(gameMap.get(sessionId)));
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
       broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
       broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
@@ -133,14 +123,12 @@ public class GameController {
    * @param accessToken account access token
    * @param hash        hash used for long polling
    * @return updated game deck
-   * @throws JsonProcessingException exception
    */
   @GetMapping(value = "/games/{sessionId}/deck", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getDeck(@PathVariable long sessionId,
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
-                                                        @RequestParam String hash)
-      throws JsonProcessingException {
+                                                        @RequestParam String hash) {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result =
@@ -157,13 +145,11 @@ public class GameController {
    * @param accessToken access token
    * @param hash        the hash
    * @return nobles present on the game board
-   * @throws JsonProcessingException if json processing fails
    */
   @GetMapping(value = "/games/{sessionId}/nobles", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
                                                           @RequestParam String accessToken,
-                                                          @RequestParam String hash)
-      throws JsonProcessingException {
+                                                          @RequestParam String hash) {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
@@ -181,13 +167,11 @@ public class GameController {
    * @param accessToken player access token
    * @param hash        hash for long polling
    * @return current player username
-   * @throws JsonProcessingException exception
    */
   @GetMapping(value = "/games/{sessionId}/player", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
-                                                                 @RequestParam String hash)
-      throws JsonProcessingException {
+                                                                 @RequestParam String hash) {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get("player"),
@@ -251,6 +235,19 @@ public class GameController {
     return new ResponseEntity<>(objectMapper.writeValueAsString(gameBankMap), HttpStatus.OK);
   }
 
+  /**
+   * Ends current player's turn and starts next player's turn.
+   *
+   * @param game the game the player is in
+   */
+  public void endCurrentPlayersTurn(Game game) {
+    game.setCurrentPlayerIndex((game.getCurrentPlayerIndex() + 1) % game.getPlayers().length);
+    BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+        (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
+    broadcastContentManagerPlayer.updateBroadcastContent(
+        new PlayerJson(game.getCurrentPlayer().getName())
+    );
+  }
 
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
@@ -342,11 +339,12 @@ public class GameController {
 
 
     // Update long polling
-    broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())
+    ((BroadcastContentManager<DeckHash>)
+        (broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())))
         .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
 
     // Ends players turn, which is current player
-    game.endCurrentPlayersTurn();
+    endCurrentPlayersTurn(game);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
