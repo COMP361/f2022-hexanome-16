@@ -2,9 +2,9 @@ package com.hexanome16.server.controllers.lobbyservice;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.controllers.lobbyservice.gameservice.GameServiceController;
 import com.hexanome16.server.models.sessions.GameParams;
+import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,10 +21,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * but hey code coverage is code coverage :)
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {UrlUtils.class, GameParams.class, AuthController.class,
+@ContextConfiguration(classes = {UrlUtils.class, GameParams.class, AuthService.class,
     GameServiceController.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class GameServiceControllerTests {
+public class GameServiceControllerTestsIT {
   @Autowired
   private GameServiceController gameServiceController;
 
