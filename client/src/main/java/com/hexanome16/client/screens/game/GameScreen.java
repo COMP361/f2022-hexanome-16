@@ -239,6 +239,9 @@ public class GameScreen {
     FXGL.spawn("LevelOneDeck");
     FXGL.spawn("LevelTwoDeck");
     FXGL.spawn("LevelThreeDeck");
+    FXGL.spawn("RedLevelOneDeck");
+    FXGL.spawn("RedLevelTwoDeck");
+    FXGL.spawn("RedLevelThreeDeck");
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
@@ -410,7 +413,6 @@ public class GameScreen {
    * Updates red level one deck.
    */
   private static void updateRedLevelOneDeck() {
-    System.out.println("updating");
     Gson gson = new Gson();
     Map<String, Object> deckHash = gson.fromJson(redLevelOneDeckJson, Map.class);
     Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
@@ -478,7 +480,7 @@ public class GameScreen {
   }
 
   /**
-   * Updates red level two deck.
+   * Updates red level three deck.
    */
   private static void updateRedLevelThreeDeck() {
     Gson gson = new Gson();
@@ -504,7 +506,7 @@ public class GameScreen {
       Map<String, Object> card = (Map<String, Object>) entry.getValue();
       if (!red_level_three.containsKey(hash)) {
         red_level_three.put(hash, card);
-        PriceMap pm = getPriceMap(card);
+        PriceMap pm = new PriceMap(); // need to be dealt with later
         FXGL.spawn("RedLevelThreeCard",
             new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
                 .put("price", pm).put("MD5", hash));

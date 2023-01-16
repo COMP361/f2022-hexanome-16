@@ -121,7 +121,8 @@ public class GameController {
       BroadcastContentManager<DeckHash> broadcastContentManagerRedTwo =
           new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDTWO));
       BroadcastContentManager<DeckHash> broadcastContentManagerRedThree =
-          new BroadcastContentManager<DeckHash>(new DeckHash(gameMap.get(sessionId), Level.REDTHREE));
+          new BroadcastContentManager<DeckHash>(
+              new DeckHash(gameMap.get(sessionId), Level.REDTHREE));
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
           new BroadcastContentManager<PlayerJson>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));

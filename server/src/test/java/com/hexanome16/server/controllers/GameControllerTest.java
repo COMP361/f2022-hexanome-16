@@ -103,7 +103,6 @@ public class GameControllerTest {
     ResponseEntity<String> response =
         (ResponseEntity<String>) gameController.getDeck(12345, "REDTHREE", accessToken, hash)
             .getResult();
-    System.out.println(response.getBody());
     assertNotNull(response);
   }
 

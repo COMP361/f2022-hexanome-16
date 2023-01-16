@@ -104,7 +104,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelThreeCard")
   public Entity newRedLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 800, matCoordsY + 155)
+        .at(matCoordsX + 985, matCoordsY + 155)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTHREE,
@@ -122,7 +122,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelTwoCard")
   public Entity newRedLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 800, matCoordsY + 360)
+        .at(matCoordsX + 985, matCoordsY + 360)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTWO,
@@ -140,7 +140,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelOneCard")
   public Entity newRedLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 800, matCoordsY + 565)
+        .at(matCoordsX + 985, matCoordsY + 565)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDONE,
@@ -267,6 +267,70 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .build();
   }
+
+  /**
+   * Adds the red level-one deck to the game board.
+   *
+   * @param data spawn data
+   * @return deck entity
+   */
+  @Spawns("RedLevelOneDeck")
+  public Entity redLevelOne(SpawnData data) {
+    Text myNumber = new Text();
+    myNumber.setFill(Color.WHITE);
+    myNumber.setFont(Font.font(500));
+    StackPane myStackPane = new StackPane();
+    Texture level1deck = FXGL.texture("red_level_two.png");
+    myStackPane.getChildren().addAll(level1deck, myNumber);
+    return FXGL.entityBuilder()
+        .at(matCoordsX + 985, matCoordsY + 565)
+        .view(myStackPane)
+        .scale(0.15, 0.15)
+        .build();
+  }
+
+  /**
+   * Adds the red level-two deck to the game board.
+   *
+   * @param data spawn data
+   * @return deck entity
+   */
+  @Spawns("RedLevelTwoDeck")
+  public Entity redLevelTwo(SpawnData data) {
+    Text myNumber = new Text();
+    myNumber.setFill(Color.WHITE);
+    myNumber.setFont(Font.font(500));
+    StackPane myStackPane = new StackPane();
+    Texture level1deck = FXGL.texture("red_level_two.png");
+    myStackPane.getChildren().addAll(level1deck, myNumber);
+    return FXGL.entityBuilder()
+        .at(matCoordsX + 985, matCoordsY + 360)
+        .view(myStackPane)
+        .scale(0.15, 0.15)
+        .build();
+  }
+
+  /**
+   * Adds the red level-three deck to the game board.
+   *
+   * @param data spawn data
+   * @return deck entity
+   */
+  @Spawns("RedLevelThreeDeck")
+  public Entity redLevelThree(SpawnData data) {
+    Text myNumber = new Text();
+    myNumber.setFill(Color.WHITE);
+    myNumber.setFont(Font.font(500));
+    StackPane myStackPane = new StackPane();
+    Texture level1deck = FXGL.texture("red_level_three.png");
+    myStackPane.getChildren().addAll(level1deck, myNumber);
+    return FXGL.entityBuilder()
+        .at(matCoordsX + 985, matCoordsY + 155)
+        .view(myStackPane)
+        .scale(0.15, 0.15)
+        .build();
+  }
+
 
   /**
    * Adds the game bank to the game board.
