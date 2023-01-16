@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class InventoryController {
   /* fields and controllers ********************************************************/
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
-  private final GameController gameController;
+  private final GameService gameService;
   private final ObjectMapper objectMapper;
 
   private final AuthServiceInterface authService;
@@ -36,16 +37,16 @@ public class InventoryController {
    *
    * @param restTemplateBuilder server
    * @param urlUtils            operations
-   * @param gameController      controller for the whole game (used for helper)
+   * @param gameService      controller for the whole game (used for helper)
    * @param objectMapper        the object mapper
    * @param authService         the authentication service
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             GameController gameController, ObjectMapper objectMapper, @Autowired
+                             @Autowired GameService gameService, ObjectMapper objectMapper, @Autowired
                              AuthServiceInterface authService) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
-    this.gameController = gameController;
+    this.gameService = gameService;
     this.objectMapper = objectMapper;
     this.authService = authService;
   }
@@ -54,20 +55,20 @@ public class InventoryController {
 
   private Player getValidPlayer(long sessionId, String accessToken) {
     // verify that the request is valid
-    if (!authService.verifyPlayer(sessionId, accessToken, gameController.getGameMap())) {
+    if (!authService.verifyPlayer(sessionId, accessToken, gameService.getGameMap())) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token
-    return gameController.findPlayerByToken(
-        gameController.getGameMap().get(sessionId), accessToken
+    return gameService.findPlayerByToken(
+        gameService.getGameMap().get(sessionId), accessToken
     );
   }
 
 
   private Player getValidPlayerByName(long sessionId, String username) {
 
-    Player myPlayer = gameController.findPlayerByName(
-        gameController.getGameMap().get(sessionId), username
+    Player myPlayer = gameService.findPlayerByName(
+        gameService.getGameMap().get(sessionId), username
     );
     if (myPlayer == null) {
       throw new IllegalArgumentException("Invalid Player.");

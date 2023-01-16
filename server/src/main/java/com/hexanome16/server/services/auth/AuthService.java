@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This service is responsible for sending authentication related requests to Lobby Service.
+ * Service is responsible for sending authentication related requests to Lobby Service.
  */
 @Service
 public class AuthService implements AuthServiceInterface {
