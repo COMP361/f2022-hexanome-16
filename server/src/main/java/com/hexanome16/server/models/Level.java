@@ -1,19 +1,31 @@
 package com.hexanome16.server.models;
 
 /**
- * Three levels of level cards.
+ * Six levels of level cards.
  */
 public enum Level {
   /**
-   * One level.
+   * Level one.
    */
   ONE,
   /**
-   * Two level.
+   * Level two.
    */
   TWO,
   /**
-   * Three level.
+   * Level three.
    */
-  THREE
+  THREE,
+  /**
+   * Red level one.
+   */
+  REDONE,
+  /**
+   * Red level two.
+   */
+  REDTWO,
+  /**
+   * Red level three.
+   */
+  REDTHREE
 }
