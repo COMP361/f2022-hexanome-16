@@ -123,7 +123,9 @@ public class GameScreen {
       @Override
       protected Void call() throws Exception {
         redLevelOneDeckJson =
-            GameRequest.updateDeck(sessionId, Level.REDONE, DigestUtils.md5Hex(redLevelOneDeckJson));
+            GameRequest.updateDeck(
+                sessionId, Level.REDONE, DigestUtils.md5Hex(redLevelOneDeckJson)
+            );
         return null;
       }
     };
@@ -142,7 +144,9 @@ public class GameScreen {
       @Override
       protected Void call() throws Exception {
         redLevelTwoDeckJson =
-            GameRequest.updateDeck(sessionId, Level.REDTWO, DigestUtils.md5Hex(redLevelTwoDeckJson));
+            GameRequest.updateDeck(
+                sessionId, Level.REDTWO, DigestUtils.md5Hex(redLevelTwoDeckJson)
+            );
         return null;
       }
     };
@@ -161,7 +165,9 @@ public class GameScreen {
       @Override
       protected Void call() throws Exception {
         redLevelThreeDeckJson =
-            GameRequest.updateDeck(sessionId, Level.REDTHREE, DigestUtils.md5Hex(redLevelThreeDeckJson));
+            GameRequest.updateDeck(
+                sessionId, Level.REDTHREE, DigestUtils.md5Hex(redLevelThreeDeckJson)
+            );
         return null;
       }
     };
