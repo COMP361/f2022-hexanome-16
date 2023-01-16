@@ -26,6 +26,18 @@ public class CardComponent extends Component {
    * The constant level_three_grid.
    */
   public static CardComponent[] level_three_grid = new CardComponent[4];
+  /**
+   * The constant red level_one_grid.
+   */
+  public static CardComponent[] red_level_one_grid = new CardComponent[2];
+  /**
+   * The constant red level_two_grid.
+   */
+  public static CardComponent[] red_level_two_grid = new CardComponent[2];
+  /**
+   * The constant red level_three_grid.
+   */
+  public static CardComponent[] red_level_three_grid = new CardComponent[2];
   private final Level level;
   private final boolean purchased = false;
   private final String cardHash;
@@ -63,6 +75,9 @@ public class CardComponent extends Component {
     level_one_grid = new CardComponent[4];
     level_two_grid = new CardComponent[4];
     level_three_grid = new CardComponent[4];
+    red_level_one_grid = new CardComponent[2];
+    red_level_two_grid = new CardComponent[2];
+    red_level_three_grid = new CardComponent[2];
   }
 
   @Override
@@ -75,12 +90,18 @@ public class CardComponent extends Component {
         entity.removeFromWorld();
       }
     } else if (adding) {
-      double diff = (matCoordsX + 140 + 138 * gridX) - position.getX();
-
-      if (diff > 0) {
-        position.translateX(5);
+      if(level == Level.ONE || level == Level.TWO || level == Level.THREE) {
+        if((matCoordsX + 140 + 138 * gridX) - position.getX() > 0) {
+          position.translateX(5);
+        } else {
+          adding = false;
+        }
       } else {
-        adding = false;
+        if(position.getX() - (matCoordsX + 850 - 138 * gridX) > 0) {
+          position.translateX(-5);
+        } else {
+          adding = false;
+        }
       }
     }
   }
@@ -94,6 +115,9 @@ public class CardComponent extends Component {
       case ONE -> addToMat(level_one_grid);
       case TWO -> addToMat(level_two_grid);
       case THREE -> addToMat(level_three_grid);
+      case REDONE -> addToMat(red_level_one_grid);
+      case REDTWO -> addToMat(red_level_two_grid);
+      case REDTHREE -> addToMat(red_level_three_grid);
       default -> throw new IllegalArgumentException("Something is sussy about this.");
     }
   }
@@ -134,6 +158,9 @@ public class CardComponent extends Component {
       case ONE -> level_one_grid;
       case TWO -> level_two_grid;
       case THREE -> level_three_grid;
+      case REDONE -> red_level_one_grid;
+      case REDTWO -> red_level_two_grid;
+      case REDTHREE -> red_level_three_grid;
     };
     for (int i = 0; i < grid.length; i++) {
       if (grid[i] == this) {
