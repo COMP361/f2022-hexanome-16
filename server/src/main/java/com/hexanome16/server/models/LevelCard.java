@@ -23,10 +23,12 @@ public class LevelCard extends DevelopmentCard {
     this.level = level;
   }
 
+  @Override
   public boolean addToInventory(Inventory inventory) {
     return inventory.acquireCard(this);
   }
 
+  @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
   }

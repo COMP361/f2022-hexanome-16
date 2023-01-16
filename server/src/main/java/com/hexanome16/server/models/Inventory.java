@@ -29,13 +29,13 @@ public class Inventory {
     reservedCards = new ArrayList<>();
   }
 
-  /**
-   * Acquire card boolean.
-   *
-   * @param card the card
-   * @return the boolean
-   */
   /* add methods ******************************************************************************/
+  /**
+   * Acquire card.
+   *
+   * @param card the card to add
+   * @return true if the card was added to inventory
+   */
   public boolean acquireCard(LevelCard card) {
     return ownedCards.add(card);
   }
