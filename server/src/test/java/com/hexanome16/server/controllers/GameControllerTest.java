@@ -245,7 +245,7 @@ public class GameControllerTest {
                     1, 0)),
             Level.ONE);
 
-    gameController.getGameMap().get(sessionId).endCurrentPlayersTurn();
+    gameController.endCurrentPlayersTurn(gameController.getGameMap().get(sessionId));
 
     DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 

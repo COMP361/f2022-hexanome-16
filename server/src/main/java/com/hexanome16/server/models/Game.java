@@ -437,14 +437,7 @@ public class Game {
 
   // TODO: TEST CASE
 
-  /**
-   * Ends current player's turn and starts next player's turn.
-   */
-  public void endCurrentPlayersTurn() {
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-    GameController.getBroadcastContentManagerMap().get("player")
-        .updateBroadcastContent(new PlayerJson(getCurrentPlayer().getName()));
-  }
+
 
   // TODO: TEST CASE
 

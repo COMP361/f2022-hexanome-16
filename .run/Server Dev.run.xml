@@ -12,7 +12,6 @@
             <list>
               <option value="package" />
               <option value="spring-boot:run" />
-              <option value="-Ddocker.javadoc.skip=true" />
             </list>
           </option>
           <option name="pomFileName" />
