@@ -17,10 +17,12 @@ public class Noble extends DevelopmentCard {
     super(id, prestigePoint, texturePath, price);
   }
 
+  @Override
   public boolean addToInventory(Inventory inventory) {
     return inventory.acquireNoble(this);
   }
 
+  @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveNoble(this);
   }
