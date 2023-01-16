@@ -72,11 +72,10 @@ public class GameServiceController {
     HttpEntity<GameParams> entity = new HttpEntity<>(gameParams, headers);
     try {
       this.restTemplate.put(url, entity);
-      return ResponseEntity.ok().build();
     } catch (HttpClientErrorException.BadRequest e) {
       System.out.println("Game service already registered");
-      return ResponseEntity.badRequest().build();
     }
+    return ResponseEntity.ok().build();
   }
 
   /**
