@@ -3,7 +3,11 @@
  > See also [my video instructions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
 ## Notes for TAs/Teacher (as of January 3 2023)
- * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in the "Server Tests" run config in IntelliJ, so please use that to verify code coverage (should be 85%).
+ * We have multiple test suites for intellij.
+   * Server Unit Tests (TODO: clear these of IT tests)
+   * Integration Tests (these require the `LS Only` docker to be running inside of Intellij)
+   * All tests (runs both the Unit and Integration tests)
+ * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in all our run configs in IntelliJ, so please use "All tests" to verify code coverage (should be 85%).
  * Some server tests require a local Lobby Service to be running.
  * If you want to try playing the game, use the Splendor Prod IntelliJ run config (equivalent to ```PROFILE_ID=prod mvn clean package javafx:run```), since that one is connected to the remote server.
 

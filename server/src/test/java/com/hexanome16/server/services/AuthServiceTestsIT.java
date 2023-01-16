@@ -1,12 +1,12 @@
-package com.hexanome16.server.controllers.lobbyservice;
+package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.server.LobbyServiceContainer;
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.models.auth.TokensInfo;
+import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
@@ -25,9 +25,9 @@ import org.testcontainers.containers.DockerComposeContainer;
  * but hey code coverage is code coverage :)
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {UrlUtils.class, AuthController.class})
+@ContextConfiguration(classes = {UrlUtils.class, AuthService.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class AuthControllerTests {
+public class AuthServiceTestsIT {
   /**
    * The Ls container.
    */
@@ -36,14 +36,14 @@ public class AuthControllerTests {
       LobbyServiceContainer.getInstance();
   private final String password = "abc123_ABC123";
   @Autowired
-  private AuthController authController;
+  private AuthService authService;
 
   /**
    * Test valid login.
    */
   @Test
   public void testValidLogin() {
-    ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
+    ResponseEntity<TokensInfo> tokens = authService.login("maex", password);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     assertNotNull(tokens.getBody().getAccessToken());
@@ -56,7 +56,7 @@ public class AuthControllerTests {
   @Test
   public void testInvalidLogin() {
     try {
-      authController.login("maex", "invalid_password");
+      authService.login("maex", "invalid_password");
     } catch (Exception e) {
       assertTrue(e.getMessage().contains("400"));
     }
@@ -67,11 +67,11 @@ public class AuthControllerTests {
    */
   @Test
   public void testValidRefresh() {
-    ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
+    ResponseEntity<TokensInfo> tokens = authService.login("maex", password);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     String refreshToken = tokens.getBody().getRefreshToken();
-    tokens = authController.login(refreshToken);
+    tokens = authService.login(refreshToken);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     assertNotNull(tokens.getBody().getAccessToken());
@@ -83,12 +83,12 @@ public class AuthControllerTests {
    */
   @Test
   public void testInvalidRefresh() {
-    ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
+    ResponseEntity<TokensInfo> tokens = authService.login("maex", password);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     String refreshToken = tokens.getBody().getRefreshToken();
     try {
-      authController.login(refreshToken + "invalid");
+      authService.login(refreshToken + "invalid");
     } catch (Exception e) {
       assertTrue(e.getMessage().contains("400"));
     }
@@ -99,11 +99,11 @@ public class AuthControllerTests {
    */
   @Test
   public void testValidLogout() {
-    ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
+    ResponseEntity<TokensInfo> tokens = authService.login("maex", password);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     String accessToken = tokens.getBody().getAccessToken();
-    ResponseEntity<Void> response = authController.logout(accessToken);
+    ResponseEntity<Void> response = authService.logout(accessToken);
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
@@ -113,7 +113,7 @@ public class AuthControllerTests {
   @Test
   public void testInvalidLogout() {
     try {
-      authController.logout("invalid_access_token");
+      authService.logout("invalid_access_token");
     } catch (Exception e) {
       assertTrue(e.getMessage().contains("400"));
     }
@@ -124,11 +124,11 @@ public class AuthControllerTests {
    */
   @Test
   public void testValidGetPlayer() {
-    ResponseEntity<TokensInfo> tokens = authController.login("maex", password);
+    ResponseEntity<TokensInfo> tokens = authService.login("maex", password);
     assertTrue(tokens.getStatusCode().is2xxSuccessful());
     assertNotNull(tokens.getBody());
     String accessToken = tokens.getBody().getAccessToken();
-    ResponseEntity<String> response = authController.getPlayer(accessToken);
+    ResponseEntity<String> response = authService.getPlayer(accessToken);
     assertTrue(response.getStatusCode().is2xxSuccessful());
     assertEquals("maex", response.getBody());
   }
@@ -139,7 +139,7 @@ public class AuthControllerTests {
   @Test
   public void testInvalidGetPlayer() {
     try {
-      authController.getPlayer("invalid_access_token");
+      authService.getPlayer("invalid_access_token");
     } catch (Exception e) {
       assertTrue(e.getMessage().contains("400"));
     }

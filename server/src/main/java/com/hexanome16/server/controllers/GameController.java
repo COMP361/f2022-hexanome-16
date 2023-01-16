@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
@@ -16,11 +15,12 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,19 +39,23 @@ public class GameController {
 
   private static final Map<String, BroadcastContentManager> broadcastContentManagerMap =
       new HashMap<String, BroadcastContentManager>();
+
+  /**
+   * A mapping from ID's to their associated games.
+   */
   //store all the games here
   private final Map<Long, Game> gameMap = new HashMap<>();
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private final AuthController authController;
+  private final AuthServiceInterface authService;
 
   /**
    * Instantiates a new Game controller.
    *
-   * @param authController the auth controller
+   * @param authService the authentication service
    */
-  public GameController(AuthController authController) {
-    this.authController = authController;
+  public GameController(@Autowired AuthServiceInterface authService) {
+    this.authService = authService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
@@ -73,27 +77,6 @@ public class GameController {
   public Map<Long, Game> getGameMap() {
     return gameMap;
   }
-
-  /**
-   * Verify player by their access .
-   *
-   * @param sessionId   session id we desire to verify.
-   * @param accessToken access token we're looking for
-   * @return true if access Token is in game with session ID, false otherwise.
-   */
-  public boolean verifyPlayer(long sessionId, String accessToken) {
-    Game game = gameMap.get(sessionId);
-    if (game == null) {
-      return false;
-    }
-    ResponseEntity<String> username = authController.getPlayer(accessToken);
-    if (username != null && username.getStatusCode().is2xxSuccessful()) {
-      return Arrays.stream(game.getPlayers())
-          .anyMatch(player -> player.getName().equals(username.getBody()));
-    }
-    return false;
-  }
-
 
   /**
    * Create a new game as client requested.
@@ -158,7 +141,7 @@ public class GameController {
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result =
           ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get(level), hash);
@@ -181,7 +164,7 @@ public class GameController {
                                                           @RequestParam String accessToken,
                                                           @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
           broadcastContentManagerMap.get("noble"), hash);
@@ -205,7 +188,7 @@ public class GameController {
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash)
       throws JsonProcessingException {
-    if (verifyPlayer(sessionId, accessToken)) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000, broadcastContentManagerMap.get("player"),
           hash);
@@ -304,7 +287,7 @@ public class GameController {
     }
 
     // Verify player is who they claim to be
-    if (!verifyPlayer(sessionId, authenticationToken)) {
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -407,7 +390,7 @@ public class GameController {
     if (game == null) {
       return null;
     }
-    ResponseEntity<String> usernameEntity = authController.getPlayer(authenticationToken);
+    ResponseEntity<String> usernameEntity = authService.getPlayer(authenticationToken);
 
     String username = usernameEntity.getBody();
 

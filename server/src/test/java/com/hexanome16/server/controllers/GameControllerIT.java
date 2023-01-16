@@ -42,7 +42,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingExcept
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {GameController.class, AuthService.class, UrlUtils.class})
 @RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class GameControllerTest {
+public class GameControllerIT {
   private final String kim = "{\"name\":" + "\"kim\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
   private final String imad = "{\"name\":" + "\"imad\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
   private final String creator = "kim";
@@ -101,7 +101,7 @@ public class GameControllerTest {
       throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getDeck(12345, "REDTHREE", accessToken, hash)
+        (ResponseEntity<String>) gameController.getDeck(12345, "ONE", accessToken, hash)
             .getResult();
     assertNotNull(response);
   }
