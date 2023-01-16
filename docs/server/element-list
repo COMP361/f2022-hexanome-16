@@ -1,10 +1,10 @@
 com.hexanome16.server
 com.hexanome16.server.controllers
-com.hexanome16.server.controllers.lobbyservice.auth
 com.hexanome16.server.controllers.lobbyservice.gameservice
 com.hexanome16.server.dto
 com.hexanome16.server.models
 com.hexanome16.server.models.auth
 com.hexanome16.server.models.sessions
 com.hexanome16.server.models.user
+com.hexanome16.server.services.auth
 com.hexanome16.server.util
