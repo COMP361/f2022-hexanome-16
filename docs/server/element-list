@@ -6,5 +6,6 @@ com.hexanome16.server.models
 com.hexanome16.server.models.auth
 com.hexanome16.server.models.sessions
 com.hexanome16.server.models.user
+com.hexanome16.server.services
 com.hexanome16.server.services.auth
 com.hexanome16.server.util
