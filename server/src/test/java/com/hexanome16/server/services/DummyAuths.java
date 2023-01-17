@@ -110,4 +110,14 @@ public class DummyAuths {
    * Immutable static list of invalid session IDs.
    */
   public static final List<Long> invalidSessionIds = List.of(0L, 1L);
+
+  /**
+   * Immutable static list of valid passwords.
+   */
+  public static final List<String> validPasswords = List.of("123");
+
+  /**
+   * Immutable static list of invalid passwords.
+   */
+  public static final List<String> invalidPasswords = List.of("wrong");
 }
