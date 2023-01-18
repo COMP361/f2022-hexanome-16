@@ -27,7 +27,7 @@ public enum Gem {
   /**
    * Gold gem.
    */
-  GOLD("NONE");
+  GOLD("NULL");
 
   private String bonusTypeEquivalent;
 
