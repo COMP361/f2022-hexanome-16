@@ -1,5 +1,7 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import java.util.ArrayList;
@@ -29,8 +31,8 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
   // to modify
   @Override
   protected ArrayList<BonusType> getAvailableBonuses() {
-    // for now this is forcing the list to have all types
-    return new ArrayList<>(List.of(BonusType.values()));
+    long promptSessionId = GameScreen.getSessionId();
+    return PromptsRequests.getAvailableThreeBonuses(promptSessionId);
   }
 
   @Override
