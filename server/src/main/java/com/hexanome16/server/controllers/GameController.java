@@ -9,6 +9,7 @@ import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.GameBank;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
@@ -349,6 +350,56 @@ public class GameController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Let the player reserve a card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
+  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
+                                        @PathVariable String cardMd5,
+                                        @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    //verify game and player
+    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    System.out.println("a card is reserved");
+    Game game = gameMap.get(sessionId);
+
+    DevelopmentCard card = DeckHash.allCards.get(cardMd5);
+
+    Player player = findPlayerByToken(game, authenticationToken);
+
+    if (!player.reserveCard(card)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // give player a gold token
+    game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
+
+    // replace this card with a new one on board
+    game.removeOnBoardCard((LevelCard) card);
+    Level level = ((LevelCard) card).getLevel();
+    game.addOnBoardCard(level);
+
+    // Notify long polling
+    ((BroadcastContentManager<DeckHash>)
+        (broadcastContentManagerMap.get(((LevelCard) card).getLevel().name())))
+        .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
+
+    endCurrentPlayersTurn(game);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
