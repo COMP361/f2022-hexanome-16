@@ -5,8 +5,10 @@ import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
@@ -94,11 +97,12 @@ public class AuthService implements AuthServiceInterface {
 
   @Override
   public ResponseEntity<Void> logout(String accessToken) {
-    URI url = urlUtils.createLobbyServiceUri("/oauth/active", "refresh_token=" + accessToken);
+    URI url = urlUtils.createLobbyServiceUri("/oauth/active", "access_token=" + accessToken);
     try {
       this.restTemplate.delete(url);
     } catch (Exception e) {
       e.printStackTrace();
+      return ResponseEntity.badRequest().build();
     }
     return ResponseEntity.ok().build();
   }
