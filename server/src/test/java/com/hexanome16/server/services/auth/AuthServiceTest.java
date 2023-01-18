@@ -67,9 +67,10 @@ public class AuthServiceTest {
     assertTrue("Valid login should return 200", validResponse.getStatusCodeValue() == 200);
     assertTrue("Valid login should return a token", Objects.requireNonNull(
         validResponse.getBody()).getAccessToken() != null);
-    assertTrue("Valid login should return a valid token",
-        validResponse.getBody().getAccessToken().equals(
-            DummyAuths.validTokensInfos.get(0).getAccessToken()));
+    assertEquals("Valid login should return a valid token",
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        validResponse.getBody().getAccessToken()
+    );
   }
 
   @Test
@@ -97,8 +98,8 @@ public class AuthServiceTest {
         validResponse.getBody()).getAccessToken() != null);
     assertEquals(
         "Valid refresh should return a valid token",
-        validResponse.getBody().getAccessToken(),
-        DummyAuths.validTokensInfos.get(0).getAccessToken()
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        validResponse.getBody().getAccessToken()
     );
   }
 
@@ -125,8 +126,10 @@ public class AuthServiceTest {
     ResponseEntity<String> validResponse =
         authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertTrue("Valid get player should return 200", validResponse.getStatusCodeValue() == 200);
-    assertEquals("Valid get player should return the username", Objects.requireNonNull(
-        validResponse.getBody()), DummyAuths.validPlayerList.get(0).getName());
+    assertEquals("Valid get player should return the username",
+        DummyAuths.validPlayerList.get(0).getName(),
+        Objects.requireNonNull(validResponse.getBody())
+    );
   }
 
   @Test
