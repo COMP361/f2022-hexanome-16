@@ -5,6 +5,7 @@ import javafx.scene.paint.Paint;
 
 /**
  * Enum class which contains all the token bonus Types that can be taken directly from the bank.
+ * SERVER DEPENDS ON THESE NAMES TO STAY THE SAME.
  */
 public enum BonusType {
   /**

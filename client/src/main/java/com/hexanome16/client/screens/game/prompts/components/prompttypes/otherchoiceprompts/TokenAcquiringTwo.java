@@ -38,6 +38,9 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
   @Override
   protected void handleConfirmation() {
     // this is where you handle what to do with their choice, refer to chosenBonus
+    long promptSessionId = GameScreen.getSessionId();
+    String auth = AuthUtils.getAuth().getAccessToken();
+    PromptsRequests.takeTwo(promptSessionId, auth, chosenBonus);
     PromptComponent.closePrompts();
   }
 
