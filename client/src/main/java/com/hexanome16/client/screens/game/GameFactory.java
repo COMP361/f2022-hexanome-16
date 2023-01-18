@@ -352,7 +352,7 @@ public class GameFactory implements EntityFactory {
     tokens.setPrefSize(200, 150);
 
     addToken(CurrencyType.RED_TOKENS, tokens, "ruby.png");
-    addToken(CurrencyType.RED_TOKENS, tokens, "emerald.png");
+    addToken(CurrencyType.GREEN_TOKENS, tokens, "emerald.png");
     addToken(CurrencyType.BLUE_TOKENS, tokens, "sapphire.png");
     addToken(CurrencyType.WHITE_TOKENS, tokens, "diamond.png");
     addToken(CurrencyType.BLACK_TOKENS, tokens, "onyx.png");

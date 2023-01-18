@@ -66,6 +66,18 @@ public class Player {
 
   }
 
+  /**
+   * Increments the player bank by the amount specified in the purchase map.
+   *
+   * @param purchaseMap purchase map representation of how much we want to increment
+   *                    the player bank.
+   */
+  public void incPlayerBank(PurchaseMap purchaseMap) {
+    getBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
+            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
+            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+  }
+
   // TODO: TEST CASE
 
   /**

@@ -217,6 +217,85 @@ public class PromptsRequests {
         availableTypes.stream().map(BonusType::fromString).filter(Objects::nonNull).toList());
   }
 
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param authToken    username of player trying to buy card.
+   * @param bonusType    Desired bonus Type.
+   */
+  public static void takeTwo(long sessionId,
+                             String authToken,
+                             BonusType bonusType) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(UrlUtils.createGameServerUri(
+                      "/api/games/" + sessionId + "/twoTokens",
+                      "authenticationToken=" + authToken + "&tokenType=" + bonusType.toString()
+              )).PUT(HttpRequest.BodyPublishers.noBody())
+              .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+
+      System.out.println("takeTwo Called");
+
+      System.out.println(response.get());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param authToken    username of player trying to buy card.
+   * @param bonusTypeOne First desired Bonus Type.
+   * @param bonusTypeTwo Second desired Bonus Type.
+   * @param bonusTypeThree Third desired Bonus Type.
+   *
+   */
+  public static void takeThree(long sessionId,
+                             String authToken,
+                             BonusType bonusTypeOne,
+                               BonusType bonusTypeTwo,
+                               BonusType bonusTypeThree) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(UrlUtils.createGameServerUri(
+                      "/api/games/" + sessionId + "/threeTokens",
+                      "authenticationToken=" + authToken
+                              + "&tokenTypeOne=" + bonusTypeOne.toString()
+                      + "&tokenTypeTwo=" + bonusTypeTwo.toString()
+                      + "&tokenTypeThree=" + bonusTypeThree.toString()
+              )).PUT(HttpRequest.BodyPublishers.noBody())
+              .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+
+      System.out.println("takeThree Called");
+
+      System.out.println(response.get());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
   private static String requestParamPurchaseMap(String authToken, PurchaseMap proposedDeal) {

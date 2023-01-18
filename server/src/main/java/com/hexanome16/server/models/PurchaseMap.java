@@ -1,7 +1,9 @@
 package com.hexanome16.server.models;
 
+import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
+
 
 /**
  * Class responsible for representing the gems the player decided to put down
@@ -27,6 +29,22 @@ public class PurchaseMap extends PriceMap {
                      int onyxAmount, int goldAmount) {
     super(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount);
     this.goldAmount = goldAmount;
+  }
+
+  /**
+   * Alternative constructor to purchase map, takes a Map from Gems to Integer instead.
+   *
+   * @param gemIntegerMap A map between each gem and their corresponding amount as an
+   *                      Integer.
+   */
+  public PurchaseMap(Map<Gem, Integer> gemIntegerMap) {
+    super(gemIntegerMap.getOrDefault(Gem.RUBY, 0),
+            gemIntegerMap.getOrDefault(Gem.EMERALD, 0),
+            gemIntegerMap.getOrDefault(Gem.SAPPHIRE, 0),
+            gemIntegerMap.getOrDefault(Gem.DIAMOND, 0),
+            gemIntegerMap.getOrDefault(Gem.ONYX, 0));
+    this.goldAmount = gemIntegerMap.getOrDefault(Gem.GOLD, 0);
+
   }
 
   // TODO: TEST CASE

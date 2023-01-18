@@ -6,6 +6,8 @@ import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hexanome16.client.utils.AuthUtils;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -61,6 +63,10 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
   @Override
   protected void handleConfirmation() {
     // this is where you handle what to do with their choice, refer to selectedTokenTypes
+    long promptSessionId = GameScreen.getSessionId();
+    String auth = AuthUtils.getAuth().getAccessToken();
+    PromptsRequests.takeThree(promptSessionId, auth, selectedTokenTypes.get(0),
+            selectedTokenTypes.get(1), selectedTokenTypes.get(2));
     PromptComponent.closePrompts();
   }
 
