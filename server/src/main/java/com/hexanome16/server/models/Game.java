@@ -12,6 +12,7 @@ import com.hexanome16.server.dto.NobleJson;
 import com.hexanome16.server.dto.PlayerJson;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -502,6 +503,24 @@ public class Game {
         diamondAmount, onyxAmount, goldAmount);
   }
 
+  /**
+   *  Gets all the token types one can take 2 of.
+   *
+   * @return An array list of all such token types
+   */
+  public ArrayList<Gem> availableTwoTokensType() {
+    return getGameBank().availableTwoTokensType();
+  }
+
+  /**
+   *  Gets all the token types one can take 2 of.
+   *
+   * @return An array list of all such token types
+   */
+  public ArrayList<Gem> availableThreeTokensType() {
+    return getGameBank().availableThreeTokensType();
+  }
+
 
   /**
    * Game bank to purchase map.
@@ -525,4 +544,6 @@ public class Game {
     }
     return -1;
   }
+
+
 }

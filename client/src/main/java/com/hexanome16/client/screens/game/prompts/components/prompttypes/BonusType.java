@@ -54,4 +54,21 @@ public enum BonusType {
     }
     return Color.BLACK;
   }
+
+  /**
+   * Returns the Bonus type that relates to the input string.
+   *
+   * @param bonusTypeString String representation of the bonus type.
+   * @return BonusType associated to that string, null if string is not valid
+   */
+  public static BonusType fromString(String bonusTypeString) {
+    return switch (bonusTypeString) {
+      case "RED" -> BonusType.RED;
+      case "GREEN" -> BonusType.GREEN;
+      case "BLUE" -> BonusType.BLUE;
+      case "WHITE" -> BonusType.WHITE;
+      case "BLACK" -> BonusType.BLACK;
+      default -> null;
+    };
+  }
 }
