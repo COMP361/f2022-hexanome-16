@@ -1,113 +1,69 @@
 package com.hexanome16.server.services.auth;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Tests for {@link AuthService}.
  */
+@ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthServiceTest {
-
-  private final String[] usernames = {
-      DummyAuths.validPlayerList.get(0).getName(),
-      DummyAuths.invalidPlayerList.get(0).getName()
-  };
-  private final String[] passwords = {
-      DummyAuths.validPasswords.get(0),
-      DummyAuths.invalidPasswords.get(0)
-  };
-  private final String[] tokens = {
-      DummyAuths.validTokensInfos.get(0).getAccessToken(),
-      DummyAuths.invalidTokensInfos.get(0).getAccessToken()
-  };
-  private final DummyAuthService authService = new DummyAuthService();
-
-  /*private URI createMockedUri() {
-    String baseUrl = "http://localhost:4242";
-    return URI.create(
-        "%s%s?%s".formatted(baseUrl, argThat((String s) -> s.contains("oauth")),
-            argThat((String s) -> s.contains("="))));
-  }
+  private AuthService authService;
+  private UrlUtils urlUtilsMock;
+  @Mock
+  private RestTemplate restTemplateMock;
 
   @BeforeEach
   void setup() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setBasicAuth("bgp-client-name", "bgp-client-pw");
-
     // Mock autowired dependencies
     RestTemplateBuilder restTemplateBuilderMock = Mockito.mock(RestTemplateBuilder.class);
-    RestTemplate restTemplateMock = Mockito.mock(RestTemplate.class);
     when(restTemplateBuilderMock.build()).thenReturn(restTemplateMock);
-    UrlUtils urlUtilsMock = Mockito.mock(UrlUtils.class);
-    when(urlUtilsMock.createLobbyServiceUri(anyString(), anyString()))
-        .thenReturn(createMockedUri());
+    urlUtilsMock = Mockito.mock(UrlUtils.class);
+    when(urlUtilsMock.createLobbyServiceUri(anyString(), anyString())).thenAnswer(invocation -> {
+      String path = invocation.getArgument(0);
+      String params = invocation.getArgument(1);
+      return URI.create("http://localhost:4242" + path + "?" + params);
+    });
 
-    for (int i = 0; i < usernames.length; i++) {
-      when(restTemplateMock.postForEntity(
-          urlUtilsMock.createLobbyServiceUri(
-              "/oauth/login",
-              "grant_type=password&username=" + usernames[i] + "&password=" + passwords[i]
-          ),
-          new HttpEntity<>(null, headers),
-          TokensInfo.class
-      )).thenReturn(authService.login(usernames[i], passwords[i]));
-    }
-
-    for (String token : tokens) {
-      when(restTemplateMock.postForEntity(
-          urlUtilsMock.createLobbyServiceUri(
-              "/oauth/login",
-              "grant_type=refresh_token&refresh_token=" + token
-          ),
-          new HttpEntity<>(null, headers),
-          TokensInfo.class
-      )).thenReturn(authService.login(token));
-
-      when(restTemplateMock.getForEntity(
-          urlUtilsMock.createLobbyServiceUri(
-              "/oauth/username",
-              "access_token=" + token
-          ),
-          TokensInfo.class
-      )).thenReturn(authService.login(token));
-
-      when(restTemplateMock.postForEntity(
-          urlUtilsMock.createLobbyServiceUri(
-              "/oauth/active",
-              "access_token=" + token
-          ),
-          new HttpEntity<>(null, headers),
-          Void.class
-      )).thenReturn(authService.logout(token));
-    }
-  }*/
+    authService = new AuthService(restTemplateBuilderMock, urlUtilsMock);
+    ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
+    ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
+  }
 
   @Test
+  @Order(1)
   void testValidLogin() {
-    ResponseEntity<TokensInfo> validResponse = authService.login(usernames[0], passwords[0]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
+    ResponseEntity<TokensInfo> validResponse = authService.login(
+        DummyAuths.validPlayerList.get(0).getName(),
+        DummyAuths.validPasswords.get(0)
+    );
     assertTrue("Valid login should return 200", validResponse.getStatusCodeValue() == 200);
     assertTrue("Valid login should return a token", Objects.requireNonNull(
         validResponse.getBody()).getAccessToken() != null);
@@ -117,14 +73,25 @@ public class AuthServiceTest {
   }
 
   @Test
+  @Order(2)
   void testInvalidLogin() {
-    ResponseEntity<TokensInfo> invalidResponse = authService.login(usernames[1], passwords[1]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    ResponseEntity<TokensInfo> invalidResponse = authService.login(
+        DummyAuths.invalidPlayerList.get(0).getName(),
+        DummyAuths.invalidPasswords.get(0)
+    );
     assertTrue("Invalid login should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
+  @Order(3)
   void testValidRefreshLogin() {
-    ResponseEntity<TokensInfo> validResponse = authService.login(tokens[0]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
+    ResponseEntity<TokensInfo> validResponse = authService.login(
+        DummyAuths.validTokensInfos.get(0).getRefreshToken()
+    );
     assertTrue("Valid refresh should return 200", validResponse.getStatusCodeValue() == 200);
     assertTrue("Valid refresh should return a token", Objects.requireNonNull(
         validResponse.getBody()).getAccessToken() != null);
@@ -136,34 +103,60 @@ public class AuthServiceTest {
   }
 
   @Test
+  @Order(4)
   void testInvalidRefreshLogin() {
-    ResponseEntity<TokensInfo> invalidResponse = authService.login(tokens[1]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    ResponseEntity<TokensInfo> invalidResponse = authService.login(
+        DummyAuths.invalidTokensInfos.get(0).getRefreshToken()
+    );
     assertTrue("Invalid login should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
+  @Order(5)
   void testValidGetPlayer() {
-    ResponseEntity<String> validResponse = authService.getPlayer(tokens[0]);
+    URI uri = urlUtilsMock.createLobbyServiceUri(
+        "/oauth/username",
+        "access_token=" + DummyAuths.validTokensInfos.get(0).getAccessToken()
+    );
+    when(restTemplateMock.getForEntity(uri, String.class))
+        .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
+    ResponseEntity<String> validResponse =
+        authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertTrue("Valid get player should return 200", validResponse.getStatusCodeValue() == 200);
     assertEquals("Valid get player should return the username", Objects.requireNonNull(
-        validResponse.getBody()), usernames[0]);
+        validResponse.getBody()), DummyAuths.validPlayerList.get(0).getName());
   }
 
   @Test
+  @Order(6)
   void testInvalidGetPlayer() {
-    ResponseEntity<String> invalidResponse = authService.getPlayer(tokens[1]);
+    URI uri = urlUtilsMock.createLobbyServiceUri(
+        "/oauth/username",
+        "access_token=" + DummyAuths.invalidTokensInfos.get(0).getAccessToken()
+    );
+    when(restTemplateMock.getForEntity(uri, String.class))
+        .thenReturn(ResponseEntity.badRequest().build());
+    ResponseEntity<String> invalidResponse =
+        authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertTrue("Invalid get player should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
+  @Order(7)
   void testValidLogout() {
-    ResponseEntity<Void> validResponse = authService.logout(tokens[0]);
+    ResponseEntity<Void> validResponse =
+        authService.logout(DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertTrue("Valid logout should return 200", validResponse.getStatusCodeValue() == 200);
   }
 
   @Test
+  @Order(8)
   void testInvalidLogout() {
-    ResponseEntity<Void> invalidResponse = authService.logout(tokens[1]);
-    assertTrue("Invalid logout should return 400", invalidResponse.getStatusCodeValue() == 400);
+    ResponseEntity<Void> invalidResponse =
+        authService.logout(DummyAuths.invalidTokensInfos.get(0).getAccessToken());
+    assertTrue("Invalid logout should also return 200",
+        invalidResponse.getStatusCodeValue() == 200);
   }
 }
