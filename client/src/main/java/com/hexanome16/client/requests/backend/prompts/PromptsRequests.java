@@ -145,6 +145,36 @@ public class PromptsRequests {
   }
 
   /**
+   * Send a request to reserve the card.
+   *
+   * @param sessionId game session id
+   * @param cardMd5 card hash
+   * @param authToken user authentication token
+   */
+  public static void reserveCard(long sessionId,
+                             String cardMd5,
+                             String authToken) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(UrlUtils.createGameServerUri(
+              "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
+              "authenticationToken=" + authToken
+          )).PUT(HttpRequest.BodyPublishers.noBody())
+          .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
    * Gets player bank of player with username "username" in session with session id "sessionId".
    *
    * @param sessionId Session ID.
