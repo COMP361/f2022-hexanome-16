@@ -79,8 +79,8 @@ public class PlayerDecks {
             vertical + 95 * scale)
         .setScaleUniform(0.1 * scale);
     for (int j = 10; j <= 130; j += 60) {
-      FXGL.spawn("ReservedCards", horizontal + (i * PlayerDecks.horizontal + j) * scale, vertical)
-          .setScaleUniform(0.07 * scale);
+      FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
+          * scale, vertical).put("player", name)).setScaleUniform(0.07 * scale);
     }
   }
 
@@ -126,12 +126,12 @@ public class PlayerDecks {
         .put("player", name)).setScaleUniform(1.2 * scale);
     FXGL.spawn("ReservedNobles", horizontal - 60, verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 180 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 240 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 300 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
   }
 
   private void spawnRightPlayer(String name, double horizontalShift,
@@ -179,14 +179,14 @@ public class PlayerDecks {
     FXGL.spawn("ReservedNobles", horizontalShift + horizontal * scale + 95,
             verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 180 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards",  new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 240 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 300 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
+        .put("player", name)).setScaleUniform(0.07 * scale);
   }
 }

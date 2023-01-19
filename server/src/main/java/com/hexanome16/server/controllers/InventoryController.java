@@ -164,7 +164,7 @@ public class InventoryController {
                                                  @RequestParam String accessToken)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayer(sessionId, accessToken);
+    Player player = getValidPlayerByName(sessionId, username);
 
     /* ( handled in the client )
      * if this player is the current player :
@@ -174,8 +174,10 @@ public class InventoryController {
      * */
 
     // return the reserved level cards in the inventory as a response entity
-    JsonNode node = getInventoryNode(player);
-    return new ResponseEntity<>(node.get("reservedCards").asText(), HttpStatus.OK);
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getReservedCards()),
+        HttpStatus.OK
+    );
   }
 
   /**
