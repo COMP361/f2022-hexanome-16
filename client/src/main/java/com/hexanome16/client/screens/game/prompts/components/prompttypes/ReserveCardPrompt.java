@@ -140,24 +140,12 @@ public class ReserveCardPrompt implements PromptTypeInterface {
     String playerName = AuthUtils.getPlayer().getName();
     UpdateGameInfo.fetchPlayerBank(GameScreen.getSessionId(), playerName, true);
 
-    // initiate playerBank
-    VBox playerBank = new VBox();
-    playerBank.setAlignment(Pos.CENTER);
-    playerBank.setPrefSize(atBankBoxesWidth, atHeight / 5);
-    playerBank.setSpacing((2 * atHeight / 10) / 8);
-
     // initiate Card to buy layout
     setCardImage();
     cardImage.setFitWidth(atCardWidth);
     cardImage.setFitHeight(atCardHeight);
 
-    // initiate gameBank layout
-    VBox gameBank = new VBox();
-    gameBank.setAlignment(Pos.CENTER);
-    gameBank.setPrefSize(atBankBoxesWidth, atHeight / 5);
-    gameBank.setSpacing((2 * atHeight / 10) / 8);
-
-    // initiate Reserve/Buy buttons layout
+    // initiate Reserve buttons layout
     VBox reserveBuy = new VBox();
     reserveBuy.setAlignment(Pos.CENTER);
     reserveBuy.setPrefSize(atButtonAreaWidth, atHeight / 5);
@@ -174,7 +162,7 @@ public class ReserveCardPrompt implements PromptTypeInterface {
     reserveBuy.getChildren().addAll(createReserveBuy(atButtonWidth, atButtonHeight));
 
     // adding to view
-    myPrompt.getChildren().addAll(playerBank, cardImage, gameBank, reserveBuy);
+    myPrompt.getChildren().addAll(cardImage, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
   }
 
@@ -233,7 +221,7 @@ public class ReserveCardPrompt implements PromptTypeInterface {
    */
   protected void setCardImage() {
     // if we have a card entity we are inspecting
-    if (level != null) {
+    if (this.level != null) {
       cardImage = FXGL.texture("level_" + this.level.name().toLowerCase() + ".png");
     } else {
       cardImage = FXGL.texture("level_one.png"); // placeholder
