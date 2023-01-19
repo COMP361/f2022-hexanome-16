@@ -3,6 +3,7 @@ package com.hexanome16.client.screens.game.prompts;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 
 /**
@@ -27,5 +28,14 @@ public class OpenPrompt {
    */
   public static void openPrompt(Entity entity) {
     FXGL.spawn("PromptBox", new SpawnData().put("entity", entity));
+  }
+
+  /**
+   * Opens Deck Reserve prompt.
+   *
+   * @param level The deck level.
+   */
+  public static void openPrompt(Level level) {
+    FXGL.spawn("PromptBox", new SpawnData().put("level", level));
   }
 }

@@ -1,9 +1,10 @@
 package com.hexanome16.client.screens.game.prompts.components;
 
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardByCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReserveNobleCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
@@ -136,7 +137,12 @@ public interface PromptTypeInterface {
      * Buy cards prompt type.
      * <p><i>Main</i></p>
      */
-    BUY_CARDS(new BuyCardPrompt()),
+    BUY_CARD(new BuyCardPrompt()),
+    /**
+     * Buy cards prompt type.
+     * <p><i>Main</i></p>
+     */
+    RESERVE_CARD(new ReserveCardPrompt()),
 //    Note : Elea removed this
 //    /**
 //     * See other reserved prompt type.
@@ -167,7 +173,7 @@ public interface PromptTypeInterface {
      * Buy cards by cards prompt type.
      * <p><i>Main</i></p>
      */
-    BUY_CARDS_BY_CARDS(new BuyCardByCard()),
+    BUY_CARD_WITH_CARDS(new BuyCardWithCards()),
     /**
      * Buy bag card prompt type.
      * <p><i>Main</i></p>

@@ -26,15 +26,16 @@ public class PlayerDecks {
    * @param players players for this session
    */
   public static void generateAll(String[] players) {
+    // TODO rotate the players on each screen so I AM at the bottom
     // number of players for this session
     int numOfPlayers = players.length;
     // current decks
     PlayerDecks decks = new PlayerDecks();
-    // spawn who is playing TODO animation
+    // spawn who is playing
     FXGL.spawn("PlayersTurn", 95, 60);
     // spawn the players
     int curr = 0;
-    // spawn the current player TODO here array of username
+    // spawn the current player
     if (curr < numOfPlayers) {
       decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
     }

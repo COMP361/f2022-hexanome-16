@@ -411,7 +411,11 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    this.onBoardDecks.get(level).addCard(this.decks.get(level).nextCard());
+    DevelopmentCard card = this.decks.get(level).nextCard();
+    if (card instanceof LevelCard) {
+      ((LevelCard) card).setIsFaceDown(false);
+    }
+    this.onBoardDecks.get(level).addCard(card);
   }
 
   /**

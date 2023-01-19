@@ -162,7 +162,7 @@ public class GameFactory implements EntityFactory {
         .view("sacrificecard.png")
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARDS_BY_CARDS);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS);
         })
         .build();
   }
@@ -222,6 +222,9 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 155)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> {
+          OpenPrompt.openPrompt(Level.TWO);
+        })
         .build();
   }
 
@@ -244,6 +247,9 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 360)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> {
+          OpenPrompt.openPrompt(Level.TWO);
+        })
         .build();
   }
 
@@ -265,6 +271,9 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> {
+          OpenPrompt.openPrompt(Level.ONE);
+        })
         .build();
   }
 

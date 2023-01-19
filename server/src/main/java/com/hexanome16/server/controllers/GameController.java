@@ -373,7 +373,6 @@ public class GameController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    System.out.println("a card is reserved");
     Game game = gameMap.get(sessionId);
 
     DevelopmentCard card = DeckHash.allCards.get(cardMd5);
@@ -401,6 +400,55 @@ public class GameController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Let the player reserve a card.
+   *
+   * @param sessionId game session id.
+   * @param level deck level.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
+  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
+                                            @RequestParam String level,
+                                            @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    //verify game and player
+    if (!gameMap.containsKey(sessionId)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    Game game = gameMap.get(sessionId);
+
+    Level atLevel;
+
+    switch (level) {
+      case "THREE": atLevel = Level.THREE;
+      break;
+      case "TWO": atLevel = Level.TWO;
+      break;
+      default: atLevel = Level.ONE;
+    }
+
+    DevelopmentCard card = game.getDeck(atLevel).nextCard();
+
+    Player player = findPlayerByToken(game, authenticationToken);
+
+    if (!player.reserveCard(card)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // give player a gold token
+    game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
+
+    endCurrentPlayersTurn(game);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
