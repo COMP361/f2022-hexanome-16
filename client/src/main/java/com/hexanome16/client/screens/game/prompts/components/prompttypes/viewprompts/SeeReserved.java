@@ -41,15 +41,15 @@ public class SeeReserved extends SeeReservedAbstract {
     boolean myCards = AuthUtils.getPlayer().getName().equals(player);
     // convert it to a list of maps
     Gson myGson = new Gson();
-    List<Map<String, String>> cards = myGson.fromJson(response, List.class);
+    List<Map<String, Object>> cards = myGson.fromJson(response, List.class);
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
-    for (Map<String, String> card : cards) {
+    for (Map<String, Object> card : cards) {
       // my cards are always face up
-      if (myCards || !Boolean.parseBoolean(card.get("isFaceDown"))) {
+      if (myCards || !(boolean)card.get("faceDown")) {
         cardTexturePaths.add(card.get("texturePath") + ".png");
       } else {
-        cardTexturePaths.add("level_" + card.get("level").toLowerCase() + ".png");
+        cardTexturePaths.add("level_" + ((String)card.get("level")).toLowerCase() + ".png");
       }
     }
   }
