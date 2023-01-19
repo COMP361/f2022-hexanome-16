@@ -268,7 +268,6 @@ public class DeckFactory implements EntityFactory {
   @Spawns("ReservedCards")
   public Entity reservedCards(SpawnData data) {
     // get a pane for this card
-    // String color = (String) data.getData().getOrDefault("color", "red");
     String player = (String) data.getData().getOrDefault("player", "");
     StackPane pane = getCard(0, "card.png");
     pane.setOpacity(0.5);

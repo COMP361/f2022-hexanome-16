@@ -22,7 +22,7 @@ public class LevelCard extends DevelopmentCard {
   public LevelCard(int id, int prestigePoint, String texturePath, Price price, Level level) {
     super(id, prestigePoint, texturePath, price);
     this.level = level;
-    this.isFaceDown = false;
+    this.isFaceDown = true;
   }
 
   @Override
@@ -33,6 +33,15 @@ public class LevelCard extends DevelopmentCard {
   @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
+  }
+
+  /**
+   * Change this card's orientation.
+   *
+   * @param isFaceDown is this card facing down?
+   */
+  public void setIsFaceDown(boolean isFaceDown) {
+    this.isFaceDown = isFaceDown;
   }
 
   /**
