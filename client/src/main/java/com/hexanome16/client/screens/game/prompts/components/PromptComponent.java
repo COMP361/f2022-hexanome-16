@@ -123,10 +123,11 @@ public class PromptComponent extends Component {
   public void onAdded() {
     initiateWorldProperties();
     buildBox();
-    if (atCardEntity == null) {
-      atPromptType.populatePrompt(entity);
-    } else if (level != null) {
+    if (level != null) {
+      System.out.println(level.name());
       ((ReserveCardPrompt) atPromptType).populatePrompt(entity, level);
+    } else if (atCardEntity == null) {
+      atPromptType.populatePrompt(entity);
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);
     }

@@ -46,7 +46,7 @@ public class PromptFactory implements EntityFactory {
       Level level = (Level)data.getData().getOrDefault("level", Level.ONE);
 
       return entityBuilder(data)
-          .with(new PromptComponent(myPromptType))
+          .with(new PromptComponent(myPromptType, level))
           .build();
     } else {
       PromptTypeInterface.PromptType promptType = PromptTypeInterface.PromptType.NULL;

@@ -223,7 +223,7 @@ public class GameFactory implements EntityFactory {
         .view(myStackPane)
         .scale(0.15, 0.15)
         .onClick(e -> {
-          OpenPrompt.openPrompt(Level.TWO);
+          OpenPrompt.openPrompt(Level.THREE);
         })
         .build();
   }
