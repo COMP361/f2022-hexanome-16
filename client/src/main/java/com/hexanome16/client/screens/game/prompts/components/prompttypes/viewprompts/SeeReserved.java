@@ -1,15 +1,13 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts;
 
-import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
-import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,65 +22,36 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 /**
- * Class responsible for populating See Cards prompt.
+ * A class responsible for populating See Own reserved Cards prompt.
  */
-public class SeeCards implements PromptTypeInterface {
+public class SeeReserved extends SeeReservedAbstract {
 
   private static List<String> cardTexturePaths = new ArrayList<>();
-
-  /**
-   * The width.
-   */
-  private double atWidth = getAppWidth() / 2.;
-  /**
-   * The height.
-   */
-  private double atHeight = getAppHeight() / 2.;
-  /**
-   * The card width.
-   */
-  private double atCardWidth = atWidth / 4;
-  /**
-   * The card height.
-   */
-  private double atCardHeight = atCardWidth * 1.39;
-  /**
-   * The top left x.
-   */
-  private double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
-  /**
-   * The top left y.
-   */
-  private double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
-  //List<String> cards = List.of("card1.png", "card2.png");
 
   /**
    * Fetches cards in the provided player's inventory.
    *
    * @param player player
    */
-  public static void fetchCards(String player) {
+  public static void fetchReservedCards(String player) {
     // make a call to the server
-    long sessionId = GameScreen.getSessionId();
-    String response = PromptsRequests.getCards(sessionId, player);
+    String response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
+        player, AuthUtils.getAuth().getAccessToken());
+    // are these my cards?
+    boolean myCards = AuthUtils.getPlayer().getName().equals(player);
     // convert it to a list of maps
     Gson myGson = new Gson();
     List<Map<String, String>> cards = myGson.fromJson(response, List.class);
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
     for (Map<String, String> card : cards) {
-      cardTexturePaths.add(card.get("texturePath") + ".png");
+      // my cards are always face up
+      if (myCards || !Boolean.parseBoolean(card.get("isFaceDown"))) {
+        cardTexturePaths.add(card.get("texturePath") + ".png");
+      } else {
+        cardTexturePaths.add("level_" + card.get("level").toLowerCase() + ".png");
+      }
     }
-  }
-
-  @Override
-  public double getWidth() {
-    return atWidth;
-  }
-
-  @Override
-  public double getHeight() {
-    return atHeight;
   }
 
   @Override
@@ -133,4 +102,27 @@ public class SeeCards implements PromptTypeInterface {
     card.setFitHeight(atCardHeight);
     return card;
   }
+  
+  // ************************************************************* 
+  
+  @Override
+  protected void promptOpened() {
+    assert (hiddenCards + viewAbleCards.size()) < 3;
+    hiddenCards = 0;
+    viewAbleCards = new ArrayList<>(
+        List.of(FXGL.texture("card1.png"), FXGL.texture("card1.png")));
+  }
+
+  @Override
+  protected String promptText() {
+    return "Own reserved cards";
+  }
+
+  @Override
+  protected void appendBehaviour(Texture t) {
+    t.setOnMouseClicked(e -> {
+      OpenPrompt.openPrompt(PromptType.BUYING_RESERVED);
+    });
+  }
+  
 }

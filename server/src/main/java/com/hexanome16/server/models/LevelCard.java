@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class LevelCard extends DevelopmentCard {
   private final Level level;
+  private boolean isFaceDown;
 
   /**
    * Instantiates a new Level card.
@@ -21,6 +22,7 @@ public class LevelCard extends DevelopmentCard {
   public LevelCard(int id, int prestigePoint, String texturePath, Price price, Level level) {
     super(id, prestigePoint, texturePath, price);
     this.level = level;
+    this.isFaceDown = false;
   }
 
   @Override
@@ -31,5 +33,16 @@ public class LevelCard extends DevelopmentCard {
   @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
+  }
+
+  /**
+   * Reserve this face down card.
+   *
+   * @param inventory the inventory
+   * @return true on success
+   */
+  public boolean reserveFaceDownCard(Inventory inventory) {
+    this.isFaceDown = true;
+    return reserveCard(inventory);
   }
 }

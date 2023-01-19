@@ -14,8 +14,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherch
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeOtherReserved;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeOwnReserved;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import java.util.function.Predicate;
 import javafx.scene.Node;
 
@@ -138,16 +137,22 @@ public interface PromptTypeInterface {
      * <p><i>Main</i></p>
      */
     BUY_CARDS(new BuyCardPrompt()),
-    /**
-     * See other reserved prompt type.
-     * <p><i>Main</i></p>
-     */
-    SEE_OTHER_RESERVED(new SeeOtherReserved()),
+//    Note : Elea removed this
+//    /**
+//     * See other reserved prompt type.
+//     * <p><i>Main</i></p>
+//     */
+//    SEE_OTHER_RESERVED(new SeeOtherReserved()),
+//    /**
+//     * See own reserved prompt type.
+//     * <p><i>Main</i></p>
+//     */
+//    SEE_OWN_RESERVED(new SeeOwnReserved()),
     /**
      * See own reserved prompt type.
      * <p><i>Main</i></p>
      */
-    SEE_OWN_RESERVED(new SeeOwnReserved()),
+    SEE_RESERVED(new SeeReserved()),
     /**
      * See cards prompt type.
      * <p><i>Main</i></p>
