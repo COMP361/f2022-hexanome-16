@@ -414,6 +414,7 @@ public class Game {
     DevelopmentCard card = this.decks.get(level).nextCard();
     if (card instanceof LevelCard) {
       ((LevelCard) card).setIsFaceDown(false);
+      System.out.println(card.getTexturePath() + "face down: " + ((LevelCard) card).isFaceDown());
     }
     this.onBoardDecks.get(level).addCard(card);
   }

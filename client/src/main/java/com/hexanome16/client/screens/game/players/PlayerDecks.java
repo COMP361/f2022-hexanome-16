@@ -6,6 +6,9 @@ import static com.hexanome16.client.Config.OPPONENT_SCALE;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.client.utils.AuthUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,7 +29,15 @@ public class PlayerDecks {
    * @param players players for this session
    */
   public static void generateAll(String[] players) {
-    // TODO rotate the players on each screen so I AM at the bottom
+    String myName = AuthUtils.getPlayer().getName();
+    while (!players[0].equals(myName)) {
+      String firstPerson = players[0];
+      for (int i = 1; i < players.length; i++) {
+        players[i - 1] = players[i];
+      }
+      players[players.length - 1] = firstPerson;
+    }
+
     // number of players for this session
     int numOfPlayers = players.length;
     // current decks
@@ -127,11 +138,14 @@ public class PlayerDecks {
         .put("player", name)).setScaleUniform(1.2 * scale);
     FXGL.spawn("ReservedNobles", horizontal - 60, verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
-    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
   }
 
