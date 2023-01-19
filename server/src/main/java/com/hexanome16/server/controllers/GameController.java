@@ -379,6 +379,10 @@ public class GameController {
 
     Player player = findPlayerByToken(game, authenticationToken);
 
+    if (!game.isPlayersTurn(player)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -438,6 +442,10 @@ public class GameController {
     DevelopmentCard card = game.getDeck(atLevel).nextCard();
 
     Player player = findPlayerByToken(game, authenticationToken);
+
+    if (!game.isPlayersTurn(player)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
