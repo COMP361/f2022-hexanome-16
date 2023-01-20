@@ -516,7 +516,8 @@ public class Game {
   }
 
   /**
-   *  Gets all the token types one can take 2 of.
+   *  Gets all the token types one can take 2 of. (Gold gems are also part of the list
+   *  (shouldn't really be the case but just saying))
    *
    * @return An array list of all such token types
    */
