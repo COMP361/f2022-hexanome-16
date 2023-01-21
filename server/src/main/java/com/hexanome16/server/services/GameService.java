@@ -69,7 +69,6 @@ public class GameService implements GameServiceInterface {
   public String createGame(long sessionId, SessionJson payload) {
     try {
       Game game = new Game(sessionId, payload);
-      System.out.println(game);
       gameMap.put(sessionId, game);
       BroadcastContentManager<DeckHash> broadcastContentManagerOne =
           new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.ONE));
