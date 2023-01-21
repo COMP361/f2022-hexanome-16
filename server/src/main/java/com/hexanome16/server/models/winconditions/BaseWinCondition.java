@@ -9,10 +9,12 @@ import lombok.ToString;
  */
 @ToString(callSuper = true)
 public class BaseWinCondition extends WinCondition {
+
   /**
    * Constructor.
    */
   public BaseWinCondition() {
+
     super(player ->
         player.getInventory().getOwnedCards().stream()
             .mapToInt(DevelopmentCard::getPrestigePoint).sum()

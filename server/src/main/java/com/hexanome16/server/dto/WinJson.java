@@ -1,5 +1,6 @@
 package com.hexanome16.server.dto;
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WinJson {
+public class WinJson implements BroadcastContent {
   private String[] winners;
+
+  @Override
+  public boolean isEmpty() {
+    return winners.length == 0;
+  }
 }

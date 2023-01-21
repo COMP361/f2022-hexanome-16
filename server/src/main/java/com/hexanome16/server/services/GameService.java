@@ -8,6 +8,7 @@ import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -21,6 +22,7 @@ import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
@@ -85,8 +87,8 @@ public class GameService implements GameServiceInterface {
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
-      // BroadcastContentManager<Player[]> broadcastContentManagerWin =
-      // new BroadcastContentManager<>(gameMap.get(sessionId).getPlayers());
+      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+          new BroadcastContentManager<>(new WinJson());
       BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NoblesHash(gameMap.get(sessionId)));
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
@@ -96,6 +98,7 @@ public class GameService implements GameServiceInterface {
       broadcastContentManagerMap.put("REDTWO", broadcastContentManagerRedTwo);
       broadcastContentManagerMap.put("REDTHREE", broadcastContentManagerRedThree);
       broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
+      broadcastContentManagerMap.put("winners", broadcastContentManagerWinners);
       broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
     } catch (Exception e) {
       e.printStackTrace();
@@ -177,10 +180,21 @@ public class GameService implements GameServiceInterface {
   public void endCurrentPlayersTurn(Game game) {
     int nextPlayerIndex = (game.getCurrentPlayerIndex() + 1) % game.getPlayers().length;
     game.setCurrentPlayerIndex(nextPlayerIndex);
-    BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-        (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
-    broadcastContentManagerPlayer.updateBroadcastContent(
-        new PlayerJson(game.getCurrentPlayer().getName()));
+    if (nextPlayerIndex == 0) {
+      Player[] winners = this.winCondition.isGameWon(game);
+      if (winners.length > 0) {
+        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+            (BroadcastContentManager<WinJson>) broadcastContentManagerMap.get("winners");
+        broadcastContentManagerWinners.updateBroadcastContent(new WinJson(
+            Arrays.stream(winners).map(Player::getName).toArray(String[]::new)
+        ));
+      }
+    } else {
+      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+          (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
+      broadcastContentManagerPlayer.updateBroadcastContent(
+          new PlayerJson(game.getCurrentPlayer().getName()));
+    }
   }
 
   @Override

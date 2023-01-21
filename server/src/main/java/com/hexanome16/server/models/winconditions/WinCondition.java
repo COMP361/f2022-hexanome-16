@@ -5,6 +5,7 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.GameServiceInterface;
 import java.util.Arrays;
 import java.util.function.Predicate;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -12,6 +13,7 @@ import lombok.ToString;
  */
 @ToString
 public abstract class WinCondition {
+  @Getter
   private final Predicate<Player> condition;
 
   /**
