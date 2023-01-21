@@ -100,6 +100,21 @@ public class GameController {
     return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
   }
 
+  /**
+   * Return the winners of the game.
+   *
+   * @param sessionId   game id
+   * @param accessToken player access token
+   * @param hash        hash for long polling
+   * @return winners of the game
+   */
+  @GetMapping(value = "/games/{sessionId}/winners", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
+                                                                 @RequestParam String accessToken,
+                                                                 @RequestParam String hash) {
+    return gameServiceInterface.getWinners(sessionId, accessToken, hash);
+  }
+
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
 
   /**

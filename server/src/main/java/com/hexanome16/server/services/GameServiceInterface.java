@@ -67,6 +67,18 @@ public interface GameServiceInterface {
                                                           String hash);
 
   /**
+   * Return the winners of the game.
+   *
+   * @param sessionId   game id
+   * @param accessToken player access token
+   * @param hash        hash for long polling
+   * @return game winners
+   */
+  DeferredResult<ResponseEntity<String>> getWinners(long sessionId,
+                                                          String accessToken,
+                                                          String hash);
+
+  /**
    * Allows client to see how many of each gem a player has.
    *
    * @param sessionId sessionId.

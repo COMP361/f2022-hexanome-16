@@ -34,7 +34,7 @@ public abstract class WinCondition {
   public Player[] isGameWon(Game game) {
     Player[] matchingPlayers =
         Arrays.stream(game.getPlayers()).filter(condition).toArray(Player[]::new);
-    return matchingPlayers.length > 0 ? matchingPlayers : null;
+    return matchingPlayers.length > 0 ? matchingPlayers : new Player[0];
   }
 
   /**
