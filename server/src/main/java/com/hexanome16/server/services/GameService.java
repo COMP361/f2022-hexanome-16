@@ -47,7 +47,6 @@ public class GameService implements GameServiceInterface {
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
-  private WinCondition winCondition;
 
   /**
    * Instantiates the game service.
@@ -143,6 +142,20 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
+  public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
+                                                                 String hash) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
+      DeferredResult<ResponseEntity<String>> result;
+      result = ResponseGenerator.getHashBasedUpdate(
+          10000, broadcastContentManagerMap.get("winners"), hash
+      );
+      return result;
+    }
+    return null;
+
+  }
+
+  @Override
   public ResponseEntity<String> getPlayerBankInfo(long sessionId, String username)
       throws JsonProcessingException {
     // session not found
@@ -181,7 +194,7 @@ public class GameService implements GameServiceInterface {
     int nextPlayerIndex = (game.getCurrentPlayerIndex() + 1) % game.getPlayers().length;
     game.setCurrentPlayerIndex(nextPlayerIndex);
     if (nextPlayerIndex == 0) {
-      Player[] winners = this.winCondition.isGameWon(game);
+      Player[] winners = game.getWinCondition().isGameWon(game);
       if (winners.length > 0) {
         BroadcastContentManager<WinJson> broadcastContentManagerWinners =
             (BroadcastContentManager<WinJson>) broadcastContentManagerMap.get("winners");

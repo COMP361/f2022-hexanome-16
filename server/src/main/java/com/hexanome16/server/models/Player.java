@@ -10,7 +10,6 @@ import lombok.Data;
 public class Player {
   private final String name;
   private final String preferredColour;
-  private boolean hasWon;
   private Inventory inventory; // the player has an inventory, not a bank
 
   /**
@@ -23,7 +22,6 @@ public class Player {
   public Player(String name, String preferredColour) {
     this.name = name;
     this.preferredColour = preferredColour;
-    this.hasWon = false;
     this.inventory = new Inventory();
   }
 
