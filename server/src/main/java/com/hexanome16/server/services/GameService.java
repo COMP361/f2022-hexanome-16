@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -15,6 +16,7 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
@@ -43,6 +45,7 @@ public class GameService implements GameServiceInterface {
   private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
+  private WinCondition winCondition;
 
   /**
    * Instantiates the game service.
@@ -62,12 +65,10 @@ public class GameService implements GameServiceInterface {
   //TODO: probably need to make a better test for this.
 
   @Override
-  public String createGame(long sessionId, Map<String, Object> payload) {
+  public String createGame(long sessionId, SessionJson payload) {
     try {
-      Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
-      String creator = objectMapper.convertValue(payload.get("creator"), String.class);
-      String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
-      Game game = new Game(sessionId, players, creator, savegame);
+      Game game = new Game(sessionId, payload);
+      System.out.println(game);
       gameMap.put(sessionId, game);
       BroadcastContentManager<DeckHash> broadcastContentManagerOne =
           new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.ONE));
@@ -84,6 +85,8 @@ public class GameService implements GameServiceInterface {
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
+      // BroadcastContentManager<Player[]> broadcastContentManagerWin =
+      // new BroadcastContentManager<>(gameMap.get(sessionId).getPlayers());
       BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NoblesHash(gameMap.get(sessionId)));
       broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
@@ -172,7 +175,8 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public void endCurrentPlayersTurn(Game game) {
-    game.setCurrentPlayerIndex((game.getCurrentPlayerIndex() + 1) % game.getPlayers().length);
+    int nextPlayerIndex = (game.getCurrentPlayerIndex() + 1) % game.getPlayers().length;
+    game.setCurrentPlayerIndex(nextPlayerIndex);
     BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
         (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
     broadcastContentManagerPlayer.updateBroadcastContent(

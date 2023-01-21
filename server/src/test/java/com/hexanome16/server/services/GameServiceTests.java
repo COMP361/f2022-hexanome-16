@@ -11,11 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
+import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 class GameServiceTests {
   private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  private final Map<String, Object> payload = new HashMap<>();
+  private final SessionJson payload = new SessionJson();
   private GameService gameService;
   private String gameResponse;
 
@@ -44,13 +47,13 @@ class GameServiceTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     gameService = new GameService(new DummyAuthService());
-    var playerPayload = List.of(objectMapper.readValue(DummyAuths.validJsonList.get(0), Map.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), Map.class));
-    payload.put("players", playerPayload);
-    String creator = "tristan";
-    payload.put("creator", creator);
-    String savegame = "";
-    payload.put("savegame", savegame);
+    payload.setPlayers(
+        new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
+            objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)}
+    );
+    payload.setCreator("tristan");
+    payload.setSavegame("");
+    payload.setWinCondition(new BaseWinCondition());
     gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(0), payload);
     gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(1), payload);
   }
