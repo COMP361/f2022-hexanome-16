@@ -1,6 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.services.GameServiceInterface;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class GameController {
    * @return error if present
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
-  public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
+  public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
     return gameServiceInterface.createGame(sessionId, payload);
   }
 
