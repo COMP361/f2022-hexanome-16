@@ -154,7 +154,7 @@ public class GameController {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
-          broadcastContentManagerMap.get("noble"), hash);
+              broadcastContentManagerMap.get("noble"), hash);
       return result;
     }
     return null;
@@ -228,11 +228,7 @@ public class GameController {
     if (!gameMap.containsKey(sessionId)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-
     PurchaseMap gameBankMap = gameMap.get(sessionId).getGameBank().toPurchaseMap();
-
-
     return new ResponseEntity<>(objectMapper.writeValueAsString(gameBankMap), HttpStatus.OK);
   }
 

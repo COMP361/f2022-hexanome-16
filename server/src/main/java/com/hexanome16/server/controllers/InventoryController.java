@@ -122,7 +122,7 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
-        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+            objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
         HttpStatus.OK
     );
   }
@@ -147,8 +147,6 @@ public class InventoryController {
         HttpStatus.OK);
   }
 
-  // TODO : IMPLEMETNATIAAOSN
-
   /**
    * Get reserved Cards, with private cards.
    *
@@ -163,21 +161,12 @@ public class InventoryController {
                                                  @RequestParam String username,
                                                  @RequestParam String accessToken)
       throws JsonProcessingException {
+
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
-
-    /* ( handled in the client )
-     * if this player is the current player :
-     *     show the cards face up
-     * else
-     *     show the cards face down
-     * */
-
     // return the reserved level cards in the inventory as a response entity
-    return new ResponseEntity<>(
-        objectMapper.writeValueAsString(player.getInventory().getReservedCards()),
-        HttpStatus.OK
-    );
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+            player.getInventory().getReservedCards()), HttpStatus.OK);
   }
 
   /**
@@ -195,8 +184,8 @@ public class InventoryController {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity
-    JsonNode node = getInventoryNode(player);
-    return new ResponseEntity<>(node.get("reservedNobles").asText(), HttpStatus.OK);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+            player.getInventory().getReservedNobles()), HttpStatus.OK);
   }
 
 }
