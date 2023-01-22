@@ -22,17 +22,18 @@ public class GameParams {
 
   @Value("${server.protocol}")
   private String protocol;
+  @Value("${server.host}")
+  private String host;
   @Value("${server.port}")
   private Integer port;
 
   /**
    * Default params used for testing/UI demo.
    *
-   * @throws UnknownHostException if the host is unknown
    */
   @PostConstruct
-  public void init() throws UnknownHostException {
-    location = protocol + "://" + Inet4Address.getLocalHost().getHostAddress() + ":" + port;
+  public void init() {
+    location = protocol + "://" + host + ":" + port;
     maxSessionPlayers = 4;
     minSessionPlayers = 2;
     name = "Splendor";

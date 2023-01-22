@@ -1,8 +1,12 @@
 package com.hexanome16.server.services;
 
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.auth.TokensInfo;
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Static accounts to use for tests that use DummyAuthService.
@@ -110,6 +114,18 @@ public class DummyAuths {
    * Immutable static list of invalid session IDs.
    */
   public static final List<Long> invalidSessionIds = List.of(0L, 1L);
+
+  public static final Map<Long, Game> validGames;
+
+  static {
+    try {
+      validGames = Map.of(
+          validSessionIds.get(0), new Game(validSessionIds.get(0), validPlayerList.toArray(new Player[2]), validPlayerList.get(0).getName(), "", new BaseWinCondition())
+      );
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * Immutable static list of valid passwords.

@@ -7,8 +7,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.controllers.TokensController;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameBank;
+import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +33,7 @@ public class TokenServiceTests {
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
       new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
           JsonCreator.Mode.PROPERTIES));
-  private final Map<String, Object> payload = new HashMap<>();
+  private final SessionJson payload = new SessionJson();
 
 
 
@@ -46,13 +49,11 @@ public class TokenServiceTests {
     tokensService  =
             new TokenService(gameService, dummyAuthService);
 
-    var playerPayload = List.of(objectMapper.readValue(DummyAuths.validJsonList.get(0), Map.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), Map.class));
-    payload.put("players", playerPayload);
-    String creator = "tristan";
-    payload.put("creator", creator);
-    String savegame = "";
-    payload.put("savegame", savegame);
+    payload.setPlayers(new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
+        objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
+    payload.setCreator("tristan");
+    payload.setSavegame("");
+    payload.setWinCondition(new BaseWinCondition());
     gameService.createGame(DummyAuths.validSessionIds.get(0), payload);
     gameService.createGame(DummyAuths.validSessionIds.get(1), payload);
   }
