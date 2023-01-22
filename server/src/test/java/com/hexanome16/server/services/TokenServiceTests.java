@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Test of {@link TokenService}
+ * Test of {@link TokenService}.
  */
 public class TokenServiceTests {
 
@@ -49,7 +49,8 @@ public class TokenServiceTests {
     tokensService  =
             new TokenService(gameService, dummyAuthService);
 
-    payload.setPlayers(new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
+    payload.setPlayers(new Player[] {
+        objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
         objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
@@ -113,7 +114,6 @@ public class TokenServiceTests {
   public void testTakeTwo() {
     long sessionId = DummyAuths.validSessionIds.get(0);
     String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
     Game game =
         gameService.getGameMap().get(sessionId);
@@ -125,6 +125,8 @@ public class TokenServiceTests {
     testGameBank.incBank(-2, 0, 0, 0, 0, 0);
     assertEquals(game.getGameBank(), testGameBank);
     game.incGameBank(-10, -10, -10, -10, -10, -10);
+
+    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
     assertEquals(tokensService.takeTwoTokens(sessionId, authTokenPlayer2, "RED").getStatusCode(),
         HttpStatus.BAD_REQUEST);
   }
@@ -137,7 +139,6 @@ public class TokenServiceTests {
   public void testTakeThree() {
     long sessionId = DummyAuths.validSessionIds.get(0);
     String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
     Game game =
         gameService.getGameMap().get(sessionId);
@@ -150,6 +151,8 @@ public class TokenServiceTests {
     testGameBank.incBank(-1, -1, 0, -1, 0, 0);
 
     assertEquals(game.getGameBank(), testGameBank);
+
+    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
     assertEquals(tokensService.takeThreeTokens(sessionId, authTokenPlayer2,
             "RED", "RED", "WHITE").getStatusCode(),

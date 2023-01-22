@@ -268,7 +268,6 @@ public class DeckFactory implements EntityFactory {
   @Spawns("ReservedCards")
   public Entity reservedCards(SpawnData data) {
     // get a pane for this card
-    String player = (String) data.getData().getOrDefault("player", "");
     StackPane pane = getCard(0, "card.png");
     pane.setOpacity(0.5);
     // animation
@@ -280,6 +279,7 @@ public class DeckFactory implements EntityFactory {
       pane.setScaleX(1);
       pane.setScaleY(1);
     });
+    String player = (String) data.getData().getOrDefault("player", "");
     // build the entity
     return FXGL.entityBuilder(data)
         .view(pane)

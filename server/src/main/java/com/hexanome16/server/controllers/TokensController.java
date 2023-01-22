@@ -35,6 +35,7 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
+   * @throws JsonProcessingException if the list of available tokens cannot be converted
    */
   @GetMapping(value = {"/games/{sessionId}/twoTokens"})
   public ResponseEntity<String> availableTwoTokensType(@PathVariable long sessionId)
@@ -48,6 +49,7 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
+   * @throws JsonProcessingException if the list of available tokens cannot be converted
    */
   @GetMapping(value = {"/games/{sessionId}/threeTokens"})
   public ResponseEntity<String> availableThreeTokensType(@PathVariable long sessionId)
@@ -76,6 +78,7 @@ public class TokensController {
   /**
    * Allows to take 3 tokens of 3 given, distinct types,
    * This function checks if the action is valid.
+   * The Three token types need to be distinct.
    *
    * @param sessionId the session's Identification number.
    * @param authenticationToken authentication token of the player who wants to take the tokens.
@@ -85,7 +88,6 @@ public class TokensController {
    *                     the acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @param tokenTypeThree String representing the Third token type selected by the player,
    *                       the acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
-   * @pre the Three token types need to be distinct.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *         HTTP BAD_REQUEST otherwise.
    *         </p>

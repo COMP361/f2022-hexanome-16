@@ -120,7 +120,9 @@ public class DummyAuths {
   static {
     try {
       validGames = Map.of(
-          validSessionIds.get(0), new Game(validSessionIds.get(0), validPlayerList.toArray(new Player[2]), validPlayerList.get(0).getName(), "", new BaseWinCondition())
+          validSessionIds.get(0), new Game(validSessionIds.get(0),
+              validPlayerList.toArray(new Player[2]), validPlayerList.get(0).getName(),
+              "", new BaseWinCondition())
       );
     } catch (IOException e) {
       throw new RuntimeException(e);
