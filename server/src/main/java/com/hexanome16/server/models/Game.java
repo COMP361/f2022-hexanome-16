@@ -11,6 +11,7 @@ import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -470,7 +471,6 @@ public class Game {
     return findPlayerIndex(player) == currentPlayerIndex;
   }
 
-  // TODO: TEST CASE
 
 
   // TODO: TEST CASE
@@ -491,6 +491,19 @@ public class Game {
     getGameBank().incBank(rubyAmount, emeraldAmount, sapphireAmount,
         diamondAmount, onyxAmount, goldAmount);
   }
+
+  /**
+   * Increments the game bank by the amount specified in the purchase map.
+   *
+   * @param purchaseMap purchase map representation of how much we want to increment
+   *                    the game bank.
+   */
+  public void incGameBank(PurchaseMap purchaseMap) {
+    getGameBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
+            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
+            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+  }
+
 
 
   // TODO: TEST CASE
@@ -536,6 +549,97 @@ public class Game {
         diamondAmount, onyxAmount, goldAmount);
   }
 
+  /**
+   *  Gets all the token types one can take 2 of. (Gold gems are also part of the list
+   *  (shouldn't really be the case but just saying))
+   *
+   * @return An array list of all such token types
+   */
+  public ArrayList<Gem> availableTwoTokensType() {
+    return getGameBank().availableTwoTokensType();
+  }
+
+  /**
+   * Returns true if one can take 2 tokens of a given gem type. False otherwise.
+   *
+   * @param gem gem we want to take 2 of.
+   * @return True if one can take 2 tokens of a given gem type. False otherwise.
+   */
+  public boolean allowedTakeTwoOf(Gem gem) {
+    return availableTwoTokensType().contains(gem);
+  }
+
+  /**
+   * Gives 2 tokens of type gem to player.
+   *
+   * @param gem Gem we want to give 2 of.
+   * @param player player who will receive the gems.
+   *
+   */
+  public void giveTwoOf(Gem gem, Player player) {
+
+    Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
+    gemIntegerMapGame.put(gem, Integer.valueOf(-2));
+    incGameBank(new PurchaseMap(gemIntegerMapGame));
+    Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
+    gemIntegerMapPlayer.put(gem, Integer.valueOf(2));
+    player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
+  }
+
+
+
+
+  /**
+   *  Gets all the token types one can take 2 of.
+   *
+   * @return An array list of all such token types
+   */
+  public ArrayList<Gem> availableThreeTokensType() {
+    return getGameBank().availableThreeTokensType();
+  }
+
+  /**
+   * Returns true if one can take 3 tokens of the given gem types. False otherwise.
+   *
+   * @param gem1 first gem type we want.
+   * @param gem2 second gem type we want.
+   * @param gem3 third gem type we want.
+   * @return True if one can take 3 tokens of the given gem types. False otherwise.
+   */
+  public boolean allowedTakeThreeOf(Gem gem1, Gem gem2, Gem gem3) {
+    ArrayList<Gem> available = availableThreeTokensType();
+    return available.contains(gem1)
+            && available.contains(gem2)
+            && available.contains(gem3)
+            && Gem.areDistinct(gem1, gem2, gem3);
+  }
+
+  /**
+   * Gives 3 tokens of 3 different types to player.
+   *
+   * @param desiredGemOne First gem we want to take one of.
+   * @param desiredGemTwo Second gem we want to take one of.
+   * @param desiredGemThree Third gem we want to take one of.
+   * @param player player who will receive the gems.
+   *
+   */
+  public void giveThreeOf(Gem desiredGemOne, Gem desiredGemTwo, Gem desiredGemThree,
+                          Player player) {
+    // Remove from game bank
+    Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
+    gemIntegerMapGame.put(desiredGemOne, Integer.valueOf(-1));
+    gemIntegerMapGame.put(desiredGemTwo, Integer.valueOf(-1));
+    gemIntegerMapGame.put(desiredGemThree, Integer.valueOf(-1));
+    incGameBank(new PurchaseMap(gemIntegerMapGame));
+
+    // Give to player bank
+    Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
+    gemIntegerMapPlayer.put(desiredGemOne, Integer.valueOf(1));
+    gemIntegerMapPlayer.put(desiredGemTwo, Integer.valueOf(1));
+    gemIntegerMapPlayer.put(desiredGemThree, Integer.valueOf(1));
+    player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
+  }
+
 
   /**
    * Game bank to purchase map.
@@ -548,7 +652,6 @@ public class Game {
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 
-  // TODO: TEST CASE
   private int findPlayerIndex(Player player) {
     int i = 0;
     for (Player e : getPlayers()) {
@@ -559,4 +662,7 @@ public class Game {
     }
     return -1;
   }
+
+
+
 }
