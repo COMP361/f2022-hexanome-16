@@ -81,8 +81,8 @@ class GameServiceTests {
   public void testUpdateDeckSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0), "REDTHREE",
-            DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
+        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0),
+            "REDTHREE", DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
   }
 
@@ -276,6 +276,53 @@ class GameServiceTests {
   }
 
   /**
+   * Test reserve card.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    ResponseEntity<String> response =
+        gameService.reserveCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  /**
+   * Test reserve face down card.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveFaceDownCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    ResponseEntity<String> response =
+        gameService.reserveFaceDownCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  /**
    * Test buy card invalid.
    *
    * @throws JsonProcessingException the json processing exception
@@ -318,6 +365,36 @@ class GameServiceTests {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
+  /**
+   * Test reserve card invalid.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveCardInvalidCard()
+      throws com.fasterxml.jackson.core.JsonProcessingException {
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    // Test invalid sessionId
+    ResponseEntity<String> response = gameService.reserveCard(invalidSessionId,
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    // Test invalid accessToken
+    response =
+        gameService.reserveCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
   private LevelCard createValidCard() {
     return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(1, 1, 1, 1, 0)), Level.ONE);
   }
@@ -346,7 +423,8 @@ class GameServiceTests {
     var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
 
     //Test invalid player
-    var player = gameService.findPlayerByName(game, DummyAuths.invalidPlayerList.get(0).getName());
+    var player = gameService.findPlayerByName(game,
+        DummyAuths.invalidPlayerList.get(0).getName());
     assertNull(player);
   }
 
