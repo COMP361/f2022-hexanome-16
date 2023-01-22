@@ -1,8 +1,8 @@
 package com.hexanome16.client.screens.game.prompts.components;
 
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
@@ -143,17 +143,17 @@ public interface PromptTypeInterface {
      * <p><i>Main</i></p>
      */
     RESERVE_CARD(new ReserveCardPrompt()),
-//    Note : Elea removed this
-//    /**
-//     * See other reserved prompt type.
-//     * <p><i>Main</i></p>
-//     */
-//    SEE_OTHER_RESERVED(new SeeOtherReserved()),
-//    /**
-//     * See own reserved prompt type.
-//     * <p><i>Main</i></p>
-//     */
-//    SEE_OWN_RESERVED(new SeeOwnReserved()),
+    //    Note : Elea removed this
+    //    /**
+    //     * See other reserved prompt type.
+    //     * <p><i>Main</i></p>
+    //     */
+    //    SEE_OTHER_RESERVED(new SeeOtherReserved()),
+    //    /**
+    //     * See own reserved prompt type.
+    //     * <p><i>Main</i></p>
+    //     */
+    //    SEE_OWN_RESERVED(new SeeOwnReserved()),
     /**
      * See own reserved prompt type.
      * <p><i>Main</i></p>

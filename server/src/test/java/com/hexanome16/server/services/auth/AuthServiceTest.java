@@ -5,18 +5,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
+import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -31,9 +32,9 @@ import org.springframework.web.client.RestTemplate;
  * Tests for {@link AuthService}.
  */
 @ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthServiceTest {
   private AuthService authService;
+  private GameService gameService;
   private UrlUtils urlUtilsMock;
   @Mock
   private RestTemplate restTemplateMock;
@@ -53,10 +54,11 @@ public class AuthServiceTest {
     authService = new AuthService(restTemplateBuilderMock, urlUtilsMock);
     ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
     ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
+
+    gameService = new GameService(authService);
   }
 
   @Test
-  @Order(1)
   void testValidLogin() {
     when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
         .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
@@ -74,7 +76,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(2)
   void testInvalidLogin() {
     when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
         .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -86,7 +87,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(3)
   void testValidRefreshLogin() {
     when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
         .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
@@ -104,7 +104,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(4)
   void testInvalidRefreshLogin() {
     when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
         .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -115,7 +114,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(5)
   void testValidGetPlayer() {
     URI uri = urlUtilsMock.createLobbyServiceUri(
         "/oauth/username",
@@ -133,7 +131,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(6)
   void testInvalidGetPlayer() {
     URI uri = urlUtilsMock.createLobbyServiceUri(
         "/oauth/username",
@@ -147,7 +144,6 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(7)
   void testValidLogout() {
     ResponseEntity<Void> validResponse =
         authService.logout(DummyAuths.validTokensInfos.get(0).getAccessToken());
@@ -155,11 +151,36 @@ public class AuthServiceTest {
   }
 
   @Test
-  @Order(8)
   void testInvalidLogout() {
     ResponseEntity<Void> invalidResponse =
         authService.logout(DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertTrue("Invalid logout should also return 200",
         invalidResponse.getStatusCodeValue() == 200);
+  }
+
+  @Test
+  void testValidVerifyPlayer() {
+    when(authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken()))
+        .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
+    boolean validResponse = authService.verifyPlayer(
+        DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        games
+    );
+    assertTrue("Valid verify player should return true", validResponse);
+  }
+
+  @Test
+  void testInvalidVerifyPlayer() {
+    when(authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
+        .thenReturn(ResponseEntity.ok(DummyAuths.invalidPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
+    boolean invalidResponse = authService.verifyPlayer(
+        DummyAuths.validSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
+        games
+    );
+    assertFalse("Invalid verify player should return false", invalidResponse);
   }
 }

@@ -46,7 +46,6 @@ public class Player {
     return developmentCard.addToInventory(this.inventory);
   }
 
-  // TODO: TEST CASE
 
   /**
    * increments Player bank by the amount specified by each parameter for each of their
@@ -66,7 +65,17 @@ public class Player {
 
   }
 
-  // TODO: TEST CASE
+  /**
+   * Increments the player bank by the amount specified in the purchase map.
+   *
+   * @param purchaseMap purchase map representation of how much we want to increment
+   *                    the player bank.
+   */
+  public void incPlayerBank(PurchaseMap purchaseMap) {
+    getBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
+            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
+            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+  }
 
   /**
    * Returns true if player has at least specified amounts of each gem type in their bank, false

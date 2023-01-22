@@ -1,13 +1,17 @@
 package com.hexanome16.client.requests.backend.prompts;
 
+import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.PurchaseMap;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
@@ -127,7 +131,7 @@ public class PromptsRequests {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
               "/api/games/" + sessionId + "/" + cardMd5,
-              requestParam(authToken, proposedDeal)
+              requestParamPurchaseMap(authToken, proposedDeal)
           )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
 
@@ -237,8 +241,125 @@ public class PromptsRequests {
     return uriToRequest(uri);
   }
 
+
+  /**
+   * Retrieves the bonuses available to take two of from the server.
+   *
+   * @param sessionId session ID of the game whose tokens info we want to retrieve.
+   * @return An array List of the possible bonus types.
+   */
+  public static ArrayList<BonusType> getAvailableTwoBonuses(long sessionId) {
+    // create a URI
+    URI uri = UrlUtils.createGameServerUri(
+        "/api/games/" + sessionId + "/twoTokens", ""
+    );
+    String response = uriToRequest(uri);
+    Gson myConverter = new Gson();
+    ArrayList<String> availableTypes = myConverter.fromJson(response, ArrayList.class);
+    return new ArrayList<>(
+        availableTypes.stream().map(BonusType::fromString).filter(Objects::nonNull).toList());
+  }
+
+  /**
+   * Retrieves the bonuses available to take three of from the server.
+   *
+   * @param sessionId session ID of the game whose tokens info we want to retrieve.
+   * @return An array List of the possible bonus types.
+   */
+  public static ArrayList<BonusType> getAvailableThreeBonuses(long sessionId) {
+    // create a URI
+    URI uri = UrlUtils.createGameServerUri(
+        "/api/games/" + sessionId + "/threeTokens", ""
+    );
+    String response = uriToRequest(uri);
+    Gson myConverter = new Gson();
+    ArrayList<String> availableTypes = myConverter.fromJson(response, ArrayList.class);
+    return new ArrayList<>(
+        availableTypes.stream().map(BonusType::fromString).filter(Objects::nonNull).toList());
+  }
+
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param authToken    username of player trying to buy card.
+   * @param bonusType    Desired bonus Type.
+   */
+  public static void takeTwo(long sessionId,
+                             String authToken,
+                             BonusType bonusType) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(UrlUtils.createGameServerUri(
+                      "/api/games/" + sessionId + "/twoTokens",
+                      "authenticationToken=" + authToken + "&tokenType=" + bonusType.toString()
+              )).PUT(HttpRequest.BodyPublishers.noBody())
+              .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+
+      System.out.println("takeTwo Called");
+
+      System.out.println(response.get());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param authToken    username of player trying to buy card.
+   * @param bonusTypeOne First desired Bonus Type.
+   * @param bonusTypeTwo Second desired Bonus Type.
+   * @param bonusTypeThree Third desired Bonus Type.
+   *
+   */
+  public static void takeThree(long sessionId,
+                             String authToken,
+                             BonusType bonusTypeOne,
+                               BonusType bonusTypeTwo,
+                               BonusType bonusTypeThree) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(UrlUtils.createGameServerUri(
+                      "/api/games/" + sessionId + "/threeTokens",
+                      "authenticationToken=" + authToken
+                              + "&tokenTypeOne=" + bonusTypeOne.toString()
+                      + "&tokenTypeTwo=" + bonusTypeTwo.toString()
+                      + "&tokenTypeThree=" + bonusTypeThree.toString()
+              )).PUT(HttpRequest.BodyPublishers.noBody())
+              .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+              client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+
+      System.out.println("takeThree Called");
+
+      System.out.println(response.get());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+
+
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
-  private static String requestParam(String authToken, PurchaseMap proposedDeal) {
+  private static String requestParamPurchaseMap(String authToken, PurchaseMap proposedDeal) {
     StringJoiner requestParam = new StringJoiner("&");
     requestParam.add("authenticationToken=" + authToken);
     requestParam.add("rubyAmount=" + proposedDeal.getRubyAmount());
@@ -250,6 +371,7 @@ public class PromptsRequests {
 
     return requestParam.toString();
   }
+
 
 
 }

@@ -83,6 +83,13 @@ public class PromptComponent extends Component {
     atCardEntity = cardEntity;
   }
 
+  /**
+   * Alternative constructor for PromptComponent (for buying cards prompt).
+   * Based on card level.
+   *
+   * @param promptType Type of prompt to be associated to the entity with this component.
+   * @param level The level of the card whose view will be displayed in the prompt.
+   */
   public PromptComponent(PromptTypeInterface promptType, Level level) {
     this(promptType);
     this.level = level;
