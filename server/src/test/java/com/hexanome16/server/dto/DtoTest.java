@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
  */
 public class DtoTest {
 
-  private final Game game = new Game(12345, null, "", "");
+  private final Game game = new Game(12345, null, "", "", new BaseWinCondition());
 
   private final DeckHash deckHash = new DeckHash(game, Level.ONE);
 

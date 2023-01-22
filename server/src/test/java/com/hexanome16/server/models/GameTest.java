@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link Game}.
  */
 public class GameTest {
-  private final Game game = new Game(12345, null, "", "");
+  private final Game game = new Game(12345, null, "", "", new BaseWinCondition());
 
   /**
    * Instantiates a new Game test.
