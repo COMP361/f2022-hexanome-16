@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Player;
@@ -12,9 +13,6 @@ import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.TokenService;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +23,9 @@ import org.springframework.http.ResponseEntity;
  * Test of {@link TokensController}.
  */
 public class TokensControllerTests {
-  private DummyAuthService dummyAuthService;
-  private GameService gameService;
   private TokensController tokensController;
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-      new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
   private String gameResponse;
 
@@ -40,12 +36,13 @@ public class TokensControllerTests {
    */
   @BeforeEach
   void setup() throws JsonProcessingException {
-    dummyAuthService = new DummyAuthService();
-    gameService = new GameService(dummyAuthService);
+    DummyAuthService dummyAuthService = new DummyAuthService();
+    GameService gameService = new GameService(dummyAuthService);
     tokensController  =
         new TokensController(
             new TokenService(gameService, dummyAuthService));
-    payload.setPlayers(new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
+    payload.setPlayers(new Player[] {
+        objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
         objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");

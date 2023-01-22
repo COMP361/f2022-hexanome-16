@@ -43,7 +43,7 @@ public class PromptFactory implements EntityFactory {
     } else if (data.getData().containsKey("level")) {
       PromptTypeInterface.PromptType promptType = PromptTypeInterface.PromptType.RESERVE_CARD;
       PromptTypeInterface myPromptType = promptType.getAssociatedClass();
-      Level level = (Level)data.getData().getOrDefault("level", Level.ONE);
+      Level level = (Level) data.getData().getOrDefault("level", Level.ONE);
 
       return entityBuilder(data)
           .with(new PromptComponent(myPromptType, level))
