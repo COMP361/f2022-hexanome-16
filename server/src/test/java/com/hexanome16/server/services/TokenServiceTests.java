@@ -1,15 +1,23 @@
 package com.hexanome16.server.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.controllers.TokensController;
+import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.GameBank;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Test of {@link TokenService}
@@ -53,7 +61,138 @@ public class TokenServiceTests {
    * Testing availableTwoTokensType.
    */
   @Test
-  public void testAvailableTwoTokensType() {
+  public void testAvailableTwoTokensType() throws JsonProcessingException {
+    ResponseEntity<String> response =
+        tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+    Set<String> available =
+        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
+    assertEquals(available,
+        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
+    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    game.incGameBank(-3, -4, 0, 0, 0, 0);
 
+    response =
+        tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+    available =
+        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
+    assertEquals(available,
+        Set.of("RED", "BLUE", "WHITE", "BLACK", "NULL"));
   }
+
+  /**
+   * Testing availableThreeTokensType().
+   */
+  @Test
+  public void testAvailableThreeTokensType() throws JsonProcessingException {
+    ResponseEntity<String> response =
+        tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+    Set<String> available =
+        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
+    assertEquals(available,
+        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
+    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    game.incGameBank(-3, -4, 0, -7, 0, 0);
+
+    response =
+        tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+    available =
+        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
+    assertEquals(available,
+        Set.of("RED", "BLUE", "GREEN", "BLACK", "NULL"));
+  }
+
+  /**
+   * Testing takeTwo.
+   */
+  @Test
+  public void testTakeTwo() {
+    long sessionId = DummyAuths.validSessionIds.get(0);
+    String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    Game game =
+        gameService.getGameMap().get(sessionId);
+
+    GameBank testGameBank =  new GameBank();
+
+    assertEquals(game.getGameBank(), testGameBank);
+    tokensService.takeTwoTokens(sessionId, authTokenPlayer1, "RED");
+    testGameBank.incBank(-2, 0, 0, 0, 0, 0);
+    assertEquals(game.getGameBank(), testGameBank);
+    game.incGameBank(-10, -10, -10, -10, -10, -10);
+    assertEquals(tokensService.takeTwoTokens(sessionId, authTokenPlayer2, "RED").getStatusCode(),
+        HttpStatus.BAD_REQUEST);
+  }
+
+
+  /**
+   * Testing takeThree.
+   */
+  @Test
+  public void testTakeThree() {
+    long sessionId = DummyAuths.validSessionIds.get(0);
+    String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    Game game =
+        gameService.getGameMap().get(sessionId);
+
+    GameBank testGameBank =  new GameBank();
+
+    assertEquals(game.getGameBank(), testGameBank);
+    tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
+
+    testGameBank.incBank(-1, -1, 0, -1, 0, 0);
+
+    assertEquals(game.getGameBank(), testGameBank);
+
+    assertEquals(tokensService.takeThreeTokens(sessionId, authTokenPlayer2,
+            "RED", "RED", "WHITE").getStatusCode(),
+        HttpStatus.BAD_REQUEST);
+  }
+
+
+  /**
+   * Testing validRequest(sessionId, authToken).
+   */
+  @Test
+  public void testValidRequest() {
+    // bad sessionId
+    ResponseEntity<String> response = tokensService.validRequest(
+        DummyAuths.invalidSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
+    );
+    assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+    // good sessionId and valid token + is their turn
+    response = tokensService.validRequest(
+        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
+    );
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+    // good sessionId and valid token but isnt their turn
+    response = tokensService.validRequest(
+        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(1).getAccessToken()
+    );
+    assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    gameService.endCurrentPlayersTurn(game);
+
+    // good sessionId and valid token + is their turn
+    response = tokensService.validRequest(
+        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(1).getAccessToken()
+    );
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+    // bad sessionId and token
+    response = tokensService.validRequest(
+        DummyAuths.invalidSessionIds.get(0), DummyAuths.invalidTokensInfos.get(1).getAccessToken()
+    );
+    assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+  }
+
 }
