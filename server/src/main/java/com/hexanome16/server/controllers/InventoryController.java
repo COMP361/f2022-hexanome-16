@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.services.GameServiceInterface;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class InventoryController {
   /* fields and controllers ********************************************************/
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
-  private final GameController gameController;
+  private final GameServiceInterface gameServiceInterface;
   private final ObjectMapper objectMapper;
 
   private final AuthServiceInterface authService;
@@ -34,18 +35,19 @@ public class InventoryController {
   /**
    * Controller for the Inventory.
    *
-   * @param restTemplateBuilder server
-   * @param urlUtils            operations
-   * @param gameController      controller for the whole game (used for helper)
-   * @param objectMapper        the object mapper
-   * @param authService         the authentication service
+   * @param restTemplateBuilder  server
+   * @param urlUtils             operations
+   * @param gameServiceInterface controller for the whole game (used for helper)
+   * @param objectMapper         the object mapper
+   * @param authService          the authentication service
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             GameController gameController, ObjectMapper objectMapper, @Autowired
-                             AuthServiceInterface authService) {
+                             @Autowired GameServiceInterface gameServiceInterface,
+                             ObjectMapper objectMapper,
+                             @Autowired AuthServiceInterface authService) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
-    this.gameController = gameController;
+    this.gameServiceInterface = gameServiceInterface;
     this.objectMapper = objectMapper;
     this.authService = authService;
   }
@@ -54,20 +56,20 @@ public class InventoryController {
 
   private Player getValidPlayer(long sessionId, String accessToken) {
     // verify that the request is valid
-    if (!authService.verifyPlayer(sessionId, accessToken, gameController.getGameMap())) {
+    if (!authService.verifyPlayer(sessionId, accessToken, gameServiceInterface.getGameMap())) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token
-    return gameController.findPlayerByToken(
-        gameController.getGameMap().get(sessionId), accessToken
+    return gameServiceInterface.findPlayerByToken(
+        gameServiceInterface.getGameMap().get(sessionId), accessToken
     );
   }
 
 
   private Player getValidPlayerByName(long sessionId, String username) {
 
-    Player myPlayer = gameController.findPlayerByName(
-        gameController.getGameMap().get(sessionId), username
+    Player myPlayer = gameServiceInterface.findPlayerByName(
+        gameServiceInterface.getGameMap().get(sessionId), username
     );
     if (myPlayer == null) {
       throw new IllegalArgumentException("Invalid Player.");

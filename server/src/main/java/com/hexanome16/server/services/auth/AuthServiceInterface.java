@@ -33,7 +33,7 @@ public interface AuthServiceInterface {
    * Sends a request to Lobby Service to get the username associated with the passed access token.
    *
    * @param accessToken The access token of the user.
-   * @return The username associated with the passed access token.
+   * @return The username associated with the passed access token, null if not found.
    */
   @ResponseBody
   ResponseEntity<String> getPlayer(String accessToken);
@@ -49,9 +49,9 @@ public interface AuthServiceInterface {
   /**
    * Verify player by their access token.
    *
-   * @param sessionId ID of session associated with request
+   * @param sessionId   ID of session associated with request
    * @param accessToken access token of request
-   * @param gameMap mapping from ID's to their respective game
+   * @param gameMap     mapping from ID's to their respective game
    * @return true if access token is in game with session ID, false otherwise.
    */
   boolean verifyPlayer(long sessionId, String accessToken, Map<Long, Game> gameMap);
