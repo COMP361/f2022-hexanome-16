@@ -1,7 +1,10 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +38,16 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
   @Override
   protected void handleConfirmation() {
     // this is where you handle what to do with their choice, refer to chosenBonus
+    long promptSessionId = GameScreen.getSessionId();
+    String auth = AuthUtils.getAuth().getAccessToken();
+    PromptsRequests.takeTwo(promptSessionId, auth, chosenBonus);
     PromptComponent.closePrompts();
   }
 
   @Override
   protected ArrayList<BonusType> getAvailableBonuses() {
-    return new ArrayList<>(List.of(BonusType.BLACK));
+    long promptSessionId = GameScreen.getSessionId();
+    return PromptsRequests.getAvailableTwoBonuses(promptSessionId);
   }
 
 }

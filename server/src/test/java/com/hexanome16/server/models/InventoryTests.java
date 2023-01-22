@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,17 +46,44 @@ public class InventoryTests {
   }
 
   /**
-   * Test to see if a pre-existing card can be successfully reserved to a player's
+   * Test to see if a face up card can be successfully reserved to a player's
    * inventory. The test here is the reserveCard method of the Inventory class.
    */
   @Test
-  @DisplayName("Reserve a Level Card successfully")
-  void testReserveCard() {
+  @DisplayName("Reserve a face up Level Card successfully")
+  void testReserveFaceUp() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     Price price = new TokenPrice(priceMap);
+    // by default the card should be face down
     levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
+    // add the card to the inventory
     inventory.reserveCard(levelCard);
+    // assert it was reserved successfully
     assertTrue(inventory.getReservedCards().contains(levelCard));
+    assertTrue(inventory.getReservedCards()
+            .get(inventory.getReservedCards().size() - 1)
+            .isFaceDown());
+  }
+
+  /**
+   * Test to see if a face down card can be successfully reserved to a player's
+   * inventory. The test here is the reserveCard method of the Inventory class.
+   */
+  @Test
+  @DisplayName("Reserve a face down Level Card successfully")
+  void testReserveFaceDown() {
+    PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
+    Price price = new TokenPrice(priceMap);
+    // by default the card should be face down
+    levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
+    levelCard.setIsFaceDown(false);
+    // add the card to the inventory
+    inventory.reserveCard(levelCard);
+    // assert it was reserved successfully
+    assertTrue(inventory.getReservedCards().contains(levelCard));
+    assertFalse(inventory.getReservedCards()
+            .get(inventory.getReservedCards().size() - 1)
+            .isFaceDown());
   }
 
   /**

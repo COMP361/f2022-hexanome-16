@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.services.GameServiceInterface;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,43 +27,49 @@ public class InventoryController {
   /* fields and controllers ********************************************************/
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
-  private final GameController gameController;
+  private final GameServiceInterface gameServiceInterface;
   private final ObjectMapper objectMapper;
+
+  private final AuthServiceInterface authService;
 
   /**
    * Controller for the Inventory.
    *
-   * @param restTemplateBuilder server
-   * @param urlUtils            operations
-   * @param gameController      controller for the whole game (used for helper)
-   * @param objectMapper        the object mapper
+   * @param restTemplateBuilder  server
+   * @param urlUtils             operations
+   * @param gameServiceInterface controller for the whole game (used for helper)
+   * @param objectMapper         the object mapper
+   * @param authService          the authentication service
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             GameController gameController, ObjectMapper objectMapper) {
+                             @Autowired GameServiceInterface gameServiceInterface,
+                             ObjectMapper objectMapper,
+                             @Autowired AuthServiceInterface authService) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
-    this.gameController = gameController;
+    this.gameServiceInterface = gameServiceInterface;
     this.objectMapper = objectMapper;
+    this.authService = authService;
   }
 
   /* helper methods ***************************************************************************/
 
   private Player getValidPlayer(long sessionId, String accessToken) {
     // verify that the request is valid
-    if (!gameController.verifyPlayer(sessionId, accessToken)) {
+    if (!authService.verifyPlayer(sessionId, accessToken, gameServiceInterface.getGameMap())) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token
-    return gameController.findPlayerByToken(
-        gameController.getGameMap().get(sessionId), accessToken
+    return gameServiceInterface.findPlayerByToken(
+        gameServiceInterface.getGameMap().get(sessionId), accessToken
     );
   }
 
 
   private Player getValidPlayerByName(long sessionId, String username) {
 
-    Player myPlayer = gameController.findPlayerByName(
-        gameController.getGameMap().get(sessionId), username
+    Player myPlayer = gameServiceInterface.findPlayerByName(
+        gameServiceInterface.getGameMap().get(sessionId), username
     );
     if (myPlayer == null) {
       throw new IllegalArgumentException("Invalid Player.");
@@ -115,7 +124,7 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
-        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+            objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
         HttpStatus.OK
     );
   }
@@ -140,8 +149,6 @@ public class InventoryController {
         HttpStatus.OK);
   }
 
-  // TODO : IMPLEMETNATIAAOSN
-
   /**
    * Get reserved Cards, with private cards.
    *
@@ -156,19 +163,12 @@ public class InventoryController {
                                                  @RequestParam String username,
                                                  @RequestParam String accessToken)
       throws JsonProcessingException {
+
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayer(sessionId, accessToken);
-
-    /* ( handled in the client )
-     * if this player is the current player :
-     *     show the cards face up
-     * else
-     *     show the cards face down
-     * */
-
+    Player player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
-    JsonNode node = getInventoryNode(player);
-    return new ResponseEntity<>(node.get("reservedCards").asText(), HttpStatus.OK);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+            player.getInventory().getReservedCards()), HttpStatus.OK);
   }
 
   /**
@@ -186,8 +186,8 @@ public class InventoryController {
     // get the player (if valid) from the session id and access token
     Player player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity
-    JsonNode node = getInventoryNode(player);
-    return new ResponseEntity<>(node.get("reservedNobles").asText(), HttpStatus.OK);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+            player.getInventory().getReservedNobles()), HttpStatus.OK);
   }
 
 }

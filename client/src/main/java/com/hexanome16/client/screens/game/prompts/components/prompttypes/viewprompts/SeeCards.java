@@ -28,32 +28,32 @@ import javafx.scene.text.TextAlignment;
  */
 public class SeeCards implements PromptTypeInterface {
 
-  private static List<String> cardPaths = new ArrayList<>();
+  private static List<String> cardTexturePaths = new ArrayList<>();
 
   /**
    * The width.
    */
-  double atWidth = getAppWidth() / 2.;
+  private double atWidth = getAppWidth() / 2.;
   /**
    * The height.
    */
-  double atHeight = getAppHeight() / 2.;
+  private double atHeight = getAppHeight() / 2.;
   /**
    * The card width.
    */
-  double atCardWidth = atWidth / 4;
+  private double atCardWidth = atWidth / 4;
   /**
    * The card height.
    */
-  double atCardHeight = atCardWidth * 1.39;
+  private double atCardHeight = atCardWidth * 1.39;
   /**
    * The top left x.
    */
-  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  private double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
   /**
    * The top left y.
    */
-  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  private double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
   //List<String> cards = List.of("card1.png", "card2.png");
 
   /**
@@ -69,9 +69,9 @@ public class SeeCards implements PromptTypeInterface {
     Gson myGson = new Gson();
     List<Map<String, String>> cards = myGson.fromJson(response, List.class);
     // add the paths to our list
-    cardPaths = new ArrayList<>();
+    cardTexturePaths = new ArrayList<>();
     for (Map<String, String> card : cards) {
-      cardPaths.add(card.get("texturePath") + ".png");
+      cardTexturePaths.add(card.get("texturePath") + ".png");
     }
   }
 
@@ -111,9 +111,9 @@ public class SeeCards implements PromptTypeInterface {
     TilePane myCards = new TilePane();
     myScrollPane.setContent(myCards);
 
-    // add cards to player's hand TODO this
-    for (String card : cardPaths) {
-      myCards.getChildren().add(cardFromName(card));
+    // add cards to player's hand
+    for (String card : cardTexturePaths) {
+      myCards.getChildren().add(getCardTexture(card));
     }
 
     myCards.setPrefWidth(atWidth);
@@ -127,7 +127,7 @@ public class SeeCards implements PromptTypeInterface {
    * @param cardName cardName
    * @return card as a texture
    */
-  private Texture cardFromName(String cardName) {
+  private Texture getCardTexture(String cardName) {
     Texture card = FXGL.texture(cardName);
     card.setFitWidth(atCardWidth);
     card.setFitHeight(atCardHeight);

@@ -6,6 +6,9 @@ import static com.hexanome16.client.Config.OPPONENT_SCALE;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.client.utils.AuthUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,15 +29,24 @@ public class PlayerDecks {
    * @param players players for this session
    */
   public static void generateAll(String[] players) {
+    String myName = AuthUtils.getPlayer().getName();
+    while (!players[0].equals(myName)) {
+      String firstPerson = players[0];
+      for (int i = 1; i < players.length; i++) {
+        players[i - 1] = players[i];
+      }
+      players[players.length - 1] = firstPerson;
+    }
+
     // number of players for this session
     int numOfPlayers = players.length;
     // current decks
     PlayerDecks decks = new PlayerDecks();
-    // spawn who is playing TODO animation
+    // spawn who is playing
     FXGL.spawn("PlayersTurn", 95, 60);
     // spawn the players
     int curr = 0;
-    // spawn the current player TODO here array of username
+    // spawn the current player
     if (curr < numOfPlayers) {
       decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
     }
@@ -79,8 +91,8 @@ public class PlayerDecks {
             vertical + 95 * scale)
         .setScaleUniform(0.1 * scale);
     for (int j = 10; j <= 130; j += 60) {
-      FXGL.spawn("ReservedCards", horizontal + (i * PlayerDecks.horizontal + j) * scale, vertical)
-          .setScaleUniform(0.07 * scale);
+      FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
+          * scale, vertical).put("player", name)).setScaleUniform(0.07 * scale);
     }
   }
 
@@ -126,12 +138,15 @@ public class PlayerDecks {
         .put("player", name)).setScaleUniform(1.2 * scale);
     FXGL.spawn("ReservedNobles", horizontal - 60, verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 180 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 240 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontal - 50, verticalShift + 300 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards",
+        new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
   }
 
   private void spawnRightPlayer(String name, double horizontalShift,
@@ -179,14 +194,14 @@ public class PlayerDecks {
     FXGL.spawn("ReservedNobles", horizontalShift + horizontal * scale + 95,
             verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 180 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards",  new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 240 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards", horizontalShift + horizontal * scale + 95,
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 300 + vertical * scale)
-        .setScaleUniform(0.07 * scale);
+        .put("player", name)).setScaleUniform(0.07 * scale);
   }
 }

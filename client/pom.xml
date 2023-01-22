@@ -15,32 +15,16 @@
         <!-- plugins -->
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
-        <node.lts.version>v16.16.0</node.lts.version>
         <checkstyle.version>10.3.4</checkstyle.version>
 
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jfx.maven.version>0.0.5</jfx.maven.version>
-        <jpro.version>2022.1.5</jpro.version>
 
         <javafx.version>17.0.2</javafx.version>
         <fxgl.version>17.2</fxgl.version>
         <kotlin.version>1.6.0</kotlin.version>
     </properties>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jpro - sandec repository</id>
-            <url>https://sandec.jfrog.io/artifactory/repo</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <repositories>
-        <repository>
-            <id>jpro - sandec repository</id>
-            <url>https://sandec.jfrog.io/artifactory/repo</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -85,12 +69,6 @@
             <version>${javafx.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sandec.jpro</groupId>
-            <artifactId>jpro-webapi</artifactId>
-            <version>${jpro.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -124,14 +102,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
-                <configuration>
-                    <installDirectory>target</installDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
@@ -160,20 +130,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.sandec.jpro</groupId>
-                <artifactId>jpro-maven-plugin</artifactId>
-                <version>${jpro.version}</version>
-                <configuration>
-                    <visible>false</visible>
-                    <JVMArgs>
-                        <!-- <JVMArg>your-args</JVMArg> -->
-                    </JVMArgs>
-                    <mainClassName>com.hexanome16.client.MainApp</mainClassName>
-                    <openingPath>/</openingPath>
-                </configuration>
             </plugin>
 
             <!-- Compile kotlin -->
@@ -249,82 +205,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jpro.mode>dev</jpro.mode>
-                <profileId>dev</profileId>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.sandec.jpro</groupId>
-                        <artifactId>jpro-maven-plugin</artifactId>
-                        <version>${jpro.version}</version>
-                        <configuration>
-                            <visible>true</visible>
-                            <JVMArgs>
-                                <!-- <JVMArg>your-args</JVMArg> -->
-                            </JVMArgs>
-                            <mainClassName>com.hexanome16.client.MainApp</mainClassName>
-                            <openingPath>/</openingPath>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jpro.mode>dev</jpro.mode>
-                                <profileId>dev</profileId>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>prod</id>
-            <properties>
-                <jpro.mode>prod</jpro.mode>
-                <profileId>prod</profileId>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.sandec.jpro</groupId>
-                        <artifactId>jpro-maven-plugin</artifactId>
-                        <version>${jpro.version}</version>
-                        <configuration>
-                            <visible>true</visible>
-                            <JVMArgs>
-                                <!-- <JVMArg>your-args</JVMArg> -->
-                            </JVMArgs>
-                            <mainClassName>com.hexanome16.client.MainApp</mainClassName>
-                            <openingPath>/</openingPath>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jpro.mode>prod</jpro.mode>
-                                <profileId>prod</profileId>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

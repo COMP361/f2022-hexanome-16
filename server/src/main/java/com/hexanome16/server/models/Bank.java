@@ -240,4 +240,23 @@ public abstract class Bank {
     return playerBankRepresentation.toString();
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj.getClass() != this.getClass()) {
+      return false;
+    }
+    if (this == obj) {
+      return true;
+    }
+    Bank otherBank = (Bank) obj;
+    return this.getBank().equals(otherBank.getBank());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getBank().hashCode();
+  }
 }

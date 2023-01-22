@@ -18,4 +18,4 @@ COPY --from=build /usr/src/app/target/ls.jar /usr/app/ls.jar
 EXPOSE 4242
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash ls-api -s
-RUN apk add --no-cache bash coreutils grep sed
+RUN apk add --no-cache bash coreutils grep sed curl
