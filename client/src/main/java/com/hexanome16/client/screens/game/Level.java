@@ -15,5 +15,17 @@ public enum Level {
   /**
    * Level three.
    */
-  THREE
+  THREE,
+  /**
+   * Red level one.
+   */
+  REDONE,
+  /**
+   * Red level two.
+   */
+  REDTWO,
+  /**
+   * Red level three.
+   */
+  REDTHREE
 }

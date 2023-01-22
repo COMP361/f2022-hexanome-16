@@ -23,11 +23,19 @@ public class GameScreen {
   private static final Map<String, Map> level_two = new HashMap<String, Map>();
   private static final Map<String, Map> level_three = new HashMap<String, Map>();
 
+  private static final Map<String, Map> red_level_one = new HashMap<String, Map>();
+  private static final Map<String, Map> red_level_two = new HashMap<String, Map>();
+  private static final Map<String, Map> red_level_three = new HashMap<String, Map>();
+
   private static final Map<String, Map> nobles = new HashMap<String, Map>();
 
   private static String levelOneDeckJson = "";
   private static String levelTwoDeckJson = "";
   private static String levelThreeDeckJson = "";
+
+  private static String redLevelOneDeckJson = "";
+  private static String redLevelTwoDeckJson = "";
+  private static String redLevelThreeDeckJson = "";
 
   private static String nobleJson = "";
 
@@ -38,6 +46,10 @@ public class GameScreen {
   private static Thread updateLevelOneDeck;
   private static Thread updateLevelTwoDeck;
   private static Thread updateLevelThreeDeck;
+
+  private static Thread updateRedLevelOneDeck;
+  private static Thread updateRedLevelTwoDeck;
+  private static Thread updateRedLevelThreeDeck;
 
   private static Thread updateNobles;
 
@@ -106,6 +118,69 @@ public class GameScreen {
     updateLevelThreeDeck.start();
   }
 
+  private static void fetchRedLevelOneDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        redLevelOneDeckJson =
+            GameRequest.updateDeck(
+                sessionId, Level.REDONE, DigestUtils.md5Hex(redLevelOneDeckJson)
+            );
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateRedLevelOneDeck = null;
+      Platform.runLater(GameScreen::updateRedLevelOneDeck);
+      fetchRedLevelOneDeckThread();
+    });
+    updateRedLevelOneDeck = new Thread(updateDeckTask);
+    updateRedLevelOneDeck.setDaemon(true);
+    updateRedLevelOneDeck.start();
+  }
+
+  private static void fetchRedLevelTwoDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        redLevelTwoDeckJson =
+            GameRequest.updateDeck(
+                sessionId, Level.REDTWO, DigestUtils.md5Hex(redLevelTwoDeckJson)
+            );
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateRedLevelTwoDeck = null;
+      Platform.runLater(GameScreen::updateRedLevelTwoDeck);
+      fetchRedLevelTwoDeckThread();
+    });
+    updateRedLevelTwoDeck = new Thread(updateDeckTask);
+    updateRedLevelTwoDeck.setDaemon(true);
+    updateRedLevelTwoDeck.start();
+  }
+
+  private static void fetchRedLevelThreeDeckThread() {
+    Task<Void> updateDeckTask = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        redLevelThreeDeckJson =
+            GameRequest.updateDeck(
+                sessionId, Level.REDTHREE, DigestUtils.md5Hex(redLevelThreeDeckJson)
+            );
+        return null;
+      }
+    };
+    updateDeckTask.setOnSucceeded(e -> {
+      updateRedLevelThreeDeck = null;
+      Platform.runLater(GameScreen::updateRedLevelThreeDeck);
+      fetchRedLevelThreeDeckThread();
+    });
+    updateRedLevelThreeDeck = new Thread(updateDeckTask);
+    updateRedLevelThreeDeck.setDaemon(true);
+    updateRedLevelThreeDeck.start();
+  }
+
   private static void fetchNoblesThread() {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
@@ -170,6 +245,9 @@ public class GameScreen {
     FXGL.spawn("LevelOneDeck");
     FXGL.spawn("LevelTwoDeck");
     FXGL.spawn("LevelThreeDeck");
+    FXGL.spawn("RedLevelOneDeck");
+    FXGL.spawn("RedLevelTwoDeck");
+    FXGL.spawn("RedLevelThreeDeck");
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
@@ -181,6 +259,15 @@ public class GameScreen {
     }
     if (updateLevelThreeDeck == null) {
       fetchLevelThreeDeckThread();
+    }
+    if (updateRedLevelOneDeck == null) {
+      fetchRedLevelOneDeckThread();
+    }
+    if (updateRedLevelTwoDeck == null) {
+      fetchRedLevelTwoDeckThread();
+    }
+    if (updateRedLevelThreeDeck == null) {
+      fetchRedLevelThreeDeckThread();
     }
     if (updateNobles == null) {
       fetchNoblesThread();
@@ -329,22 +416,136 @@ public class GameScreen {
   }
 
   /**
+   * Updates red level one deck.
+   */
+  private static void updateRedLevelOneDeck() {
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(redLevelOneDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
+
+    String hashToRemove = "";
+    //check if remove
+    for (Map.Entry<String, Map> entry : red_level_one.entrySet()) {
+      String hash = entry.getKey();
+      if (!cardHashList.containsKey(hash)) {
+        hashToRemove = hash;
+        for (int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.red_level_one_grid[i].getCardHash())) {
+            CardComponent.red_level_one_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    red_level_one.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!red_level_one.containsKey(hash)) {
+        red_level_one.put(hash, card);
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("RedLevelOneCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
+  }
+
+  /**
+   * Updates red level two deck.
+   */
+  private static void updateRedLevelTwoDeck() {
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(redLevelTwoDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
+
+    String hashToRemove = "";
+    //check if remove
+    for (Map.Entry<String, Map> entry : red_level_two.entrySet()) {
+      String hash = entry.getKey();
+      if (!cardHashList.containsKey(hash)) {
+        hashToRemove = hash;
+        for (int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.red_level_two_grid[i].getCardHash())) {
+            CardComponent.red_level_two_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    red_level_two.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!red_level_two.containsKey(hash)) {
+        red_level_two.put(hash, card);
+        PriceMap pm = getPriceMap(card);
+        FXGL.spawn("RedLevelTwoCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
+  }
+
+  /**
+   * Updates red level three deck.
+   */
+  private static void updateRedLevelThreeDeck() {
+    Gson gson = new Gson();
+    Map<String, Object> deckHash = gson.fromJson(redLevelThreeDeckJson, Map.class);
+    Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
+
+    String hashToRemove = "";
+    //check if remove
+    for (Map.Entry<String, Map> entry : red_level_three.entrySet()) {
+      String hash = entry.getKey();
+      if (!cardHashList.containsKey(hash)) {
+        hashToRemove = hash;
+        for (int i = 0; i < 4; i++) {
+          if (hash.equals(CardComponent.red_level_three_grid[i].getCardHash())) {
+            CardComponent.red_level_three_grid[i].removeFromMat();
+          }
+        }
+      }
+    }
+    red_level_three.remove(hashToRemove);
+    for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
+      String hash = entry.getKey();
+      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      if (!red_level_three.containsKey(hash)) {
+        red_level_three.put(hash, card);
+        PriceMap pm = new PriceMap(); // need to be dealt with later
+        FXGL.spawn("RedLevelThreeCard",
+            new SpawnData().put("id", card.get("id")).put("texture", card.get("texturePath"))
+                .put("price", pm).put("MD5", hash));
+      }
+    }
+  }
+
+  /**
    * Resets every component and clears the game board when exit the game.
    */
   public static void exitGame() {
     levelOneDeckJson = "";
     levelTwoDeckJson = "";
     levelThreeDeckJson = "";
+    redLevelOneDeckJson = "";
+    redLevelTwoDeckJson = "";
+    redLevelThreeDeckJson = "";
     nobleJson = "";
     currentPlayerJson = "";
     updateLevelOneDeck = null;
     updateLevelTwoDeck = null;
     updateLevelThreeDeck = null;
+    updateRedLevelOneDeck = null;
+    updateRedLevelTwoDeck = null;
+    updateRedLevelThreeDeck = null;
     updateNobles = null;
     updateCurrentPlayer = null;
     level_one.clear();
     level_two.clear();
     level_three.clear();
+    red_level_one.clear();
+    red_level_two.clear();
+    red_level_three.clear();
     nobles.clear();
     CardComponent.reset();
     NobleComponent.reset();

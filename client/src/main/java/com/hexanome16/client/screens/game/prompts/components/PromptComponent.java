@@ -9,8 +9,10 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -67,6 +69,8 @@ public class PromptComponent extends Component {
    */
   Entity atCardEntity;
 
+  Level level;
+
   /**
    * Alternative constructor for PromptComponent (for buying cards prompt).
    * To rework.
@@ -77,6 +81,18 @@ public class PromptComponent extends Component {
   public PromptComponent(PromptTypeInterface promptType, Entity cardEntity) {
     this(promptType);
     atCardEntity = cardEntity;
+  }
+
+  /**
+   * Alternative constructor for PromptComponent (for buying cards prompt).
+   * Based on card level.
+   *
+   * @param promptType Type of prompt to be associated to the entity with this component.
+   * @param level The level of the card whose view will be displayed in the prompt.
+   */
+  public PromptComponent(PromptTypeInterface promptType, Level level) {
+    this(promptType);
+    this.level = level;
   }
 
   /**
@@ -114,7 +130,9 @@ public class PromptComponent extends Component {
   public void onAdded() {
     initiateWorldProperties();
     buildBox();
-    if (atCardEntity == null) {
+    if (level != null) {
+      ((ReserveCardPrompt) atPromptType).populatePrompt(entity, level);
+    } else if (atCardEntity == null) {
       atPromptType.populatePrompt(entity);
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);

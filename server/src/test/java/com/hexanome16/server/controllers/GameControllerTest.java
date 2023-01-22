@@ -1,263 +1,244 @@
 package com.hexanome16.server.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.lobbyservice.auth.AuthController;
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.PriceMap;
-import com.hexanome16.server.models.PurchaseMap;
-import com.hexanome16.server.models.TokenPrice;
-import com.hexanome16.server.models.auth.TokensInfo;
-import com.hexanome16.server.util.UrlUtils;
-import java.util.ArrayList;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.models.Game;
+import com.hexanome16.server.services.GameService;
+import com.hexanome16.server.services.GameServiceInterface;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
- * Tests for {@link GameController}.
+ * Unit tests for {@link GameController}.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {GameController.class, AuthController.class, UrlUtils.class})
-@RestClientTest(excludeAutoConfiguration = MockRestServiceServerAutoConfiguration.class)
-public class GameControllerTest {
-  private final String kim = "{\"name\":" + "\"kim\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
-  private final String imad = "{\"name\":" + "\"imad\"," + "\"preferredColour\":" + "\"#FFFFFF\"}";
-  private final String creator = "kim";
-  private final String savegame = "";
-  private final Long sessionId = Long.valueOf(12345);
-  private final ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  private final Map<String, Object> payload = new HashMap<String, Object>();
-  @Autowired
-  private GameController gameController;
-  @Autowired
-  private AuthController authController;
-  private String accessToken;
-  private String invalidAccessToken;
-  private String gameResponse;
+class GameControllerTest {
 
   /**
-   * Setup mock for game tests.
-   *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * The Game controller.
    */
-  @BeforeEach
-  public void createGame() throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<TokensInfo> tokens = authController.login("kim", "123");
-    authController.login("imad", "123");
-    accessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
-    tokens = authController.login("peini", "123");
-    invalidAccessToken = Objects.requireNonNull(tokens.getBody()).getAccessToken();
-    List playerList = new ArrayList<String>();
-    playerList.add(objectMapper.readValue(imad, Map.class));
-    playerList.add(objectMapper.readValue(kim, Map.class));
-    payload.put("players", playerList);
-    payload.put("creator", creator);
-    payload.put("savegame", savegame);
-    gameResponse = gameController.createGame(12345, payload);
+  GameController gameController;
+
+  /**
+   * Create game service mock with Mockito.
+   *
+   * @return the game service mock
+   */
+  GameServiceInterface createGameServiceMock() {
+    return Mockito.mock(GameService.class);
+  }
+
+  /**
+   * Test get game map.
+   */
+  @Test
+  void testGetGameMap() {
+    final HashMap<Long, Game> gameMapStub = new HashMap<>();
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.getGameMap()).thenReturn(gameMapStub);
+    this.gameController = new GameController(gameServiceMock);
+
+    assertEquals(gameMapStub, gameController.getGameMap());
   }
 
   /**
    * Test create game.
-   *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
-  public void testCreateGame() throws com.fasterxml.jackson.core.JsonProcessingException {
-    assertEquals("success", gameResponse);
+  void testCreateGame() {
+    final String gameStub = "game test";
+    final String game2Stub = "game test 2";
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.createGame(123L, new SessionJson())).thenReturn(gameStub);
+    when(gameServiceMock.createGame(124L, new SessionJson())).thenReturn(game2Stub);
+    this.gameController = new GameController(gameServiceMock);
+
+    assertEquals(gameStub, gameController.createGame(123L, new SessionJson()));
+    assertEquals(game2Stub, gameController.createGame(124L, new SessionJson()));
   }
 
   /**
-   * Test update deck success.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * Test get deck.
    */
   @Test
-  public void testUpdateDeckSuccess()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getDeck(12345, "ONE", accessToken, hash)
-            .getResult();
-    assertNotNull(response);
+  void testGetDeck() {
+    final DeferredResult<ResponseEntity<String>> deckStub = new DeferredResult<>();
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.getDeck(123L, "ONE", "123", "123B")).thenReturn(deckStub);
+    this.gameController = new GameController(gameServiceMock);
+
+    assertEquals(deckStub, gameController.getDeck(123L, "ONE", "123", "123B"));
   }
 
   /**
-   * Test update deck fail.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * Test get nobles.
    */
   @Test
-  public void testUpdateDeckFail()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    DeferredResult<ResponseEntity<String>> response =
-        gameController.getDeck(12345, "ONE",
-            invalidAccessToken, hash);
-    assertNull(response);
+  void testGetNobles() {
+    final DeferredResult<ResponseEntity<String>> noblesStub = new DeferredResult<>();
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.getNobles(123L, "123", "123B")).thenReturn(noblesStub);
+    this.gameController = new GameController(gameServiceMock);
+
+    assertEquals(noblesStub, gameController.getNobles(123L, "123", "123B"));
   }
 
   /**
-   * Test update nobles success.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * Test get current player.
    */
   @Test
-  public void testUpdateNoblesSuccess()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getNobles(12345, accessToken, hash).getResult();
-    assertNotNull(response);
+  void testGetCurrentPlayer() {
+    final DeferredResult<ResponseEntity<String>> currentPlayerStub = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> currentPlayer2Stub = new DeferredResult<>();
+
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.getCurrentPlayer(123L, "123", "123B")).thenReturn(currentPlayerStub);
+    this.gameController = new GameController(gameServiceMock);
+
+    assertEquals(currentPlayerStub, gameController.getCurrentPlayer(123L, "123", "123B"));
+    assertNotEquals(currentPlayer2Stub, gameController.getCurrentPlayer(123L, "123", "123B"));
   }
 
   /**
-   * Test update nobles fail.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   * Test get winners.
    */
   @Test
-  public void testUpdateNoblesFail()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    DeferredResult<ResponseEntity<String>> response =
-        gameController.getNobles(12345, invalidAccessToken,
-            hash);
-    assertNull(response);
-  }
+  void testGetWinners() {
+    final DeferredResult<ResponseEntity<String>> winnersStub = new DeferredResult<>();
 
-  /**
-   * Test current player success.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
-   */
-  @Test
-  public void testCurrentPlayerSuccess()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    ResponseEntity<String> response =
-        (ResponseEntity<String>) gameController.getCurrentPlayer(12345, accessToken, hash)
-            .getResult();
-    assertNotNull(response);
-  }
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    when(gameServiceMock.getWinners(123L, "123", "123B")).thenReturn(winnersStub);
+    this.gameController = new GameController(gameServiceMock);
 
-  /**
-   * Test current player fail.
-   *
-   * @throws JsonProcessingException                            the json processing exception
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
-   */
-  @Test
-  public void testCurrentPlayerFail()
-      throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
-    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    DeferredResult<ResponseEntity<String>> response =
-        gameController.getCurrentPlayer(12345,
-            invalidAccessToken, hash);
-    assertNull(response);
+    assertEquals(winnersStub, gameController.getWinners(123L, "123", "123B"));
   }
 
   /**
    * Test get player bank info.
-   *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
-  public void testGetPlayerBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<String> response =
-        gameController.getPlayerBankInfo(sessionId, "imad");
-    String string = response.getBody().toString();
-    PurchaseMap myPm = objectMapper.readValue(string,
-        new TypeReference<PurchaseMap>() {
-        });
+  void testGetPlayerBankInfo() {
+    final ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
 
-    assertEquals(myPm.getRubyAmount(), 3);
-    assertEquals(myPm.getEmeraldAmount(), 3);
-    assertEquals(myPm.getSapphireAmount(), 3);
-    assertEquals(myPm.getDiamondAmount(), 3);
-    assertEquals(myPm.getOnyxAmount(), 3);
-    assertEquals(myPm.getGoldAmount(), 3);
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    try {
+      when(gameServiceMock.getPlayerBankInfo(123L, "tristan")).thenReturn(playerBankInfoStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock);
+
+    try {
+      assertEquals(playerBankInfoStub, gameController.getPlayerBankInfo(123L, "tristan"));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
   }
 
   /**
    * Test get game bank info.
-   *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
-  public void testGetGameBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<String> response =
-        gameController.getGameBankInfo(sessionId);
-    String string = response.getBody().toString();
-    PurchaseMap myPm = objectMapper.readValue(string,
-        new TypeReference<PurchaseMap>() {
-        });
+  void testGetGameBankInfo() {
+    final ResponseEntity<String> gameBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
 
-    assertEquals(myPm.getRubyAmount(), 7);
-    assertEquals(myPm.getEmeraldAmount(), 7);
-    assertEquals(myPm.getSapphireAmount(), 7);
-    assertEquals(myPm.getDiamondAmount(), 7);
-    assertEquals(myPm.getOnyxAmount(), 7);
-    assertEquals(myPm.getGoldAmount(), 5);
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    try {
+      when(gameServiceMock.getGameBankInfo(123L)).thenReturn(gameBankInfoStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock);
+
+    try {
+      assertEquals(gameBankInfoStub, gameController.getGameBankInfo(123L));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
   }
-
 
   /**
    * Test buy card.
-   *
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @Test
-  public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+  void testBuyCard() {
+    final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
-    LevelCard myCard =
-        new LevelCard(20, 0, "",
-            new TokenPrice(
-                new PriceMap(1, 1, 1,
-                    1, 0)),
-            Level.ONE);
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    try {
+      when(gameServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
+          buyCardResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock);
 
-    gameController.getGameMap().get(sessionId).endCurrentPlayersTurn();
-
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-
-    ResponseEntity<String> response =
-        gameController.buyCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
-            1, 1, 1, 0, 0, 1
-        );
-
-
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
+    try {
+      assertEquals(buyCardResponseStub,
+          gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
   }
 
-}
+  /**
+   * Test reserve card.
+   */
+  @Test
+  void testReserveCard() {
+    final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    try {
+      when(gameServiceMock.reserveCard(123L, "md5", "abc")).thenReturn(
+          reserveCardResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock);
+
+    try {
+      assertEquals(reserveCardResponseStub, gameController.reserveCard(123L, "md5", "abc"));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+  }
+
+  /**
+   * Test reserve face down card.
+   */
+  @Test
+  void testReserveFaceDownCard() {
+    final ResponseEntity<String> reserveCardFaceDownResponseStub =
+        new ResponseEntity<>(HttpStatus.OK);
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    try {
+      when(gameServiceMock.reserveFaceDownCard(123L, "md5", "abc")).thenReturn(
+          reserveCardFaceDownResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock);
+
+    try {
+      assertEquals(reserveCardFaceDownResponseStub,
+          gameController.reserveFaceDownCard(123L, "md5", "abc"));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+  }
+}

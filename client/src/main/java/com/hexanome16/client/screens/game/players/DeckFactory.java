@@ -12,6 +12,7 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -278,10 +279,15 @@ public class DeckFactory implements EntityFactory {
       pane.setScaleX(1);
       pane.setScaleY(1);
     });
+    String player = (String) data.getData().getOrDefault("player", "");
     // build the entity
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.07, 0.07)
+        .onClick(e -> {
+          SeeReserved.fetchReservedCards(player);
+          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_RESERVED);
+        })
         .build();
   }
 
