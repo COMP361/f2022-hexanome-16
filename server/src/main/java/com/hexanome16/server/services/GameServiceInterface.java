@@ -1,6 +1,7 @@
 package com.hexanome16.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import java.util.Map;
@@ -28,7 +29,7 @@ public interface GameServiceInterface {
    * @param payload   the payload
    * @return error if present
    */
-  String createGame(long sessionId, Map<String, Object> payload);
+  String createGame(long sessionId, SessionJson payload);
 
   /**
    * Long polling on update on onboard deck.
@@ -64,6 +65,18 @@ public interface GameServiceInterface {
    * @return current player username
    */
   DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId,
+                                                          String accessToken,
+                                                          String hash);
+
+  /**
+   * Return the winners of the game.
+   *
+   * @param sessionId   game id
+   * @param accessToken player access token
+   * @param hash        hash for long polling
+   * @return game winners
+   */
+  DeferredResult<ResponseEntity<String>> getWinners(long sessionId,
                                                           String accessToken,
                                                           String hash);
 

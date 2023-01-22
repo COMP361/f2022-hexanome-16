@@ -1,6 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.GameServiceInterface;
@@ -49,7 +50,7 @@ public class GameController {
    * @return error if present
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
-  public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
+  public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
     return gameServiceInterface.createGame(sessionId, payload);
   }
 
@@ -98,6 +99,21 @@ public class GameController {
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
     return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
+  }
+
+  /**
+   * Return the winners of the game.
+   *
+   * @param sessionId   game id
+   * @param accessToken player access token
+   * @param hash        hash for long polling
+   * @return winners of the game
+   */
+  @GetMapping(value = "/games/{sessionId}/winners", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
+                                                                 @RequestParam String accessToken,
+                                                                 @RequestParam String hash) {
+    return gameServiceInterface.getWinners(sessionId, accessToken, hash);
   }
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
