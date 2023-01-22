@@ -38,7 +38,7 @@ public class CardComponent extends Component {
    * The constant red level_three_grid.
    */
   public static CardComponent[] red_level_three_grid = new CardComponent[2];
-  private final Level level;
+  public final Level level;
   private final boolean purchased = false;
   private final String cardHash;
   private final PriceMap priceMap;
@@ -118,7 +118,7 @@ public class CardComponent extends Component {
       case REDONE -> addToMat(red_level_one_grid);
       case REDTWO -> addToMat(red_level_two_grid);
       case REDTHREE -> addToMat(red_level_three_grid);
-      default -> throw new IllegalArgumentException("Something is sussy about this.");
+      default -> throw new IllegalArgumentException("Problem adding cards to the mat.");
     }
   }
 

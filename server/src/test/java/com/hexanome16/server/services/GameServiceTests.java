@@ -11,11 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
+import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 class GameServiceTests {
   private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  private final Map<String, Object> payload = new HashMap<>();
+  private final SessionJson payload = new SessionJson();
   private GameService gameService;
   private String gameResponse;
 
@@ -44,13 +47,13 @@ class GameServiceTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     gameService = new GameService(new DummyAuthService());
-    var playerPayload = List.of(objectMapper.readValue(DummyAuths.validJsonList.get(0), Map.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), Map.class));
-    payload.put("players", playerPayload);
-    String creator = "tristan";
-    payload.put("creator", creator);
-    String savegame = "";
-    payload.put("savegame", savegame);
+    payload.setPlayers(
+        new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
+            objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)}
+    );
+    payload.setCreator("tristan");
+    payload.setSavegame("");
+    payload.setWinCondition(new BaseWinCondition());
     gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(0), payload);
     gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(1), payload);
   }
@@ -81,8 +84,8 @@ class GameServiceTests {
   public void testUpdateDeckSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0), "REDTHREE",
-            DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
+        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0),
+            "REDTHREE", DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
   }
 
@@ -276,6 +279,53 @@ class GameServiceTests {
   }
 
   /**
+   * Test reserve card.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    ResponseEntity<String> response =
+        gameService.reserveCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  /**
+   * Test reserve face down card.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveFaceDownCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    ResponseEntity<String> response =
+        gameService.reserveFaceDownCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  /**
    * Test buy card invalid.
    *
    * @throws JsonProcessingException the json processing exception
@@ -318,6 +368,36 @@ class GameServiceTests {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
+  /**
+   * Test reserve card invalid.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testReserveCardInvalidCard()
+      throws com.fasterxml.jackson.core.JsonProcessingException {
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
+
+    LevelCard myCard = createValidCard();
+
+    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+
+    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+    // Test invalid sessionId
+    ResponseEntity<String> response = gameService.reserveCard(invalidSessionId,
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    // Test invalid accessToken
+    response =
+        gameService.reserveCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
   private LevelCard createValidCard() {
     return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(1, 1, 1, 1, 0)), Level.ONE);
   }
@@ -346,7 +426,8 @@ class GameServiceTests {
     var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
 
     //Test invalid player
-    var player = gameService.findPlayerByName(game, DummyAuths.invalidPlayerList.get(0).getName());
+    var player = gameService.findPlayerByName(game,
+        DummyAuths.invalidPlayerList.get(0).getName());
     assertNull(player);
   }
 

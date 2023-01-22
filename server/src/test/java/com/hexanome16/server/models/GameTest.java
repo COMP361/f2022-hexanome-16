@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +14,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-
 
 /**
  * Tests for {@link Game}.
@@ -25,14 +24,13 @@ public class GameTest {
   Player tristan;
   private Game game;
 
-
   /**
    * Initiates every test.
    */
   @BeforeEach
   public void init() throws IOException {
     game = new Game(12345,
-            new Player[]{imad, tristan}, "imad", "");
+            new Player[]{imad, tristan}, "imad", "", new BaseWinCondition());
     imad = new Player("imad", "#FFFFFF");
     tristan = new Player("tristan", "#FFFFFF");
   }

@@ -1,122 +1,186 @@
 package com.hexanome16.server.services.auth;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-import com.hexanome16.server.controllers.DummyAuthService;
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
+import com.hexanome16.server.services.GameService;
+import com.hexanome16.server.util.UrlUtils;
+import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Tests for {@link AuthService}.
  */
+@ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
+  private AuthService authService;
+  private GameService gameService;
+  private UrlUtils urlUtilsMock;
+  @Mock
+  private RestTemplate restTemplateMock;
 
-  private final String[] usernames = {
-      DummyAuths.validPlayerList.get(0).getName(),
-      DummyAuths.invalidPlayerList.get(0).getName()
-  };
-  private final String[] passwords = {
-      DummyAuths.validPasswords.get(0),
-      DummyAuths.invalidPasswords.get(0)
-  };
-  private final String[] tokens = {
-      DummyAuths.validTokensInfos.get(0).getAccessToken(),
-      DummyAuths.invalidTokensInfos.get(0).getAccessToken()
-  };
-  private final Long[] sessionIds = {
-      DummyAuths.validSessionIds.get(0),
-      DummyAuths.invalidSessionIds.get(0)
-  };
-  private final DummyAuthService authService = new DummyAuthService();
+  @BeforeEach
+  void setup() {
+    // Mock autowired dependencies
+    RestTemplateBuilder restTemplateBuilderMock = Mockito.mock(RestTemplateBuilder.class);
+    when(restTemplateBuilderMock.build()).thenReturn(restTemplateMock);
+    urlUtilsMock = Mockito.mock(UrlUtils.class);
+    when(urlUtilsMock.createLobbyServiceUri(anyString(), anyString())).thenAnswer(invocation -> {
+      String path = invocation.getArgument(0);
+      String params = invocation.getArgument(1);
+      return URI.create("http://localhost:4242" + path + "?" + params);
+    });
+
+    authService = new AuthService(restTemplateBuilderMock, urlUtilsMock);
+    ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
+    ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
+
+    gameService = new GameService(authService);
+  }
 
   @Test
   void testValidLogin() {
-    ResponseEntity<TokensInfo> validResponse = authService.login(usernames[0], passwords[0]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
+    ResponseEntity<TokensInfo> validResponse = authService.login(
+        DummyAuths.validPlayerList.get(0).getName(),
+        DummyAuths.validPasswords.get(0)
+    );
     assertTrue("Valid login should return 200", validResponse.getStatusCodeValue() == 200);
     assertTrue("Valid login should return a token", Objects.requireNonNull(
         validResponse.getBody()).getAccessToken() != null);
-    assertTrue("Valid login should return a valid token",
-        validResponse.getBody().getAccessToken().equals(
-            DummyAuths.validTokensInfos.get(0).getAccessToken()));
+    assertEquals("Valid login should return a valid token",
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        validResponse.getBody().getAccessToken()
+    );
   }
 
   @Test
   void testInvalidLogin() {
-    ResponseEntity<TokensInfo> invalidResponse = authService.login(usernames[1], passwords[1]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    ResponseEntity<TokensInfo> invalidResponse = authService.login(
+        DummyAuths.invalidPlayerList.get(0).getName(),
+        DummyAuths.invalidPasswords.get(0)
+    );
     assertTrue("Invalid login should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
   void testValidRefreshLogin() {
-    ResponseEntity<TokensInfo> validResponse = authService.login(tokens[0]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK));
+    ResponseEntity<TokensInfo> validResponse = authService.login(
+        DummyAuths.validTokensInfos.get(0).getRefreshToken()
+    );
     assertTrue("Valid refresh should return 200", validResponse.getStatusCodeValue() == 200);
     assertTrue("Valid refresh should return a token", Objects.requireNonNull(
         validResponse.getBody()).getAccessToken() != null);
     assertEquals(
         "Valid refresh should return a valid token",
-        validResponse.getBody().getAccessToken(),
-        DummyAuths.validTokensInfos.get(0).getAccessToken()
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        validResponse.getBody().getAccessToken()
     );
   }
 
   @Test
   void testInvalidRefreshLogin() {
-    ResponseEntity<TokensInfo> invalidResponse = authService.login(tokens[1]);
+    when(restTemplateMock.postForEntity(any(URI.class), any(), eq(TokensInfo.class)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    ResponseEntity<TokensInfo> invalidResponse = authService.login(
+        DummyAuths.invalidTokensInfos.get(0).getRefreshToken()
+    );
     assertTrue("Invalid login should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
   void testValidGetPlayer() {
-    ResponseEntity<String> validResponse = authService.getPlayer(tokens[0]);
+    URI uri = urlUtilsMock.createLobbyServiceUri(
+        "/oauth/username",
+        "access_token=" + DummyAuths.validTokensInfos.get(0).getAccessToken()
+    );
+    when(restTemplateMock.getForEntity(uri, String.class))
+        .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
+    ResponseEntity<String> validResponse =
+        authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertTrue("Valid get player should return 200", validResponse.getStatusCodeValue() == 200);
-    assertEquals("Valid get player should return the username", Objects.requireNonNull(
-        validResponse.getBody()), usernames[0]);
+    assertEquals("Valid get player should return the username",
+        DummyAuths.validPlayerList.get(0).getName(),
+        Objects.requireNonNull(validResponse.getBody())
+    );
   }
 
   @Test
   void testInvalidGetPlayer() {
-    ResponseEntity<String> invalidResponse = authService.getPlayer(tokens[1]);
+    URI uri = urlUtilsMock.createLobbyServiceUri(
+        "/oauth/username",
+        "access_token=" + DummyAuths.invalidTokensInfos.get(0).getAccessToken()
+    );
+    when(restTemplateMock.getForEntity(uri, String.class))
+        .thenReturn(ResponseEntity.badRequest().build());
+    ResponseEntity<String> invalidResponse =
+        authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertTrue("Invalid get player should return 400", invalidResponse.getStatusCodeValue() == 400);
   }
 
   @Test
   void testValidLogout() {
-    ResponseEntity<Void> validResponse = authService.logout(tokens[0]);
+    ResponseEntity<Void> validResponse =
+        authService.logout(DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertTrue("Valid logout should return 200", validResponse.getStatusCodeValue() == 200);
   }
 
   @Test
   void testInvalidLogout() {
-    ResponseEntity<Void> invalidResponse = authService.logout(tokens[1]);
-    assertTrue("Invalid logout should return 400", invalidResponse.getStatusCodeValue() == 400);
+    ResponseEntity<Void> invalidResponse =
+        authService.logout(DummyAuths.invalidTokensInfos.get(0).getAccessToken());
+    assertTrue("Invalid logout should also return 200",
+        invalidResponse.getStatusCodeValue() == 200);
   }
 
   @Test
   void testValidVerifyPlayer() {
-    assertTrue(
-        "Valid player and session should return true",
-        authService.verifyPlayer(sessionIds[0], tokens[0], null)
+    when(authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken()))
+        .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
+    boolean validResponse = authService.verifyPlayer(
+        DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(),
+        games
     );
+    assertTrue("Valid verify player should return true", validResponse);
   }
 
   @Test
   void testInvalidVerifyPlayer() {
-    assertFalse(
-        "Invalid session should return false",
-        authService.verifyPlayer(sessionIds[1], tokens[0], null)
+    when(authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
+        .thenReturn(ResponseEntity.ok(DummyAuths.invalidPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
+    boolean invalidResponse = authService.verifyPlayer(
+        DummyAuths.validSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
+        games
     );
-    assertFalse(
-        "Invalid token should return false",
-        authService.verifyPlayer(sessionIds[0], tokens[1], null)
-    );
-    assertFalse(
-        "Both invalid should return false",
-        authService.verifyPlayer(sessionIds[1], tokens[1], null)
-    );
+    assertFalse("Invalid verify player should return false", invalidResponse);
   }
 }

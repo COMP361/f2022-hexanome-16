@@ -2,6 +2,7 @@ package com.hexanome16.client.requests.backend.prompts;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.utils.UrlUtils;
@@ -141,6 +142,66 @@ public class PromptsRequests {
       System.out.println("BuyCard Called");
 
       System.out.println(response.get());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Send a request to reserve the card.
+   *
+   * @param sessionId game session id
+   * @param cardMd5 card hash
+   * @param authToken user authentication token
+   */
+  public static void reserveCard(long sessionId,
+                             String cardMd5,
+                             String authToken) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(UrlUtils.createGameServerUri(
+              "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
+              "authenticationToken=" + authToken
+          )).PUT(HttpRequest.BodyPublishers.noBody())
+          .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Send a request to reserve a face down card.
+   *
+   * @param sessionId game session id
+   * @param level level of the face down card
+   * @param authToken user authentication token
+   */
+  public static void reserveCard(long sessionId,
+                                 Level level,
+                                 String authToken) {
+    try {
+
+      HttpClient client = RequestClient.getClient();
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(UrlUtils.createGameServerUri(
+              "/api/games/" + sessionId + "/deck/reservation",
+              "authenticationToken=" + authToken + "&level=" + level.name()
+          )).PUT(HttpRequest.BodyPublishers.noBody())
+          .build();
+
+      CompletableFuture<HttpResponse<String>> response =
+          client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
     } catch (Exception e) {
       e.printStackTrace();

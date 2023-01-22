@@ -1,7 +1,9 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.GameServiceInterface;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +50,7 @@ public class GameController {
    * @return error if present
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
-  public String createGame(@PathVariable long sessionId, @RequestBody Map<String, Object> payload) {
+  public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
     return gameServiceInterface.createGame(sessionId, payload);
   }
 
@@ -99,6 +101,21 @@ public class GameController {
     return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
   }
 
+  /**
+   * Return the winners of the game.
+   *
+   * @param sessionId   game id
+   * @param accessToken player access token
+   * @param hash        hash for long polling
+   * @return winners of the game
+   */
+  @GetMapping(value = "/games/{sessionId}/winners", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
+                                                                 @RequestParam String accessToken,
+                                                                 @RequestParam String hash) {
+    return gameServiceInterface.getWinners(sessionId, accessToken, hash);
+  }
+
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
 
   /**
@@ -127,15 +144,6 @@ public class GameController {
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
     return gameServiceInterface.getGameBankInfo(sessionId);
-  }
-
-  /**
-   * Ends current player's turn and starts next player's turn.
-   *
-   * @param game the game the player is in
-   */
-  public void endCurrentPlayersTurn(Game game) {
-    gameServiceInterface.endCurrentPlayersTurn(game);
   }
 
   /**
@@ -170,4 +178,40 @@ public class GameController {
         emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
+
+  /**
+   * Let the player reserve a face up card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
+  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
+                                        @PathVariable String cardMd5,
+                                        @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    return gameServiceInterface.reserveCard(sessionId, cardMd5, authenticationToken);
+  }
+
+  /**
+   * Let the player reserve a face down card.
+   *
+   * @param sessionId game session id.
+   * @param level deck level.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
+  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
+                                            @RequestParam String level,
+                                            @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+
+    return gameServiceInterface.reserveFaceDownCard(sessionId, level, authenticationToken);
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 }

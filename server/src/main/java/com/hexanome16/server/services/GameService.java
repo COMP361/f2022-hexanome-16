@@ -7,6 +7,8 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
+import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
@@ -15,10 +17,12 @@ import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
@@ -26,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
@@ -62,37 +68,24 @@ public class GameService implements GameServiceInterface {
   //TODO: probably need to make a better test for this.
 
   @Override
-  public String createGame(long sessionId, Map<String, Object> payload) {
+  public String createGame(long sessionId, SessionJson payload) {
     try {
-      Player[] players = objectMapper.convertValue(payload.get("players"), Player[].class);
-      String creator = objectMapper.convertValue(payload.get("creator"), String.class);
-      String savegame = objectMapper.convertValue(payload.get("savegame"), String.class);
-      Game game = new Game(sessionId, players, creator, savegame);
+      Game game = new Game(sessionId, payload);
       gameMap.put(sessionId, game);
-      BroadcastContentManager<DeckHash> broadcastContentManagerOne =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.ONE));
-      BroadcastContentManager<DeckHash> broadcastContentManagerTwo =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.TWO));
-      BroadcastContentManager<DeckHash> broadcastContentManagerThree =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.THREE));
-      BroadcastContentManager<DeckHash> broadcastContentManagerRedOne =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.REDONE));
-      BroadcastContentManager<DeckHash> broadcastContentManagerRedTwo =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.REDTWO));
-      BroadcastContentManager<DeckHash> broadcastContentManagerRedThree =
-          new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), Level.REDTHREE));
+      for (Level level : Level.values()) {
+        BroadcastContentManager<DeckHash> broadcastContentManager =
+            new BroadcastContentManager<>(new DeckHash(gameMap.get(sessionId), level));
+        broadcastContentManagerMap.put(level.name(), broadcastContentManager);
+      }
       BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(
               new PlayerJson(gameMap.get(sessionId).getCurrentPlayer().getName()));
+      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+          new BroadcastContentManager<>(new WinJson());
       BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NoblesHash(gameMap.get(sessionId)));
-      broadcastContentManagerMap.put("ONE", broadcastContentManagerOne);
-      broadcastContentManagerMap.put("TWO", broadcastContentManagerTwo);
-      broadcastContentManagerMap.put("THREE", broadcastContentManagerThree);
-      broadcastContentManagerMap.put("REDONE", broadcastContentManagerRedOne);
-      broadcastContentManagerMap.put("REDTWO", broadcastContentManagerRedTwo);
-      broadcastContentManagerMap.put("REDTHREE", broadcastContentManagerRedThree);
       broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
+      broadcastContentManagerMap.put("winners", broadcastContentManagerWinners);
       broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
     } catch (Exception e) {
       e.printStackTrace();
@@ -138,6 +131,20 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
+  public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
+                                                                 String hash) {
+    if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
+      DeferredResult<ResponseEntity<String>> result;
+      result = ResponseGenerator.getHashBasedUpdate(
+          10000, broadcastContentManagerMap.get("winners"), hash
+      );
+      return result;
+    }
+    return null;
+
+  }
+
+  @Override
   public ResponseEntity<String> getPlayerBankInfo(long sessionId, String username)
       throws JsonProcessingException {
     // session not found
@@ -173,11 +180,23 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public void endCurrentPlayersTurn(Game game) {
-    game.setCurrentPlayerIndex((game.getCurrentPlayerIndex() + 1) % game.getPlayers().length);
-    BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-        (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
-    broadcastContentManagerPlayer.updateBroadcastContent(
-        new PlayerJson(game.getCurrentPlayer().getName()));
+    int nextPlayerIndex = (game.getCurrentPlayerIndex() + 1) % game.getPlayers().length;
+    game.setCurrentPlayerIndex(nextPlayerIndex);
+    if (nextPlayerIndex == 0) {
+      Player[] winners = game.getWinCondition().isGameWon(game);
+      if (winners.length > 0) {
+        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+            (BroadcastContentManager<WinJson>) broadcastContentManagerMap.get("winners");
+        broadcastContentManagerWinners.updateBroadcastContent(new WinJson(
+            Arrays.stream(winners).map(Player::getName).toArray(String[]::new)
+        ));
+      }
+    } else {
+      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+          (BroadcastContentManager<PlayerJson>) broadcastContentManagerMap.get("player");
+      broadcastContentManagerPlayer.updateBroadcastContent(
+          new PlayerJson(game.getCurrentPlayer().getName()));
+    }
   }
 
   @Override
@@ -254,6 +273,112 @@ public class GameService implements GameServiceInterface {
     // Ends players turn, which is current player
     endCurrentPlayersTurn(game);
 
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Let the player reserve a face up card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
+                                            @PathVariable String cardMd5,
+                                            @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    //verify game and player
+    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    Game game = gameMap.get(sessionId);
+
+    DevelopmentCard card = DeckHash.allCards.get(cardMd5);
+
+    Player player = findPlayerByToken(game, authenticationToken);
+
+    if (!game.isPlayersTurn(player)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!player.reserveCard(card)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // give player a gold token
+    game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
+
+    // replace this card with a new one on board
+    game.removeOnBoardCard((LevelCard) card);
+    Level level = ((LevelCard) card).getLevel();
+    game.addOnBoardCard(level);
+
+    // Notify long polling
+    ((BroadcastContentManager<DeckHash>)
+        (broadcastContentManagerMap.get(((LevelCard) card).getLevel().name())))
+        .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
+
+    endCurrentPlayersTurn(game);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Let the player reserve a face down card.
+   *
+   * @param sessionId game session id.
+   * @param level deck level.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
+                                                    @RequestParam String level,
+                                                    @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    //verify game and player
+    if (!gameMap.containsKey(sessionId)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    Game game = gameMap.get(sessionId);
+
+    Level atLevel;
+
+    switch (level) {
+      case "THREE": atLevel = Level.THREE;
+        break;
+      case "TWO": atLevel = Level.TWO;
+        break;
+      default: atLevel = Level.ONE;
+    }
+
+    DevelopmentCard card = game.getDeck(atLevel).nextCard();
+
+    Player player = findPlayerByToken(game, authenticationToken);
+
+    if (!game.isPlayersTurn(player)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    if (!player.reserveCard(card)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // give player a gold token
+    game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
+
+    endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
