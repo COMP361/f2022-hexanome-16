@@ -147,15 +147,6 @@ public class GameController {
   }
 
   /**
-   * Ends current player's turn and starts next player's turn.
-   *
-   * @param game the game the player is in
-   */
-  public void endCurrentPlayersTurn(Game game) {
-    gameServiceInterface.endCurrentPlayersTurn(game);
-  }
-
-  /**
    * Allows client to buy card, given that they send a valid way to buy that card.
    *
    * @param sessionId           sessionID.
@@ -223,27 +214,4 @@ public class GameController {
     return gameServiceInterface.reserveFaceDownCard(sessionId, level, authenticationToken);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Finds a player in a game given their username.
-   *
-   * @param game     game where player is supposed to be.
-   * @param username name of player.
-   * @return Player with that username in that game, null if no such player.
-   */
-  public Player findPlayerByName(Game game, String username) {
-
-    if (game == null) {
-      return null;
-    }
-    for (Player e : game.getPlayers()) {
-      if (e.getName().equals(username)) {
-        return e;
-      }
-    }
-    return null;
-  }
 }
