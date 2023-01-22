@@ -1,15 +1,14 @@
 package com.hexanome16.server.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.controllers.GameController;
 import com.hexanome16.server.dto.BagJson;
 import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.CascadeTwoJson;
 import com.hexanome16.server.dto.DoubleJson;
 import com.hexanome16.server.dto.NobleJson;
-import com.hexanome16.server.dto.PlayerJson;
+import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Game class that holds all the information.
  */
 @Getter
+@ToString
 public class Game {
   private final Map<Level, Deck> decks = new HashMap<>();
 
@@ -34,6 +35,7 @@ public class Game {
   private final String creator;
   private final String savegame;
   private final GameBank gameBank;
+  private final WinCondition winCondition;
   @Setter
   private int currentPlayerIndex = 0;
   private Deck nobleDeck = new Deck();
@@ -42,23 +44,37 @@ public class Game {
   /**
    * Game constructor, create a new with a unique session id.
    *
-   * @param sessionId session id
-   * @param players   the players
-   * @param creator   the creator
-   * @param savegame  the savegame
+   * @param sessionId    session id
+   * @param players      the players
+   * @param creator      the creator
+   * @param savegame     the savegame
+   * @param winCondition the win condition
    * @throws IOException exception
    */
-  @JsonCreator
-  public Game(long sessionId, Player[] players, String creator, String savegame)
+  public Game(long sessionId, Player[] players, String creator, String savegame,
+              WinCondition winCondition)
       throws IOException {
     this.sessionId = sessionId;
     this.players = players;
     this.creator = creator;
     this.savegame = savegame;
+    this.winCondition = winCondition;
     gameBank = new GameBank();
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
+  }
+
+  /**
+   * Game constructor, create a new with a unique session id.
+   *
+   * @param sessionId session id
+   * @param payload   the payload
+   * @throws IOException exception
+   */
+  public Game(long sessionId, SessionJson payload) throws IOException {
+    this(sessionId, payload.getPlayers(), payload.getCreator(), payload.getSavegame(),
+        payload.getWinCondition());
   }
 
 
@@ -255,7 +271,7 @@ public class Game {
   private void createGoldDeck() {
     Deck deck = redDecks.get(Level.REDONE);
     int[][] prices =
-          {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
+      {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
     for (int i = 0; i < 4; i++) {
       PriceMap priceMap =
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
@@ -339,8 +355,8 @@ public class Game {
       CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList.get(i);
       PriceMap priceMap =
           new PriceMap(cascadeTwoJson.getRubyAmount(), cascadeTwoJson.getEmeraldAmount(),
-          cascadeTwoJson.getSapphireAmount(),
-          cascadeTwoJson.getDiamondAmount(), cascadeTwoJson.getOnyxAmount());
+              cascadeTwoJson.getSapphireAmount(),
+              cascadeTwoJson.getDiamondAmount(), cascadeTwoJson.getOnyxAmount());
       LevelCard bag = new LevelCard(cascadeTwoJson.getId(), 0,
           "cascade_two" + cascadeTwoJson.getId(),
           new TokenPrice(priceMap),
@@ -436,7 +452,6 @@ public class Game {
   }
 
   // TODO: TEST CASE
-
 
 
   // TODO: TEST CASE

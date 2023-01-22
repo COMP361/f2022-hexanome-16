@@ -34,6 +34,8 @@ services:
       - WAIT_HOST_CONNECT_TIMEOUT=5
     networks:
       - splendor
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   splendor-server:
     platform: linux/x86_64
     container_name: splendor-server

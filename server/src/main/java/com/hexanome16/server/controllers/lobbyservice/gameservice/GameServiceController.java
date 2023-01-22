@@ -7,6 +7,7 @@ import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -83,6 +84,7 @@ public class GameServiceController {
    *
    * @return the response entity
    */
+  @PreDestroy
   public ResponseEntity<Void> deleteGameService() {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
