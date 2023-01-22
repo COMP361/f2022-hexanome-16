@@ -17,89 +17,121 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
+/**
+ * Unit tests for {@link GameController}.
+ */
 class GameControllerTest {
 
+  /**
+   * The Game controller.
+   */
   GameController gameController;
 
+  /**
+   * Create game service mock with Mockito.
+   *
+   * @return the game service mock
+   */
   GameServiceInterface createGameServiceMock() {
     return Mockito.mock(GameService.class);
   }
 
+  /**
+   * Test get game map.
+   */
   @Test
   void testGetGameMap() {
-    HashMap<Long, Game> defaultGameMap = new HashMap<>();
+    final HashMap<Long, Game> gameMapStub = new HashMap<>();
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getGameMap()).thenReturn(defaultGameMap);
+    when(gameServiceMock.getGameMap()).thenReturn(gameMapStub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(defaultGameMap, gameController.getGameMap());
+    assertEquals(gameMapStub, gameController.getGameMap());
   }
 
+  /**
+   * Test create game.
+   */
   @Test
   void testCreateGame() {
-    String game = "game test";
-    String game2 = "game test 2";
+    final String gameStub = "game test";
+    final String game2Stub = "game test 2";
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.createGame(123L, new SessionJson())).thenReturn(game);
-    when(gameServiceMock.createGame(124L, new SessionJson())).thenReturn(game2);
+    when(gameServiceMock.createGame(123L, new SessionJson())).thenReturn(gameStub);
+    when(gameServiceMock.createGame(124L, new SessionJson())).thenReturn(game2Stub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(game, gameController.createGame(123L, new SessionJson()));
-    assertEquals(game2, gameController.createGame(124L, new SessionJson()));
+    assertEquals(gameStub, gameController.createGame(123L, new SessionJson()));
+    assertEquals(game2Stub, gameController.createGame(124L, new SessionJson()));
   }
 
+  /**
+   * Test get deck.
+   */
   @Test
   void testGetDeck() {
-    DeferredResult<ResponseEntity<String>> deck = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> deckStub = new DeferredResult<>();
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getDeck(123L, "ONE", "123", "123B")).thenReturn(deck);
+    when(gameServiceMock.getDeck(123L, "ONE", "123", "123B")).thenReturn(deckStub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(deck, gameController.getDeck(123L, "ONE", "123", "123B"));
+    assertEquals(deckStub, gameController.getDeck(123L, "ONE", "123", "123B"));
   }
 
+  /**
+   * Test get nobles.
+   */
   @Test
   void testGetNobles() {
-    DeferredResult<ResponseEntity<String>> nobles = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> noblesStub = new DeferredResult<>();
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getNobles(123L, "123", "123B")).thenReturn(nobles);
+    when(gameServiceMock.getNobles(123L, "123", "123B")).thenReturn(noblesStub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(nobles, gameController.getNobles(123L, "123", "123B"));
+    assertEquals(noblesStub, gameController.getNobles(123L, "123", "123B"));
   }
 
+  /**
+   * Test get current player.
+   */
   @Test
   void testGetCurrentPlayer() {
-    DeferredResult<ResponseEntity<String>> currentPlayer = new DeferredResult<>();
-    DeferredResult<ResponseEntity<String>> currentPlayer2 = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> currentPlayerStub = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> currentPlayer2Stub = new DeferredResult<>();
 
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getCurrentPlayer(123L, "123", "123B")).thenReturn(currentPlayer);
+    when(gameServiceMock.getCurrentPlayer(123L, "123", "123B")).thenReturn(currentPlayerStub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(currentPlayer, gameController.getCurrentPlayer(123L, "123", "123B"));
-    assertNotEquals(currentPlayer2, gameController.getCurrentPlayer(123L, "123", "123B"));
+    assertEquals(currentPlayerStub, gameController.getCurrentPlayer(123L, "123", "123B"));
+    assertNotEquals(currentPlayer2Stub, gameController.getCurrentPlayer(123L, "123", "123B"));
   }
 
+  /**
+   * Test get winners.
+   */
   @Test
   void testGetWinners() {
-    DeferredResult<ResponseEntity<String>> winners = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<String>> winnersStub = new DeferredResult<>();
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getWinners(123L, "123", "123B")).thenReturn(winners);
+    when(gameServiceMock.getWinners(123L, "123", "123B")).thenReturn(winnersStub);
     this.gameController = new GameController(gameServiceMock);
 
-    assertEquals(winners, gameController.getWinners(123L, "123", "123B"));
+    assertEquals(winnersStub, gameController.getWinners(123L, "123", "123B"));
   }
 
+  /**
+   * Test get player bank info.
+   */
   @Test
   void testGetPlayerBankInfo() {
-    ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
+    final ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
@@ -116,9 +148,12 @@ class GameControllerTest {
     }
   }
 
+  /**
+   * Test get game bank info.
+   */
   @Test
   void testGetGameBankInfo() {
-    ResponseEntity<String> gameBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
+    final ResponseEntity<String> gameBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
@@ -135,9 +170,12 @@ class GameControllerTest {
     }
   }
 
+  /**
+   * Test buy card.
+   */
   @Test
   void testBuyCard() {
-    ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+    final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
@@ -149,15 +187,19 @@ class GameControllerTest {
     this.gameController = new GameController(gameServiceMock);
 
     try {
-      assertEquals(buyCardResponseStub, gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
+      assertEquals(buyCardResponseStub,
+          gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
   }
 
+  /**
+   * Test reserve card.
+   */
   @Test
   void testReserveCard() {
-    ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+    final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
@@ -175,9 +217,13 @@ class GameControllerTest {
     }
   }
 
+  /**
+   * Test reserve face down card.
+   */
   @Test
   void testReserveFaceDownCard() {
-    ResponseEntity<String> reserveCardFaceDownResponseStub = new ResponseEntity<>(HttpStatus.OK);
+    final ResponseEntity<String> reserveCardFaceDownResponseStub =
+        new ResponseEntity<>(HttpStatus.OK);
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
@@ -189,7 +235,8 @@ class GameControllerTest {
     this.gameController = new GameController(gameServiceMock);
 
     try {
-      assertEquals(reserveCardFaceDownResponseStub, gameController.reserveFaceDownCard(123L, "md5", "abc"));
+      assertEquals(reserveCardFaceDownResponseStub,
+          gameController.reserveFaceDownCard(123L, "md5", "abc"));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
