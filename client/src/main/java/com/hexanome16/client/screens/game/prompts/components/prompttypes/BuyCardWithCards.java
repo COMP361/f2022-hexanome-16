@@ -32,7 +32,7 @@ import javafx.scene.text.TextAlignment;
 /**
  * A class responsible for populating Buy sacrifice card prompt.
  */
-public class BuyCardByCard implements PromptTypeInterface {
+public class BuyCardWithCards implements PromptTypeInterface {
 
   /**
    * The width.

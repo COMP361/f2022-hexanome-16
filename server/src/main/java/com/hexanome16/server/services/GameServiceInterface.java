@@ -7,6 +7,8 @@ import com.hexanome16.server.models.Player;
 import java.util.Map;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
@@ -133,6 +135,34 @@ public interface GameServiceInterface {
                                  int diamondAmount,
                                  int onyxAmount,
                                  int goldAmount)
+      throws JsonProcessingException;
+
+  /**
+   * Let the player reserve a card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  ResponseEntity<String> reserveCard(@PathVariable long sessionId,
+              @PathVariable String cardMd5,
+              @RequestParam String authenticationToken) throws JsonProcessingException;
+
+
+  /**
+   * Let the player reserve a face down card.
+   *
+   * @param sessionId game session id.
+   * @param level deck level.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
+                                             @RequestParam String level,
+                                             @RequestParam String authenticationToken)
       throws JsonProcessingException;
 
   /**
