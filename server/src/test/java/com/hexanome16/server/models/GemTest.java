@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link Gem}
+ * Test for {@link Gem}.
  */
 public class GemTest {
 

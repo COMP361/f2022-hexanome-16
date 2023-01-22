@@ -28,7 +28,7 @@ public class PurchaseMapTests {
   }
 
   /**
-   * Test altConstructor
+   * Test altConstructor.
    */
   @Test
   public void testAltConstructor() {

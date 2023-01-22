@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,7 +79,7 @@ public class GameTest {
    */
   @Test
   public void testIncGameBank() {
-    assertEquals( game.getGameBank(), new GameBank());
+    assertEquals(game.getGameBank(), new GameBank());
     HashMap<Gem, Integer> myMap = new HashMap<Gem, Integer>();
     myMap.put(Gem.RUBY, -2);
     game.incGameBank(new PurchaseMap(myMap));

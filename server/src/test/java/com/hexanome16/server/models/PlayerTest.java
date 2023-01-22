@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of {@link Player}
+ * Test of {@link Player}.
  */
 public class PlayerTest {
   private Player costa;
