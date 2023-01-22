@@ -124,7 +124,6 @@ public class PromptComponent extends Component {
     initiateWorldProperties();
     buildBox();
     if (level != null) {
-      System.out.println(level.name());
       ((ReserveCardPrompt) atPromptType).populatePrompt(entity, level);
     } else if (atCardEntity == null) {
       atPromptType.populatePrompt(entity);

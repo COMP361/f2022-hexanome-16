@@ -45,7 +45,6 @@ public class SeeReserved extends SeeReservedAbstract {
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
     for (Map<String, Object> card : cards) {
-      System.out.println((boolean) card.get("faceDown"));
       // my cards are always face up
       if (myCards || !(boolean) card.get("faceDown")) {
         cardTexturePaths.add(card.get("texturePath") + ".png");
