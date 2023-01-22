@@ -1,9 +1,10 @@
 package com.hexanome16.client.screens.game.prompts.components;
 
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardByCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReserveNobleCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
@@ -14,8 +15,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherch
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeOtherReserved;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeOwnReserved;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import java.util.function.Predicate;
 import javafx.scene.Node;
 
@@ -137,17 +137,28 @@ public interface PromptTypeInterface {
      * Buy cards prompt type.
      * <p><i>Main</i></p>
      */
-    BUY_CARDS(new BuyCardPrompt()),
+    BUY_CARD(new BuyCardPrompt()),
     /**
-     * See other reserved prompt type.
+     * Buy cards prompt type.
      * <p><i>Main</i></p>
      */
-    SEE_OTHER_RESERVED(new SeeOtherReserved()),
+    RESERVE_CARD(new ReserveCardPrompt()),
+//    Note : Elea removed this
+//    /**
+//     * See other reserved prompt type.
+//     * <p><i>Main</i></p>
+//     */
+//    SEE_OTHER_RESERVED(new SeeOtherReserved()),
+//    /**
+//     * See own reserved prompt type.
+//     * <p><i>Main</i></p>
+//     */
+//    SEE_OWN_RESERVED(new SeeOwnReserved()),
     /**
      * See own reserved prompt type.
      * <p><i>Main</i></p>
      */
-    SEE_OWN_RESERVED(new SeeOwnReserved()),
+    SEE_RESERVED(new SeeReserved()),
     /**
      * See cards prompt type.
      * <p><i>Main</i></p>
@@ -162,7 +173,7 @@ public interface PromptTypeInterface {
      * Buy cards by cards prompt type.
      * <p><i>Main</i></p>
      */
-    BUY_CARDS_BY_CARDS(new BuyCardByCard()),
+    BUY_CARD_WITH_CARDS(new BuyCardWithCards()),
     /**
      * Buy bag card prompt type.
      * <p><i>Main</i></p>

@@ -3,6 +3,7 @@ package com.hexanome16.server.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.GameServiceInterface;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,5 +186,64 @@ public class GameController {
     return gameServiceInterface.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
         emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+  }
+
+  /**
+   * Let the player reserve a face up card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
+  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
+                                        @PathVariable String cardMd5,
+                                        @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    return gameServiceInterface.reserveCard(sessionId, cardMd5, authenticationToken);
+  }
+
+  /**
+   * Let the player reserve a face down card.
+   *
+   * @param sessionId game session id.
+   * @param level deck level.
+   * @param authenticationToken player's authentication token.
+   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
+   * @throws JsonProcessingException exception
+   */
+  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
+  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
+                                            @RequestParam String level,
+                                            @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+
+    return gameServiceInterface.reserveFaceDownCard(sessionId, level, authenticationToken);
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Finds a player in a game given their username.
+   *
+   * @param game     game where player is supposed to be.
+   * @param username name of player.
+   * @return Player with that username in that game, null if no such player.
+   */
+  public Player findPlayerByName(Game game, String username) {
+
+    if (game == null) {
+      return null;
+    }
+    for (Player e : game.getPlayers()) {
+      if (e.getName().equals(username)) {
+        return e;
+      }
+    }
+    return null;
   }
 }

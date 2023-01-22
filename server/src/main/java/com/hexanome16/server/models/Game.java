@@ -371,14 +371,28 @@ public class Game {
     Deck baseOneDeck = new Deck();
     Deck baseTwoDeck = new Deck();
     Deck baseThreeDeck = new Deck();
+
+    // lay the cards face up on the game board
     for (int i = 0; i < 4; i++) {
-      baseOneDeck.addCard(decks.get(Level.ONE).nextCard());
-      baseTwoDeck.addCard(decks.get(Level.TWO).nextCard());
-      baseThreeDeck.addCard(decks.get(Level.THREE).nextCard());
+      LevelCard levelOne = (LevelCard) decks.get(Level.ONE).nextCard();
+      levelOne.setIsFaceDown(false);
+      baseOneDeck.addCard(levelOne);
+
+      LevelCard levelTwo = (LevelCard) decks.get(Level.TWO).nextCard();
+      levelTwo.setIsFaceDown(false);
+      baseTwoDeck.addCard(levelTwo);
+
+      LevelCard levelThree = (LevelCard) decks.get(Level.THREE).nextCard();
+      levelThree.setIsFaceDown(false);
+      baseThreeDeck.addCard(levelThree);
     }
+
+    // make into data structures (hash map)
     this.onBoardDecks.put(Level.ONE, baseOneDeck);
     this.onBoardDecks.put(Level.TWO, baseTwoDeck);
     this.onBoardDecks.put(Level.THREE, baseThreeDeck);
+
+    // same thing but with the nobles
     Deck nobleDeck = new Deck();
     for (int i = 0; i < 5; i++) {
       nobleDeck.addCard(this.nobleDeck.nextCard());
@@ -427,7 +441,12 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    this.onBoardDecks.get(level).addCard(this.decks.get(level).nextCard());
+    DevelopmentCard card = this.decks.get(level).nextCard();
+    if (card instanceof LevelCard) {
+      ((LevelCard) card).setIsFaceDown(false);
+      System.out.println(card.getTexturePath() + "face down: " + ((LevelCard) card).isFaceDown());
+    }
+    this.onBoardDecks.get(level).addCard(card);
   }
 
   /**

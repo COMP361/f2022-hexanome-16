@@ -208,7 +208,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
   /**
    * Do something if someone reserves a card.
    */
-  protected static void cardReservation() {
+  protected void cardReservation() {
+    long promptSessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    // send request to server
+    PromptsRequests.reserveCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        authToken);
   }
 
   @Override
@@ -538,7 +544,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
         t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
           // add behaviour here
           closeBuyPrompt();
-          cardReservation();
+          buyCardPrompt.cardReservation();
+          buyCardPrompt.cardBought();
           e.consume();
         });
       } else if (this == BUY) {
