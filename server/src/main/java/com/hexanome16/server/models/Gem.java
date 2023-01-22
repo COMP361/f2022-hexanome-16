@@ -50,6 +50,7 @@ public enum Gem {
 
   /**
    * Returns the gem associated to a given String representation of a bonus type from the client.
+   * Returns null if string is NULL or anything else.
    *
    * @param bonusTypeString BonusType as a string. (from client) (under game/prompts/viewprompts).
    * @return The gem associated to the bonus type.

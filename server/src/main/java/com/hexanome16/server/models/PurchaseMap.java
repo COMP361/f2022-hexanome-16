@@ -1,5 +1,7 @@
 package com.hexanome16.server.models;
 
+import static java.util.Objects.hash;
+
 import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
@@ -47,7 +49,6 @@ public class PurchaseMap extends PriceMap {
 
   }
 
-  // TODO: TEST CASE
 
   /**
    * Makes a purchase map out of the input price map, sets gold amount in the new purchase
@@ -111,7 +112,31 @@ public class PurchaseMap extends PriceMap {
     return false;
   }
 
+  @Override
+  public boolean equals(Object otherPriceMap) {
+    if (otherPriceMap == null) {
+      return false;
+    }
+    if (this == otherPriceMap) {
+      return true;
+    }
+    if (this.getClass() != otherPriceMap.getClass()) {
+      return false;
+    }
+    PurchaseMap confirmedOtherPriceMap = (PurchaseMap) otherPriceMap;
+    return this.rubyAmount == confirmedOtherPriceMap.getRubyAmount()
+        && this.emeraldAmount == confirmedOtherPriceMap.getEmeraldAmount()
+        && this.sapphireAmount == confirmedOtherPriceMap.getSapphireAmount()
+        && this.diamondAmount == confirmedOtherPriceMap.getDiamondAmount()
+        && this.onyxAmount == confirmedOtherPriceMap.getOnyxAmount()
+        && this.goldAmount == confirmedOtherPriceMap.getGoldAmount();
+  }
 
+  @Override
+  public int hashCode() {
+    return hash(this.rubyAmount, this.emeraldAmount, this.sapphireAmount,
+        this.diamondAmount, this.onyxAmount, this.goldAmount);
+  }
 }
 
 

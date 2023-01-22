@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -24,6 +26,31 @@ public class PurchaseMapTests {
   public void testAmountOfTokens() {
     assertEquals(purchaseMap.sumTokensNonJokers(), 5);
   }
+
+  /**
+   * Test altConstructor
+   */
+  @Test
+  public void testAltConstructor() {
+    Map<Gem, Integer> myMap = new HashMap<>();
+    myMap.put(Gem.RUBY, 1);
+    myMap.put(Gem.EMERALD, 1);
+    myMap.put(Gem.SAPPHIRE, 1);
+    myMap.put(Gem.DIAMOND, 1);
+    myMap.put(Gem.ONYX, 1);
+    myMap.put(Gem.GOLD, 0);
+    PurchaseMap altPurchaseMap = new PurchaseMap(myMap);
+    assertEquals(purchaseMap, altPurchaseMap);
+  }
+
+  /**
+   * Test toPurchaseMap(PriceMap pm).
+   */
+  @Test
+  public void testToPurchaseMap() {
+    assertEquals(purchaseMap, PurchaseMap.toPurchaseMap(priceMap));
+  }
+
 
   /**
    * Test buy.

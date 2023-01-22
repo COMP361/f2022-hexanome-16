@@ -16,6 +16,7 @@ public class PlayerBank extends Bank {
     playerBank = initBank(3);
   }
 
+
   @Override
   protected Hashtable<Gem, ArrayList<Token>> getBank() {
     return this.playerBank;
