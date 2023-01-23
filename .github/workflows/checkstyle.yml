@@ -1,0 +1,30 @@
+# Action: https://github.com/marketplace/actions/checkstyle-for-java
+name: Checkstyle
+on:
+  pull_request:
+    branches:
+    - master
+jobs:
+  checkstyle:
+    name: CheckStyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dbelyaev/action-checkstyle@v0.6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: error
+          filter_mode: file
+          checkstyle_version: 9.3
+          workdir: server
+          checkstyle_config: server/checkstyle.xml
+      - uses: dbelyaev/action-checkstyle@v0.6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: error
+          filter_mode: file
+          checkstyle_version: 9.3
+          workdir: client
+          checkstyle_config: client/checkstyle.xml

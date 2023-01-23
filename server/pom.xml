@@ -137,7 +137,7 @@
                 </dependencies>
                 <configuration>
                     <!-- the checkstyle plugin can be configured here       -->
-                    <configLocation>${project.basedir}/google_checks.xml</configLocation>
+                    <configLocation>${project.basedir}/checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <violationSeverity>warning</violationSeverity>
                     <failOnViolation>true</failOnViolation>
@@ -186,7 +186,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M7</version>
                 <configuration>
-                    <skip>${docker.test.skip}</skip>
+                    <skip>${docker.build.skip}</skip>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
