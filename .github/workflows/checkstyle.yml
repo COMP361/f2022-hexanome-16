@@ -18,7 +18,7 @@ jobs:
           filter_mode: file
           checkstyle_version: 9.3
           workdir: server
-          checkstyle_config: checkstyle.xml
+          checkstyle_config: server/checkstyle.xml
       - uses: dbelyaev/action-checkstyle@v0.6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -27,4 +27,4 @@ jobs:
           filter_mode: file
           checkstyle_version: 9.3
           workdir: client
-          checkstyle_config: checkstyle.xml
+          checkstyle_config: client/checkstyle.xml
