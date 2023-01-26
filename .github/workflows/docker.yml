@@ -18,4 +18,5 @@ jobs:
         registry: ghcr.io
         workdir: docker
         dockerfile: Dockerfile-server
+        context: ..
         cache: true
