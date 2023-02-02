@@ -12,6 +12,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+      packages: write
     steps:
     - uses: actions/checkout@v3
     - name: Client Checkstyle
