@@ -1,5 +1,5 @@
 # Action: https://github.com/marketplace/actions/publish-docker
-name: Test and Publish Docker Server Image
+name: Auto-Test and Publish Docker Server Image
 on:
   pull_request:
     branches:
