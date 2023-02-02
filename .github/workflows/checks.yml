@@ -1,5 +1,7 @@
-# Action: https://github.com/marketplace/actions/publish-docker
-name: Auto-Test and Publish Docker Server Image
+# Actions:
+# Checkstyle: https://github.com/marketplace/actions/checkstyle-for-java
+# Docker + GitHub Registry: https://github.com/marketplace/actions/publish-docker
+name: Test and Publish Project
 on:
   pull_request:
     branches:
@@ -15,6 +17,16 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@v3
+    - name: Client Checkstyle
+      uses: dbelyaev/action-checkstyle@v0.6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        reporter: github-pr-review
+        level: error
+        filter_mode: file
+        checkstyle_version: 9.3
+        workdir: client
+        checkstyle_config: client/checkstyle.xml
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
