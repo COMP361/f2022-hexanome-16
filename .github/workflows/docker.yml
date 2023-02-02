@@ -1,6 +1,9 @@
 # Action: https://github.com/marketplace/actions/publish-docker
-name: Publish Docker Server Image
+name: Test and Publish Docker Server Image
 on:
+  pull_request:
+    branches:
+    - master
   push:
     branches:
     - master
@@ -16,7 +19,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
-        workdir: docker
-        dockerfile: Dockerfile-server
-        context: ..
+        dockerfile: docker/Dockerfile-server
         cache: true
+        tags: "${{ github.head_ref || github.ref_name }}"
