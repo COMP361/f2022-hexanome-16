@@ -19,6 +19,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
-        dockerfile: docker/Dockerfile-server
+        dockerfile: Dockerfile-server
         cache: true
         tags: "${{ github.head_ref || github.ref_name }}"
