@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import java.util.ArrayList;
 import javafx.geometry.Pos;
@@ -74,7 +75,8 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
 
     // Prompt Message
     Text myPromptMessage = new Text(promptText());
-    myPromptMessage.setFont(Font.font(atHeight / 10));
+    myPromptMessage.setFont(GAME_FONT.newFont(atHeight / 10));
+    myPromptMessage.setFill(Config.SECONDARY_COLOR);
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
 
@@ -112,7 +114,7 @@ public abstract class SeeReservedAbstract implements PromptTypeInterface {
   // for making hidden cards
   private Node makeAnonymousCard() {
     Text myInterrogation = new Text("?");
-    myInterrogation.setFont(Font.font(atCardHeight * 0.9));
+    myInterrogation.setFont(GAME_FONT.newFont(atCardHeight * 0.9));
     myInterrogation.setFill(Color.WHITE);
     myInterrogation.setTextAlignment(TextAlignment.CENTER);
 
