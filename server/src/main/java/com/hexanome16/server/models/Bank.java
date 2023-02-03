@@ -86,7 +86,6 @@ public abstract class Bank {
   protected abstract Hashtable<Gem, ArrayList<Token>> getBank();
 
 
-  // TODO TEST
 
   /**
    * increments Player bank by the amount specified by each parameter for each of their
@@ -151,7 +150,6 @@ public abstract class Bank {
     }
   }
 
-  // TODO: TEST CASE
 
   /**
    * Returns true if bank has at least specified amounts of each gem type in their bank, false
