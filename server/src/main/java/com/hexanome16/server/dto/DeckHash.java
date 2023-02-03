@@ -2,8 +2,8 @@ package com.hexanome16.server.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
@@ -21,19 +21,19 @@ public class DeckHash implements BroadcastContent {
   /**
    * Map of all cards.
    */
-  public static Map<String, DevelopmentCard> allCards = new HashMap<String, DevelopmentCard>();
-  private Map<String, DevelopmentCard> cards = new HashMap<String, DevelopmentCard>();
+  public static Map<String, InventoryAddable> allCards = new HashMap<>();
+  private Map<String, InventoryAddable> cards = new HashMap<>();
 
   /**
    * Create deck MD5.
    *
    * @param game  current game
    * @param level deck level
-   * @throws JsonProcessingException exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   public DeckHash(Game game, Level level) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    for (DevelopmentCard card : game.getOnBoardDeck(level).getCardList()) {
+    for (InventoryAddable card : game.getOnBoardDeck(level).getCardList()) {
       cards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
       allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }

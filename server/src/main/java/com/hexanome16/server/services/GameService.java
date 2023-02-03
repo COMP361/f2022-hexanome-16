@@ -9,15 +9,16 @@ import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.dto.WinJson;
-import com.hexanome16.server.models.DevelopmentCard;
+import com.hexanome16.server.models.CardInfo;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
+import com.hexanome16.server.models.Reservable;
 import com.hexanome16.server.models.TokenPrice;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
@@ -46,7 +47,7 @@ public class GameService implements GameServiceInterface {
    */
   //store all the games here
   private final Map<Long, Game> gameMap = new HashMap<>();
-  private final Map<String, DevelopmentCard> cardHashMap = new HashMap<>();
+  private final Map<String, CardInfo> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
 
@@ -216,7 +217,7 @@ public class GameService implements GameServiceInterface {
     }
 
     // Fetch the card in question
-    DevelopmentCard cardToBuy = DeckHash.allCards.get(cardMd5);
+    InventoryAddable cardToBuy = DeckHash.allCards.get(cardMd5);
 
     // Get game in question
     Game game = gameMap.get(sessionId);
@@ -227,7 +228,7 @@ public class GameService implements GameServiceInterface {
             goldAmount);
 
     // Get card price as a priceMap
-    PriceMap cardPriceMap = ((TokenPrice) cardToBuy.getPrice()).getPriceMap();
+    PriceMap cardPriceMap = ((TokenPrice) cardToBuy.getCardInfo().price()).getPriceMap();
 
     // Get player using found index
     Player clientPlayer = findPlayerByToken(game, authenticationToken);
@@ -244,7 +245,7 @@ public class GameService implements GameServiceInterface {
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
     if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount) || !game.isPlayersTurn(clientPlayer)) {
+        onyxAmount, goldAmount) || game.isNotPlayersTurn(clientPlayer)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -300,15 +301,15 @@ public class GameService implements GameServiceInterface {
 
     Game game = gameMap.get(sessionId);
 
-    DevelopmentCard card = DeckHash.allCards.get(cardMd5);
+    InventoryAddable card = DeckHash.allCards.get(cardMd5);
 
     Player player = findPlayerByToken(game, authenticationToken);
 
-    if (!game.isPlayersTurn(player)) {
+    if (game.isNotPlayersTurn(player)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    if (!player.reserveCard(card)) {
+    if (card instanceof Reservable && !player.reserveCard((Reservable) card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -363,15 +364,15 @@ public class GameService implements GameServiceInterface {
       default: atLevel = Level.ONE;
     }
 
-    DevelopmentCard card = game.getDeck(atLevel).nextCard();
+    InventoryAddable card = game.getLevelDeck(atLevel).nextCard();
 
     Player player = findPlayerByToken(game, authenticationToken);
 
-    if (!game.isPlayersTurn(player)) {
+    if (game.isNotPlayersTurn(player)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    if (!player.reserveCard(card)) {
+    if (card instanceof Reservable && !player.reserveCard((Reservable) card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 

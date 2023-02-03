@@ -25,22 +25,22 @@ public class DeckTest {
   /**
    * The Noble 1.
    */
-  public final DevelopmentCard noble1 = new Noble(0, 3, "texture.png", price);
+  public final Noble noble1 = new Noble(0, 3, "texture.png", price);
   /**
    * The Noble 2.
    */
-  public final DevelopmentCard noble2 = new Noble(1, 3, "texture.png", price);
+  public final Noble noble2 = new Noble(1, 3, "texture.png", price);
   /**
    * The Deck.
    */
-  public Deck deck = new Deck();
+  public Deck<InventoryAddable> deck;
 
   /**
    * Reset.
    */
   @BeforeEach
   public void reset() {
-    deck = new Deck();
+    deck = new Deck<>();
     deck.addCard(noble1);
   }
 
@@ -50,7 +50,7 @@ public class DeckTest {
   @Test
   public void testAddCard() {
     deck.addCard(noble2);
-    List<DevelopmentCard> cardList = deck.getCardList();
+    List<InventoryAddable> cardList = deck.getCardList();
     assertEquals(noble2, cardList.get(1));
   }
 
@@ -60,7 +60,7 @@ public class DeckTest {
   @Test
   public void testRemoveCard() {
     deck.removeCard(noble1);
-    List<DevelopmentCard> cardList = deck.getCardList();
+    List<InventoryAddable> cardList = deck.getCardList();
     assertEquals(0, cardList.size());
   }
 
@@ -86,7 +86,7 @@ public class DeckTest {
    */
   @Test
   public void testGetCardList() {
-    List<DevelopmentCard> cardList = new ArrayList<DevelopmentCard>();
+    List<InventoryAddable> cardList = new ArrayList<>();
     cardList.add(noble1);
     assertEquals(cardList, deck.getCardList());
   }
@@ -116,7 +116,7 @@ public class DeckTest {
   public void testShuffled() {
     deck.addCard(noble2);
     deck.shuffle();
-    List<DevelopmentCard> shuffledList = deck.getCardList();
+    List<InventoryAddable> shuffledList = deck.getCardList();
     assertTrue(shuffledList.contains(noble1) && shuffledList.contains(noble2));
   }
 }
