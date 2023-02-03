@@ -35,7 +35,7 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
   @GetMapping(value = {"/games/{sessionId}/twoTokens"})
   public ResponseEntity<String> availableTwoTokensType(@PathVariable long sessionId)
@@ -49,7 +49,7 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
   @GetMapping(value = {"/games/{sessionId}/threeTokens"})
   public ResponseEntity<String> availableThreeTokensType(@PathVariable long sessionId)

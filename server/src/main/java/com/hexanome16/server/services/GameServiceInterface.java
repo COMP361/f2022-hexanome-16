@@ -86,7 +86,7 @@ public interface GameServiceInterface {
    * @param sessionId sessionId.
    * @param username  username of the player.
    * @return String representation of the Purchase map
-   * @throws JsonProcessingException if Json processing fails
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
    */
   ResponseEntity<String> getPlayerBankInfo(long sessionId,
                                            String username)
@@ -97,7 +97,7 @@ public interface GameServiceInterface {
    *
    * @param sessionId sessionId.
    * @return String representation of the Purchase map
-   * @throws JsonProcessingException if Json processing fails
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
    */
   ResponseEntity<String> getGameBankInfo(long sessionId)
       throws JsonProcessingException;
@@ -124,7 +124,7 @@ public interface GameServiceInterface {
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *         HTTP BAD_REQUEST otherwise.
    *         </p>
-   * @throws JsonProcessingException the json processing exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
@@ -144,7 +144,7 @@ public interface GameServiceInterface {
    * @param cardMd5 card hash.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws JsonProcessingException exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   ResponseEntity<String> reserveCard(@PathVariable long sessionId,
               @PathVariable String cardMd5,
@@ -158,7 +158,7 @@ public interface GameServiceInterface {
    * @param level deck level.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws JsonProcessingException exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                              @RequestParam String level,

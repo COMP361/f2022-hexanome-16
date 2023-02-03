@@ -114,7 +114,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token
    * @return response cards
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
   public ResponseEntity<String> getCards(@PathVariable long sessionId,
@@ -135,7 +135,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token.
    * @return response entity.
-   * @throws JsonProcessingException if json doesnt work
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/nobles"})
   public ResponseEntity<String> getNobles(@PathVariable long sessionId,
@@ -156,7 +156,7 @@ public class InventoryController {
    * @param username    username.
    * @param accessToken access Token.
    * @return get reserve nobles.
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
   public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
@@ -177,7 +177,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token.
    * @return response entity.
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedNobles"})
   public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,

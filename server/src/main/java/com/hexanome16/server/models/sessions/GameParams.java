@@ -1,7 +1,5 @@
 package com.hexanome16.server.models.sessions;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +27,6 @@ public class GameParams {
 
   /**
    * Default params used for testing/UI demo.
-   *
    */
   @PostConstruct
   public void init() {

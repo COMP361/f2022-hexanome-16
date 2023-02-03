@@ -53,6 +53,8 @@ public class TokensControllerTests {
 
   /**
    * Test get on /games/{sessionId}/twoTokens;.
+   *
+   * @throws JsonProcessingException possible json processing error
    */
   @Test
   public void testGetTwoTokens() throws JsonProcessingException {
@@ -67,6 +69,8 @@ public class TokensControllerTests {
 
   /**
    * Test get on /games/{sessionId}/threeTokens;.
+   *
+   * @throws JsonProcessingException possible json processing error
    */
   @Test
   public void testGetThreeTokens() throws JsonProcessingException {
