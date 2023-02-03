@@ -437,7 +437,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setMaxHeight(atHeight);
   }
 
-  // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
