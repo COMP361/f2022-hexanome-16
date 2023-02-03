@@ -12,6 +12,7 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.GameService;
+import com.hexanome16.server.util.BroadcastMap;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class AuthServiceTest {
     ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
     ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
 
-    gameService = new GameService(authService);
+    gameService = new GameService(authService, new BroadcastMap());
   }
 
   @Test
