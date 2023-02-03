@@ -16,6 +16,6 @@ public class WinJson implements BroadcastContent {
 
   @Override
   public boolean isEmpty() {
-    return winners.length == 0;
+    return winners == null || winners.length == 0;
   }
 }
