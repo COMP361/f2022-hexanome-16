@@ -14,7 +14,7 @@ public interface TokenServiceInterface {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
   ResponseEntity<String> availableTwoTokensType(long sessionId) throws JsonProcessingException;
 
@@ -24,7 +24,7 @@ public interface TokenServiceInterface {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
   ResponseEntity<String> availableThreeTokensType(long sessionId) throws JsonProcessingException;
 

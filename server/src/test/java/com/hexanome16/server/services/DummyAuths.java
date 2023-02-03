@@ -115,6 +115,9 @@ public class DummyAuths {
    */
   public static final List<Long> invalidSessionIds = List.of(0L, 1L);
 
+  /**
+   * The constant validGames.
+   */
   public static final Map<Long, Game> validGames;
 
   static {

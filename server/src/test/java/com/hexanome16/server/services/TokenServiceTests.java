@@ -6,16 +6,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.controllers.TokensController;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameBank;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,15 +23,13 @@ import org.springframework.http.ResponseEntity;
  */
 public class TokenServiceTests {
 
-  private DummyAuthService dummyAuthService;
-  private GameService gameService;
-  private TokenService tokensService;
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
       new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
           JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
-
-
+  private DummyAuthService dummyAuthService;
+  private GameService gameService;
+  private TokenService tokensService;
 
   /**
    * Sets .
@@ -46,8 +40,8 @@ public class TokenServiceTests {
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
     gameService = new GameService(dummyAuthService);
-    tokensService  =
-            new TokenService(gameService, dummyAuthService);
+    tokensService =
+        new TokenService(gameService, dummyAuthService);
 
     payload.setPlayers(new Player[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
@@ -61,6 +55,8 @@ public class TokenServiceTests {
 
   /**
    * Testing availableTwoTokensType.
+   *
+   * @throws JsonProcessingException possible json processing error
    */
   @Test
   public void testAvailableTwoTokensType() throws JsonProcessingException {
@@ -85,6 +81,8 @@ public class TokenServiceTests {
 
   /**
    * Testing availableThreeTokensType().
+   *
+   * @throws JsonProcessingException possible json processing error
    */
   @Test
   public void testAvailableThreeTokensType() throws JsonProcessingException {
@@ -118,7 +116,7 @@ public class TokenServiceTests {
     Game game =
         gameService.getGameMap().get(sessionId);
 
-    GameBank testGameBank =  new GameBank();
+    GameBank testGameBank = new GameBank();
 
     assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeTwoTokens(sessionId, authTokenPlayer1, "RED");
@@ -143,7 +141,7 @@ public class TokenServiceTests {
     Game game =
         gameService.getGameMap().get(sessionId);
 
-    GameBank testGameBank =  new GameBank();
+    GameBank testGameBank = new GameBank();
 
     assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
