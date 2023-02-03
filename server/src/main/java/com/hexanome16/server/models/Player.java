@@ -39,11 +39,11 @@ public class Player {
   /**
    * Add this card to the player's inventory.
    *
-   * @param developmentCard the development card to add
+   * @param inventoryAddable the development card to add
    * @return true on success
    */
-  public boolean addCardToInventory(DevelopmentCard developmentCard) {
-    return developmentCard.addToInventory(this.inventory);
+  public boolean addCardToInventory(InventoryAddable inventoryAddable) {
+    return inventoryAddable.addToInventory(this.inventory);
   }
 
 
@@ -99,11 +99,11 @@ public class Player {
   /**
    * Reserve this card.
    *
-   * @param developmentCard the development card to reserve
+   * @param reservable the card to reserve
    * @return true on success
    */
-  public boolean reserveCard(DevelopmentCard developmentCard) {
-    return developmentCard.reserveCard(this.inventory);
+  public boolean reserveCard(Reservable reservable) {
+    return reservable.reserveCard(this.inventory);
   }
 
   /**

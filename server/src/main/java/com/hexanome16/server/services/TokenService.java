@@ -145,7 +145,7 @@ public class TokenService implements TokenServiceInterface {
       return new ResponseEntity<>("Can't find player", HttpStatus.BAD_REQUEST);
     }
 
-    if (!currentGame.isPlayersTurn(requestingPlayer)) {
+    if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ResponseEntity<>("Not player turn", HttpStatus.BAD_REQUEST);
     }
 

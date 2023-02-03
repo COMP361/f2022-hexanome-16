@@ -26,11 +26,13 @@ public class GameTest {
 
   /**
    * Initiates every test.
+   *
+   * @throws IOException from game creation
    */
   @BeforeEach
   public void init() throws IOException {
     game = new Game(12345,
-            new Player[]{imad, tristan}, "imad", "", new BaseWinCondition());
+        new Player[] {imad, tristan}, "imad", "", new BaseWinCondition());
     imad = new Player("imad", "#FFFFFF");
     tristan = new Player("tristan", "#FFFFFF");
   }
@@ -40,7 +42,7 @@ public class GameTest {
    */
   @Test
   public void testGetDeck() {
-    assertNotNull(game.getDeck(Level.ONE));
+    assertNotNull(game.getLevelDeck(Level.ONE));
   }
 
   /**
@@ -66,9 +68,9 @@ public class GameTest {
    */
   @Test
   public void testRemoveOnBoardCard() {
-    List<DevelopmentCard> cardList = game.getDeck(Level.ONE).getCardList();
-    DevelopmentCard card = cardList.get(0);
-    game.removeOnBoardCard((LevelCard) card);
+    List<LevelCard> cardList = game.getLevelDeck(Level.ONE).getCardList();
+    LevelCard card = cardList.get(0);
+    game.removeOnBoardCard(card);
     assertFalse(game.getOnBoardDeck(Level.ONE).getCardList().contains(card));
   }
 
@@ -83,8 +85,8 @@ public class GameTest {
     game.incGameBank(new PurchaseMap(myMap));
     GameBank myGameBank = new GameBank();
     myGameBank.incBank(-2,
-            0, 0,
-            0, 0, 0);
+        0, 0,
+        0, 0, 0);
     assertEquals(game.getGameBank(), myGameBank);
   }
 
@@ -99,13 +101,13 @@ public class GameTest {
   public void testAvailableTwoTokensType() {
     ArrayList<Gem> availableGems = game.availableTwoTokensType();
     assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-            Gem.SAPPHIRE, Gem.DIAMOND,
-            Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
+        Gem.SAPPHIRE, Gem.DIAMOND,
+        Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
     game.incGameBank(-3, -4,
-            0, 0, 0, 0);
+        0, 0, 0, 0);
     availableGems = game.availableTwoTokensType();
     assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-            Gem.SAPPHIRE, Gem.DIAMOND, Gem.ONYX, Gem.GOLD))));
+        Gem.SAPPHIRE, Gem.DIAMOND, Gem.ONYX, Gem.GOLD))));
   }
 
   /**
@@ -115,7 +117,7 @@ public class GameTest {
   public void testAllowedTakeTwoOf() {
     assertTrue(game.allowedTakeTwoOf(Gem.RUBY));
     game.incGameBank(-7, 0,
-            0, 0, 0, 0);
+        0, 0, 0, 0);
     assertFalse(game.allowedTakeTwoOf(Gem.RUBY));
   }
 
@@ -124,10 +126,10 @@ public class GameTest {
    */
   @Test
   public void testGiveTwoOf() {
-    PlayerBank myBank =  new PlayerBank();
+    PlayerBank myBank = new PlayerBank();
     assertEquals(imad.getBank(), myBank);
     myBank.incBank(2, 0,
-            0, 0, 0, 0);
+        0, 0, 0, 0);
     game.giveTwoOf(Gem.RUBY, imad);
     GameBank gameBank = new GameBank();
     gameBank.incBank(-2, 0, 0, 0, 0, 0);
@@ -144,14 +146,14 @@ public class GameTest {
   public void testAvailableThreeTokensType() {
     ArrayList<Gem> availableGems = game.availableThreeTokensType();
     assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-            Gem.SAPPHIRE, Gem.DIAMOND,
-            Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
+        Gem.SAPPHIRE, Gem.DIAMOND,
+        Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
     game.incGameBank(-3, -4,
-            0, 0, -7, 0);
+        0, 0, -7, 0);
     availableGems = game.availableThreeTokensType();
     assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-            Gem.SAPPHIRE, Gem.DIAMOND,
-            Gem.EMERALD, Gem.GOLD))));
+        Gem.SAPPHIRE, Gem.DIAMOND,
+        Gem.EMERALD, Gem.GOLD))));
   }
 
   /**
@@ -170,10 +172,10 @@ public class GameTest {
    */
   @Test
   public void testGiveThreeOf() {
-    PlayerBank myBank =  new PlayerBank();
+    PlayerBank myBank = new PlayerBank();
     assertEquals(imad.getBank(), myBank);
     myBank.incBank(1, 1,
-            0, 1, 0, 0);
+        0, 1, 0, 0);
     game.giveThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.EMERALD, imad);
     GameBank gameBank = new GameBank();
     gameBank.incBank(-1, -1, 0, -1, 0, 0);

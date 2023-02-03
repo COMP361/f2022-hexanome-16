@@ -8,10 +8,12 @@ import lombok.Data;
 
 /**
  * Development deck class.
+ *
+ * @param <T> Inventory Addable to be contained in the deck
  */
 @Data
-public class Deck implements BroadcastContent {
-  private final List<DevelopmentCard> cardList = new ArrayList<>();
+public class Deck<T extends InventoryAddable> implements BroadcastContent {
+  private final List<T> cardList = new ArrayList<>();
   private int index;
 
   /**
@@ -26,7 +28,7 @@ public class Deck implements BroadcastContent {
    *
    * @param card the card to be added.
    */
-  public void addCard(DevelopmentCard card) {
+  public void addCard(T card) {
     cardList.add(card);
   }
 
@@ -35,7 +37,7 @@ public class Deck implements BroadcastContent {
    *
    * @param card the card to be removed.
    */
-  public void removeCard(DevelopmentCard card) {
+  public void removeCard(T card) {
     cardList.remove(card);
   }
 
@@ -51,7 +53,7 @@ public class Deck implements BroadcastContent {
    *
    * @return card, null if deck is empty
    */
-  public DevelopmentCard nextCard() {
+  public T nextCard() {
     if (remainingAmount() <= 0) {
       return null;
     }
@@ -74,22 +76,38 @@ public class Deck implements BroadcastContent {
 
   /**
    * Compares two deck to see if they have the same sequence of cards.
-   *
-   * @param otherDeck second deck used for comparison.
-   * @return true if same, else false.
    */
-  public boolean isSameDeck(Deck otherDeck) {
-    if (otherDeck == null) {
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof final Deck<?> otherDeck)) {
+      return false;
+    }
+    if (!otherDeck.canEqual((Object) this)) {
       return false;
     }
     if (this.getCardList().size() != otherDeck.getCardList().size()) {
       return false;
     }
     for (int i = 0; i < this.getCardList().size() && !this.getCardList().isEmpty(); i++) {
-      if (this.getCardList().get(i).getId() != otherDeck.getCardList().get(i).getId()) {
+      if (this.getCardList().get(i).getCardInfo().id()
+          != otherDeck.getCardList().get(i).getCardInfo().id()) {
         return false;
       }
     }
     return true;
   }
+
+  /**
+   * <p>canEqual.</p>
+   *
+   * @param other a {@link java.lang.Object} object
+   * @return a boolean
+   */
+  protected boolean canEqual(final Object other) {
+    return other instanceof Deck;
+  }
+
 }

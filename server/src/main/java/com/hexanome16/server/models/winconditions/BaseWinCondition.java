@@ -1,6 +1,5 @@
 package com.hexanome16.server.models.winconditions;
 
-import com.hexanome16.server.models.DevelopmentCard;
 import lombok.ToString;
 
 /**
@@ -17,8 +16,8 @@ public class BaseWinCondition extends WinCondition {
 
     super(player ->
         player.getInventory().getOwnedCards().stream()
-            .mapToInt(DevelopmentCard::getPrestigePoint).sum()
+            .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
             + player.getInventory().getOwnedNobles().stream()
-            .mapToInt(DevelopmentCard::getPrestigePoint).sum() >= 15);
+            .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15);
   }
 }

@@ -25,10 +25,10 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Game {
-  private final Map<Level, Deck> decks = new HashMap<>();
+  private final Map<Level, Deck<LevelCard>> levelDecks = new HashMap<>();
 
-  private final Map<Level, Deck> redDecks = new HashMap<>();
-  private final Map<Level, Deck> onBoardDecks = new HashMap<>();
+  private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
+  private final Map<Level, Deck<LevelCard>> onBoardDecks = new HashMap<>();
 
   private final long sessionId;
 
@@ -39,8 +39,8 @@ public class Game {
   private final WinCondition winCondition;
   @Setter
   private int currentPlayerIndex = 0;
-  private Deck nobleDeck = new Deck();
-  private Deck onBoardNobles = new Deck();
+  private Deck<Noble> nobleDeck = new Deck<>();
+  private Deck<Noble> onBoardNobles = new Deck<>();
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -50,7 +50,7 @@ public class Game {
    * @param creator      the creator
    * @param savegame     the savegame
    * @param winCondition the win condition
-   * @throws IOException exception
+   * @throws java.io.IOException exception
    */
   public Game(long sessionId, Player[] players, String creator, String savegame,
               WinCondition winCondition)
@@ -71,7 +71,7 @@ public class Game {
    *
    * @param sessionId session id
    * @param payload   the payload
-   * @throws IOException exception
+   * @throws java.io.IOException exception
    */
   public Game(long sessionId, SessionJson payload) throws IOException {
     this(sessionId, payload.getPlayers(), payload.getCreator(), payload.getSavegame(),
@@ -186,7 +186,7 @@ public class Game {
   }
 
   private void createBaseLevelOneDeck(List<CardJson> cardJsonList) {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     for (int i = 0; i < 40; i++) {
       CardJson cardJson = cardJsonList.get(i);
       PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
@@ -199,11 +199,11 @@ public class Game {
       deck.addCard(card);
     }
     deck.shuffle();
-    decks.put(Level.ONE, deck);
+    levelDecks.put(Level.ONE, deck);
   }
 
   private void createBaseLevelTwoDeck(List<CardJson> cardJsonList) {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     for (int i = 40; i < 70; i++) {
       CardJson cardJson = cardJsonList.get(i);
       PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
@@ -217,11 +217,11 @@ public class Game {
       deck.addCard(card);
     }
     deck.shuffle();
-    decks.put(Level.TWO, deck);
+    levelDecks.put(Level.TWO, deck);
   }
 
   private void createBaseLevelThreeDeck(List<CardJson> cardJsonList) {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     for (int i = 70; i < 90; i++) {
       CardJson cardJson = cardJsonList.get(i);
       PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
@@ -235,11 +235,11 @@ public class Game {
       deck.addCard(card);
     }
     deck.shuffle();
-    decks.put(Level.THREE, deck);
+    levelDecks.put(Level.THREE, deck);
   }
 
   private void createNobleDeck(List<NobleJson> nobleJsonList) {
-    Deck deck = new Deck();
+    Deck<Noble> deck = new Deck<>();
     for (int i = 0; i < 10; i++) {
       NobleJson nobleJson = nobleJsonList.get(i);
       PriceMap priceMap = new PriceMap(nobleJson.getRubyAmount(), nobleJson.getEmeraldAmount(),
@@ -253,7 +253,7 @@ public class Game {
   }
 
   private void createBagDeck(List<BagJson> bagJsonList) {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
       BagJson bagJson = bagJsonList.get(i);
       PriceMap priceMap = new PriceMap(bagJson.getRubyAmount(), bagJson.getEmeraldAmount(),
@@ -270,7 +270,7 @@ public class Game {
   }
 
   private void createGoldDeck() {
-    Deck deck = redDecks.get(Level.REDONE);
+    Deck<LevelCard> deck = redDecks.get(Level.REDONE);
     int[][] prices =
       {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
     for (int i = 0; i < 4; i++) {
@@ -287,7 +287,7 @@ public class Game {
   }
 
   private void createDoubleDeck(List<DoubleJson> doubleJsonList) {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
       DoubleJson doubleJson = doubleJsonList.get(i);
       PriceMap priceMap = new PriceMap(doubleJson.getRubyAmount(), doubleJson.getEmeraldAmount(),
@@ -304,7 +304,7 @@ public class Game {
   }
 
   private void createNobleReserveDeck() {
-    Deck deck = redDecks.get(Level.REDTWO);
+    Deck<LevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{2, 2, 2, 0, 2}, {2, 0, 2, 2, 2}, {0, 2, 2, 2, 2}};
     for (int i = 0; i < 2; i++) {
       PriceMap priceMap =
@@ -320,7 +320,7 @@ public class Game {
   }
 
   private void createBagCascadeDeck() {
-    Deck deck = redDecks.get(Level.REDTWO);
+    Deck<LevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{3, 4, 0, 0, 1}, {0, 0, 3, 4, 1}};
     for (int i = 0; i < 1; i++) {
       PriceMap priceMap =
@@ -336,7 +336,7 @@ public class Game {
   }
 
   private void createSacrificeDeck() {
-    Deck deck = new Deck();
+    Deck<LevelCard> deck = new Deck<>();
     Gem[] gems = {Gem.SAPPHIRE, Gem.RUBY, Gem.EMERALD, Gem.ONYX, Gem.DIAMOND};
     for (int i = 0; i < 4; i++) {
       CardPrice price = new CardPrice(gems[i]);
@@ -351,7 +351,7 @@ public class Game {
   }
 
   private void createCascadeTwoDeck(List<CascadeTwoJson> cascadeTwoJsonList) {
-    Deck deck = redDecks.get(Level.REDTHREE);
+    Deck<LevelCard> deck = redDecks.get(Level.REDTHREE);
     for (int i = 0; i < 4; i++) {
       CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList.get(i);
       PriceMap priceMap =
@@ -369,21 +369,21 @@ public class Game {
   }
 
   private void createOnBoardDecks() {
-    Deck baseOneDeck = new Deck();
-    Deck baseTwoDeck = new Deck();
-    Deck baseThreeDeck = new Deck();
+    Deck<LevelCard> baseOneDeck = new Deck<>();
+    Deck<LevelCard> baseTwoDeck = new Deck<>();
+    Deck<LevelCard> baseThreeDeck = new Deck<>();
 
     // lay the cards face up on the game board
     for (int i = 0; i < 4; i++) {
-      LevelCard levelOne = (LevelCard) decks.get(Level.ONE).nextCard();
+      LevelCard levelOne = levelDecks.get(Level.ONE).nextCard();
       levelOne.setIsFaceDown(false);
       baseOneDeck.addCard(levelOne);
 
-      LevelCard levelTwo = (LevelCard) decks.get(Level.TWO).nextCard();
+      LevelCard levelTwo = levelDecks.get(Level.TWO).nextCard();
       levelTwo.setIsFaceDown(false);
       baseTwoDeck.addCard(levelTwo);
 
-      LevelCard levelThree = (LevelCard) decks.get(Level.THREE).nextCard();
+      LevelCard levelThree = levelDecks.get(Level.THREE).nextCard();
       levelThree.setIsFaceDown(false);
       baseThreeDeck.addCard(levelThree);
     }
@@ -394,7 +394,7 @@ public class Game {
     this.onBoardDecks.put(Level.THREE, baseThreeDeck);
 
     // same thing but with the nobles
-    Deck nobleDeck = new Deck();
+    Deck<Noble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
       nobleDeck.addCard(this.nobleDeck.nextCard());
     }
@@ -402,9 +402,9 @@ public class Game {
   }
 
   private void createOnBoardRedDecks() {
-    Deck redOneDeck = new Deck();
-    Deck redTwoDeck = new Deck();
-    Deck redThreeDeck = new Deck();
+    Deck<LevelCard> redOneDeck = new Deck<>();
+    Deck<LevelCard> redTwoDeck = new Deck<>();
+    Deck<LevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
       redOneDeck.addCard(redDecks.get(Level.REDONE).nextCard());
       redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
@@ -421,8 +421,8 @@ public class Game {
    * @param level deck level
    * @return the deck
    */
-  public Deck getDeck(Level level) {
-    return decks.get(level);
+  public Deck<LevelCard> getLevelDeck(Level level) {
+    return levelDecks.get(level);
   }
 
   /**
@@ -431,7 +431,7 @@ public class Game {
    * @param level deck level
    * @return the deck
    */
-  public Deck getOnBoardDeck(Level level) {
+  public Deck<LevelCard> getOnBoardDeck(Level level) {
     return onBoardDecks.get(level);
   }
 
@@ -442,11 +442,10 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    DevelopmentCard card = this.decks.get(level).nextCard();
-    if (card instanceof LevelCard) {
-      ((LevelCard) card).setIsFaceDown(false);
-      System.out.println(card.getTexturePath() + "face down: " + ((LevelCard) card).isFaceDown());
-    }
+    LevelCard card = this.levelDecks.get(level).nextCard();
+    card.setIsFaceDown(false);
+    System.out.println(
+        card.getCardInfo().texturePath() + "face down: " + card.isFaceDown());
     this.onBoardDecks.get(level).addCard(card);
   }
 
@@ -467,10 +466,9 @@ public class Game {
    * @param player player we want to check.
    * @return true if is player's turn, false otherwise
    */
-  public boolean isPlayersTurn(Player player) {
-    return findPlayerIndex(player) == currentPlayerIndex;
+  public boolean isNotPlayersTurn(Player player) {
+    return findPlayerIndex(player) != currentPlayerIndex;
   }
-
 
 
   // TODO: TEST CASE
@@ -500,10 +498,9 @@ public class Game {
    */
   public void incGameBank(PurchaseMap purchaseMap) {
     getGameBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
-            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
-            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+        purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
+        purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
   }
-
 
 
   // TODO: TEST CASE
@@ -550,8 +547,8 @@ public class Game {
   }
 
   /**
-   *  Gets all the token types one can take 2 of. (Gold gems are also part of the list
-   *  (shouldn't really be the case but just saying))
+   * Gets all the token types one can take 2 of. (Gold gems are also part of the list
+   * (shouldn't really be the case but just saying))
    *
    * @return An array list of all such token types
    */
@@ -572,25 +569,22 @@ public class Game {
   /**
    * Gives 2 tokens of type gem to player.
    *
-   * @param gem Gem we want to give 2 of.
+   * @param gem    Gem we want to give 2 of.
    * @param player player who will receive the gems.
-   *
    */
   public void giveTwoOf(Gem gem, Player player) {
 
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
-    gemIntegerMapGame.put(gem, Integer.valueOf(-2));
+    gemIntegerMapGame.put(gem, -2);
     incGameBank(new PurchaseMap(gemIntegerMapGame));
     Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
-    gemIntegerMapPlayer.put(gem, Integer.valueOf(2));
+    gemIntegerMapPlayer.put(gem, 2);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
 
 
-
-
   /**
-   *  Gets all the token types one can take 2 of.
+   * Gets all the token types one can take 2 of.
    *
    * @return An array list of all such token types
    */
@@ -609,34 +603,33 @@ public class Game {
   public boolean allowedTakeThreeOf(Gem gem1, Gem gem2, Gem gem3) {
     ArrayList<Gem> available = availableThreeTokensType();
     return available.contains(gem1)
-            && available.contains(gem2)
-            && available.contains(gem3)
-            && Gem.areDistinct(gem1, gem2, gem3);
+        && available.contains(gem2)
+        && available.contains(gem3)
+        && Gem.areDistinct(gem1, gem2, gem3);
   }
 
   /**
    * Gives 3 tokens of 3 different types to player.
    *
-   * @param desiredGemOne First gem we want to take one of.
-   * @param desiredGemTwo Second gem we want to take one of.
+   * @param desiredGemOne   First gem we want to take one of.
+   * @param desiredGemTwo   Second gem we want to take one of.
    * @param desiredGemThree Third gem we want to take one of.
-   * @param player player who will receive the gems.
-   *
+   * @param player          player who will receive the gems.
    */
   public void giveThreeOf(Gem desiredGemOne, Gem desiredGemTwo, Gem desiredGemThree,
                           Player player) {
     // Remove from game bank
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
-    gemIntegerMapGame.put(desiredGemOne, Integer.valueOf(-1));
-    gemIntegerMapGame.put(desiredGemTwo, Integer.valueOf(-1));
-    gemIntegerMapGame.put(desiredGemThree, Integer.valueOf(-1));
+    gemIntegerMapGame.put(desiredGemOne, -1);
+    gemIntegerMapGame.put(desiredGemTwo, -1);
+    gemIntegerMapGame.put(desiredGemThree, -1);
     incGameBank(new PurchaseMap(gemIntegerMapGame));
 
     // Give to player bank
     Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
-    gemIntegerMapPlayer.put(desiredGemOne, Integer.valueOf(1));
-    gemIntegerMapPlayer.put(desiredGemTwo, Integer.valueOf(1));
-    gemIntegerMapPlayer.put(desiredGemThree, Integer.valueOf(1));
+    gemIntegerMapPlayer.put(desiredGemOne, 1);
+    gemIntegerMapPlayer.put(desiredGemTwo, 1);
+    gemIntegerMapPlayer.put(desiredGemThree, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
 
@@ -662,7 +655,6 @@ public class Game {
     }
     return -1;
   }
-
 
 
 }

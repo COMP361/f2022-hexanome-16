@@ -109,24 +109,12 @@ public abstract class Bank {
       ArrayList<Token> tokensForGem = getBank().get(e);
 
       switch (e) {
-        case RUBY -> {
-          incSingularTokenList(e, tokensForGem, rubyAmount);
-        }
-        case EMERALD -> {
-          incSingularTokenList(e, tokensForGem, emeraldAmount);
-        }
-        case SAPPHIRE -> {
-          incSingularTokenList(e, tokensForGem, sapphireAmount);
-        }
-        case DIAMOND -> {
-          incSingularTokenList(e, tokensForGem, diamondAmount);
-        }
-        case ONYX -> {
-          incSingularTokenList(e, tokensForGem, onyxAmount);
-        }
-        case GOLD -> {
-          incSingularTokenList(e, tokensForGem, goldAmount);
-        }
+        case RUBY -> incSingularTokenList(e, tokensForGem, rubyAmount);
+        case EMERALD -> incSingularTokenList(e, tokensForGem, emeraldAmount);
+        case SAPPHIRE -> incSingularTokenList(e, tokensForGem, sapphireAmount);
+        case DIAMOND -> incSingularTokenList(e, tokensForGem, diamondAmount);
+        case ONYX -> incSingularTokenList(e, tokensForGem, onyxAmount);
+        case GOLD -> incSingularTokenList(e, tokensForGem, goldAmount);
         default -> {
         }
       }
@@ -174,27 +162,13 @@ public abstract class Bank {
     for (Gem e : Gem.values()) {
       ArrayList<Token> tokenListForGem = getBank().get(e);
       switch (e) {
-        case RUBY -> {
-          checkResult = checkResult && tokenListForGem.size() >= rubyAmount;
-        }
-        case EMERALD -> {
-          checkResult = checkResult && tokenListForGem.size() >= emeraldAmount;
-        }
-        case SAPPHIRE -> {
-          checkResult = checkResult && tokenListForGem.size() >= sapphireAmount;
-        }
-        case DIAMOND -> {
-          checkResult = checkResult && tokenListForGem.size() >= diamondAmount;
-        }
-        case ONYX -> {
-          checkResult = checkResult && tokenListForGem.size() >= onyxAmount;
-        }
-        case GOLD -> {
-          checkResult = checkResult && tokenListForGem.size() >= goldAmount;
-        }
-        default -> {
-          throw new IllegalArgumentException("Something is sussy here");
-        }
+        case RUBY -> checkResult = checkResult && tokenListForGem.size() >= rubyAmount;
+        case EMERALD -> checkResult = checkResult && tokenListForGem.size() >= emeraldAmount;
+        case SAPPHIRE -> checkResult = checkResult && tokenListForGem.size() >= sapphireAmount;
+        case DIAMOND -> checkResult = checkResult && tokenListForGem.size() >= diamondAmount;
+        case ONYX -> checkResult = checkResult && tokenListForGem.size() >= onyxAmount;
+        case GOLD -> checkResult = checkResult && tokenListForGem.size() >= goldAmount;
+        default -> throw new IllegalArgumentException("Something is sussy here");
       }
     }
 
@@ -219,8 +193,6 @@ public abstract class Bank {
 
   /**
    * String representation of a bank.
-   *
-   * @return a String of the bank.
    */
   @Override
   public String toString() {
