@@ -69,7 +69,7 @@ public enum CurrencyType {
    * @return A color that would be suitable for the Text over a currencyType.
    */
   public Paint getTextColor() {
-    if (this == BLACK_TOKENS) {
+    if (this == BLACK_TOKENS || this == BLUE_TOKENS) {
       return Color.WHITE;
     }
     return Color.BLACK;

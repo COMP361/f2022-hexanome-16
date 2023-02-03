@@ -237,8 +237,7 @@ public class GameService implements GameServiceInterface {
         || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    System.out.println("PLAYER FOUND");
-    System.out.println(clientPlayer.getName());
+
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.

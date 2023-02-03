@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.google.gson.Gson;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
@@ -58,7 +59,8 @@ public class SeeReserved extends SeeReservedAbstract {
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");
-    myPromptMessage.setFont(Font.font(15));
+    myPromptMessage.setFont(GAME_FONT.newFont(15));
+    myPromptMessage.setFill(Config.SECONDARY_COLOR);
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
 

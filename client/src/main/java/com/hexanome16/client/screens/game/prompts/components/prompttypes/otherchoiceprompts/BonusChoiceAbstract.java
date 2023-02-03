@@ -1,5 +1,6 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
+import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePromptAbstract;
@@ -52,9 +53,9 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
   private ArrayList<Node> makeBonusType(BonusType bonusType) {
 
     // initialize and set up actual circle
-    Circle bonusCircle = new Circle(tokenRadiusAttribute, bonusType.getColor());
-    bonusCircle.setStrokeWidth(tokenRadiusAttribute * 0.2);
-    bonusCircle.setStroke(bonusType.getStrokeColor());
+    Texture bonusCircle = bonusType.getTexture();
+    bonusCircle.setFitHeight(tokenRadiusAttribute * 2.5);
+    bonusCircle.setFitWidth(tokenRadiusAttribute * 2.5);
 
     // initialize and set up the glowing around the circle
     // (also, add it to the list of all the glowing circles in the prompt)
