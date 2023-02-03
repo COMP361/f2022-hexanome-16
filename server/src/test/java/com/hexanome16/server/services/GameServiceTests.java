@@ -19,6 +19,7 @@ import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.util.BroadcastMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ class GameServiceTests {
    */
   @BeforeEach
   void setup() throws JsonProcessingException {
-    gameService = new GameService(new DummyAuthService());
+    gameService = new GameService(new DummyAuthService(), new BroadcastMap());
     payload.setPlayers(
         new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
             objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)}

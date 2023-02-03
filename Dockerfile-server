@@ -16,7 +16,7 @@ RUN sed -i 's/server.host=host.docker.internal/server.host=splendor-server/g' sr
 RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/application.properties
 
 # Build the application
-RUN mvn -Ddocker.javadoc.skip=true -Ddocker.test.skip=true package
+RUN mvn -Ddocker.test.skip=true package
 
 # Discard Maven, run JAR file using JRE
 FROM eclipse-temurin:17-jre-alpine AS runtime

@@ -40,7 +40,7 @@ import org.springframework.web.context.request.async.DeferredResult;
  */
 @Service
 public class GameService implements GameServiceInterface {
-  private final BroadcastMap broadcastContentManagerMap = new BroadcastMap();
+  private final BroadcastMap broadcastContentManagerMap;
   /**
    * A mapping from ID's to their associated games.
    */
@@ -54,9 +54,12 @@ public class GameService implements GameServiceInterface {
    * Instantiates the game service.
    *
    * @param authService the authentication service used to validate requests
+   * @param broadcastContentManagerMap the broadcast content manager map used to manage
    */
-  public GameService(@Autowired AuthServiceInterface authService) {
+  public GameService(@Autowired AuthServiceInterface authService, @Autowired BroadcastMap
+      broadcastContentManagerMap) {
     this.authService = authService;
+    this.broadcastContentManagerMap = broadcastContentManagerMap;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 

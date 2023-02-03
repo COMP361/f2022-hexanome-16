@@ -12,6 +12,7 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameBank;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.util.BroadcastMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public class TokenServiceTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
-    gameService = new GameService(dummyAuthService);
+    gameService = new GameService(dummyAuthService, new BroadcastMap());
     tokensService  =
             new TokenService(gameService, dummyAuthService);
 
