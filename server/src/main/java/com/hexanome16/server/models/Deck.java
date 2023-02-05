@@ -4,14 +4,14 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import lombok.Data;
+import lombok.ToString;
 
 /**
  * Development deck class.
  *
  * @param <T> Inventory Addable to be contained in the deck
  */
-@Data
+@ToString
 public class Deck<T extends InventoryAddable> implements BroadcastContent {
   private final List<T> cardList = new ArrayList<>();
   private int index;
@@ -21,6 +21,13 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    */
   public Deck() {
     this.index = 0;
+  }
+
+  /**
+   * @return immutable copy of internal card list
+   */
+  public List<T> getCardList() {
+    return Collections.unmodifiableList(cardList);
   }
 
   /**

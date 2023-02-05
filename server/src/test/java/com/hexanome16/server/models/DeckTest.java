@@ -3,6 +3,7 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,19 @@ public class DeckTest {
     List<InventoryAddable> cardList = new ArrayList<>();
     cardList.add(noble1);
     assertEquals(cardList, deck.getCardList());
+  }
+
+  /**
+   * Test get card list is immutable.
+   */
+  @Test
+  public void testGetCardListImmutable() {
+    try {
+      deck.getCardList().add(noble2);
+      fail();
+    } catch (UnsupportedOperationException e) {
+      assertTrue(true);
+    }
   }
 
   /**
