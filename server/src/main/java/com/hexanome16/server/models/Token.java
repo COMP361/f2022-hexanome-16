@@ -7,9 +7,5 @@ import lombok.Getter;
 /**
  * Token class.
  */
-@AllArgsConstructor
-@Getter
-@EqualsAndHashCode
-public final class Token {
-  private final Gem gem;
+public record Token(Gem gem) {
 }
