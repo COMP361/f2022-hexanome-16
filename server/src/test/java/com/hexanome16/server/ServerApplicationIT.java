@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 /**
  * The type Server application tests.
  */
-@SpringBootTest(classes = ServerApplicationTests.class)
-class ServerApplicationTests {
+@SpringBootTest(classes = ServerApplicationIT.class)
+class ServerApplicationIT {
 
   /**
    * Context loads.

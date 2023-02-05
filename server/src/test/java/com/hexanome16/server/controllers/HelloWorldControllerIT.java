@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
  * This class contains tests for the server.
  */
 @WebMvcTest(HelloWorldController.class)
-public class HelloWorldControllerTests {
+public class HelloWorldControllerIT {
   /**
    * Test say hello.
    */
