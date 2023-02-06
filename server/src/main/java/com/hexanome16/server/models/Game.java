@@ -454,8 +454,6 @@ public class Game {
   public void addOnBoardCard(Level level) {
     LevelCard card = this.levelDecks.get(level).nextCard();
     card.setIsFaceDown(false);
-    System.out.println(
-        card.getCardInfo().texturePath() + "face down: " + card.isFaceDown());
     this.onBoardDecks.get(level).addCard(card);
   }
 
