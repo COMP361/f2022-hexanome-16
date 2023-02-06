@@ -181,8 +181,8 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public void endCurrentPlayersTurn(Game game) {
-    int nextPlayerIndex = (game.getCurrentPlayerIndex() + 1) % game.getPlayers().length;
-    game.setCurrentPlayerIndex(nextPlayerIndex);
+    game.goToNextPlayer();
+    int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
       Player[] winners = game.getWinCondition().isGameWon(game);
       if (winners.length > 0) {
@@ -292,7 +292,7 @@ public class GameService implements GameServiceInterface {
                                             @RequestParam String authenticationToken)
       throws JsonProcessingException {
 
-    InventoryAddable card = DeckHash.getCardFromAllCards(cardMd5);
+    LevelCard card = DeckHash.getCardFromDeck(cardMd5);
 
     //verify game and player
     if (!gameMap.containsKey(sessionId) || card == null) {
@@ -312,21 +312,23 @@ public class GameService implements GameServiceInterface {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    if (card instanceof Reservable && !player.reserveCard((Reservable) card)) {
+    if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     // give player a gold token
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
+    //TODO: probably need a check to only remove level cards from board
+
     // replace this card with a new one on board
-    game.removeOnBoardCard((LevelCard) card);
-    Level level = ((LevelCard) card).getLevel();
+    game.removeOnBoardCard(card);
+    Level level = (card).getLevel();
     game.addOnBoardCard(level);
 
     // Notify long polling
     ((BroadcastContentManager<DeckHash>)
-        (broadcastContentManagerMap.get(((LevelCard) card).getLevel().name())))
+        (broadcastContentManagerMap.get((card).getLevel().name())))
         .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
 
     endCurrentPlayersTurn(game);
@@ -359,6 +361,7 @@ public class GameService implements GameServiceInterface {
 
     Level atLevel;
 
+    // TODO: bug waiting to happen
     switch (level) {
       case "THREE": atLevel = Level.THREE;
         break;

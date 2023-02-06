@@ -38,7 +38,6 @@ public class Game {
   private final String savegame;
   private final GameBank gameBank;
   private final WinCondition winCondition;
-  @Setter
   private int currentPlayerIndex = 0;
   private Deck<Noble> nobleDeck = new Deck<>();
   private Deck<Noble> onBoardNobles = new Deck<>();
@@ -86,7 +85,7 @@ public class Game {
    * @return the current player
    */
   public Player getCurrentPlayer() {
-    return getPlayers()[getCurrentPlayerIndex()];
+    return players[currentPlayerIndex];
   }
 
   /**
@@ -96,6 +95,13 @@ public class Game {
    */
   public Player[] getPlayers() {
     return players.clone();
+  }
+
+  /**
+   * Start next player's turn.
+   */
+  public void goToNextPlayer() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
   }
 
   private void createDecks() throws IOException {
