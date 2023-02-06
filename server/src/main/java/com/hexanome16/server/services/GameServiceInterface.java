@@ -1,10 +1,8 @@
 package com.hexanome16.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
-import java.util.Map;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,22 +13,6 @@ import org.springframework.web.context.request.async.DeferredResult;
  * Interface for managing game state backend requests.
  */
 public interface GameServiceInterface {
-  /**
-   * Gets game map.
-   *
-   * @return the game map
-   */
-  Map<Long, Game> getGameMap();
-
-  /**
-   * Create a new game as client requested.
-   *
-   * @param sessionId sessionId
-   * @param payload   the payload
-   * @return error if present
-   */
-  String createGame(long sessionId, SessionJson payload);
-
   /**
    * Long polling on update on onboard deck.
    *
@@ -77,8 +59,8 @@ public interface GameServiceInterface {
    * @return game winners
    */
   DeferredResult<ResponseEntity<String>> getWinners(long sessionId,
-                                                          String accessToken,
-                                                          String hash);
+                                                    String accessToken,
+                                                    String hash);
 
   /**
    * Allows client to see how many of each gem a player has.
@@ -140,22 +122,23 @@ public interface GameServiceInterface {
   /**
    * Let the player reserve a card.
    *
-   * @param sessionId game session id.
-   * @param cardMd5 card hash.
+   * @param sessionId           game session id.
+   * @param cardMd5             card hash.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   ResponseEntity<String> reserveCard(@PathVariable long sessionId,
-              @PathVariable String cardMd5,
-              @RequestParam String authenticationToken) throws JsonProcessingException;
+                                     @PathVariable String cardMd5,
+                                     @RequestParam String authenticationToken)
+      throws JsonProcessingException;
 
 
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId game session id.
-   * @param level deck level.
+   * @param sessionId           game session id.
+   * @param level               deck level.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
@@ -177,7 +160,7 @@ public interface GameServiceInterface {
   /**
    * Finds player with that authentication token in the game.
    *
-   * @param game                game to search.
+   * @param game        game to search.
    * @param accessToken token associated to player
    * @return player with that token, null if no such player
    */
