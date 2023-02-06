@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -46,13 +47,13 @@ public class Game {
    * Game constructor, create a new with a unique session id.
    *
    * @param sessionId    session id
-   * @param players      the players
+   * @param players      a non-null list of players
    * @param creator      the creator
    * @param savegame     the savegame
    * @param winCondition the win condition
    * @throws java.io.IOException exception
    */
-  public Game(long sessionId, Player[] players, String creator, String savegame,
+  public Game(long sessionId, @NonNull Player[] players, String creator, String savegame,
               WinCondition winCondition)
       throws IOException {
     this.sessionId = sessionId;
