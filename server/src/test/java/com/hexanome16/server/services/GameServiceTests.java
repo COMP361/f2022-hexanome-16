@@ -3,6 +3,7 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
@@ -19,9 +21,8 @@ import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -268,8 +269,16 @@ class GameServiceTests {
 
     gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    try {
+      Field field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
 
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
     ResponseEntity<String> response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             accessToken, 1, 1, 1, 0, 0, 1);
@@ -292,7 +301,17 @@ class GameServiceTests {
 
     gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     ResponseEntity<String> response =
         gameService.reserveCard(sessionId,
@@ -316,7 +335,17 @@ class GameServiceTests {
 
     gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     ResponseEntity<String> response =
         gameService.reserveFaceDownCard(sessionId,
@@ -341,7 +370,17 @@ class GameServiceTests {
 
     gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     // Test invalid sessionId
     ResponseEntity<String> response = gameService.buyCard(invalidSessionId,
@@ -360,8 +399,17 @@ class GameServiceTests {
 
     // Test not enough funds
     LevelCard invalidCard = createInvalidCard();
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)),
-        invalidCard);
+
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
     response = gameService.buyCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken, 7, 1, 1, 0,
         0, 1);
@@ -385,7 +433,17 @@ class GameServiceTests {
 
     gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     // Test invalid sessionId
     ResponseEntity<String> response = gameService.reserveCard(invalidSessionId,
