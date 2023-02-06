@@ -3,8 +3,8 @@ package com.hexanome16.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Gem;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class TokenService implements TokenServiceInterface {
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(listAvailableForTwoBonusType), HttpStatus.OK);
   }
-  
+
   @Override
   public ResponseEntity<String> availableThreeTokensType(long sessionId)
       throws JsonProcessingException {

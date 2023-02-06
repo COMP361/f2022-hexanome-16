@@ -2,6 +2,9 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.hexanome16.server.models.bank.GameBank;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +33,8 @@ public class GameBankTest {
     ArrayList<Gem> availableTwoTokens = gameBank.availableTwoTokensType();
     assertEquals(Set.copyOf(availableTwoTokens), Set.of(Gem.RUBY, Gem.SAPPHIRE,
         Gem.DIAMOND, Gem.EMERALD, Gem.ONYX, Gem.GOLD));
-    gameBank.incBank(-3, -4, 0,
-        0, 0, 0);
+    gameBank.removeGemsFromBank(new PurchaseMap(3, 4, 0,
+        0, 0, 0));
     availableTwoTokens = gameBank.availableTwoTokensType();
     assertEquals(Set.copyOf(availableTwoTokens), Set.of(Gem.RUBY, Gem.SAPPHIRE,
         Gem.DIAMOND, Gem.ONYX, Gem.GOLD));
@@ -45,8 +48,8 @@ public class GameBankTest {
     ArrayList<Gem> availableThreeTokens = gameBank.availableThreeTokensType();
     assertEquals(Set.copyOf(availableThreeTokens), Set.of(Gem.RUBY, Gem.SAPPHIRE,
         Gem.DIAMOND, Gem.EMERALD, Gem.ONYX, Gem.GOLD));
-    gameBank.incBank(-3, -4, 0,
-        0, -7, 0);
+    gameBank.removeGemsFromBank(new PurchaseMap(3, 4, 0,
+        0, 7, 0));
     availableThreeTokens = gameBank.availableThreeTokensType();
     assertEquals(Set.copyOf(availableThreeTokens), Set.of(Gem.RUBY, Gem.SAPPHIRE,
         Gem.DIAMOND, Gem.EMERALD, Gem.GOLD));

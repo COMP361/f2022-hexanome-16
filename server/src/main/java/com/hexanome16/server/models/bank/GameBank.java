@@ -1,5 +1,6 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.bank;
 
+import com.hexanome16.server.models.price.Gem;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,20 +11,12 @@ import java.util.stream.Stream;
  */
 public class GameBank extends Bank {
 
-  private final Hashtable<Gem, ArrayList<Token>> gameBank;
-
   /**
-   * The game starts with the default amount of tokens.
+   * The game starts with the default amount of tokens (7).
    */
   public GameBank() {
-    gameBank = initBank(7);
+    super(7);
   }
-
-  @Override
-  protected Hashtable<Gem, ArrayList<Token>> getBank() {
-    return this.gameBank;
-  }
-
 
   /**
    * Gets all the token types one can take 2 of.
@@ -32,7 +25,7 @@ public class GameBank extends Bank {
    */
   public ArrayList<Gem> availableTwoTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));
-    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem).size() >= 4);
+    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) >= 4);
     return new ArrayList<>(myStream.toList());
   }
 
@@ -43,7 +36,7 @@ public class GameBank extends Bank {
    */
   public ArrayList<Gem> availableThreeTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));
-    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem).size() > 0);
+    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) > 0);
     return new ArrayList<>(myStream.toList());
   }
 

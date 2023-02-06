@@ -1,72 +1,102 @@
 [
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 4,
-    "emeraldAmount": 4,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 4,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 4,
-    "rubyAmount": 4,
-    "diamondAmount": 0
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 4,
+      "DIAMOND": 0
+    }
   },
   {
-    "onyxAmount": 4,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 4
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 4,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
   },
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 4,
-    "emeraldAmount": 0,
-    "rubyAmount": 4,
-    "diamondAmount": 0
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 0,
+      "RUBY": 4,
+      "DIAMOND": 0
+    }
   },
   {
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
-    "onyxAmount": 3,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 3,
-    "diamondAmount": 3
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
   },
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 3,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 3,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
-    "onyxAmount": 0,
-    "sapphireAmount": 4,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 4
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
   }
 ]

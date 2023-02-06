@@ -3,6 +3,7 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,8 +40,7 @@ public class InventoryTests {
   @DisplayName("Acquire a Level Card successfully")
   void testAcquireCard() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    Price price = new TokenPrice(priceMap);
-    levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
+    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
   }
@@ -53,9 +53,8 @@ public class InventoryTests {
   @DisplayName("Reserve a face up Level Card successfully")
   void testReserveFaceUp() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    Price price = new TokenPrice(priceMap);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
+    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully
@@ -73,9 +72,8 @@ public class InventoryTests {
   @DisplayName("Reserve a face down Level Card successfully")
   void testReserveFaceDown() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    Price price = new TokenPrice(priceMap);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", price, Level.ONE);
+    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     levelCard.setIsFaceDown(false);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
@@ -94,8 +92,7 @@ public class InventoryTests {
   @DisplayName("Acquire a visiting Noble successfully")
   void testAcquireNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    Price price = new TokenPrice(priceMap);
-    noble = new Noble(0, 3, "noble0.png", price);
+    noble = new Noble(0, 3, "noble0.png", priceMap);
     inventory.acquireNoble(noble);
     assertTrue(inventory.getOwnedNobles().contains(noble));
   }
@@ -108,8 +105,7 @@ public class InventoryTests {
   @DisplayName("Reserve a Noble successfully")
   void testReserveNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    Price price = new TokenPrice(priceMap);
-    noble = new Noble(0, 3, "noble0.png", price);
+    noble = new Noble(0, 3, "noble0.png", priceMap);
     inventory.reserveNoble(noble);
     assertTrue(inventory.getReservedNobles().contains(noble));
   }

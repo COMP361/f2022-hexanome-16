@@ -1,6 +1,5 @@
 package com.hexanome16.server.models;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.BagJson;
 import com.hexanome16.server.dto.CardJson;
@@ -8,12 +7,15 @@ import com.hexanome16.server.dto.CascadeTwoJson;
 import com.hexanome16.server.dto.DoubleJson;
 import com.hexanome16.server.dto.NobleJson;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.models.bank.GameBank;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
@@ -30,6 +32,7 @@ public class Game {
 
   private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
   private final Map<Level, Deck<LevelCard>> onBoardDecks = new HashMap<>();
+  private final int levelCardsTotal = 90;
 
   private final long sessionId;
 
@@ -100,74 +103,41 @@ public class Game {
 
   private void createDecks() throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
-    List<CardJson> cardJsonList;
+    CardJson[] cardJsonList;
     try {
-      cardJsonList =
-          objectMapper.readValue(new File(
-                  "/app/cards.json"),
-              new TypeReference<List<CardJson>>() {
-              });
+      cardJsonList = objectMapper.readValue(new File("/app/cards.json"), CardJson[].class);
     } catch (Exception e) {
       cardJsonList =
-          objectMapper.readValue(new File(
-                  "./src/main/resources/cards.json"),
-              new TypeReference<List<CardJson>>() {
-              });
+          objectMapper.readValue(new File("./src/main/resources/cards.json"), CardJson[].class);
     }
-    createBaseLevelOneDeck(cardJsonList);
-    createBaseLevelTwoDeck(cardJsonList);
-    createBaseLevelThreeDeck(cardJsonList);
+    createBaseLevelDecks(cardJsonList);
 
-    List<NobleJson> nobleJsonList;
+    NobleJson[] nobleJsonList;
     try {
-      nobleJsonList =
-          objectMapper.readValue(new File(
-                  "/app/nobles.json"),
-              new TypeReference<List<NobleJson>>() {
-              });
+      nobleJsonList = objectMapper.readValue(new File("/app/nobles.json"), NobleJson[].class);
     } catch (Exception e) {
-      File file = new File(".");
       nobleJsonList =
-          objectMapper.readValue(new File(
-                  "./src/main/resources/nobles.json"),
-              new TypeReference<List<NobleJson>>() {
-              });
+          objectMapper.readValue(new File("./src/main/resources/nobles.json"), NobleJson[].class);
     }
     createNobleDeck(nobleJsonList);
 
-    List<BagJson> bagJsonList;
+    BagJson[] bagJsonList;
     try {
-      bagJsonList =
-          objectMapper.readValue(new File(
-                  "/app/bag.json"),
-              new TypeReference<List<BagJson>>() {
-              });
+      bagJsonList = objectMapper.readValue(new File("/app/bag.json"), BagJson[].class);
     } catch (Exception e) {
-      File file = new File(".");
       bagJsonList =
-          objectMapper.readValue(new File(
-                  "./src/main/resources/bag.json"),
-              new TypeReference<List<BagJson>>() {
-              });
+          objectMapper.readValue(new File("./src/main/resources/bag.json"), BagJson[].class);
     }
     createBagDeck(bagJsonList);
 
     createGoldDeck();
 
-    List<DoubleJson> doubleJsonList;
+    DoubleJson[] doubleJsonList;
     try {
-      doubleJsonList =
-          objectMapper.readValue(new File(
-                  "/app/double.json"),
-              new TypeReference<List<DoubleJson>>() {
-              });
+      doubleJsonList = objectMapper.readValue(new File("/app/double.json"), DoubleJson[].class);
     } catch (Exception e) {
-      File file = new File(".");
       doubleJsonList =
-          objectMapper.readValue(new File(
-                  "./src/main/resources/double.json"),
-              new TypeReference<List<DoubleJson>>() {
-              });
+          objectMapper.readValue(new File("./src/main/resources/double.json"), DoubleJson[].class);
     }
     createDoubleDeck(doubleJsonList);
 
@@ -177,101 +147,50 @@ public class Game {
 
     createSacrificeDeck();
 
-    List<CascadeTwoJson> cascadeTwoJsonList;
+    CascadeTwoJson[] cascadeTwoJsonList;
     try {
       cascadeTwoJsonList =
-          objectMapper.readValue(new File(
-                  "/app/cascade_two.json"),
-              new TypeReference<List<CascadeTwoJson>>() {
-              });
+          objectMapper.readValue(new File("/app/cascade_two.json"), CascadeTwoJson[].class);
     } catch (Exception e) {
-      File file = new File(".");
       cascadeTwoJsonList =
-          objectMapper.readValue(new File(
-                  "./src/main/resources/cascade_two.json"),
-              new TypeReference<List<CascadeTwoJson>>() {
-              });
+          objectMapper.readValue(new File("./src/main/resources/cascade_two.json"),
+              CascadeTwoJson[].class);
     }
     createCascadeTwoDeck(cascadeTwoJsonList);
   }
 
-  private void createBaseLevelOneDeck(List<CardJson> cardJsonList) {
-    Deck<LevelCard> deck = new Deck<>();
-    for (int i = 0; i < 40; i++) {
-      CardJson cardJson = cardJsonList.get(i);
-      PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
-          cardJson.getSapphireAmount(),
-          cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
-      LevelCard card =
-          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
-              "level_one" + cardJson.getId(), new TokenPrice(priceMap),
-              Level.ONE);
-      deck.addCard(card);
+  private void createBaseLevelDecks(CardJson[] cardJsonList) {
+    levelDecks.put(Level.ONE, new Deck<>());
+    levelDecks.put(Level.TWO, new Deck<>());
+    levelDecks.put(Level.THREE, new Deck<>());
+    for (int i = 0; i < levelCardsTotal; i++) {
+      CardJson cardJson = cardJsonList[i];
+      String textureLevel = i < 40 ? "level_one" : i < 70 ? "level_two" : "level_three";
+      Level level = i < 40 ? Level.ONE : i < 70 ? Level.TWO : Level.THREE;
+      LevelCard card = new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
+          textureLevel + cardJson.getId(), cardJson.getPrice(), level);
+      levelDecks.get(level).addCard(card);
     }
-    deck.shuffle();
-    levelDecks.put(Level.ONE, deck);
   }
 
-  private void createBaseLevelTwoDeck(List<CardJson> cardJsonList) {
-    Deck<LevelCard> deck = new Deck<>();
-    for (int i = 40; i < 70; i++) {
-      CardJson cardJson = cardJsonList.get(i);
-      PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
-          cardJson.getSapphireAmount(),
-          cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
-      LevelCard card =
-          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
-              "level_two" + cardJson.getId(),
-              new TokenPrice(priceMap),
-              Level.TWO);
-      deck.addCard(card);
-    }
-    deck.shuffle();
-    levelDecks.put(Level.TWO, deck);
-  }
-
-  private void createBaseLevelThreeDeck(List<CardJson> cardJsonList) {
-    Deck<LevelCard> deck = new Deck<>();
-    for (int i = 70; i < 90; i++) {
-      CardJson cardJson = cardJsonList.get(i);
-      PriceMap priceMap = new PriceMap(cardJson.getRubyAmount(), cardJson.getEmeraldAmount(),
-          cardJson.getSapphireAmount(),
-          cardJson.getDiamondAmount(), cardJson.getOnyxAmount());
-      LevelCard card =
-          new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
-              "level_three" + cardJson.getId(),
-              new TokenPrice(priceMap),
-              Level.THREE);
-      deck.addCard(card);
-    }
-    deck.shuffle();
-    levelDecks.put(Level.THREE, deck);
-  }
-
-  private void createNobleDeck(List<NobleJson> nobleJsonList) {
+  private void createNobleDeck(NobleJson[] nobleJsonList) {
     Deck<Noble> deck = new Deck<>();
     for (int i = 0; i < 10; i++) {
-      NobleJson nobleJson = nobleJsonList.get(i);
-      PriceMap priceMap = new PriceMap(nobleJson.getRubyAmount(), nobleJson.getEmeraldAmount(),
-          nobleJson.getSapphireAmount(),
-          nobleJson.getDiamondAmount(), nobleJson.getOnyxAmount());
-      Noble noble = new Noble(i, 3, "noble" + i, new TokenPrice(priceMap));
+      NobleJson nobleJson = nobleJsonList[i];
+      Noble noble = new Noble(i, 3, "noble" + i, nobleJson.getPrice());
       deck.addCard(noble);
     }
     deck.shuffle();
     this.nobleDeck = deck;
   }
 
-  private void createBagDeck(List<BagJson> bagJsonList) {
+  private void createBagDeck(BagJson[] bagJsonList) {
     Deck<LevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
-      BagJson bagJson = bagJsonList.get(i);
-      PriceMap priceMap = new PriceMap(bagJson.getRubyAmount(), bagJson.getEmeraldAmount(),
-          bagJson.getSapphireAmount(),
-          bagJson.getDiamondAmount(), bagJson.getOnyxAmount());
+      BagJson bagJson = bagJsonList[i];
       LevelCard bag = new LevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
-          new TokenPrice(priceMap),
+          bagJson.getPrice(),
           Level.REDONE);
       deck.addCard(bag);
     }
@@ -288,7 +207,7 @@ public class Game {
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
       LevelCard gold = new LevelCard(i, 0,
           "gold" + i,
-          new TokenPrice(priceMap),
+          priceMap,
           Level.REDONE);
       deck.addCard(gold);
     }
@@ -296,16 +215,13 @@ public class Game {
     redDecks.put(Level.REDONE, deck);
   }
 
-  private void createDoubleDeck(List<DoubleJson> doubleJsonList) {
+  private void createDoubleDeck(DoubleJson[] doubleJsonList) {
     Deck<LevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
-      DoubleJson doubleJson = doubleJsonList.get(i);
-      PriceMap priceMap = new PriceMap(doubleJson.getRubyAmount(), doubleJson.getEmeraldAmount(),
-          doubleJson.getSapphireAmount(),
-          doubleJson.getDiamondAmount(), doubleJson.getOnyxAmount());
+      DoubleJson doubleJson = doubleJsonList[i];
       LevelCard bag = new LevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
-          new TokenPrice(priceMap),
+          doubleJson.getPrice(),
           Level.REDTWO);
       deck.addCard(bag);
     }
@@ -321,7 +237,7 @@ public class Game {
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
       LevelCard bag = new LevelCard(i, 1,
           "noble_reserve" + i,
-          new TokenPrice(priceMap),
+          priceMap,
           Level.REDTWO);
       deck.addCard(bag);
     }
@@ -337,7 +253,7 @@ public class Game {
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
       LevelCard bag = new LevelCard(i, 0,
           "bag_cascade" + i,
-          new TokenPrice(priceMap),
+          priceMap,
           Level.REDTWO);
       deck.addCard(bag);
     }
@@ -349,10 +265,11 @@ public class Game {
     Deck<LevelCard> deck = new Deck<>();
     Gem[] gems = {Gem.SAPPHIRE, Gem.RUBY, Gem.EMERALD, Gem.ONYX, Gem.DIAMOND};
     for (int i = 0; i < 4; i++) {
-      CardPrice price = new CardPrice(gems[i]);
+      PriceMap priceMap = new PriceMap(0, 0, 0, 0, 0);
+      priceMap.addGems(gems[i], 1);
       LevelCard bag = new LevelCard(i, 3,
           "sacrifice" + i,
-          price,
+          priceMap,
           Level.REDTHREE);
       deck.addCard(bag);
     }
@@ -360,17 +277,13 @@ public class Game {
     redDecks.put(Level.REDTHREE, deck);
   }
 
-  private void createCascadeTwoDeck(List<CascadeTwoJson> cascadeTwoJsonList) {
+  private void createCascadeTwoDeck(CascadeTwoJson[] cascadeTwoJsonList) {
     Deck<LevelCard> deck = redDecks.get(Level.REDTHREE);
     for (int i = 0; i < 4; i++) {
-      CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList.get(i);
-      PriceMap priceMap =
-          new PriceMap(cascadeTwoJson.getRubyAmount(), cascadeTwoJson.getEmeraldAmount(),
-              cascadeTwoJson.getSapphireAmount(),
-              cascadeTwoJson.getDiamondAmount(), cascadeTwoJson.getOnyxAmount());
+      CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList[i];
       LevelCard bag = new LevelCard(cascadeTwoJson.getId(), 0,
           "cascade_two" + cascadeTwoJson.getId(),
-          new TokenPrice(priceMap),
+          cascadeTwoJson.getPrice(),
           Level.REDTHREE);
       deck.addCard(bag);
     }
@@ -496,8 +409,8 @@ public class Game {
    */
   public void incGameBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
                           int diamondAmount, int onyxAmount, int goldAmount) {
-    getGameBank().incBank(rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount);
+    getGameBank().addGemsToBank(new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount));
   }
 
   /**
@@ -507,11 +420,35 @@ public class Game {
    *                    the game bank.
    */
   public void incGameBank(PurchaseMap purchaseMap) {
-    getGameBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
-        purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
-        purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+    getGameBank().addGemsToBank(purchaseMap);
   }
 
+  /**
+   * Decrements game bank by the amount specified by each parameter for each of their
+   * corresponding gem types.
+   *
+   * @param rubyAmount     amount to decrease ruby stack by.
+   * @param emeraldAmount  amount to decrease emerald stack by.
+   * @param sapphireAmount amount to decrease sapphire stack by.
+   * @param diamondAmount  amount to decrease diamond stack by.
+   * @param onyxAmount     amount to decrease onyx stack by.
+   * @param goldAmount     amount to decrease gold stack by.
+   */
+  public void decGameBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
+                          int diamondAmount, int onyxAmount, int goldAmount) {
+    getGameBank().removeGemsFromBank(new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount));
+  }
+
+  /**
+   * Decrements the game bank by the amount specified in the purchase map.
+   *
+   * @param purchaseMap purchase map representation of how much we want to decrement
+   *                    the game bank.
+   */
+  public void decGameBank(PurchaseMap purchaseMap) {
+    getGameBank().removeGemsFromBank(purchaseMap);
+  }
 
   // TODO: TEST CASE
 
@@ -530,8 +467,8 @@ public class Game {
   public void incGameBankFromPlayer(Player player, int rubyAmount, int emeraldAmount,
                                     int sapphireAmount, int diamondAmount, int onyxAmount,
                                     int goldAmount) {
-    player.incPlayerBank(-rubyAmount, -emeraldAmount, -sapphireAmount,
-        -diamondAmount, -onyxAmount, -goldAmount);
+    player.getBank().removeGemsFromBank(new PurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount));
 
     incGameBank(rubyAmount, emeraldAmount, sapphireAmount,
         diamondAmount, onyxAmount, goldAmount);
@@ -552,8 +489,9 @@ public class Game {
    */
   public boolean gameBankHasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                                     int diamondAmount, int onyxAmount, int goldAmount) {
-    return getGameBank().hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount);
+    return getGameBank().toPurchaseMap().canBeUsedToBuy(
+        new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount));
   }
 
   /**
@@ -585,7 +523,7 @@ public class Game {
   public void giveTwoOf(Gem gem, Player player) {
 
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
-    gemIntegerMapGame.put(gem, -2);
+    gemIntegerMapGame.put(gem, 2);
     incGameBank(new PurchaseMap(gemIntegerMapGame));
     Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
     gemIntegerMapPlayer.put(gem, 2);
@@ -630,10 +568,10 @@ public class Game {
                           Player player) {
     // Remove from game bank
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
-    gemIntegerMapGame.put(desiredGemOne, -1);
-    gemIntegerMapGame.put(desiredGemTwo, -1);
-    gemIntegerMapGame.put(desiredGemThree, -1);
-    incGameBank(new PurchaseMap(gemIntegerMapGame));
+    gemIntegerMapGame.put(desiredGemOne, 1);
+    gemIntegerMapGame.put(desiredGemTwo, 1);
+    gemIntegerMapGame.put(desiredGemThree, 1);
+    gameBank.removeGemsFromBank(new PurchaseMap(gemIntegerMapGame));
 
     // Give to player bank
     Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
@@ -641,16 +579,6 @@ public class Game {
     gemIntegerMapPlayer.put(desiredGemTwo, 1);
     gemIntegerMapPlayer.put(desiredGemThree, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
-  }
-
-
-  /**
-   * Game bank to purchase map.
-   *
-   * @return the purchase map
-   */
-  public PurchaseMap gameBankToPurchaseMap() {
-    return getGameBank().toPurchaseMap();
   }
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
