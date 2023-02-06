@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
@@ -47,6 +48,8 @@ public class TokenAcquiring implements PromptTypeInterface {
    */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
 
+
+
   @Override
   public double getWidth() {
     return atWidth;
@@ -70,7 +73,8 @@ public class TokenAcquiring implements PromptTypeInterface {
     Text myPromptMessage = new Text("Taking Tokens");
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
-    myPromptMessage.setFont(Font.font(atHeight / 10.));
+    myPromptMessage.setFont(GAME_FONT.newFont(atHeight / 10.));
+    myPromptMessage.setFill(Config.SECONDARY_COLOR);
 
     // set up choose 2 choice
     StackPane chooseTwo = makeButton("TAKE 2 TOKENS SAME COLOR", 0.25,
@@ -79,7 +83,8 @@ public class TokenAcquiring implements PromptTypeInterface {
     // set up OR text
     Text orText = new Text("OR");
     orText.setTextAlignment(TextAlignment.CENTER);
-    orText.setFont(Font.font(atButtonHeight));
+    orText.setFont(GAME_FONT.newFont(atButtonHeight));
+    orText.setFill(Config.SECONDARY_COLOR);
 
     // set up choose 3 choice
     StackPane chooseThree = makeButton("TAKE 3 TOKENS DIFFERENT COLOR", 0.20,
@@ -115,7 +120,8 @@ public class TokenAcquiring implements PromptTypeInterface {
 
     // set up button message
     Text buttonMessage = new Text(buttonText);
-    buttonMessage.setFont(Font.font(atButtonHeight * fontHeightFraction));
+    buttonMessage.setFont(GAME_FONT.newFont(atButtonHeight * fontHeightFraction));
+    buttonMessage.setFill(Config.PRIMARY_COLOR);
     buttonMessage.setTextAlignment(TextAlignment.CENTER);
 
     // adds onHoverEffect
