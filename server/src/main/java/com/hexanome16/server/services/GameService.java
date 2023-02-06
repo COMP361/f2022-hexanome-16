@@ -328,8 +328,8 @@ public class GameService implements GameServiceInterface {
 
     // Notify long polling
     ((BroadcastContentManager<DeckHash>)
-        (broadcastContentManagerMap.get(((LevelCard) card).getLevel().name())))
-        .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
+            broadcastContentManagerMap.get(level.name()))
+            .updateBroadcastContent(new DeckHash(game, level));
 
     endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
