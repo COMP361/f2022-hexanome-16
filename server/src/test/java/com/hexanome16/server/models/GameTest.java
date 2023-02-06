@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  Player imad;
-  Player tristan;
+  Player imad = new Player("imad", "white");
+  Player tristan = new Player("tristan", "blue");
   private Game game;
 
   /**
@@ -33,8 +33,6 @@ public class GameTest {
   public void init() throws IOException {
     game = new Game(12345,
         new Player[] {imad, tristan}, "imad", "", new BaseWinCondition());
-    imad = new Player("imad", "#FFFFFF");
-    tristan = new Player("tristan", "#FFFFFF");
   }
 
   /**
@@ -54,11 +52,53 @@ public class GameTest {
   }
 
   /**
+   * Test get current player.
+   */
+  @Test
+  public void testCurrentPlayerInitializesAtZero() {
+    assertEquals(0, game.getCurrentPlayerIndex());
+  }
+
+  /**
+   * Test player array gets cloned.
+   *
+   * @throws IOException object mapper exception
+   */
+  @Test
+  public void testPlayerArrayGetsCloned() throws IOException {
+    Player[] players = new Player[] {imad, tristan};
+    game = new Game(12345,
+        players, "imad", "", new BaseWinCondition());
+    var gamePlayers = game.getPlayers();
+    assertNotEquals(players, gamePlayers);
+    players[0] = null;
+    assertNotNull(gamePlayers[0]);
+  }
+
+  /**
+   * Test go to next player.
+   */
+  @Test
+  public void testGoToNextPlayer() {
+    assertEquals(0, game.getCurrentPlayerIndex());
+    assertEquals(imad, game.getCurrentPlayer());
+    assertNotEquals(tristan, game.getCurrentPlayer());
+    game.goToNextPlayer();
+    assertEquals(1, game.getCurrentPlayerIndex());
+    assertEquals(tristan, game.getCurrentPlayer());
+    assertNotEquals(imad, game.getCurrentPlayer());
+    game.goToNextPlayer();
+    assertEquals(0, game.getCurrentPlayerIndex());
+    assertEquals(imad, game.getCurrentPlayer());
+    assertNotEquals(tristan, game.getCurrentPlayer());
+  }
+
+  /**
    * Test add on board card.
    */
   @Test
   public void testAddOnBoardCard() {
-    List cardList = game.getNobleDeck().getCardList();
+    List<Noble> cardList = game.getNobleDeck().getCardList();
     game.addOnBoardCard(Level.ONE);
     assertNotEquals(cardList.size() + 1, game.getOnBoardDeck(Level.ONE).getCardList().size());
   }
@@ -80,7 +120,7 @@ public class GameTest {
   @Test
   public void testIncGameBank() {
     assertEquals(game.getGameBank(), new GameBank());
-    HashMap<Gem, Integer> myMap = new HashMap<Gem, Integer>();
+    HashMap<Gem, Integer> myMap = new HashMap<>();
     myMap.put(Gem.RUBY, -2);
     game.incGameBank(new PurchaseMap(myMap));
     GameBank myGameBank = new GameBank();
