@@ -29,7 +29,16 @@ public enum CustomHttpResponses {
   /**
    * OK.
    */
-  OK("Ok", HttpStatus.OK);
+  OK("Ok", HttpStatus.OK),
+
+  /**
+   * Used for Server side errors that aren't necessarily caused by client.
+   * (Object mapper stuff for example)
+   *
+   * <p>Good case for Custom Message in {@link CustomResponseFactory#getCustomErrorResponse}
+   */
+  SERVER_SIDE_ERROR("There was an error on the server, please try again later",
+      HttpStatus.INTERNAL_SERVER_ERROR);
 
   private final String body;
   private final HttpStatus status;
