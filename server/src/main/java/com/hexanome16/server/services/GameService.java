@@ -9,18 +9,17 @@ import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.dto.WinJson;
-import com.hexanome16.server.models.CardInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PriceMap;
 import com.hexanome16.server.models.PurchaseMap;
-import com.hexanome16.server.models.Reservable;
 import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.util.CustomResponseFactory;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
@@ -47,7 +46,6 @@ public class GameService implements GameServiceInterface {
    */
   //store all the games here
   private final Map<Long, Game> gameMap = new HashMap<>();
-  private final Map<String, CardInfo> cardHashMap = new HashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
 
@@ -133,7 +131,7 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
-                                                                 String hash) {
+                                                           String hash) {
     if (authService.verifyPlayer(sessionId, accessToken, gameMap)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(
@@ -208,7 +206,7 @@ public class GameService implements GameServiceInterface {
 
 
     // Fetch the card in question
-    InventoryAddable cardToBuy = DeckHash.getCardFromAllCards(cardMd5);
+    LevelCard cardToBuy = DeckHash.getCardFromDeck(cardMd5);
 
     //
     if (!gameMap.containsKey(sessionId) || cardToBuy == null) {
@@ -260,16 +258,16 @@ public class GameService implements GameServiceInterface {
     clientPlayer.addCardToInventory(cardToBuy);
 
     // Remove card from the board
-    game.removeOnBoardCard((LevelCard) cardToBuy);
+    game.removeOnBoardCard(cardToBuy);
 
-    Level level = ((LevelCard) cardToBuy).getLevel();
+    Level level = (cardToBuy).getLevel();
     // Add new card to the deck
     game.addOnBoardCard(level);
 
 
     // Update long polling
     ((BroadcastContentManager<DeckHash>)
-        (broadcastContentManagerMap.get(((LevelCard) cardToBuy).getLevel().name())))
+        (broadcastContentManagerMap.get((cardToBuy).getLevel().name())))
         .updateBroadcastContent(new DeckHash(gameMap.get(sessionId), level));
 
     // Ends players turn, which is current player
@@ -281,8 +279,8 @@ public class GameService implements GameServiceInterface {
   /**
    * Let the player reserve a face up card.
    *
-   * @param sessionId game session id.
-   * @param cardMd5 card hash.
+   * @param sessionId           game session id.
+   * @param cardMd5             card hash.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws JsonProcessingException exception
@@ -338,19 +336,17 @@ public class GameService implements GameServiceInterface {
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId game session id.
-   * @param level deck level.
+   * @param sessionId           game session id.
+   * @param level               deck level.
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws JsonProcessingException exception
    */
   public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                                     @RequestParam String level,
-                                                    @RequestParam String authenticationToken)
-      throws JsonProcessingException {
+                                                    @RequestParam String authenticationToken) {
     //verify game and player
     if (!gameMap.containsKey(sessionId)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
 
     if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
@@ -370,15 +366,15 @@ public class GameService implements GameServiceInterface {
       default: atLevel = Level.ONE;
     }
 
-    InventoryAddable card = game.getLevelDeck(atLevel).nextCard();
+    LevelCard card = game.getLevelDeck(atLevel).nextCard();
 
     Player player = findPlayerByToken(game, authenticationToken);
 
     if (game.isNotPlayersTurn(player)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN);
     }
 
-    if (card instanceof Reservable && !player.reserveCard((Reservable) card)) {
+    if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
