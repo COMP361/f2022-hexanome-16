@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.server.models.price.PriceInterface;
 import lombok.Getter;
 
 /**
@@ -20,7 +21,8 @@ public class LevelCard implements Reservable {
    * @param price         the price
    * @param level         the level
    */
-  public LevelCard(int id, int prestigePoint, String texturePath, Price price, Level level) {
+  public LevelCard(int id, int prestigePoint, String texturePath, PriceInterface price,
+                   Level level) {
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
     this.level = level;
     this.faceDown = true;

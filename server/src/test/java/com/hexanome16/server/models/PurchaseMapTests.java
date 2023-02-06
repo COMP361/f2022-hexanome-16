@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.server.models.price.PurchaseMap;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -24,7 +27,7 @@ public class PurchaseMapTests {
    */
   @Test
   public void testAmountOfTokens() {
-    assertEquals(purchaseMap.sumTokensNonJokers(), 5);
+    assertEquals(purchaseMap.getTotalGemsNonJokers(), 5);
   }
 
   /**
@@ -58,11 +61,11 @@ public class PurchaseMapTests {
   @Test
   public void testBuy() {
     assertFalse(purchaseMap.canBeUsedToBuy(null));
-    assertFalse(purchaseMap.canBeUsedToBuy(priceMap));
+    assertTrue(purchaseMap.canBeUsedToBuy(priceMap));
     assertTrue(purchaseMap.canBeUsedToBuy(purchaseMap));
     assertTrue(purchaseMap.canBeUsedToBuy(PurchaseMap.toPurchaseMap(priceMap)));
     PurchaseMap bigMap = PurchaseMap.toPurchaseMap(priceMap);
-    bigMap.diamondAmount += 1;
+    bigMap.addGems(Gem.DIAMOND, 1);
     assertFalse(purchaseMap.canBeUsedToBuy(bigMap));
   }
 }

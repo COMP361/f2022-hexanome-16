@@ -3,6 +3,8 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +31,8 @@ public class PlayerTest {
     assertEquals(costa.getBank(), playerBank);
     costa.incPlayerBank(-3, -2,
         0, 0, 0, 0);
-    playerBank.incBank(-3, -2,
-        0, 0, 0, 0);
+    playerBank.removeGemsFromBank(new PurchaseMap(3, 2,
+        0, 0, 0, 0));
     assertEquals(costa.getBank(), playerBank);
   }
 
@@ -43,8 +45,8 @@ public class PlayerTest {
     assertEquals(costa.getBank(), playerBank);
     costa.incPlayerBank(new PurchaseMap(-3, -2,
         0, 0, 0, 0));
-    playerBank.incBank(-3, -2,
-        0, 0, 0, 0);
+    playerBank.removeGemsFromBank(new PurchaseMap(3, 2,
+        0, 0, 0, 0));
     assertEquals(costa.getBank(), playerBank);
   }
 
