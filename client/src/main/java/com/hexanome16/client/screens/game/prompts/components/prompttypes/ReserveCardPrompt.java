@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
@@ -94,7 +95,6 @@ public class ReserveCardPrompt implements PromptTypeInterface {
    * The button width.
    */
   double atButtonWidth = 3 * atWidth / 14;
-
 
   /**
    * Close buy prompt.
@@ -199,7 +199,8 @@ public class ReserveCardPrompt implements PromptTypeInterface {
     Text buttonText = new Text("Reserve");
     buttonText.setWrappingWidth(buttonWidth);
     buttonText.setTextAlignment(TextAlignment.CENTER);
-    buttonText.setFont(Font.font(buttonHeight * 0.6));
+    buttonText.setFont(GAME_FONT.newFont(buttonHeight * 0.6));
+    buttonText.setFill(Config.PRIMARY_COLOR);
 
     // return them
     return new ArrayList<>(List.of(buttonBox, buttonText));

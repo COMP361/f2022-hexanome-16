@@ -2,6 +2,7 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -46,6 +47,9 @@ public class Pause implements PromptTypeInterface {
    * The button height.
    */
   double atButtonHeight = atButtonWidth * 0.25;
+  /**
+   * Game Font.
+   */
 
   @Override
   public double getWidth() {
@@ -88,7 +92,8 @@ public class Pause implements PromptTypeInterface {
 
     // initialize and set up button Text
     Text buttonText = new Text(buttonType.toString());
-    buttonText.setFont(Font.font(atButtonHeight * 0.7));
+    buttonText.setFont(GAME_FONT.newFont(atButtonHeight * 0.7));
+    buttonText.setFill(Config.PRIMARY_COLOR);
     buttonText.setWrappingWidth(atButtonWidth * 0.9);
     buttonText.setTextAlignment(TextAlignment.CENTER);
 

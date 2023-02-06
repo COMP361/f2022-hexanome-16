@@ -1,5 +1,7 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.texture.Texture;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -11,28 +13,30 @@ public enum BonusType {
   /**
    * Red bonus type.
    */
-  RED(Color.RED.darker()),
+  RED(Color.RED.darker(), FXGL.texture("ruby.png")),
   /**
    * Green bonus type.
    */
-  GREEN(Color.GREEN.darker()),
+  GREEN(Color.GREEN.darker(), FXGL.texture("emerald.png")),
   /**
    * Blue bonus type.
    */
-  BLUE(Color.BLUE.darker()),
+  BLUE(Color.BLUE.darker(), FXGL.texture("sapphire.png")),
   /**
    * White bonus type.
    */
-  WHITE(Color.WHITE.darker()),
+  WHITE(Color.WHITE.darker(), FXGL.texture("diamond.png")),
   /**
    * Black bonus type.
    */
-  BLACK(Color.BLACK);
+  BLACK(Color.BLACK, FXGL.texture("onyx.png"));
 
   private final Color color;
+  private final Texture texture;
 
-  BonusType(Color color) {
+  BonusType(Color color, Texture t) {
     this.color = color;
+    this.texture = t;
   }
 
   /**
@@ -42,6 +46,15 @@ public enum BonusType {
    */
   public Paint getColor() {
     return this.color;
+  }
+
+  /**
+   * Gets texture.
+   *
+   * @return the  texture.
+   */
+  public Texture getTexture() {
+    return this.texture;
   }
 
   /**

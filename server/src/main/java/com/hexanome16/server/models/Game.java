@@ -466,7 +466,6 @@ public class Game {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
   }
 
-  // TODO: TEST CASE
 
   /**
    * Checks if is player's turn.
@@ -478,8 +477,6 @@ public class Game {
     return findPlayerIndex(player) != currentPlayerIndex;
   }
 
-
-  // TODO: TEST CASE
 
   /**
    * increments game bank by the amount specified by each parameter for each of their
@@ -510,9 +507,6 @@ public class Game {
         purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
   }
 
-
-  // TODO: TEST CASE
-
   /**
    * Increase game bank and decrease player bank by specified amount. (works the opposite for
    * negative number)
@@ -535,7 +529,6 @@ public class Game {
         diamondAmount, onyxAmount, goldAmount);
   }
 
-  // TODO: TEST CASE
 
   /**
    * Checks if game bank has at least x amount of each gem type.
