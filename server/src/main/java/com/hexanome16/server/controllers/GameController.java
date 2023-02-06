@@ -2,9 +2,8 @@ package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameServiceInterface;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,24 +20,19 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameController {
 
-  private final GameServiceInterface gameServiceInterface;
+  private final GameServiceInterface gameService;
+  private final GameManagerServiceInterface gameManager;
 
   /**
    * Instantiates a new Game controller.
    *
-   * @param gameServiceInterface game service to use for backend manipulations
+   * @param gameService        game service to use for backend manipulations of individual games
+   * @param gameManagerService game manager to manage different game instances
    */
-  public GameController(@Autowired GameServiceInterface gameServiceInterface) {
-    this.gameServiceInterface = gameServiceInterface;
-  }
-
-  /**
-   * Gets game map.
-   *
-   * @return the game map
-   */
-  public Map<Long, Game> getGameMap() {
-    return gameServiceInterface.getGameMap();
+  public GameController(@Autowired GameServiceInterface gameService,
+                        @Autowired GameManagerServiceInterface gameManagerService) {
+    this.gameService = gameService;
+    this.gameManager = gameManagerService;
   }
 
   /**
@@ -50,7 +44,7 @@ public class GameController {
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
-    return gameServiceInterface.createGame(sessionId, payload);
+    return gameManager.createGame(sessionId, payload);
   }
 
   /**
@@ -67,7 +61,7 @@ public class GameController {
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash) {
-    return gameServiceInterface.getDeck(sessionId, level, accessToken, hash);
+    return gameService.getDeck(sessionId, level, accessToken, hash);
   }
 
   /**
@@ -82,7 +76,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
                                                           @RequestParam String accessToken,
                                                           @RequestParam String hash) {
-    return gameServiceInterface.getNobles(sessionId, accessToken, hash);
+    return gameService.getNobles(sessionId, accessToken, hash);
   }
 
   /**
@@ -97,7 +91,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
-    return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
+    return gameService.getCurrentPlayer(sessionId, accessToken, hash);
   }
 
   /**
@@ -112,7 +106,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
                                                            @RequestParam String accessToken,
                                                            @RequestParam String hash) {
-    return gameServiceInterface.getWinners(sessionId, accessToken, hash);
+    return gameService.getWinners(sessionId, accessToken, hash);
   }
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
@@ -129,7 +123,7 @@ public class GameController {
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
-    return gameServiceInterface.getPlayerBankInfo(sessionId, username);
+    return gameService.getPlayerBankInfo(sessionId, username);
   }
 
   /**
@@ -142,7 +136,7 @@ public class GameController {
   @GetMapping(value = {"/games/{sessionId}/gameBank", "/games/{sessionId}/gameBank/"})
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
-    return gameServiceInterface.getGameBankInfo(sessionId);
+    return gameService.getGameBankInfo(sessionId);
   }
 
   /**
@@ -164,18 +158,15 @@ public class GameController {
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
-  public ResponseEntity<String> buyCard(@PathVariable long sessionId,
-                                        @PathVariable String cardMd5,
+  public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
                                         @RequestParam String authenticationToken,
                                         @RequestParam int rubyAmount,
                                         @RequestParam int emeraldAmount,
                                         @RequestParam int sapphireAmount,
                                         @RequestParam int diamondAmount,
-                                        @RequestParam int onyxAmount,
-                                        @RequestParam int goldAmount)
+                                        @RequestParam int onyxAmount, @RequestParam int goldAmount)
       throws JsonProcessingException {
-    return gameServiceInterface.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
-        emeraldAmount,
+    return gameService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
@@ -193,7 +184,7 @@ public class GameController {
                                             @PathVariable String cardMd5,
                                             @RequestParam String authenticationToken)
       throws JsonProcessingException {
-    return gameServiceInterface.reserveCard(sessionId, cardMd5, authenticationToken);
+    return gameService.reserveCard(sessionId, cardMd5, authenticationToken);
   }
 
   /**
@@ -211,7 +202,7 @@ public class GameController {
                                                     @RequestParam String authenticationToken)
       throws JsonProcessingException {
 
-    return gameServiceInterface.reserveFaceDownCard(sessionId, level, authenticationToken);
+    return gameService.reserveFaceDownCard(sessionId, level, authenticationToken);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////
 }

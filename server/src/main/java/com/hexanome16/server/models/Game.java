@@ -5,10 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.BagJson;
 import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.CascadeTwoJson;
+import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.DoubleJson;
 import com.hexanome16.server.dto.NobleJson;
+import com.hexanome16.server.dto.NoblesHash;
+import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.util.BroadcastMap;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -26,6 +31,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Game {
+  private final BroadcastMap broadcastContentManagerMap = new BroadcastMap();
   private final Map<Level, Deck<LevelCard>> levelDecks = new HashMap<>();
 
   private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
@@ -50,7 +56,7 @@ public class Game {
    * @param creator      the creator
    * @param savegame     the savegame
    * @param winCondition the win condition
-   * @throws java.io.IOException exception
+   * @throws java.io.IOException object mapper IO exception
    */
   public Game(long sessionId, @NonNull Player[] players, String creator, String savegame,
               WinCondition winCondition)
@@ -64,6 +70,7 @@ public class Game {
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
+    createBroadcastContentManagerMap();
   }
 
   /**
@@ -78,6 +85,27 @@ public class Game {
         payload.getWinCondition());
   }
 
+  private void createBroadcastContentManagerMap() {
+    try {
+      for (Level level : Level.values()) {
+        BroadcastContentManager<DeckHash> broadcastContentManager =
+            new BroadcastContentManager<>(new DeckHash(this, level));
+        broadcastContentManagerMap.put(level.name(), broadcastContentManager);
+      }
+      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+          new BroadcastContentManager<>(
+              new PlayerJson(getCurrentPlayer().getName()));
+      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+          new BroadcastContentManager<>(new WinJson());
+      BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
+          new BroadcastContentManager<>(new NoblesHash(this));
+      broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
+      broadcastContentManagerMap.put("winners", broadcastContentManagerWinners);
+      broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   /**
    * Gets current player.

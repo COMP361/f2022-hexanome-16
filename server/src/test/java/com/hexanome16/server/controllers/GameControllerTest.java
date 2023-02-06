@@ -7,10 +7,10 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.services.GameManagerService;
+import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.GameServiceInterface;
-import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -37,17 +37,12 @@ class GameControllerTest {
   }
 
   /**
-   * Test get game map.
+   * Create game manager service mock with Mockito.
+   *
+   * @return the game manager service mock
    */
-  @Test
-  void testGetGameMap() {
-    final HashMap<Long, Game> gameMapStub = new HashMap<>();
-
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.getGameMap()).thenReturn(gameMapStub);
-    this.gameController = new GameController(gameServiceMock);
-
-    assertEquals(gameMapStub, gameController.getGameMap());
+  GameManagerServiceInterface createGameManagerServiceMock() {
+    return Mockito.mock(GameManagerService.class);
   }
 
   /**
@@ -57,14 +52,15 @@ class GameControllerTest {
   void testCreateGame() {
     final String gameStub = "game test";
     final String game2Stub = "game test 2";
+    final SessionJson testJson = new SessionJson();
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    when(gameServiceMock.createGame(123L, new SessionJson())).thenReturn(gameStub);
-    when(gameServiceMock.createGame(124L, new SessionJson())).thenReturn(game2Stub);
-    this.gameController = new GameController(gameServiceMock);
+    GameManagerServiceInterface gameManagerServiceMock = createGameManagerServiceMock();
+    when(gameManagerServiceMock.createGame(123L, testJson)).thenReturn(gameStub);
+    when(gameManagerServiceMock.createGame(124L, testJson)).thenReturn(game2Stub);
+    this.gameController = new GameController(null, gameManagerServiceMock);
 
-    assertEquals(gameStub, gameController.createGame(123L, new SessionJson()));
-    assertEquals(game2Stub, gameController.createGame(124L, new SessionJson()));
+    assertEquals(gameStub, gameController.createGame(123L, testJson));
+    assertEquals(game2Stub, gameController.createGame(124L, testJson));
   }
 
   /**
@@ -76,7 +72,7 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     when(gameServiceMock.getDeck(123L, "ONE", "123", "123B")).thenReturn(deckStub);
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     assertEquals(deckStub, gameController.getDeck(123L, "ONE", "123", "123B"));
   }
@@ -90,7 +86,7 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     when(gameServiceMock.getNobles(123L, "123", "123B")).thenReturn(noblesStub);
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     assertEquals(noblesStub, gameController.getNobles(123L, "123", "123B"));
   }
@@ -106,7 +102,7 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     when(gameServiceMock.getCurrentPlayer(123L, "123", "123B")).thenReturn(currentPlayerStub);
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     assertEquals(currentPlayerStub, gameController.getCurrentPlayer(123L, "123", "123B"));
     assertNotEquals(currentPlayer2Stub, gameController.getCurrentPlayer(123L, "123", "123B"));
@@ -121,7 +117,7 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     when(gameServiceMock.getWinners(123L, "123", "123B")).thenReturn(winnersStub);
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     assertEquals(winnersStub, gameController.getWinners(123L, "123", "123B"));
   }
@@ -139,7 +135,7 @@ class GameControllerTest {
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     try {
       assertEquals(playerBankInfoStub, gameController.getPlayerBankInfo(123L, "tristan"));
@@ -161,7 +157,7 @@ class GameControllerTest {
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     try {
       assertEquals(gameBankInfoStub, gameController.getGameBankInfo(123L));
@@ -184,7 +180,7 @@ class GameControllerTest {
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     try {
       assertEquals(buyCardResponseStub,
@@ -208,7 +204,7 @@ class GameControllerTest {
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     try {
       assertEquals(reserveCardResponseStub, gameController.reserveCard(123L, "md5", "abc"));
@@ -232,7 +228,7 @@ class GameControllerTest {
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
-    this.gameController = new GameController(gameServiceMock);
+    this.gameController = new GameController(gameServiceMock, null);
 
     try {
       assertEquals(reserveCardFaceDownResponseStub,

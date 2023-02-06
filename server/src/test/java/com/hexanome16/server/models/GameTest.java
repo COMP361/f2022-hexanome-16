@@ -5,9 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.util.BroadcastMap;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +61,58 @@ public class GameTest {
   @Test
   public void testCurrentPlayerInitializesAtZero() {
     assertEquals(0, game.getCurrentPlayerIndex());
+  }
+
+  /**
+   * Test creation of BroadcastContentManagerMap.
+   */
+  @Test
+  public void testCreateBroadcastContentManagerMap() {
+    Field field;
+    try {
+      field = Game.class.getDeclaredField("broadcastContentManagerMap");
+
+      field.setAccessible(true);
+
+      var map = ((BroadcastMap) field.get(game));
+      assertNotNull(map);
+      assertFalse(map.getMap().isEmpty());
+      assertNotNull(map.getMap().get("player"));
+      assertNotNull(map.getMap().get("winners"));
+      assertNotNull(map.getMap().get("noble"));
+      for (Level level : Level.values()) {
+        assertNotNull(map.getMap().get(level.name()));
+      }
+    } catch (NoSuchFieldException e) {
+      fail("gameMap not in GameManagerService");
+    } catch (IllegalAccessException e) {
+      fail("set accessible did not work");
+    }
+  }
+
+  /**
+   * Test BroadcastContentManagerMap getter.
+   */
+  @Test
+  public void testGetBroadcastContentManagerMap() {
+    assertNotNull(game.getBroadcastContentManagerMap());
+    Field field = ReflectionUtils.getFieldAndSetPublic(game, "broadcastContentManagerMap");
+    if (field == null) {
+      fail("Field is missing");
+    }
+    try {
+      var map = ((BroadcastMap) field.get(game));
+      assertNotNull(map);
+      assertFalse(map.getMap().isEmpty());
+      assertNotNull(map.getMap().get("player"));
+      assertNotNull(map.getMap().get("winners"));
+      assertNotNull(map.getMap().get("noble"));
+      for (Level level : Level.values()) {
+        assertNotNull(map.getMap().get(level.name()));
+      }
+    } catch (IllegalAccessException e) {
+      fail("set accessible did not work");
+    }
   }
 
   /**

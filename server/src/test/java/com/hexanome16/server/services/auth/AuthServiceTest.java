@@ -11,6 +11,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
+import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
@@ -55,7 +56,8 @@ public class AuthServiceTest {
     ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
     ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
 
-    gameService = new GameService(authService);
+    //TODO : mock game manager service
+    gameService = new GameService(authService, new GameManagerService());
   }
 
   @Test
@@ -162,11 +164,10 @@ public class AuthServiceTest {
   void testValidVerifyPlayer() {
     when(authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken()))
         .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
-    Map<Long, Game> games = DummyAuths.validGames;
     boolean validResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(),
-        games
+        DummyAuths.validGames.get(DummyAuths.validSessionIds.get(0))
     );
     assertTrue("Valid verify player should return true", validResponse);
   }
@@ -175,11 +176,10 @@ public class AuthServiceTest {
   void testInvalidVerifyPlayer() {
     when(authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
         .thenReturn(ResponseEntity.ok(DummyAuths.invalidPlayerList.get(0).getName()));
-    Map<Long, Game> games = DummyAuths.validGames;
     boolean invalidResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
-        games
+        DummyAuths.validGames.get(DummyAuths.validSessionIds.get(0))
     );
     assertFalse("Invalid verify player should return false", invalidResponse);
   }
