@@ -375,7 +375,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
     Text buttonText = new Text(buttonType.toString());
     buttonText.setWrappingWidth(buttonWidth);
     buttonText.setTextAlignment(TextAlignment.CENTER);
-    buttonText.setFont(Font.font(buttonHeight * 0.6));
+    buttonText.setFont(GAME_FONT.newFont(buttonHeight * 0.6));
+    buttonText.setFill(Config.PRIMARY_COLOR);
 
     // return them
     return new ArrayList<>(List.of(buttonBox, buttonText));
@@ -390,7 +391,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
             .intProperty(tokenOwner.toString() + "/" + tokenType)
             .asString());
     tokensAmount.setFill(tokenType.getTextColor());
-    tokensAmount.setFont(Font.font(atHeight / 20));
+    tokensAmount.setFont(GAME_FONT.newFont(atHeight / 20));
 
     // initialize circle
     Circle tokensCircle = new Circle(atHeight / 20, tokenType.getColor());
@@ -437,7 +438,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
     myPrompt.setMaxHeight(atHeight);
   }
 
-  // TODO: what to do to notify server that we desire to purchase a card
   private void notifyServer() {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();

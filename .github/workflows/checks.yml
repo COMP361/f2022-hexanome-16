@@ -1,0 +1,41 @@
+# Actions:
+# Checkstyle: https://github.com/marketplace/actions/checkstyle-for-java
+# Docker + GitHub Registry: https://github.com/marketplace/actions/publish-docker
+name: Test and Publish Project
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+      packages: write
+    steps:
+    - uses: actions/checkout@v3
+    - name: Client Checkstyle
+      uses: dbelyaev/action-checkstyle@v0.6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        reporter: github-pr-review
+        level: error
+        filter_mode: file
+        checkstyle_version: 9.3
+        workdir: client
+        checkstyle_config: client/checkstyle.xml
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      with:
+        name: comp361/f2022-hexanome-16/splendor-server
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
+        dockerfile: Dockerfile-server
+        cache: true
+        tags: "${{ github.head_ref || github.ref_name }}"

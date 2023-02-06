@@ -78,7 +78,6 @@ public class PurchaseMap extends PriceMap {
   }
 
 
-  // TODO: TEST CASE
 
   /**
    * Checks if implied argument can be used instead of the parameter to commit a purchase.

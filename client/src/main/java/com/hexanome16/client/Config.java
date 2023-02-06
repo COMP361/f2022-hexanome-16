@@ -1,5 +1,7 @@
 package com.hexanome16.client;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.ui.FontFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
@@ -30,15 +32,19 @@ public class Config {
   /**
    * The primary color used in UI.
    */
-  public static final Color PRIMARY_COLOR = Color.rgb(78, 147, 180);
+  public static final Color PRIMARY_COLOR = Color.rgb(48, 4, 24);
   /**
    * The secondary color used in UI.
    */
-  public static final Color SECONDARY_COLOR = Color.rgb(249, 161, 89);
+  public static final Color SECONDARY_COLOR = Color.rgb(207, 251, 231);
   /**
    * The scaling factor for opponents cards.
    */
   public static final double OPPONENT_SCALE = 2.0 / 3.0;
-
+  /**
+   * THE FONT.
+   */
+  public static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
+      .loadFont("EnchantedLand.otf");
 
 }
