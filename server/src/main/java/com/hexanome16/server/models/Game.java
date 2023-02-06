@@ -56,7 +56,7 @@ public class Game {
               WinCondition winCondition)
       throws IOException {
     this.sessionId = sessionId;
-    this.players = players;
+    this.players = players.clone();
     this.creator = creator;
     this.savegame = savegame;
     this.winCondition = winCondition;
@@ -86,6 +86,15 @@ public class Game {
    */
   public Player getCurrentPlayer() {
     return getPlayers()[getCurrentPlayerIndex()];
+  }
+
+  /**
+   * Get copy of array of players.
+   *
+   * @return a cloned copy of the internal array of players.
+   */
+  public Player[] getPlayers() {
+    return players.clone();
   }
 
   private void createDecks() throws IOException {

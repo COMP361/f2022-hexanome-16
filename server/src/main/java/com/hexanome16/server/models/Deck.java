@@ -24,6 +24,8 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
   }
 
   /**
+   * Get copy of deck.
+   *
    * @return immutable copy of internal card list
    */
   public List<T> getCardList() {
