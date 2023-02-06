@@ -1,11 +1,9 @@
 package com.hexanome16.server.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * For converting json file to level card objects.
@@ -13,10 +11,8 @@ import lombok.ToString;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardJson extends BonusJson {
-  private String level;
-  private int prestigePoint;
+public class BonusJson extends BagJson {
+  private String bonus;
 }
