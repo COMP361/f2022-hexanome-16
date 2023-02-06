@@ -13,6 +13,8 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.models.Deck;
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
@@ -23,6 +25,7 @@ import com.hexanome16.server.models.TokenPrice;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,8 +88,9 @@ class GameServiceTests {
   public void testUpdateDeckSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0),
-            "REDTHREE", DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
+        null;
+    response = (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0),
+        "REDTHREE", DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
   }
 
@@ -274,7 +278,7 @@ class GameServiceTests {
       field.setAccessible(true);
 
 
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+      ((HashMap<String, LevelCard>) field.get(null)).put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       fail();
@@ -307,7 +311,7 @@ class GameServiceTests {
       field.setAccessible(true);
 
 
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+      ((HashMap<String, LevelCard>) field.get(null)).put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       fail();
@@ -341,17 +345,28 @@ class GameServiceTests {
       field.setAccessible(true);
 
 
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+      ((HashMap<String, LevelCard>) field.get(null)).put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+      Game game = gameService.getGameMap().get(sessionId);
+      field = game.getClass().getDeclaredField("onBoardDecks");
+      field.setAccessible(true);
+      Deck<LevelCard> testDeck = new Deck<>();
+      testDeck.addCard(myCard);
+      ((Map<Level, Deck<LevelCard>>) field.get(game)).put(Level.ONE, testDeck);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       fail();
     }
 
     ResponseEntity<String> response =
         gameService.reserveFaceDownCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+            "ONE", accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
+
+    response = gameService.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
   }
 
   /**
@@ -376,7 +391,7 @@ class GameServiceTests {
       field.setAccessible(true);
 
 
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+      ((HashMap<String, LevelCard>) field.get(null)).put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       fail();
@@ -405,7 +420,7 @@ class GameServiceTests {
       field.setAccessible(true);
 
 
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+      ((HashMap<String, LevelCard>) field.get(null)).put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       fail();
