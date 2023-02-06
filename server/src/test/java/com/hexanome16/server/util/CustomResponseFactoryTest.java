@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-class ErrorResponseFactoryTest {
+class CustomResponseFactoryTest {
 
   @Test
   void getErrorResponse() {
-    var status = ErrorResponses.BAD_LEVEL_INFO.getStatus();
-    var body = ErrorResponses.BAD_LEVEL_INFO.getBody();
-    var response = ErrorResponseFactory.getErrorResponse(ErrorResponses.BAD_LEVEL_INFO);
+    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
+    var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
+    var response = CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     assertEquals(status, response.getStatusCode());
     assertTrue(response.hasBody());
     assertEquals(body, response.getBody());
@@ -19,9 +19,10 @@ class ErrorResponseFactoryTest {
 
   @Test
   void getCustomErrorResponse() {
-    var status = ErrorResponses.BAD_LEVEL_INFO.getStatus();
+    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
     var body = "Testing error";
-    var response = ErrorResponseFactory.getCustomErrorResponse(ErrorResponses.BAD_LEVEL_INFO, body);
+    var response =
+        CustomResponseFactory.getCustomErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO, body);
     assertEquals(status, response.getStatusCode());
     assertTrue(response.hasBody());
     assertEquals(body, response.getBody());

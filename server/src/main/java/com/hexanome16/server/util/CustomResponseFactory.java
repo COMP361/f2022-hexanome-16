@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 /**
  * Static factory for accessing pre-generated Error Responses.
  */
-public class ErrorResponseFactory {
+public class CustomResponseFactory {
   /**
    * Factory for creating ResponseEntity for any of our Error Responses.
    *
@@ -16,7 +16,7 @@ public class ErrorResponseFactory {
    * @param errorType enum ErrorResponse to put in ResponseEntity
    * @return the response entity
    */
-  public static ResponseEntity<String> getErrorResponse(ErrorResponses errorType) {
+  public static ResponseEntity<String> getErrorResponse(CustomHttpResponses errorType) {
     return new ResponseEntity<>(errorType.getBody(), errorType.getStatus());
   }
 
@@ -31,7 +31,7 @@ public class ErrorResponseFactory {
    * @param body      custom body to add instead of the errorType body
    * @return the response entity
    */
-  public static ResponseEntity<String> getCustomErrorResponse(ErrorResponses errorType,
+  public static ResponseEntity<String> getCustomErrorResponse(CustomHttpResponses errorType,
                                                               String body) {
     return new ResponseEntity<>(body, errorType.getStatus());
   }
