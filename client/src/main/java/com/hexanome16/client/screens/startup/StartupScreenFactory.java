@@ -12,6 +12,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.utils.AuthUtils;
@@ -30,8 +31,7 @@ import javafx.util.Duration;
  * startup screen and the login screen.
  */
 public class StartupScreenFactory implements EntityFactory {
-  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-      .loadFont("BrushScriptMT.ttf");
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   private static String username = "";
   private static String password = "";
@@ -181,6 +181,18 @@ public class StartupScreenFactory implements EntityFactory {
     PasswordField passwordField = new PasswordField();
     passwordField.setOnKeyTyped(e -> {
       password = passwordField.getText();
+    });
+
+    passwordField.setOnAction(e -> {
+      getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
+      AuthRequest.execute(username, password);
+      if (AuthUtils.getAuth() == null) {
+        spawn("message",
+            new SpawnData(getAppWidth() / 3.0 - 200, getAppHeight() - 200)
+                .put("message", "Invalid username or password"));
+      } else {
+        MainMenuScreen.initUi();
+      }
     });
     animateLoginElement(passwordField, 1000);
     return FXGL.entityBuilder(data)

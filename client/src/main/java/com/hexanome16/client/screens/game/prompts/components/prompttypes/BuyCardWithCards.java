@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -123,7 +124,8 @@ public class BuyCardWithCards implements PromptTypeInterface {
     myCard.setFitHeight(atMainCardHeight);
 
     Text bagCardsText = new Text("BAG CARDS");
-    bagCardsText.setFont(Font.font(atHeight * 0.05));
+    bagCardsText.setFont(GAME_FONT.newFont(atHeight * 0.05));
+    bagCardsText.setFill(Config.SECONDARY_COLOR);
     bagCardsText.setWrappingWidth(atScrollCardWidth);
     bagCardsText.setTextAlignment(TextAlignment.CENTER);
 
@@ -142,7 +144,8 @@ public class BuyCardWithCards implements PromptTypeInterface {
     disablingRectangleOthers.setOpacity(0.75);
 
     Text otherCards = new Text("OTHERS");
-    otherCards.setFont(Font.font(atHeight * 0.05));
+    otherCards.setFont(GAME_FONT.newFont(atHeight * 0.05));
+    otherCards.setFill(Config.SECONDARY_COLOR);
     otherCards.setWrappingWidth(atScrollCardWidth);
     otherCards.setTextAlignment(TextAlignment.CENTER);
 
@@ -198,11 +201,13 @@ public class BuyCardWithCards implements PromptTypeInterface {
       textPrestigeAmount = new Text(Integer.toString(prestigeAmount));
     }
     textPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
-    textPrestigeAmount.setFont(Font.font(atScrollCardHeight * 0.75));
+    textPrestigeAmount.setFont(GAME_FONT.newFont(atScrollCardHeight * 0.75));
+    textPrestigeAmount.setFill(Config.SECONDARY_COLOR);
     textPrestigeAmount.setWrappingWidth(atScrollCardWidth);
     Text x = new Text("X");
     x.setTextAlignment(TextAlignment.CENTER);
-    x.setFont(Font.font(atScrollCardHeight * 0.75));
+    x.setFont(GAME_FONT.newFont(atScrollCardHeight * 0.75));
+    x.setFill(Config.SECONDARY_COLOR);
     x.setFill(Color.DARKRED);
     x.setOpacity(0);
 
@@ -232,7 +237,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
                           Rectangle disablingRectangleOthers) {
     Text x = new Text("X");
     x.setTextAlignment(TextAlignment.CENTER);
-    x.setFont(Font.font(atScrollCardHeight * 0.75));
+    x.setFont(GAME_FONT.newFont(atScrollCardHeight * 0.75));
     x.setFill(Color.DARKRED);
     x.setOpacity(0);
 
@@ -260,13 +265,14 @@ public class BuyCardWithCards implements PromptTypeInterface {
   }
 
   private void createReserveButton(StackPane reserve, double buttonWidth, double buttonHeight) {
-    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
+    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Config.SECONDARY_COLOR);
     buttonBox.setStrokeWidth(buttonHeight / 20);
     buttonBox.setStroke(Color.BLACK);
     Text reserveText = new Text("RESERVE");
     reserveText.setWrappingWidth(buttonWidth);
     reserveText.setTextAlignment(TextAlignment.CENTER);
-    reserveText.setFont(Font.font(buttonHeight * 0.6));
+    reserveText.setFont(GAME_FONT.newFont(buttonHeight * 0.6));
+    reserveText.setFill(Config.PRIMARY_COLOR);
 
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 
@@ -278,13 +284,14 @@ public class BuyCardWithCards implements PromptTypeInterface {
   }
 
   private void createBuyButton(StackPane buy, double buttonWidth, double buttonHeight) {
-    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Color.rgb(249, 161, 89));
+    Rectangle buttonBox = new Rectangle(buttonWidth, buttonHeight, Config.SECONDARY_COLOR);
     buttonBox.setStrokeWidth(buttonHeight / 20);
     buttonBox.setStroke(Color.BLACK);
     Text reserve = new Text("BUY");
     reserve.setWrappingWidth(buttonWidth);
     reserve.setTextAlignment(TextAlignment.CENTER);
-    reserve.setFont(Font.font(buttonHeight * 0.6));
+    reserve.setFont(GAME_FONT.newFont(buttonHeight * 0.6));
+    reserve.setFill(Config.PRIMARY_COLOR);
     buy.setOpacity(0.5);
 
     FXGL.getEventBus().addEventHandler(EventType.ROOT, e -> {

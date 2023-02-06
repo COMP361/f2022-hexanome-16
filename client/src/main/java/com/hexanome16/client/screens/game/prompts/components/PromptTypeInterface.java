@@ -1,6 +1,8 @@
 package com.hexanome16.client.screens.game.prompts.components;
 
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
@@ -26,6 +28,8 @@ import javafx.scene.Node;
  * Also contains some useful methods.
  */
 public interface PromptTypeInterface {
+
+  FontFactory GAME_FONT = Config.CURSIVE_FONT_FACTORY;
 
   /**
    * The constant nullPromptType.
