@@ -355,15 +355,15 @@ public class GameService implements GameServiceInterface {
 
     Game game = gameMap.get(sessionId);
 
-    Level atLevel;
+    Level atLevel = switch (level) {
+      case "THREE" -> Level.THREE;
+      case "TWO" -> Level.TWO;
+      case "ONE" -> Level.ONE;
+      default -> null;
+    };
 
-    // TODO: bug waiting to happen
-    switch (level) {
-      case "THREE": atLevel = Level.THREE;
-        break;
-      case "TWO": atLevel = Level.TWO;
-        break;
-      default: atLevel = Level.ONE;
+    if (atLevel == null) {
+      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
     LevelCard card = game.getLevelDeck(atLevel).nextCard();
