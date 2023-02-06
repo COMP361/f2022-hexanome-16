@@ -32,7 +32,7 @@ public class Player {
    * @return the bank
    */
   public PlayerBank getBank() {
-    return getInventory().getPlayerBank();
+    return this.inventory.getPlayerBank();
   }
 
 
