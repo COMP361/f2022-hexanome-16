@@ -12,6 +12,7 @@ import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.TokenService;
+import com.hexanome16.server.util.BroadcastMap;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ public class TokensControllerTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     DummyAuthService dummyAuthService = new DummyAuthService();
-    GameService gameService = new GameService(dummyAuthService);
+    GameService gameService = new GameService(dummyAuthService, new BroadcastMap());
     tokensController  =
         new TokensController(
             new TokenService(gameService, dummyAuthService));

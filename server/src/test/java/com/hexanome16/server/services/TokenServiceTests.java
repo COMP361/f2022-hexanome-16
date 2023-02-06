@@ -13,6 +13,7 @@ import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.util.BroadcastMap;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,9 +42,9 @@ public class TokenServiceTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
-    gameService = new GameService(dummyAuthService);
-    tokensService =
-        new TokenService(gameService, dummyAuthService);
+    gameService = new GameService(dummyAuthService, new BroadcastMap());
+    tokensService  =
+            new TokenService(gameService, dummyAuthService);
 
     payload.setPlayers(new Player[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
