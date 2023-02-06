@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonDeserialize(using = PriceMapDeserializer.class)
 public class PriceMap implements PriceInterface {
+  /**
+   * The Price map.
+   */
   protected Hashtable<Gem, Integer> priceMap;
 
   /**
