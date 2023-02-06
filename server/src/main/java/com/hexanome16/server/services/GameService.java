@@ -206,8 +206,12 @@ public class GameService implements GameServiceInterface {
                                         int diamondAmount, int onyxAmount, int goldAmount)
       throws JsonProcessingException {
 
+
+    // Fetch the card in question
+    InventoryAddable cardToBuy = DeckHash.getCardFromAllCards(cardMd5);
+
     //
-    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
+    if (!gameMap.containsKey(sessionId) || cardToBuy == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -215,9 +219,6 @@ public class GameService implements GameServiceInterface {
     if (!authService.verifyPlayer(sessionId, authenticationToken, gameMap)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-    // Fetch the card in question
-    InventoryAddable cardToBuy = DeckHash.allCards.get(cardMd5);
 
     // Get game in question
     Game game = gameMap.get(sessionId);
@@ -290,8 +291,11 @@ public class GameService implements GameServiceInterface {
                                             @PathVariable String cardMd5,
                                             @RequestParam String authenticationToken)
       throws JsonProcessingException {
+
+    InventoryAddable card = DeckHash.getCardFromAllCards(cardMd5);
+
     //verify game and player
-    if (!gameMap.containsKey(sessionId) || !DeckHash.allCards.containsKey(cardMd5)) {
+    if (!gameMap.containsKey(sessionId) || card == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -301,7 +305,6 @@ public class GameService implements GameServiceInterface {
 
     Game game = gameMap.get(sessionId);
 
-    InventoryAddable card = DeckHash.allCards.get(cardMd5);
 
     Player player = findPlayerByToken(game, authenticationToken);
 
