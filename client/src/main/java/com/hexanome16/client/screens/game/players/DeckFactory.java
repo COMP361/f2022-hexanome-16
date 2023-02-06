@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
@@ -31,8 +32,7 @@ import javafx.scene.text.TextAlignment;
  */
 public class DeckFactory implements EntityFactory {
 
-  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-      .loadFont("BrushScriptMT.ttf");
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   // (helper) return a pane with a card and a label
   private StackPane getCard(int multiplicity, String cardName) {
@@ -221,7 +221,7 @@ public class DeckFactory implements EntityFactory {
     );
     number.setFont(CURSIVE_FONT_FACTORY.newFont(28));
     number.setFill(Paint.valueOf("#FFFFFF"));
-    number.setStrokeWidth(2.);
+    number.setStrokeWidth(1.);
     number.setStroke(Paint.valueOf("#000000"));
     number.setStyle("-fx-background-color: ffffff00; ");
     // pane

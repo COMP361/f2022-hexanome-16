@@ -87,7 +87,8 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     // do rest of set up
     Text promptMessage = new Text();            //Prompt Message : Top
     promptMessage.setText(atPromptText);
-    promptMessage.setFont(Font.font(atPromptTextFontSize));
+    promptMessage.setFont(GAME_FONT.newFont(atPromptTextFontSize));
+    promptMessage.setFill(Config.SECONDARY_COLOR);
     promptMessage.setTextAlignment(TextAlignment.CENTER);
     promptMessage.setWrappingWidth(atWidth);
     myPrompt.setTop(promptMessage);
@@ -102,7 +103,9 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
 
     /*Centering circle*/
     Text confirm = new Text("Confirm");
-    confirm.setFont(Font.font(atHeight / 20.));
+    confirm.setFont(GAME_FONT.newFont(atHeight / 20.));
+    confirm.setFill(Config.PRIMARY_COLOR);
+
     atConfirmButton = new StackPane(atConfirmCircle, confirm);
     atConfirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if (canConfirm()) {
