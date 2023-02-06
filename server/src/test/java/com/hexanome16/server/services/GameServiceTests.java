@@ -17,9 +17,9 @@ import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.PriceMap;
-import com.hexanome16.server.models.PurchaseMap;
-import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -183,12 +183,12 @@ class GameServiceTests {
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
     });
 
-    assertEquals(myPm.getRubyAmount(), 3);
-    assertEquals(myPm.getEmeraldAmount(), 3);
-    assertEquals(myPm.getSapphireAmount(), 3);
-    assertEquals(myPm.getDiamondAmount(), 3);
-    assertEquals(myPm.getOnyxAmount(), 3);
-    assertEquals(myPm.getGoldAmount(), 3);
+    assertEquals(myPm.getGemCost(Gem.RUBY), 3);
+    assertEquals(myPm.getGemCost(Gem.EMERALD), 3);
+    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 3);
+    assertEquals(myPm.getGemCost(Gem.DIAMOND), 3);
+    assertEquals(myPm.getGemCost(Gem.ONYX), 3);
+    assertEquals(myPm.getGemCost(Gem.GOLD), 3);
   }
 
   /**
@@ -225,12 +225,12 @@ class GameServiceTests {
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
     });
 
-    assertEquals(myPm.getRubyAmount(), 7);
-    assertEquals(myPm.getEmeraldAmount(), 7);
-    assertEquals(myPm.getSapphireAmount(), 7);
-    assertEquals(myPm.getDiamondAmount(), 7);
-    assertEquals(myPm.getOnyxAmount(), 7);
-    assertEquals(myPm.getGoldAmount(), 5);
+    assertEquals(myPm.getGemCost(Gem.RUBY), 7);
+    assertEquals(myPm.getGemCost(Gem.EMERALD), 7);
+    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 7);
+    assertEquals(myPm.getGemCost(Gem.DIAMOND), 7);
+    assertEquals(myPm.getGemCost(Gem.ONYX), 7);
+    assertEquals(myPm.getGemCost(Gem.GOLD), 5);
   }
 
   /**
@@ -394,7 +394,7 @@ class GameServiceTests {
     // Test invalid price
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 3, 1, 1, 0, 0, 1);
+            accessToken, 3, 0, 0, 0, 0, 1);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     // Test not enough funds
@@ -457,11 +457,11 @@ class GameServiceTests {
   }
 
   private LevelCard createValidCard() {
-    return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(1, 1, 1, 1, 0)), Level.ONE);
+    return new LevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
   }
 
   private LevelCard createInvalidCard() {
-    return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(7, 1, 1, 1, 0)), Level.ONE);
+    return new LevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE);
   }
 
   /**

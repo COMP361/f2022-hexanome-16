@@ -1,19 +1,20 @@
 package com.hexanome16.server.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hexanome16.server.models.price.PriceMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
  * For converting json file to noble objects.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class NobleJson extends DevelopmentCardJson {
-  private int prestigePoint;
+public class DevelopmentCardJson {
+  @JsonProperty("price")
+  private PriceMap price;
 }

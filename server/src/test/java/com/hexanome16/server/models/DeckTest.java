@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.hexanome16.server.models.price.PriceMap;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,17 +21,13 @@ public class DeckTest {
    */
   public final PriceMap priceMap = new PriceMap(1, 2, 3, 4, 5);
   /**
-   * The Price.
-   */
-  public final Price price = new TokenPrice(priceMap);
-  /**
    * The Noble 1.
    */
-  public final Noble noble1 = new Noble(0, 3, "texture.png", price);
+  public final Noble noble1 = new Noble(0, 3, "texture.png", priceMap);
   /**
    * The Noble 2.
    */
-  public final Noble noble2 = new Noble(1, 3, "texture.png", price);
+  public final Noble noble2 = new Noble(1, 3, "texture.png", priceMap);
   /**
    * The Deck.
    */

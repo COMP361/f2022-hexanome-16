@@ -8,8 +8,10 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.GameBank;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.bank.GameBank;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.util.Arrays;
 import java.util.Set;
@@ -120,7 +122,7 @@ public class TokenServiceTests {
 
     assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeTwoTokens(sessionId, authTokenPlayer1, "RED");
-    testGameBank.incBank(-2, 0, 0, 0, 0, 0);
+    testGameBank.addGemsToBank(Gem.RUBY, 2);
     assertEquals(game.getGameBank(), testGameBank);
     game.incGameBank(-10, -10, -10, -10, -10, -10);
 
@@ -146,7 +148,7 @@ public class TokenServiceTests {
     assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
 
-    testGameBank.incBank(-1, -1, 0, -1, 0, 0);
+    testGameBank.removeGemsFromBank(new PurchaseMap(1, 1, 0, 1, 0, 0));
 
     assertEquals(game.getGameBank(), testGameBank);
 

@@ -6,6 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.bank.GameBank;
+import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,12 +85,10 @@ public class GameTest {
   public void testIncGameBank() {
     assertEquals(game.getGameBank(), new GameBank());
     HashMap<Gem, Integer> myMap = new HashMap<Gem, Integer>();
-    myMap.put(Gem.RUBY, -2);
-    game.incGameBank(new PurchaseMap(myMap));
+    myMap.put(Gem.RUBY, 2);
+    game.decGameBank(new PurchaseMap(myMap));
     GameBank myGameBank = new GameBank();
-    myGameBank.incBank(-2,
-        0, 0,
-        0, 0, 0);
+    myGameBank.removeGemsFromBank(Gem.RUBY, 2);
     assertEquals(game.getGameBank(), myGameBank);
   }
 
@@ -128,11 +130,10 @@ public class GameTest {
   public void testGiveTwoOf() {
     PlayerBank myBank = new PlayerBank();
     assertEquals(imad.getBank(), myBank);
-    myBank.incBank(2, 0,
-        0, 0, 0, 0);
+    myBank.addGemsToBank(Gem.RUBY, 2);
     game.giveTwoOf(Gem.RUBY, imad);
     GameBank gameBank = new GameBank();
-    gameBank.incBank(-2, 0, 0, 0, 0, 0);
+    gameBank.addGemsToBank(Gem.RUBY, 2);
     assertEquals(imad.getBank(), myBank);
     assertEquals(game.getGameBank(), gameBank);
   }
@@ -174,11 +175,11 @@ public class GameTest {
   public void testGiveThreeOf() {
     PlayerBank myBank = new PlayerBank();
     assertEquals(imad.getBank(), myBank);
-    myBank.incBank(1, 1,
-        0, 1, 0, 0);
+    myBank.addGemsToBank(new PurchaseMap(1, 1,
+        0, 1, 0, 0));
     game.giveThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.EMERALD, imad);
     GameBank gameBank = new GameBank();
-    gameBank.incBank(-1, -1, 0, -1, 0, 0);
+    gameBank.removeGemsFromBank(new PurchaseMap(1, 1, 0, 1, 0, 0));
     assertEquals(imad.getBank(), myBank);
     assertEquals(game.getGameBank(), gameBank);
   }
