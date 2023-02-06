@@ -446,7 +446,6 @@ public class Game {
     getGameBank().removeGemsFromBank(purchaseMap);
   }
 
-
   /**
    * Increase game bank and decrease player bank by specified amount. (works the opposite for
    * negative number)
