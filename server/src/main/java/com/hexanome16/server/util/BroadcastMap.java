@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * This class is used to manage the broadcast content.
+ * //TODO DELETE THIS replace with a normal String, BroadcastContentManager hashmap
  */
 @Component
 public class BroadcastMap {

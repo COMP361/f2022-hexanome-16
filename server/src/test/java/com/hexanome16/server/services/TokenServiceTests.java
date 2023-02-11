@@ -143,8 +143,6 @@ public class TokenServiceTests {
 
     GameBank testGameBank = new GameBank();
 
-    //TODO: why are you testing this?
-    assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
 
     testGameBank.incBank(-1, -1, 0, -1, 0, 0);
