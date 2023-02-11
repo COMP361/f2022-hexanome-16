@@ -42,7 +42,8 @@ public class DummyGameManagerService {
 
     when(mock.createGame(eq(DummyAuths.validSessionIds.get(0)), any(SessionJson.class))).thenReturn(
         "success");
-    when(mock.createGame(eq(DummyAuths.invalidSessionIds.get(0)), any(SessionJson.class))).thenReturn(
+    when(mock.createGame(eq(DummyAuths.invalidSessionIds.get(0)),
+        any(SessionJson.class))).thenReturn(
         "failure");
     return mock;
   }

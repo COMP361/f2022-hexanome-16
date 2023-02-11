@@ -42,6 +42,7 @@ public class DeckHash implements BroadcastContent {
    * @return level card associated with md5 hash or null if hash is not in map
    */
   public static LevelCard getCardFromDeck(String md5Hash) {
+    //TODO: make sure this doesn't introduce problems (reserving/buying same card twice)
     return allCards.get(md5Hash);
   }
 
