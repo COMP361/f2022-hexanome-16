@@ -2,991 +2,1173 @@
   {
     "id": 20,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 1,
-    "emeraldAmount": 1,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 1,
+      "EMERALD": 1,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 21,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 1,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 1,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 22,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 0,
-    "rubyAmount": 1,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 1,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 23,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 0,
-    "emeraldAmount": 1,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 0,
+      "EMERALD": 1,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 17,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 2,
-    "rubyAmount": 1,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 2,
+      "RUBY": 1,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 18,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 2,
-    "rubyAmount": 0,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 16,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 19,
     "level": "ONE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 4,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 30,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 0,
-    "emeraldAmount": 1,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 0,
+      "EMERALD": 1,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 29,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 0,
-    "emeraldAmount": 1,
-    "rubyAmount": 2,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 0,
+      "EMERALD": 1,
+      "RUBY": 2,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 31,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 2,
-    "rubyAmount": 2,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 2,
+      "RUBY": 2,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 28,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 1,
-    "emeraldAmount": 3,
-    "rubyAmount": 1,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 1,
+      "EMERALD": 3,
+      "RUBY": 1,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 25,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 26,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 2,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 27,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 0,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 24,
     "level": "ONE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 4,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 4,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 38,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 1,
-    "rubyAmount": 1,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 1,
+      "RUBY": 1,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 39,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 2,
-    "rubyAmount": 1,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 2,
+      "RUBY": 1,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 37,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 2,
-    "emeraldAmount": 2,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 2,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 36,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 33,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 34,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 2,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 35,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 32,
     "level": "ONE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 4,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 6,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 0,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 0,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 5,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 1,
-    "emeraldAmount": 0,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 1,
+      "EMERALD": 0,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 7,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 1,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 1,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 4,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 1,
-    "rubyAmount": 0,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 1,
+      "RUBY": 0,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 2,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 1,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 1,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 1,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 0,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 3,
     "level": "ONE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 1,
-    "onyxAmount": 4,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 4,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 13,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 1,
-    "rubyAmount": 0,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 1,
+      "RUBY": 0,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 14,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 1,
-    "sapphireAmount": 1,
-    "emeraldAmount": 1,
-    "rubyAmount": 0,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 1,
+      "EMERALD": 1,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 11,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 1,
-    "rubyAmount": 0,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 1,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 12,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 1,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 1,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 10,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 1,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 1,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 15,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 8,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 0,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 9,
     "level": "ONE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 4
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
   },
   {
     "id": 14,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 2,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 16,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 1,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 19,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 1,
-    "emeraldAmount": 4,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 1,
+      "EMERALD": 4,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 15,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 5,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 5,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 13,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 5
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 5
+    }
   },
   {
     "id": 12,
     "level": "TWO",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 3,
-    "onyxAmount": 6,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 6,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 22,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 2,
-    "emeraldAmount": 2,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 2,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 21,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 1,
-    "onyxAmount": 3,
-    "sapphireAmount": 2,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 2,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 20,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 5
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 5
+    }
   },
   {
     "id": 23,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 2,
-    "onyxAmount": 4,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 1,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 4,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 1,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 17,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 5,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 5,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 18,
     "level": "TWO",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 3,
-    "onyxAmount": 0,
-    "sapphireAmount": 6,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 6,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 29,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 1,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 28,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 3,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 26,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 2,
-    "onyxAmount": 2,
-    "sapphireAmount": 0,
-    "emeraldAmount": 1,
-    "rubyAmount": 4,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 1,
+      "RUBY": 4,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 25,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 2,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 5,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 5,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 24,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 5,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 5,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 27,
     "level": "TWO",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 3,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 6
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 6
+    }
   },
   {
     "id": 1,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 1,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 2,
-    "rubyAmount": 3,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 2,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 0,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 1,
-    "onyxAmount": 2,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 2,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 2,
-    "onyxAmount": 1,
-    "sapphireAmount": 2,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 4
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
   },
   {
     "id": 7,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 5,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 5,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 4,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 5,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 5,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 3,
     "level": "TWO",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 3,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 6,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 6,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 8,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 1,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 2
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 2
+    }
   },
   {
     "id": 11,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 1,
-    "onyxAmount": 3,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 2,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 9,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 2,
-    "onyxAmount": 0,
-    "sapphireAmount": 4,
-    "emeraldAmount": 2,
-    "rubyAmount": 0,
-    "diamondAmount": 1
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 1
+    }
   },
   {
     "id": 10,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 2,
-    "onyxAmount": 5,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 5,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 6,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 2,
-    "onyxAmount": 5,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 5,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 5,
     "level": "TWO",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 3,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 6,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 6,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 11,
     "level": "THREE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 3,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 5,
-    "rubyAmount": 3,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 5,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 9,
     "level": "THREE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 7,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 7,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 10,
     "level": "THREE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 4,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 6,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 6,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 8,
     "level": "THREE",
-    "bonus": "onyx",
+    "bonus": "ONYX",
     "prestigePoint": 5,
-    "onyxAmount": 3,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 7,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 7,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 12,
     "level": "THREE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 3,
-    "onyxAmount": 5,
-    "sapphireAmount": 0,
-    "emeraldAmount": 3,
-    "rubyAmount": 3,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 5,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 15,
     "level": "THREE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 7
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 7
+    }
   },
   {
     "id": 14,
     "level": "THREE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 4,
-    "onyxAmount": 3,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 6
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 6
+    }
   },
   {
     "id": 13,
     "level": "THREE",
-    "bonus": "sapphire",
+    "bonus": "SAPPHIRE",
     "prestigePoint": 5,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 7
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 7
+    }
   },
   {
     "id": 18,
     "level": "THREE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 3,
-    "onyxAmount": 3,
-    "sapphireAmount": 3,
-    "emeraldAmount": 3,
-    "rubyAmount": 5,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 3,
+      "RUBY": 5,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 16,
     "level": "THREE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 4,
-    "onyxAmount": 7,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 7,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 19,
     "level": "THREE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 4,
-    "onyxAmount": 6,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 3,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 6,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 17,
     "level": "THREE",
-    "bonus": "diamond",
+    "bonus": "DIAMOND",
     "prestigePoint": 5,
-    "onyxAmount": 7,
-    "sapphireAmount": 0,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 7,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 3,
     "level": "THREE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 3,
-    "onyxAmount": 3,
-    "sapphireAmount": 3,
-    "emeraldAmount": 0,
-    "rubyAmount": 3,
-    "diamondAmount": 5
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 5
+    }
   },
   {
     "id": 1,
     "level": "THREE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 7,
-    "emeraldAmount": 0,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 7,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 2,
     "level": "THREE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 6,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 6,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 0,
     "level": "THREE",
-    "bonus": "emerald",
+    "bonus": "EMERALD",
     "prestigePoint": 5,
-    "onyxAmount": 0,
-    "sapphireAmount": 7,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 7,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 5,
     "level": "THREE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 3,
-    "onyxAmount": 3,
-    "sapphireAmount": 5,
-    "emeraldAmount": 3,
-    "rubyAmount": 0,
-    "diamondAmount": 3
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 5,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
   },
   {
     "id": 6,
     "level": "THREE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 7,
-    "rubyAmount": 0,
-    "diamondAmount": 0
+    "price": {
+      "price": {
+        "ONYX": 0,
+        "SAPPHIRE": 0,
+        "EMERALD": 7,
+        "RUBY": 0,
+        "DIAMOND": 0
+      }
+    }
   },
   {
     "id": 7,
     "level": "THREE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 4,
-    "onyxAmount": 0,
-    "sapphireAmount": 3,
-    "emeraldAmount": 6,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 6,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   },
   {
     "id": 4,
     "level": "THREE",
-    "bonus": "ruby",
+    "bonus": "RUBY",
     "prestigePoint": 5,
-    "onyxAmount": 0,
-    "sapphireAmount": 0,
-    "emeraldAmount": 7,
-    "rubyAmount": 3,
-    "diamondAmount": 0
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 7,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
   }
 ]
