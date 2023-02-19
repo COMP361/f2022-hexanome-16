@@ -11,9 +11,8 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.PriceMap;
-import com.hexanome16.server.models.PurchaseMap;
-import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.price.PriceInterface;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
@@ -127,7 +126,8 @@ public class GameService implements GameServiceInterface {
 
     PurchaseMap playerBankMap = concernedPlayer.getBank().toPurchaseMap();
 
-    return new ResponseEntity<>(objectMapper.writeValueAsString(playerBankMap), HttpStatus.OK);
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(playerBankMap.getPriceMap()), HttpStatus.OK);
   }
 
   @Override
@@ -141,7 +141,8 @@ public class GameService implements GameServiceInterface {
     PurchaseMap gameBankMap = game.getGameBank().toPurchaseMap();
 
 
-    return new ResponseEntity<>(objectMapper.writeValueAsString(gameBankMap), HttpStatus.OK);
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(gameBankMap.getPriceMap()), HttpStatus.OK);
   }
 
   @Override
@@ -196,7 +197,7 @@ public class GameService implements GameServiceInterface {
             goldAmount);
 
     // Get card price as a priceMap
-    PriceMap cardPriceMap = ((TokenPrice) cardToBuy.getCardInfo().price()).getPriceMap();
+    PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
     // Get player using found index
     Player clientPlayer = findPlayerByToken(game, authenticationToken);

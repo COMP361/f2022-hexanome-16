@@ -1,6 +1,8 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.price.PurchaseMap;
 import lombok.Data;
 
 /**
@@ -60,8 +62,8 @@ public class Player {
    */
   public void incPlayerBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    getBank().incBank(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount);
+    getBank().addGemsToBank(new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount));
 
   }
 
@@ -72,9 +74,7 @@ public class Player {
    *                    the player bank.
    */
   public void incPlayerBank(PurchaseMap purchaseMap) {
-    getBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
-            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
-            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+    getBank().addGemsToBank(purchaseMap);
   }
 
   /**
@@ -91,8 +91,8 @@ public class Player {
    */
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    return getBank().hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount);
+    return getBank().toPurchaseMap().canBeUsedToBuy(new PurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount));
   }
 
 

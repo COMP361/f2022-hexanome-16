@@ -168,7 +168,7 @@ public class AuthServiceTest {
     boolean validResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(),
-        games
+        games.get(DummyAuths.validSessionIds.get(0))
     );
     assertTrue("Valid verify player should return true", validResponse);
   }
@@ -181,7 +181,7 @@ public class AuthServiceTest {
     boolean invalidResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
-        games
+        games.get(DummyAuths.validSessionIds.get(0))
     );
     assertFalse("Invalid verify player should return false", invalidResponse);
   }

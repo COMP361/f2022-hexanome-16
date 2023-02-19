@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.server.models.price.PriceInterface;
 import lombok.Getter;
 
 /**
@@ -18,7 +19,7 @@ public class Noble implements Reservable, Visitable {
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public Noble(int id, int prestigePoint, String texturePath, Price price) {
+  public Noble(int id, int prestigePoint, String texturePath, PriceInterface price) {
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
   }
 
