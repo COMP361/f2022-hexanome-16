@@ -4,14 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.BagJson;
 import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.CascadeTwoJson;
+import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.DoubleJson;
 import com.hexanome16.server.dto.NobleJson;
+import com.hexanome16.server.dto.NoblesHash;
+import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PriceMap;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.util.BroadcastMap;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -28,6 +33,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Game {
+  private final BroadcastMap broadcastContentManagerMap = new BroadcastMap();
   private final Map<Level, Deck<LevelCard>> levelDecks = new HashMap<>();
 
   private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
@@ -41,7 +47,6 @@ public class Game {
   private final String savegame;
   private final GameBank gameBank;
   private final WinCondition winCondition;
-  @Setter
   private int currentPlayerIndex = 0;
   private Deck<Noble> nobleDeck = new Deck<>();
   private Deck<Noble> onBoardNobles = new Deck<>();
@@ -54,7 +59,7 @@ public class Game {
    * @param creator      the creator
    * @param savegame     the savegame
    * @param winCondition the win condition
-   * @throws java.io.IOException exception
+   * @throws java.io.IOException object mapper IO exception
    */
   public Game(long sessionId, @NonNull Player[] players, String creator, String savegame,
               WinCondition winCondition)
@@ -68,6 +73,7 @@ public class Game {
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
+    createBroadcastContentManagerMap();
   }
 
   /**
@@ -82,6 +88,27 @@ public class Game {
         payload.getWinCondition());
   }
 
+  private void createBroadcastContentManagerMap() {
+    try {
+      for (Level level : Level.values()) {
+        BroadcastContentManager<DeckHash> broadcastContentManager =
+            new BroadcastContentManager<>(new DeckHash(this, level));
+        broadcastContentManagerMap.put(level.name(), broadcastContentManager);
+      }
+      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+          new BroadcastContentManager<>(
+              new PlayerJson(getCurrentPlayer().getName()));
+      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+          new BroadcastContentManager<>(new WinJson());
+      BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
+          new BroadcastContentManager<>(new NoblesHash(this));
+      broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
+      broadcastContentManagerMap.put("winners", broadcastContentManagerWinners);
+      broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   /**
    * Gets current player.
@@ -89,7 +116,7 @@ public class Game {
    * @return the current player
    */
   public Player getCurrentPlayer() {
-    return getPlayers()[getCurrentPlayerIndex()];
+    return players[currentPlayerIndex];
   }
 
   /**
@@ -99,6 +126,13 @@ public class Game {
    */
   public Player[] getPlayers() {
     return players.clone();
+  }
+
+  /**
+   * Start next player's turn.
+   */
+  public void goToNextPlayer() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
   }
 
   private void createDecks() throws IOException {
@@ -367,8 +401,6 @@ public class Game {
   public void addOnBoardCard(Level level) {
     LevelCard card = this.levelDecks.get(level).nextCard();
     card.setIsFaceDown(false);
-    System.out.println(
-        card.getCardInfo().texturePath() + "face down: " + card.isFaceDown());
     this.onBoardDecks.get(level).addCard(card);
   }
 

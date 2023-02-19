@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class TokenService implements TokenServiceInterface {
 
   private final GameServiceInterface gameService;
+  private final GameManagerServiceInterface gameManager;
   private final AuthServiceInterface authService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -28,17 +29,20 @@ public class TokenService implements TokenServiceInterface {
    *
    * @param gameService Needed for getting games and such.
    * @param authService Needed for player verification.
+   * @param gameManager Game manager for fetching game instances
    */
   public TokenService(@Autowired GameServiceInterface gameService,
-                      @Autowired AuthServiceInterface authService) {
+                      @Autowired AuthServiceInterface authService,
+                      @Autowired GameManagerServiceInterface gameManager) {
     this.gameService = gameService;
     this.authService = authService;
+    this.gameManager = gameManager;
   }
 
   @Override
   public ResponseEntity<String> availableTwoTokensType(long sessionId)
       throws JsonProcessingException {
-    Game currentGame = gameService.getGameMap().get(sessionId);
+    Game currentGame = gameManager.getGame(sessionId);
     if (currentGame == null) {
       return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
     }
@@ -52,14 +56,14 @@ public class TokenService implements TokenServiceInterface {
   @Override
   public ResponseEntity<String> availableThreeTokensType(long sessionId)
       throws JsonProcessingException {
-    Game currentGame = gameService.getGameMap().get(sessionId);
+    Game currentGame = gameManager.getGame(sessionId);
     if (currentGame == null) {
       return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
     }
     ArrayList<Gem> listAvailableForThree = currentGame.availableThreeTokensType();
     ArrayList<String> listAvailableForThreeBonusType =
         new ArrayList<>(listAvailableForThree.stream()
-        .map(Gem::getBonusType).toList());
+            .map(Gem::getBonusType).toList());
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(listAvailableForThreeBonusType), HttpStatus.OK);
   }
@@ -72,7 +76,7 @@ public class TokenService implements TokenServiceInterface {
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
     }
-    Game currentGame = gameService.getGameMap().get(sessionId);
+    Game currentGame = gameManager.getGame(sessionId);
     Player requestingPlayer = gameService.findPlayerByToken(currentGame, authenticationToken);
     Gem desiredGem = Gem.getGem(tokenType);
     if (!currentGame.allowedTakeTwoOf(desiredGem)) {
@@ -92,7 +96,7 @@ public class TokenService implements TokenServiceInterface {
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
     }
-    Game currentGame = gameService.getGameMap().get(sessionId);
+    Game currentGame = gameManager.getGame(sessionId);
     Player requestingPlayer = gameService.findPlayerByToken(currentGame, authenticationToken);
 
     Gem desiredGemOne = Gem.getGem(tokenTypeOne);
@@ -117,7 +121,6 @@ public class TokenService implements TokenServiceInterface {
   }
 
 
-
   // HELPERS /////////////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -130,12 +133,12 @@ public class TokenService implements TokenServiceInterface {
    * @return true if the request is appropriate, false otherwise
    */
   public ResponseEntity<String> validRequest(long sessionId, String authToken) {
-    Game currentGame = gameService.getGameMap().get(sessionId);
+    Game currentGame = gameManager.getGame(sessionId);
 
     if (currentGame == null) {
       return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
     }
-    if (!authService.verifyPlayer(sessionId, authToken, gameService.getGameMap())) {
+    if (!authService.verifyPlayer(sessionId, authToken, currentGame)) {
       return new ResponseEntity<>("Can't verify player", HttpStatus.BAD_REQUEST);
     }
 

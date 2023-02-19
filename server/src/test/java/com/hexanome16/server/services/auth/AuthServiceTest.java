@@ -11,8 +11,8 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
+import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameService;
-import com.hexanome16.server.util.BroadcastMap;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Map;
@@ -56,7 +56,8 @@ public class AuthServiceTest {
     ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
     ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
 
-    gameService = new GameService(authService, new BroadcastMap());
+    //TODO : mock game manager service
+    gameService = new GameService(authService, new GameManagerService());
   }
 
   @Test
@@ -167,7 +168,7 @@ public class AuthServiceTest {
     boolean validResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(),
-        games
+        games.get(DummyAuths.validSessionIds.get(0))
     );
     assertTrue("Valid verify player should return true", validResponse);
   }
@@ -180,7 +181,7 @@ public class AuthServiceTest {
     boolean invalidResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
-        games
+        games.get(DummyAuths.validSessionIds.get(0))
     );
     assertFalse("Invalid verify player should return false", invalidResponse);
   }

@@ -2,7 +2,6 @@ package com.hexanome16.server.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.models.CardInfo;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Noble;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
