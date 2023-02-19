@@ -1,7 +1,7 @@
 package com.hexanome16.server.util;
 
-import com.hexanome16.server.models.Level;
 import java.util.Arrays;
+import models.Level;
 import org.springframework.http.HttpStatus;
 
 /**

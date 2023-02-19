@@ -1,10 +1,9 @@
 package com.hexanome16.server.models.bank;
 
-import com.hexanome16.server.models.price.Gem;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.stream.Stream;
+import models.price.Gem;
 
 /**
  * Game Bank for the whole game.

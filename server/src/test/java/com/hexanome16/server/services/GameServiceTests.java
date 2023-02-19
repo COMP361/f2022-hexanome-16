@@ -17,15 +17,15 @@ import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.InventoryAddable;
-import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PriceMap;
-import com.hexanome16.server.models.price.PurchaseMap;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import models.Level;
+import models.price.Gem;
+import models.price.PriceMap;
+import models.price.PurchaseMap;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -269,7 +269,7 @@ class GameServiceTests {
     }
     ResponseEntity<String> response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 1, 1, 1, 0, 0, 1);
+            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
 
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -383,17 +383,18 @@ class GameServiceTests {
 
     // Test invalid sessionId
     ResponseEntity<String> response = gameService.buyCard(invalidSessionId,
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken, 1, 1, 1, 0, 0, 1);
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
+        new PurchaseMap(1, 1, 1, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     // Test invalid accessToken
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            invalidAccessToken, 1, 1, 1, 0, 0, 1);
+            invalidAccessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     // Test invalid price
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 3, 0, 0, 0, 0, 1);
+            accessToken, new PurchaseMap(3, 0, 0, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     // Test not enough funds
@@ -410,8 +411,8 @@ class GameServiceTests {
       fail();
     }
     response = gameService.buyCard(sessionId,
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken, 7, 1, 1, 0,
-        0, 1);
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken,
+        new PurchaseMap(7, 1, 1, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 

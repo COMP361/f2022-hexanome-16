@@ -1,13 +1,13 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
-import com.hexanome16.server.models.auth.TokensInfo;
-import com.hexanome16.server.models.sessions.GameParams;
+import com.hexanome16.server.models.sessions.ServerGameParams;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
+import models.auth.TokensInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,7 +30,7 @@ public class GameServiceController {
 
   private final AuthServiceInterface authService;
   private final UrlUtils urlUtils;
-  private final GameParams gameParams;
+  private final ServerGameParams serverGameParams;
   @Value("${gs.username}")
   private String gsUsername;
   @Value("${gs.password}")
@@ -42,16 +42,16 @@ public class GameServiceController {
    * @param restTemplateBuilder The RestTemplateBuilder.
    * @param authService         The AuthController.
    * @param urlUtils            The UrlUtils.
-   * @param gameParams          The GameParams.
+   * @param serverGameParams    The ServerGameParams.
    */
   public GameServiceController(@Autowired RestTemplateBuilder restTemplateBuilder,
                                @Autowired AuthServiceInterface authService,
                                @Autowired UrlUtils urlUtils,
-                               @Autowired GameParams gameParams) {
+                               @Autowired ServerGameParams serverGameParams) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authService = authService;
-    this.gameParams = gameParams;
+    this.serverGameParams = serverGameParams;
   }
 
   /**
@@ -64,13 +64,13 @@ public class GameServiceController {
   public ResponseEntity<Void> createGameService() {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
-    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
+    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/" + serverGameParams.getName(),
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    HttpEntity<GameParams> entity = new HttpEntity<>(gameParams, headers);
+    HttpEntity<ServerGameParams> entity = new HttpEntity<>(serverGameParams, headers);
     try {
       this.restTemplate.put(url, entity);
     } catch (HttpClientErrorException.BadRequest e) {

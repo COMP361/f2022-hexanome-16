@@ -1,22 +1,19 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.dto.BagJson;
-import com.hexanome16.server.dto.CardJson;
-import com.hexanome16.server.dto.CascadeTwoJson;
 import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.DoubleJson;
-import com.hexanome16.server.dto.NobleJson;
 import com.hexanome16.server.dto.NoblesHash;
-import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.bank.GameBank;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PriceMap;
-import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.BroadcastMap;
+import dto.BagJson;
+import dto.CardJson;
+import dto.CascadeTwoJson;
+import dto.DoubleJson;
+import dto.NobleJson;
+import dto.PlayerJson;
+import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +23,10 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
+import models.Level;
+import models.price.Gem;
+import models.price.PriceMap;
+import models.price.PurchaseMap;
 
 /**
  * Game class that holds all the information.
@@ -516,7 +517,7 @@ public class Game {
                                     int diamondAmount, int onyxAmount, int goldAmount) {
     return getGameBank().toPurchaseMap().canBeUsedToBuy(
         new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount));
+            diamondAmount, onyxAmount, goldAmount));
   }
 
   /**

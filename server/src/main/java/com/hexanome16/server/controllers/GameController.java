@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameServiceInterface;
+import models.price.PurchaseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -145,12 +146,7 @@ public class GameController {
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
    * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
+   * @param purchaseMap         PurchaseMap denoting player's offer.
    * @return
    *     <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.
@@ -160,14 +156,9 @@ public class GameController {
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
                                         @RequestParam String authenticationToken,
-                                        @RequestParam int rubyAmount,
-                                        @RequestParam int emeraldAmount,
-                                        @RequestParam int sapphireAmount,
-                                        @RequestParam int diamondAmount,
-                                        @RequestParam int onyxAmount, @RequestParam int goldAmount)
+                                        @RequestBody PurchaseMap purchaseMap)
       throws JsonProcessingException {
-    return gameService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+    return gameService.buyCard(sessionId, cardMd5, authenticationToken, purchaseMap);
   }
 
   /**

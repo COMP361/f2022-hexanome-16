@@ -1,8 +1,8 @@
 package com.hexanome16.server.models.bank;
 
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PriceInterface;
-import com.hexanome16.server.models.price.PurchaseMap;
+import models.price.Gem;
+import models.price.PriceInterface;
+import models.price.PurchaseMap;
 
 /**
  * This interface represents bank operations for a bank.

@@ -5,21 +5,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.price.PriceInterface;
-import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
+import dto.PlayerJson;
+import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import lombok.NonNull;
+import models.Level;
+import models.price.Gem;
+import models.price.PriceInterface;
+import models.price.PurchaseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -168,8 +169,7 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        int rubyAmount, int emeraldAmount, int sapphireAmount,
-                                        int diamondAmount, int onyxAmount, int goldAmount)
+                                        PurchaseMap proposedDeal)
       throws JsonProcessingException {
 
 
@@ -191,11 +191,6 @@ public class GameService implements GameServiceInterface {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // Get proposed Deal as a purchase map
-    PurchaseMap proposedDeal =
-        new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount,
-            goldAmount);
-
     // Get card price as a priceMap
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
@@ -213,15 +208,26 @@ public class GameService implements GameServiceInterface {
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
     // and is player's turn
-    if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount) || game.isNotPlayersTurn(clientPlayer)) {
+    if (!clientPlayer.hasAtLeast(
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD)
+        ) || game.isNotPlayersTurn(clientPlayer)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     // Increase Game Bank and decrease player funds
-    game.incGameBankFromPlayer(clientPlayer, rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount);
+    game.incGameBankFromPlayer(clientPlayer,
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD));
 
 
     // Add that card to the player's Inventory

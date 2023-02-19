@@ -2,11 +2,11 @@ package com.hexanome16.server.services;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import models.auth.TokensInfo;
 
 /**
  * Static accounts to use for tests that use DummyAuthService.

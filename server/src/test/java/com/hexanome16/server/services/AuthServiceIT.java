@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.server.LobbyServiceContainer;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
+import models.auth.TokensInfo;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

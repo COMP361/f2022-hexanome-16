@@ -2,8 +2,8 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.models.price.PurchaseMap;
 import lombok.Data;
+import models.price.PurchaseMap;
 
 /**
  * Player class.

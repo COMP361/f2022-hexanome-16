@@ -2,12 +2,12 @@ package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.util.Map;
 import javafx.util.Pair;
+import models.sessions.Session;
 
 /**
  * This class provides methods to list sessions in Lobby Service.
@@ -40,8 +40,10 @@ public class ListSessionsRequest {
     }
     Map<String, Session> sessions = res.sessions;
     return new Pair<>(response.getKey(), sessions.entrySet().stream().map(entry -> {
-      entry.getValue().setId(Long.valueOf(entry.getKey()));
-      return entry.getValue();
+      Session session = entry.getValue();
+      return new Session(Long.valueOf(entry.getKey()), session.getCreator(),
+          session.getGameParameters(), session.isLaunched(), session.getPlayers(),
+          session.getSaveGameId());
     }).toArray(Session[]::new));
   }
 

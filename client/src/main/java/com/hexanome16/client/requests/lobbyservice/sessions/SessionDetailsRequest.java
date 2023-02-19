@@ -2,10 +2,10 @@ package com.hexanome16.client.requests.lobbyservice.sessions;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpRequest;
 import javafx.util.Pair;
+import models.sessions.Session;
 
 /**
  * This class provides methods to get details about a session in Lobby Service.

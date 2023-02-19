@@ -1,11 +1,11 @@
 package com.hexanome16.server.controllers;
 
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.List;
 import java.util.Objects;
+import models.auth.TokensInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

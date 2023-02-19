@@ -1,7 +1,8 @@
 package com.hexanome16.server.models;
 
-import com.hexanome16.server.models.price.PriceInterface;
 import lombok.Getter;
+import models.CardInfo;
+import models.price.PriceInterface;
 
 /**
  * Noble class.

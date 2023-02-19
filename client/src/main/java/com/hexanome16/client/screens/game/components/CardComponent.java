@@ -5,10 +5,10 @@ import static com.hexanome16.client.screens.game.GameFactory.matCoordsX;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
-import com.hexanome16.client.screens.game.Level;
-import com.hexanome16.client.screens.game.PriceMap;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import javafx.scene.input.MouseEvent;
+import models.Level;
+import models.price.PriceMap;
 
 /**
  * FXGL component for development cards on board.

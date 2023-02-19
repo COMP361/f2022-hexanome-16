@@ -28,6 +28,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.hexanome16</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>

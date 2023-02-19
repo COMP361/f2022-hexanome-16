@@ -3,11 +3,11 @@ package com.hexanome16.server.dto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.Map;
+import models.Level;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**

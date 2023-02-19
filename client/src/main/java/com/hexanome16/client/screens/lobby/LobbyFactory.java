@@ -18,7 +18,6 @@ import com.hexanome16.client.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
-import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +34,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import models.sessions.Session;
 
 /**
  * This class is used to create the entities of the lobby screen.
@@ -158,7 +158,7 @@ public class LobbyFactory implements EntityFactory {
 
     TableColumn<Session, String> launchedColumn = new TableColumn<>("Launched");
     launchedColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-        cellData.getValue().getLaunched() ? "Yes" : "No"
+        cellData.getValue().isLaunched() ? "Yes" : "No"
     ));
     launchedColumn.setStyle(columnStyle);
 
@@ -193,7 +193,7 @@ public class LobbyFactory implements EntityFactory {
                   final Session session = getTableView().getItems().get(getIndex());
                   boolean isOwn = session.getCreator().equals(AuthUtils.getPlayer().getName());
                   join.setOnAction(event -> {
-                    if (session.getLaunched()) {
+                    if (session.isLaunched()) {
                       shouldFetch = false;
                       fetchSessionsThread.interrupt();
                       fetchSessionsThread = null;
@@ -239,7 +239,7 @@ public class LobbyFactory implements EntityFactory {
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
-                    if (!session.getLaunched()) {
+                    if (!session.isLaunched()) {
                       if (isOwn && session.getPlayers().length
                           >= session.getGameParameters().getMinSessionPlayers()) {
                         buttons.add(launch);
@@ -248,7 +248,7 @@ public class LobbyFactory implements EntityFactory {
                     } else {
                       buttons.add(join);
                     }
-                  } else if (!session.getLaunched() && session.getPlayers().length
+                  } else if (!session.isLaunched() && session.getPlayers().length
                       < session.getGameParameters().getMaxSessionPlayers()) {
                     buttons.add(join);
                   }

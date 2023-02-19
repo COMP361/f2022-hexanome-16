@@ -1,8 +1,8 @@
 package com.hexanome16.client.utils;
 
-import com.hexanome16.client.types.auth.TokensInfo;
 import com.hexanome16.client.types.user.User;
 import java.util.Base64;
+import models.auth.TokensInfo;
 
 /**
  * This class provides methods to create authorization headers for requests.

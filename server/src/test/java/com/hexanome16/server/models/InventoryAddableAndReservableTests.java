@@ -2,7 +2,8 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.hexanome16.server.models.price.PriceMap;
+import models.Level;
+import models.price.PriceMap;
 import org.junit.jupiter.api.Test;
 
 /**

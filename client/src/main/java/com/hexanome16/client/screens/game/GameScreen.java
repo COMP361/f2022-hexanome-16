@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import models.Level;
+import models.price.PriceMap;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**

@@ -10,8 +10,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.util.BroadcastMap;
 import java.io.IOException;
@@ -20,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import models.Level;
+import models.price.Gem;
+import models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

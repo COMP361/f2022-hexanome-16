@@ -9,7 +9,6 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameService;
@@ -17,6 +16,7 @@ import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
+import models.auth.TokensInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

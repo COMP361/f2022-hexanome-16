@@ -3,10 +3,13 @@ package com.hexanome16.server.dto;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import dto.CardJson;
+import dto.NobleJson;
+import dto.PlayerJson;
 import java.io.IOException;
+import models.Level;
 import org.junit.jupiter.api.Test;
 
 /**

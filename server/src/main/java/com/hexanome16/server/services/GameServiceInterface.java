@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import lombok.NonNull;
+import models.price.PurchaseMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,12 +98,7 @@ public interface GameServiceInterface {
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
    * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
+   * @param purchaseMap         Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *         HTTP BAD_REQUEST otherwise.
    *         </p>
@@ -111,12 +107,7 @@ public interface GameServiceInterface {
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
                                  String authenticationToken,
-                                 int rubyAmount,
-                                 int emeraldAmount,
-                                 int sapphireAmount,
-                                 int diamondAmount,
-                                 int onyxAmount,
-                                 int goldAmount)
+                                 PurchaseMap purchaseMap)
       throws JsonProcessingException;
 
   /**

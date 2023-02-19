@@ -2,8 +2,6 @@ package com.hexanome16.client.requests.backend.prompts;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.screens.game.Level;
-import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.URI;
@@ -12,8 +10,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
+import models.Level;
+import models.price.PurchaseMap;
 
 /**
  * Class responsible for sending HTTP requests related to the prompts.
@@ -131,8 +130,8 @@ public class PromptsRequests {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(UrlUtils.createGameServerUri(
               "/api/games/" + sessionId + "/" + cardMd5,
-              requestParamPurchaseMap(authToken, proposedDeal)
-          )).PUT(HttpRequest.BodyPublishers.noBody())
+              "authenticationToken=" + authToken
+          )).PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(proposedDeal)))
           .build();
 
       CompletableFuture<HttpResponse<String>> response =
@@ -355,23 +354,5 @@ public class PromptsRequests {
     }
 
   }
-
-
-
-  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
-  private static String requestParamPurchaseMap(String authToken, PurchaseMap proposedDeal) {
-    StringJoiner requestParam = new StringJoiner("&");
-    requestParam.add("authenticationToken=" + authToken);
-    requestParam.add("rubyAmount=" + proposedDeal.getRubyAmount());
-    requestParam.add("emeraldAmount=" + proposedDeal.getEmeraldAmount());
-    requestParam.add("sapphireAmount=" + proposedDeal.getSapphireAmount());
-    requestParam.add("diamondAmount=" + proposedDeal.getDiamondAmount());
-    requestParam.add("onyxAmount=" + proposedDeal.getOnyxAmount());
-    requestParam.add("goldAmount=" + proposedDeal.getGoldAmount());
-
-    return requestParam.toString();
-  }
-
-
 
 }

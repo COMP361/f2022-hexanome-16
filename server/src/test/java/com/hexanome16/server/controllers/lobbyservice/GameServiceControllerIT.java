@@ -3,9 +3,9 @@ package com.hexanome16.server.controllers.lobbyservice;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.server.controllers.lobbyservice.gameservice.GameServiceController;
-import com.hexanome16.server.models.sessions.GameParams;
 import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
+import models.sessions.GameParams;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

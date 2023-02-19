@@ -1,7 +1,9 @@
 package com.hexanome16.server.models;
 
-import com.hexanome16.server.models.price.PriceInterface;
 import lombok.Getter;
+import models.CardInfo;
+import models.Level;
+import models.price.PriceInterface;
 
 /**
  * Card instead of noble.

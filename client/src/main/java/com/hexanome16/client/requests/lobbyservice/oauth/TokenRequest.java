@@ -2,13 +2,13 @@ package com.hexanome16.client.requests.lobbyservice.oauth;
 
 import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.auth.TokensInfo;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
+import models.auth.TokensInfo;
 
 /**
  * This class provides methods to log in the user and get the associated OAuth tokens.
@@ -25,7 +25,7 @@ public class TokenRequest {
    * @param password     The password of the user.
    * @param refreshToken The refresh token of the user.
    */
-  public static void execute(String username, String password, String refreshToken) {
+  private static void execute(String username, String password, String refreshToken) {
     HttpClient client = RequestClient.getClient();
     try {
       StringBuilder params = new StringBuilder();

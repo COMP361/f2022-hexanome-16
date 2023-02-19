@@ -11,6 +11,7 @@ import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.GameServiceInterface;
+import models.price.PurchaseMap;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -175,7 +176,8 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     try {
-      when(gameServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
+      when(gameServiceMock.buyCard(123L, "md5", "abc",
+          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
           buyCardResponseStub);
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
@@ -184,7 +186,8 @@ class GameControllerTest {
 
     try {
       assertEquals(buyCardResponseStub,
-          gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
+          gameController.buyCard(123L, "md5", "abc",
+              new PurchaseMap(1, 1, 1, 1, 1, 1)));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

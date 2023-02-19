@@ -1,11 +1,10 @@
 package com.hexanome16.client.requests.backend.cards;
 
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import models.Level;
 
 /**
  * This class provides methods to perform development card related requests to the game server.
@@ -21,7 +20,6 @@ public class GameRequest {
    * @return string representation of deck.
    */
   public static String updateDeck(long sessionId, Level level, String hash) {
-    HttpClient client = RequestClient.getClient();
     HttpRequest request = HttpRequest.newBuilder()
         .uri(UrlUtils.createGameServerUri(
             "/api/games/" + sessionId + "/deck",
@@ -41,7 +39,6 @@ public class GameRequest {
    * @return noble json
    */
   public static String updateNoble(long sessionId, String hash) {
-    HttpClient client = RequestClient.getClient();
     HttpRequest request = HttpRequest.newBuilder()
         .uri(UrlUtils.createGameServerUri(
             "/api/games/" + sessionId + "/nobles",
@@ -61,7 +58,6 @@ public class GameRequest {
    * @return current player username
    */
   public static String updateCurrentPlayer(long sessionId, String hash) {
-    HttpClient client = RequestClient.getClient();
     HttpRequest request = HttpRequest.newBuilder()
         .uri(UrlUtils.createGameServerUri(
             "/api/games/" + sessionId + "/player",
