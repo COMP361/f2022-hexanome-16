@@ -20,6 +20,15 @@ public class BroadcastMap {
   }
 
   /**
+   * Constructor.
+   *
+   * @param broadcastMap The broadcast map.
+   */
+  public BroadcastMap(HashMap<String, BroadcastContentManager<?>> broadcastMap) {
+    this.broadcastMap = broadcastMap;
+  }
+
+  /**
    * Gets the broadcast content manager for the given key.
    *
    * @param key The key to get the broadcast content manager for.
