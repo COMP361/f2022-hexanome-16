@@ -108,8 +108,7 @@ public class AuthService implements AuthServiceInterface {
   }
 
   @Override
-  public boolean verifyPlayer(long sessionId, String accessToken, Map<Long, Game> gameMap) {
-    Game game = gameMap.get(sessionId);
+  public boolean verifyPlayer(long sessionId, String accessToken, Game game) {
     if (game == null) {
       return false;
     }

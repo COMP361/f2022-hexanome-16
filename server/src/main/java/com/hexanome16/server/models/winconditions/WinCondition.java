@@ -2,7 +2,7 @@ package com.hexanome16.server.models.winconditions;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.services.GameServiceInterface;
+import com.hexanome16.server.services.GameManagerServiceInterface;
 import java.util.Arrays;
 import java.util.function.Predicate;
 import lombok.Getter;
@@ -40,11 +40,11 @@ public abstract class WinCondition {
   /**
    * Check if a game is won.
    *
-   * @param gameService The game service.
-   * @param sessionId The session id of the game to check.
+   * @param gameManager The game manager service to fetch the game.
+   * @param sessionId   The session id of the game to check.
    * @return The player(s) who won the game, or null if no player has won.
    */
-  public Player[] isGameWon(GameServiceInterface gameService, Long sessionId) {
-    return this.isGameWon(gameService.getGameMap().get(sessionId));
+  public Player[] isGameWon(GameManagerServiceInterface gameManager, Long sessionId) {
+    return this.isGameWon(gameManager.getGame(sessionId));
   }
 }

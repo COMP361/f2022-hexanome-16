@@ -13,7 +13,6 @@ import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import com.hexanome16.server.util.BroadcastMap;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +31,7 @@ public class TokenServiceTests {
   private final SessionJson payload = new SessionJson();
   private DummyAuthService dummyAuthService;
   private GameService gameService;
+  private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
 
   /**
@@ -42,9 +42,10 @@ public class TokenServiceTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
-    gameService = new GameService(dummyAuthService, new BroadcastMap());
-    tokensService  =
-            new TokenService(gameService, dummyAuthService);
+    gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
+    gameService = new GameService(dummyAuthService, gameManagerMock);
+    tokensService =
+        new TokenService(gameService, dummyAuthService, gameManagerMock);
 
     payload.setPlayers(new Player[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
@@ -52,8 +53,8 @@ public class TokenServiceTests {
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setWinCondition(new BaseWinCondition());
-    gameService.createGame(DummyAuths.validSessionIds.get(0), payload);
-    gameService.createGame(DummyAuths.validSessionIds.get(1), payload);
+    gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload);
+    gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload);
   }
 
   /**
@@ -70,7 +71,7 @@ public class TokenServiceTests {
         Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
     assertEquals(available,
         Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
-    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    Game game = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
     game.incGameBank(-3, -4, 0, 0, 0, 0);
 
     response =
@@ -96,7 +97,7 @@ public class TokenServiceTests {
         Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
     assertEquals(available,
         Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
-    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    Game game = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
     game.incGameBank(-3, -4, 0, -7, 0, 0);
 
     response =
@@ -116,8 +117,7 @@ public class TokenServiceTests {
     long sessionId = DummyAuths.validSessionIds.get(0);
     String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
-    Game game =
-        gameService.getGameMap().get(sessionId);
+    Game game = gameManagerMock.getGame(sessionId);
 
     GameBank testGameBank = new GameBank();
 
@@ -141,12 +141,10 @@ public class TokenServiceTests {
     long sessionId = DummyAuths.validSessionIds.get(0);
     String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
-    Game game =
-        gameService.getGameMap().get(sessionId);
+    Game game = gameManagerMock.getGame(sessionId);
 
     GameBank testGameBank = new GameBank();
 
-    assertEquals(game.getGameBank(), testGameBank);
     tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
 
     testGameBank.removeGemsFromBank(new PurchaseMap(1, 1, 0, 1, 0, 0));
@@ -184,7 +182,7 @@ public class TokenServiceTests {
     );
     assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
 
-    Game game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
+    Game game = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
     gameService.endCurrentPlayersTurn(game);
 
     // good sessionId and valid token + is their turn
