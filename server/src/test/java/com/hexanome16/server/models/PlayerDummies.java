@@ -5,10 +5,9 @@ package com.hexanome16.server.models;
  */
 public class PlayerDummies {
   private static final Player tristan = new Player("tristan", "#FFFFFF");
-  private static final Player imad = new Player("imad", "#FFFFFF");
-
+  private static final Player elea = new Player("elea", "#FFFFFF");
   /**
-   * Returns cloned copy of an array containing two dummy players.
+   * Returns cloned copy of an array containing two valid dummy players.
    */
-  public static final Player[] dummies = new Player[] {tristan, imad}.clone();
+  public static final Player[] validDummies = new Player[] {tristan, elea}.clone();
 }
