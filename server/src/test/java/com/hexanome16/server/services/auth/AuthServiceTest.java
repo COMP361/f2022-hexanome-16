@@ -164,10 +164,11 @@ public class AuthServiceTest {
   void testValidVerifyPlayer() {
     when(authService.getPlayer(DummyAuths.validTokensInfos.get(0).getAccessToken()))
         .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
     boolean validResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(),
-        DummyAuths.validGames.get(DummyAuths.validSessionIds.get(0))
+        games
     );
     assertTrue("Valid verify player should return true", validResponse);
   }
@@ -176,10 +177,11 @@ public class AuthServiceTest {
   void testInvalidVerifyPlayer() {
     when(authService.getPlayer(DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
         .thenReturn(ResponseEntity.ok(DummyAuths.invalidPlayerList.get(0).getName()));
+    Map<Long, Game> games = DummyAuths.validGames;
     boolean invalidResponse = authService.verifyPlayer(
         DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
-        DummyAuths.validGames.get(DummyAuths.validSessionIds.get(0))
+        games
     );
     assertFalse("Invalid verify player should return false", invalidResponse);
   }
