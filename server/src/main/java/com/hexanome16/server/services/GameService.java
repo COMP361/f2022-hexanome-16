@@ -55,7 +55,7 @@ public class GameService implements GameServiceInterface {
   public DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
                                                         String accessToken, String hash) {
     Game game = gameManagerService.getGame(sessionId);
-    if (authService.verifyPlayer(sessionId, accessToken, game)) {
+    if (!authService.verifyPlayer(accessToken, game)) {
       return ResponseGenerator.getHashBasedUpdate(10000,
           game.getBroadcastContentManagerMap().get(level),
           hash);
@@ -67,7 +67,7 @@ public class GameService implements GameServiceInterface {
   public DeferredResult<ResponseEntity<String>> getNobles(long sessionId, String accessToken,
                                                           String hash) {
     Game game = gameManagerService.getGame(sessionId);
-    if (authService.verifyPlayer(sessionId, accessToken, game)) {
+    if (authService.verifyPlayer(accessToken, game)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
           game.getBroadcastContentManagerMap().get("noble"),
@@ -82,7 +82,7 @@ public class GameService implements GameServiceInterface {
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId, String accessToken,
                                                                  String hash) {
     Game game = gameManagerService.getGame(sessionId);
-    if (authService.verifyPlayer(sessionId, accessToken, game)) {
+    if (authService.verifyPlayer(accessToken, game)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(10000,
           game.getBroadcastContentManagerMap().get("player"),
@@ -97,7 +97,7 @@ public class GameService implements GameServiceInterface {
   public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
                                                            String hash) {
     Game game = gameManagerService.getGame(sessionId);
-    if (authService.verifyPlayer(sessionId, accessToken, game)) {
+    if (authService.verifyPlayer(accessToken, game)) {
       DeferredResult<ResponseEntity<String>> result;
       result = ResponseGenerator.getHashBasedUpdate(
           10000, game.getBroadcastContentManagerMap().get("winners"), hash
@@ -187,7 +187,7 @@ public class GameService implements GameServiceInterface {
     }
 
     // Verify player is who they claim to be
-    if (!authService.verifyPlayer(sessionId, authenticationToken, game)) {
+    if (!authService.verifyPlayer(authenticationToken, game)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -272,7 +272,7 @@ public class GameService implements GameServiceInterface {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    if (!authService.verifyPlayer(sessionId, authenticationToken, game)) {
+    if (!authService.verifyPlayer(authenticationToken, game)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -322,7 +322,7 @@ public class GameService implements GameServiceInterface {
       return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
 
-    if (!authService.verifyPlayer(sessionId, authenticationToken, game)) {
+    if (!authService.verifyPlayer(authenticationToken, game)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 

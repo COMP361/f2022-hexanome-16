@@ -3,6 +3,7 @@ package com.hexanome16.server.services.auth;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -48,10 +49,9 @@ public interface AuthServiceInterface {
   /**
    * Verify player by their access token.
    *
-   * @param sessionId   ID of session associated with request
    * @param accessToken access token of request
    * @param game        game to verify
    * @return true if access token is in game with session ID, false otherwise or if game is null
    */
-  boolean verifyPlayer(long sessionId, String accessToken, Game game);
+  boolean verifyPlayer(String accessToken, @NonNull Game game);
 }
