@@ -12,8 +12,8 @@ class CustomResponseFactoryTest {
   @Test
   void getErrorResponse() {
     // Arrange
-    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
-    var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
+    final var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
+    final var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
 
     // Act
     var response = CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
@@ -27,8 +27,8 @@ class CustomResponseFactoryTest {
   @Test
   void getCustomErrorResponse() {
     // Arrange
-    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
-    var body = "Testing error";
+    final var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
+    final var body = "Testing error";
 
     // Act
     var response =
@@ -43,8 +43,8 @@ class CustomResponseFactoryTest {
   @Test
   void getDeferredErrorResponse() {
     // Arrange
-    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
-    var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
+    final var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
+    final var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
 
     // Act
     var response =
@@ -61,8 +61,8 @@ class CustomResponseFactoryTest {
   @Test
   void getDeferredCustomErrorResponse() {
     // Arrange
-    var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
-    var body = "Testing error";
+    final var status = CustomHttpResponses.BAD_LEVEL_INFO.getStatus();
+    final var body = "Testing error";
 
     // Act
     var response =
