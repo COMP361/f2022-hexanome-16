@@ -47,11 +47,11 @@ public interface AuthServiceInterface {
   ResponseEntity<Void> logout(String accessToken);
 
   /**
-   * Verify player by their access token.
+   * Verify that player is in game.
    *
-   * @param accessToken access token of request
+   * @param accessToken access token of player
    * @param game        game to verify
-   * @return true if access token is in game with session ID, false otherwise or if game is null
+   * @return true if player is in game with session ID, false otherwise
    */
   boolean verifyPlayer(String accessToken, @NonNull Game game);
 }
