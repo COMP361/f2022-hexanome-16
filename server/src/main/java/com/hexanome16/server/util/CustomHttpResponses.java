@@ -19,7 +19,12 @@ public enum CustomHttpResponses {
    * Used for invalid session id.
    */
   INVALID_SESSION_ID("SessionID not associated with any game in current server",
-      HttpStatus.BAD_REQUEST),
+      HttpStatus.NOT_FOUND),
+  /**
+   * Used for invalid access token.
+   */
+  INVALID_ACCESS_TOKEN("No player with corresponding access token in game with sessionId provided",
+      HttpStatus.UNAUTHORIZED),
 
   /**
    * Used for when it is not players turn.

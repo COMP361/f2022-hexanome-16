@@ -63,7 +63,7 @@ public class InventoryController {
   private Player getValidPlayer(long sessionId, String accessToken) {
     Game game = gameManager.getGame(sessionId);
     // verify that the request is valid
-    if (!authService.verifyPlayer(sessionId, accessToken, game)) {
+    if (!authService.verifyPlayer(accessToken, game)) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token

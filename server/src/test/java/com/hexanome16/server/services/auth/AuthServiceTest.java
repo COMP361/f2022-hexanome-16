@@ -10,8 +10,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.services.DummyAuths;
-import com.hexanome16.server.services.GameManagerService;
-import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Map;
@@ -35,7 +33,6 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
   private AuthService authService;
-  private GameService gameService;
   private UrlUtils urlUtilsMock;
   @Mock
   private RestTemplate restTemplateMock;
@@ -55,9 +52,6 @@ public class AuthServiceTest {
     authService = new AuthService(restTemplateBuilderMock, urlUtilsMock);
     ReflectionTestUtils.setField(authService, "lsUsername", "bgp-client-name");
     ReflectionTestUtils.setField(authService, "lsPassword", "bgp-client-pwd");
-
-    //TODO : mock game manager service
-    gameService = new GameService(authService, new GameManagerService());
   }
 
   @Test
@@ -166,7 +160,6 @@ public class AuthServiceTest {
         .thenReturn(ResponseEntity.ok(DummyAuths.validPlayerList.get(0).getName()));
     Map<Long, Game> games = DummyAuths.validGames;
     boolean validResponse = authService.verifyPlayer(
-        DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(),
         games.get(DummyAuths.validSessionIds.get(0))
     );
@@ -179,7 +172,6 @@ public class AuthServiceTest {
         .thenReturn(ResponseEntity.ok(DummyAuths.invalidPlayerList.get(0).getName()));
     Map<Long, Game> games = DummyAuths.validGames;
     boolean invalidResponse = authService.verifyPlayer(
-        DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(),
         games.get(DummyAuths.validSessionIds.get(0))
     );

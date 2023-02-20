@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
@@ -104,10 +105,7 @@ public class AuthService implements AuthServiceInterface {
   }
 
   @Override
-  public boolean verifyPlayer(long sessionId, String accessToken, Game game) {
-    if (game == null) {
-      return false;
-    }
+  public boolean verifyPlayer(String accessToken, @NonNull Game game) {
     ResponseEntity<String> username = getPlayer(accessToken);
     if (username != null && username.getStatusCode().is2xxSuccessful()) {
       return Arrays.stream(game.getPlayers())
