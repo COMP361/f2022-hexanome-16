@@ -138,7 +138,7 @@ public class TokenService implements TokenServiceInterface {
     if (currentGame == null) {
       return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
     }
-    if (!authService.verifyPlayer(sessionId, authToken, currentGame)) {
+    if (!authService.verifyPlayer(authToken, currentGame)) {
       return new ResponseEntity<>("Can't verify player", HttpStatus.BAD_REQUEST);
     }
 
