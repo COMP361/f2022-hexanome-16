@@ -131,6 +131,64 @@ class GameServiceTests {
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
   }
 
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnSuccess_whenValidParams() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    DeferredResult<ResponseEntity<String>> response =
+        gameService.getWinners(DummyAuths.validSessionIds.get(0),
+            DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+  }
+
+  /**
+   * GetWinners should return http error when invalid access token.
+   */
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnHttpError_whenInvalidAccessToken() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    DeferredResult<ResponseEntity<String>> response =
+        gameService.getWinners(DummyAuths.validSessionIds.get(0),
+            DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+  }
+
+  /**
+   * GetWinners should return http error when invalid session id.
+   */
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnHttpError_WhenInvalidSessionId() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    var response = gameService.getWinners(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+  }
+
   /**
    * Test update nobles success.
    *

@@ -187,6 +187,8 @@ public class GameService implements GameServiceInterface {
     if (game == null) {
       return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
+    // TODO test
+    // TODO add http error
     if (cardToBuy == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
