@@ -48,7 +48,7 @@ public class TokenService implements TokenServiceInterface {
       throws JsonProcessingException {
     Game currentGame = gameManager.getGame(sessionId);
     if (currentGame == null) {
-      return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
     ArrayList<Gem> listAvailableForTwo = currentGame.availableTwoTokensType();
     ArrayList<String> listAvailableForTwoBonusType =
@@ -62,7 +62,7 @@ public class TokenService implements TokenServiceInterface {
       throws JsonProcessingException {
     Game currentGame = gameManager.getGame(sessionId);
     if (currentGame == null) {
-      return new ResponseEntity<>("Game doesnt exist", HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
     ArrayList<Gem> listAvailableForThree = currentGame.availableThreeTokensType();
     ArrayList<String> listAvailableForThreeBonusType =

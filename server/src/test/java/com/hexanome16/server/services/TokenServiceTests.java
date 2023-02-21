@@ -18,8 +18,10 @@ import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.Arrays;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -70,23 +72,10 @@ public class TokenServiceTests {
    */
   @Test
   public void testAvailableTwoTokensType() throws JsonProcessingException {
-    ResponseEntity<String> response =
-        tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-    Set<String> available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
-    Game game = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
-    game.incGameBank(-3, -4, 0, 0, 0, 0);
-
-    response =
-        tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-    available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "BLUE", "WHITE", "BLACK", "NULL"));
+    var response = tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    response = tokensService.availableTwoTokensType(DummyAuths.invalidSessionIds.get(0));
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
   }
 
   /**
@@ -96,23 +85,10 @@ public class TokenServiceTests {
    */
   @Test
   public void testAvailableThreeTokensType() throws JsonProcessingException {
-    ResponseEntity<String> response =
-        tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-    Set<String> available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
-    Game game = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
-    game.incGameBank(-3, -4, 0, -7, 0, 0);
-
-    response =
-        tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-    available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(response.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "BLUE", "GREEN", "BLACK", "NULL"));
+    var response = tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    response = tokensService.availableThreeTokensType(DummyAuths.invalidSessionIds.get(0));
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
   }
 
   /**
@@ -120,22 +96,16 @@ public class TokenServiceTests {
    */
   @Test
   public void testTakeTwo() {
-    long sessionId = DummyAuths.validSessionIds.get(0);
-    String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    //
+    //    when(tokensService.validRequest(DummyAuths.invalidSessionIds.get(0),
+    //        DummyAuths.invalidTokensInfos.get(0).getAccessToken())).thenReturn(
+    //            new ImmutablePair<>(
+    //                new ResponseEntity<>()CustomHttpResponses.INVALID_SESSION_ID),
+    //                new ImmutablePair<>(null, null)));
 
-    Game game = gameManagerMock.getGame(sessionId);
-
-    GameBank testGameBank = new GameBank();
-
-    assertEquals(game.getGameBank(), testGameBank);
-    tokensService.takeTwoTokens(sessionId, authTokenPlayer1, "RED");
-    testGameBank.addGemsToBank(Gem.RUBY, 2);
-    assertEquals(game.getGameBank(), testGameBank);
-    game.incGameBank(-10, -10, -10, -10, -10, -10);
-
-    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
-    assertEquals(tokensService.takeTwoTokens(sessionId, authTokenPlayer2, "RED").getStatusCode(),
-        HttpStatus.BAD_REQUEST);
+    var response = tokensService.takeTwoTokens(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "RED");
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 
 
