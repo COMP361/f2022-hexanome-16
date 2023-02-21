@@ -188,11 +188,12 @@ public class TokenServiceTests {
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode());
 
-    // good sessionId and valid token + is their turn
+   // good sessionId but bad player
     response = tokensService.validRequest(
-        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
+        DummyAuths.validSessionIds.get(0), DummyAuths.invalidTokensInfos.get(0).getAccessToken()
     );
-    assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        response.getLeft().getStatusCode());
 
     // good sessionId and valid token but isn't their turn
     response = tokensService.validRequest(
@@ -207,6 +208,12 @@ public class TokenServiceTests {
     );
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode());
+
+    // good sessionId and valid token + is their turn
+    response = tokensService.validRequest(
+        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
+    );
+    assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
   }
 
 }

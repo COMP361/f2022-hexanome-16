@@ -1,7 +1,9 @@
 package com.hexanome16.server.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -35,6 +37,7 @@ public class TokensControllerTests {
   private final SessionJson payload = new SessionJson();
   private TokensController tokensController;
   private String gameResponse;
+  private TokenService tokenService;
 
   /**
    * Sets .
@@ -45,10 +48,10 @@ public class TokensControllerTests {
   void setup() throws JsonProcessingException {
     DummyAuthService dummyAuthService = new DummyAuthService();
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
-    GameService gameService = new GameService(dummyAuthService, gameManagerMock);
+    GameService gameService = Mockito.mock(GameService.class);
+    tokenService = Mockito.mock(TokenService.class);
     tokensController =
-        new TokensController(
-            new TokenService(gameService, dummyAuthService, gameManagerMock));
+        new TokensController(tokenService);
     payload.setPlayers(new Player[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
         objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
@@ -76,13 +79,10 @@ public class TokensControllerTests {
    */
   @Test
   public void testGetTwoTokens() throws JsonProcessingException {
-    ResponseEntity<String> myResponse =
-        tokensController.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(myResponse.getStatusCode(), HttpStatus.OK);
-    Set<String> available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(myResponse.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
+    when(tokenService.availableTwoTokensType(DummyAuths.validSessionIds.get(0)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
   /**
@@ -92,13 +92,10 @@ public class TokensControllerTests {
    */
   @Test
   public void testGetThreeTokens() throws JsonProcessingException {
-    ResponseEntity<String> myResponse =
-        tokensController.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
-    assertEquals(myResponse.getStatusCode(), HttpStatus.OK);
-    Set<String> available =
-        Set.copyOf(Arrays.asList(objectMapper.readValue(myResponse.getBody(), String[].class)));
-    assertEquals(available,
-        Set.of("RED", "GREEN", "BLUE", "WHITE", "BLACK", "NULL"));
+    when(tokenService.availableThreeTokensType(DummyAuths.validSessionIds.get(0)))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
   /**
@@ -106,11 +103,12 @@ public class TokensControllerTests {
    */
   @Test
   public void testPutTwoTokens() {
-    ResponseEntity<String> myResponse =
-        tokensController.takeTwoTokens(
-            DummyAuths.validSessionIds.get(0),
-            DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED");
-    assertEquals(myResponse.getStatusCode(), HttpStatus.OK);
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    when(tokenService.takeTwoTokens(validSessionId, validAccessToken, "RED"))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.takeTwoTokens(validSessionId, validAccessToken, "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
   /**
@@ -118,12 +116,12 @@ public class TokensControllerTests {
    */
   @Test
   public void testPutThreeTokens() {
-    ResponseEntity<String> myResponse =
-        tokensController.takeThreeTokens(
-            DummyAuths.validSessionIds.get(0),
-            DummyAuths.validTokensInfos.get(0).getAccessToken(),
-            "RED", "GREEN", "WHITE");
-    assertEquals(myResponse.getStatusCode(), HttpStatus.OK);
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    when(tokenService.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN"))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
 }
