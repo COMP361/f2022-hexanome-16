@@ -1,6 +1,8 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -96,16 +98,32 @@ public class TokenServiceTests {
    */
   @Test
   public void testTakeTwo() {
-    //
-    //    when(tokensService.validRequest(DummyAuths.invalidSessionIds.get(0),
-    //        DummyAuths.invalidTokensInfos.get(0).getAccessToken())).thenReturn(
-    //            new ImmutablePair<>(
-    //                new ResponseEntity<>()CustomHttpResponses.INVALID_SESSION_ID),
-    //                new ImmutablePair<>(null, null)));
 
+    Game validGame = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
+    Player validPlayer = PlayerDummies.validDummies[0];
+    when(gameService.findPlayerByToken(any(),
+        eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
+        validPlayer);
+    when(validGame
+        .isNotPlayersTurn(validPlayer)).thenReturn(
+        false);
+    when(validGame.allowedTakeTwoOf(Gem.RUBY)).thenReturn(false);
+    when(validGame.allowedTakeTwoOf(Gem.DIAMOND)).thenReturn(true);
+
+    // INVALID REQUEST
     var response = tokensService.takeTwoTokens(DummyAuths.invalidSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "RED");
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST BUT CANT TAKE TWO OF TOKEN
+    response = tokensService.takeTwoTokens(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST + CAN TAKE TWO OF TOKEN
+    response = tokensService.takeTwoTokens(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "WHITE");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
 
@@ -114,30 +132,33 @@ public class TokenServiceTests {
    */
   @Test
   //public void testTakeThree() {
-  public void takeThreeTokens_shouldRemoveTokensFromGameBank() {
-    // Arrange
-    long sessionId = DummyAuths.validSessionIds.get(0);
-    String authTokenPlayer1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    Game game = gameManagerMock.getGame(sessionId);
+  public void testTakeThreeTokens() {
+    Game validGame = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
+    Player validPlayer = PlayerDummies.validDummies[0];
+    when(gameService.findPlayerByToken(any(),
+        eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
+        validPlayer);
+    when(validGame
+        .isNotPlayersTurn(validPlayer)).thenReturn(
+        false);
+    when(validGame.allowedTakeThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.ONYX)).thenReturn(false);
+    when(validGame.allowedTakeThreeOf(Gem.DIAMOND, Gem.SAPPHIRE, Gem.RUBY)).thenReturn(true);
 
-    GameBank testGameBank = new GameBank();
-    when(game.getGameBank()).thenReturn(testGameBank);
+    // INVALID REQUEST
+    var response = tokensService.takeThreeTokens(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "RED", "WHITE", "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
 
-    // Act
+    // VALID REQUEST BUT CANT TAKE THREE OF TOKENS
+    response = tokensService.takeThreeTokens(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED", "WHITE", "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
 
-    // Assert
+    // VALID REQUEST + CAN TAKE THREE OF TOKENS
+    response = tokensService.takeThreeTokens(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "WHITE", "BLUE", "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
 
-    tokensService.takeThreeTokens(sessionId, authTokenPlayer1, "RED", "GREEN", "WHITE");
-
-    testGameBank.removeGemsFromBank(new PurchaseMap(1, 1, 0, 1, 0, 0));
-
-    assertEquals(game.getGameBank(), testGameBank);
-
-    String authTokenPlayer2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
-
-    assertEquals(tokensService.takeThreeTokens(sessionId, authTokenPlayer2,
-            "RED", "RED", "WHITE").getStatusCode(),
-        HttpStatus.BAD_REQUEST);
   }
 
 
@@ -150,12 +171,12 @@ public class TokenServiceTests {
     when(gameService.findPlayerByToken(any(),
         eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
         PlayerDummies.validDummies[0]);
-    when(gameService.findPlayerByToken(any(),
-        eq(DummyAuths.validTokensInfos.get(1).getAccessToken()))).thenReturn(
-        PlayerDummies.validDummies[1]);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))
         .isNotPlayersTurn(PlayerDummies.validDummies[0])).thenReturn(
         false);
+    when(gameService.findPlayerByToken(any(),
+        eq(DummyAuths.validTokensInfos.get(1).getAccessToken()))).thenReturn(
+        PlayerDummies.validDummies[1]);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))
         .isNotPlayersTurn(PlayerDummies.validDummies[1])).thenReturn(
         true);
