@@ -6,9 +6,11 @@ on:
   pull_request:
     branches:
     - master
+    - staging
   push:
     branches:
     - master
+    - staging
 jobs:
   build:
     runs-on: ubuntu-latest
