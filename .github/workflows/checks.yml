@@ -40,4 +40,4 @@ jobs:
         registry: ghcr.io
         dockerfile: Dockerfile-server
         cache: true
-        tags: "${{ github.head_ref || github.event.number }}"
+        tags: "${{ github.event.number || github.head_ref }}"
