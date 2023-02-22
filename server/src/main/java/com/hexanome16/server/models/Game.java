@@ -99,7 +99,7 @@ public class Game {
           new BroadcastContentManager<>(
               new PlayerJson(getCurrentPlayer().getName()));
       BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-          new BroadcastContentManager<>(new WinJson());
+          new BroadcastContentManager<>(new WinJson(new String[players.length]));
       BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NoblesHash(this));
       broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);

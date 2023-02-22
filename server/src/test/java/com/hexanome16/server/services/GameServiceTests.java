@@ -145,8 +145,8 @@ class GameServiceTests {
 
     // Assert
     assertNotNull(response);
-    // assertNotNull(result);
-    // assertEquals(HttpStatus.OK, result.getStatusCode());
+    assertNotNull(result);
+    assertEquals(HttpStatus.OK, result.getStatusCode());
   }
 
   /**
