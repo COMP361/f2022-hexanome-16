@@ -12,6 +12,11 @@ import lombok.NoArgsConstructor;
 public class WinJson implements BroadcastContent {
   private String[] winners;
 
+  /**
+   * Constructor.
+   *
+   * @param winners the winners
+   */
   public WinJson(String[] winners) {
     this.winners = winners;
   }
