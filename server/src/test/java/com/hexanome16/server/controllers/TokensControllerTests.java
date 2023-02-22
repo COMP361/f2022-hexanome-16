@@ -1,9 +1,7 @@
 package com.hexanome16.server.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,8 +18,6 @@ import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.TokenService;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,7 +43,6 @@ public class TokensControllerTests {
   @BeforeEach
   void setup() throws JsonProcessingException {
     DummyAuthService dummyAuthService = new DummyAuthService();
-    GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
     GameService gameService = Mockito.mock(GameService.class);
     tokenService = Mockito.mock(TokenService.class);
     tokensController =
@@ -64,6 +59,7 @@ public class TokensControllerTests {
     } catch (IOException e) {
       fail("Game creation failed");
     }
+    GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload)).thenReturn(
         "success");
     when(gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload)).thenReturn(
@@ -120,7 +116,8 @@ public class TokensControllerTests {
     String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
     when(tokenService.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN"))
         .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-    var response = tokensController.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN");
+    var response =
+        tokensController.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN");
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 

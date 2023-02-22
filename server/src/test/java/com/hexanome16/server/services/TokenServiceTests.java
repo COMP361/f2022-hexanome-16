@@ -15,20 +15,13 @@ import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.util.CustomHttpResponses;
-import com.hexanome16.server.util.CustomResponseFactory;
-import java.util.Arrays;
-import java.util.Set;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Test of {@link TokenService}.
@@ -188,7 +181,7 @@ public class TokenServiceTests {
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode());
 
-   // good sessionId but bad player
+    // good sessionId but bad player
     response = tokensService.validRequest(
         DummyAuths.validSessionIds.get(0), DummyAuths.invalidTokensInfos.get(0).getAccessToken()
     );
