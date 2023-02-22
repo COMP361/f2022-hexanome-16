@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

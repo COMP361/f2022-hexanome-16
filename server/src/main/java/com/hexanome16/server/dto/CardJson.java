@@ -1,30 +1,22 @@
 package com.hexanome16.server.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * For converting json file to level card objects.
  * Only used for creating cards at the start of the game.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardJson {
+public class CardJson extends BonusJson {
   private String level;
-  private String bonus;
-
-  private int id;
   private int prestigePoint;
-
-  private int onyxAmount;
-
-  private int sapphireAmount;
-
-  private int emeraldAmount;
-
-  private int rubyAmount;
-
-  private int diamondAmount;
 }

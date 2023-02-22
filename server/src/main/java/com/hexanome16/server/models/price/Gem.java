@@ -1,7 +1,4 @@
-package com.hexanome16.server.models;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.hexanome16.server.models.price;
 
 /**
  * All six splendor gems.
@@ -32,7 +29,7 @@ public enum Gem {
    */
   GOLD("NULL");
 
-  private String bonusTypeEquivalent;
+  private final String bonusTypeEquivalent;
 
   Gem(String bonusTypeEquivalent) {
     this.bonusTypeEquivalent = bonusTypeEquivalent;

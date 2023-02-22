@@ -8,7 +8,7 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.IOException;
 
 /**
- * Deserializer for {@link WinCondition}.
+ * Deserializer for {@link com.hexanome16.server.models.winconditions.WinCondition}.
  */
 public class WinConditionDeserializer extends StdDeserializer<WinCondition> {
 

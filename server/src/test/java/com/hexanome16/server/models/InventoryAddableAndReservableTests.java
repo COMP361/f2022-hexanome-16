@@ -2,19 +2,19 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.server.models.price.PriceMap;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link DevelopmentCard}.
+ * Tests for {@link InventoryAddable} and {@link Reservable}.
  */
-public class DevelopmentCardTest {
+public class InventoryAddableAndReservableTests {
   private final PriceMap priceMap = new PriceMap(1, 2, 3, 4, 5);
 
-  private final Price price = new TokenPrice(priceMap);
 
-  private final DevelopmentCard levelCard = new LevelCard(0, 1, "texture.png", price, Level.ONE);
+  private final LevelCard levelCard = new LevelCard(0, 1, "texture.png", priceMap, Level.ONE);
 
-  private final DevelopmentCard noble = new Noble(0, 3, "texture.png", price);
+  private final Noble noble = new Noble(0, 3, "texture.png", priceMap);
 
   private final Inventory inventory = new Inventory();
 

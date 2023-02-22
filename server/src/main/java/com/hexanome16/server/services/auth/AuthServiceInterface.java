@@ -2,8 +2,8 @@ package com.hexanome16.server.services.auth;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.auth.TokensInfo;
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -47,12 +47,11 @@ public interface AuthServiceInterface {
   ResponseEntity<Void> logout(String accessToken);
 
   /**
-   * Verify player by their access token.
+   * Verify that player is in game.
    *
-   * @param sessionId   ID of session associated with request
-   * @param accessToken access token of request
-   * @param gameMap     mapping from ID's to their respective game
-   * @return true if access token is in game with session ID, false otherwise.
+   * @param accessToken access token of player
+   * @param game        game to verify
+   * @return true if player is in game with session ID, false otherwise
    */
-  boolean verifyPlayer(long sessionId, String accessToken, Map<Long, Game> gameMap);
+  boolean verifyPlayer(String accessToken, @NonNull Game game);
 }

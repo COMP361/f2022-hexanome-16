@@ -3,7 +3,9 @@ package com.hexanome16.server.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameServiceInterface;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
@@ -28,6 +30,7 @@ public class InventoryController {
   private final RestTemplate restTemplate;
   private final UrlUtils urlUtils;
   private final GameServiceInterface gameServiceInterface;
+  private final GameManagerServiceInterface gameManager;
   private final ObjectMapper objectMapper;
 
   private final AuthServiceInterface authService;
@@ -40,36 +43,41 @@ public class InventoryController {
    * @param gameServiceInterface controller for the whole game (used for helper)
    * @param objectMapper         the object mapper
    * @param authService          the authentication service
+   * @param gameManager          the game manager for fetching games
    */
   public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
                              @Autowired GameServiceInterface gameServiceInterface,
                              ObjectMapper objectMapper,
-                             @Autowired AuthServiceInterface authService) {
+                             @Autowired AuthServiceInterface authService,
+                             @Autowired GameManagerServiceInterface gameManager) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.gameServiceInterface = gameServiceInterface;
     this.objectMapper = objectMapper;
     this.authService = authService;
+    this.gameManager = gameManager;
   }
 
   /* helper methods ***************************************************************************/
 
   private Player getValidPlayer(long sessionId, String accessToken) {
+    Game game = gameManager.getGame(sessionId);
     // verify that the request is valid
-    if (!authService.verifyPlayer(sessionId, accessToken, gameServiceInterface.getGameMap())) {
+    if (!authService.verifyPlayer(accessToken, game)) {
       throw new IllegalArgumentException("Invalid Player.");
     }
     // get the player from the session id and access token
     return gameServiceInterface.findPlayerByToken(
-        gameServiceInterface.getGameMap().get(sessionId), accessToken
+        game, accessToken
     );
   }
 
 
   private Player getValidPlayerByName(long sessionId, String username) {
+    Game game = gameManager.getGame(sessionId);
 
     Player myPlayer = gameServiceInterface.findPlayerByName(
-        gameServiceInterface.getGameMap().get(sessionId), username
+        game, username
     );
     if (myPlayer == null) {
       throw new IllegalArgumentException("Invalid Player.");
@@ -114,7 +122,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token
    * @return response cards
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
   public ResponseEntity<String> getCards(@PathVariable long sessionId,
@@ -124,7 +132,7 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
-            objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
         HttpStatus.OK
     );
   }
@@ -135,7 +143,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token.
    * @return response entity.
-   * @throws JsonProcessingException if json doesnt work
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/nobles"})
   public ResponseEntity<String> getNobles(@PathVariable long sessionId,
@@ -156,7 +164,7 @@ public class InventoryController {
    * @param username    username.
    * @param accessToken access Token.
    * @return get reserve nobles.
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
   public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
@@ -168,7 +176,7 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
-            player.getInventory().getReservedCards()), HttpStatus.OK);
+        player.getInventory().getReservedCards()), HttpStatus.OK);
   }
 
   /**
@@ -177,7 +185,7 @@ public class InventoryController {
    * @param sessionId session id.
    * @param username  access token.
    * @return response entity.
-   * @throws JsonProcessingException if json doesnt work.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
   @GetMapping(value = {"/games/{sessionId}/inventory/reservedNobles"})
   public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,
@@ -187,7 +195,7 @@ public class InventoryController {
     Player player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
-            player.getInventory().getReservedNobles()), HttpStatus.OK);
+        player.getInventory().getReservedNobles()), HttpStatus.OK);
   }
 
 }

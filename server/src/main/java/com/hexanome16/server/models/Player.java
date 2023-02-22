@@ -1,6 +1,8 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.price.PurchaseMap;
 import lombok.Data;
 
 /**
@@ -32,18 +34,18 @@ public class Player {
    * @return the bank
    */
   public PlayerBank getBank() {
-    return getInventory().getPlayerBank();
+    return this.inventory.getPlayerBank();
   }
 
 
   /**
    * Add this card to the player's inventory.
    *
-   * @param developmentCard the development card to add
+   * @param inventoryAddable the development card to add
    * @return true on success
    */
-  public boolean addCardToInventory(DevelopmentCard developmentCard) {
-    return developmentCard.addToInventory(this.inventory);
+  public boolean addCardToInventory(InventoryAddable inventoryAddable) {
+    return inventoryAddable.addToInventory(this.inventory);
   }
 
 
@@ -60,8 +62,8 @@ public class Player {
    */
   public void incPlayerBank(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    getBank().incBank(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount);
+    getBank().addGemsToBank(new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
+        diamondAmount, onyxAmount, goldAmount));
 
   }
 
@@ -72,9 +74,7 @@ public class Player {
    *                    the player bank.
    */
   public void incPlayerBank(PurchaseMap purchaseMap) {
-    getBank().incBank(purchaseMap.getRubyAmount(), purchaseMap.getEmeraldAmount(),
-            purchaseMap.getSapphireAmount(), purchaseMap.getDiamondAmount(),
-            purchaseMap.getOnyxAmount(), purchaseMap.getGoldAmount());
+    getBank().addGemsToBank(purchaseMap);
   }
 
   /**
@@ -91,19 +91,19 @@ public class Player {
    */
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    return getBank().hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount);
+    return getBank().toPurchaseMap().canBeUsedToBuy(new PurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount));
   }
 
 
   /**
    * Reserve this card.
    *
-   * @param developmentCard the development card to reserve
+   * @param reservable the card to reserve
    * @return true on success
    */
-  public boolean reserveCard(DevelopmentCard developmentCard) {
-    return developmentCard.reserveCard(this.inventory);
+  public boolean reserveCard(Reservable reservable) {
+    return reservable.reserveCard(this.inventory);
   }
 
   /**

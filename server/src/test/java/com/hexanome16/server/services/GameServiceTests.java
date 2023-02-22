@@ -3,6 +3,9 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,21 +14,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.server.dto.NoblesHash;
+import com.hexanome16.server.models.Deck;
+import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.InventoryAddable;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.PriceMap;
-import com.hexanome16.server.models.PurchaseMap;
-import com.hexanome16.server.models.TokenPrice;
+import com.hexanome16.server.models.PlayerDummies;
+import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.util.CustomHttpResponses;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -36,9 +47,9 @@ import org.springframework.web.context.request.async.DeferredResult;
 class GameServiceTests {
   private final ObjectMapper objectMapper =
       new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  private final SessionJson payload = new SessionJson();
+  private Game validMockGame;
   private GameService gameService;
-  private String gameResponse;
+  private GameManagerServiceInterface gameManagerMock;
 
   /**
    * Sets .
@@ -46,34 +57,23 @@ class GameServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @BeforeEach
-  void setup() throws JsonProcessingException {
-    gameService = new GameService(new DummyAuthService(), new BroadcastMap());
-    payload.setPlayers(
-        new Player[] {objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
-            objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)}
-    );
-    payload.setCreator("tristan");
-    payload.setSavegame("");
-    payload.setWinCondition(new BaseWinCondition());
-    gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(0), payload);
-    gameResponse = gameService.createGame(DummyAuths.validSessionIds.get(1), payload);
-  }
+  void setup() throws IOException {
 
-  /**
-   * Should have non-null map on creation.
-   */
-  @Test
-  void shouldHaveNonNullMapOnCreation() {
-    assertNotNull(gameService.getGameMap());
-  }
+    validMockGame =
+        new Game(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
+            new BaseWinCondition());
 
-  /**
-   * Should get success on game creation.
-   */
-  @Test
-  void shouldGetSuccessOnGameCreation() {
-    System.out.println(gameResponse);
-    assertEquals("success", gameResponse);
+    BroadcastMap broadcastMap = new BroadcastMap();
+    BroadcastContentManager<NoblesHash> noblesHashBroadcastContentManager =
+        new BroadcastContentManager<>(new NoblesHash(validMockGame));
+    broadcastMap.put("noble", noblesHashBroadcastContentManager);
+
+    gameManagerMock = Mockito.mock(GameManagerService.class);
+    when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
+    when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
+
+    gameService = new GameService(new DummyAuthService(), gameManagerMock);
+
   }
 
   /**
@@ -85,26 +85,109 @@ class GameServiceTests {
   public void testUpdateDeckSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0),
-            "REDTHREE", DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
+        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0), "REDTHREE",
+            DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
   }
 
   /**
-   * Test update deck fail.
-   *
-   * @throws JsonProcessingException the json processing exception
+   * GetDeck should return http error when invalid access token.
    */
+  @SneakyThrows
   @Test
-  public void testUpdateDeckFail() throws com.fasterxml.jackson.core.JsonProcessingException {
+  public void getDeck_shouldReturnHttpError_whenInvalidAccessToken() {
+    // Arrange
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
     DeferredResult<ResponseEntity<String>> response =
         gameService.getDeck(DummyAuths.validSessionIds.get(0), "ONE",
             DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
-    response = gameService.getDeck(DummyAuths.invalidSessionIds.get(0), "ONE",
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+  }
+
+  /**
+   * GetDeck should return http error when invalid session id.
+   */
+  @SneakyThrows
+  @Test
+  public void getDeck_shouldReturnHttpError_WhenInvalidSessionId() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    var response = gameService.getDeck(DummyAuths.invalidSessionIds.get(0), "ONE",
         DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+  }
+
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnSuccess_whenValidParams() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    DeferredResult<ResponseEntity<String>> response =
+        gameService.getWinners(DummyAuths.validSessionIds.get(0),
+            DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(response);
+    assertNotNull(result);
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+  }
+
+  /**
+   * GetWinners should return http error when invalid access token.
+   */
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnHttpError_whenInvalidAccessToken() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    DeferredResult<ResponseEntity<String>> response =
+        gameService.getWinners(DummyAuths.validSessionIds.get(0),
+            DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+  }
+
+  /**
+   * GetWinners should return http error when invalid session id.
+   */
+  @SneakyThrows
+  @Test
+  public void getWinners_shouldReturnHttpError_WhenInvalidSessionId() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    var response = gameService.getWinners(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
   }
 
   /**
@@ -114,28 +197,57 @@ class GameServiceTests {
    */
   @Test
   public void testUpdateNoblesSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
+    // Arrange
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
     ResponseEntity<String> response =
         (ResponseEntity<String>) gameService.getNobles(DummyAuths.validSessionIds.get(0),
             DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
+
+    // Assert
+
     assertNotNull(response);
   }
 
   /**
-   * Test update nobles fail.
-   *
-   * @throws JsonProcessingException the json processing exception
+   * GetNobles should return http error when invalid session id.
    */
+  @SneakyThrows
   @Test
-  public void testUpdateNoblesFail() throws com.fasterxml.jackson.core.JsonProcessingException {
+  public void getNobles_shouldReturnHttpError_whenInvalidSessionId() {
+    // Arrange
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    DeferredResult<ResponseEntity<String>> response =
-        gameService.getNobles(DummyAuths.validSessionIds.get(0),
-            DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
-    response = gameService.getNobles(DummyAuths.invalidSessionIds.get(0),
+
+    // Act
+    var response = gameService.getNobles(DummyAuths.invalidSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+  }
+
+  /**
+   * GetNobles should return http error when invalid access token.
+   */
+  @SneakyThrows
+  @Test
+  public void getNobles_shouldReturnHttpError_whenInvalidAccessToken() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    var response = gameService.getNobles(DummyAuths.validSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
   }
 
   /**
@@ -153,20 +265,43 @@ class GameServiceTests {
   }
 
   /**
-   * Test current player fail.
-   *
-   * @throws JsonProcessingException the json processing exception
+   * GetCurrentPlayer should return http error when invalid access token.
    */
+  @SneakyThrows
   @Test
-  public void testCurrentPlayerFail() throws com.fasterxml.jackson.core.JsonProcessingException {
+  public void getCurrentPlayer_shouldReturnHttpError_whenInvalidAccessToken() {
+    // Arrange
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
-    DeferredResult<ResponseEntity<String>> response =
-        gameService.getCurrentPlayer(DummyAuths.validSessionIds.get(0),
-            DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
-    response = gameService.getCurrentPlayer(DummyAuths.invalidSessionIds.get(0),
+
+    // Act
+    var response = gameService.getCurrentPlayer(DummyAuths.validSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+  }
+
+  /**
+   * GetCurrentPlayer should return http error when invalid session id.
+   */
+  @SneakyThrows
+  @Test
+  public void getCurrentPlayer_shouldReturnHttpError_whenInvalidSessionId() {
+    // Arrange
+    String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
+
+    // Act
+    var response = gameService.getCurrentPlayer(DummyAuths.invalidSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
-    assertNull(response);
+    var result = (ResponseEntity<String>) response.getResult();
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
   }
 
   /**
@@ -183,12 +318,12 @@ class GameServiceTests {
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
     });
 
-    assertEquals(myPm.getRubyAmount(), 3);
-    assertEquals(myPm.getEmeraldAmount(), 3);
-    assertEquals(myPm.getSapphireAmount(), 3);
-    assertEquals(myPm.getDiamondAmount(), 3);
-    assertEquals(myPm.getOnyxAmount(), 3);
-    assertEquals(myPm.getGoldAmount(), 3);
+    assertEquals(myPm.getGemCost(Gem.RUBY), 3);
+    assertEquals(myPm.getGemCost(Gem.EMERALD), 3);
+    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 3);
+    assertEquals(myPm.getGemCost(Gem.DIAMOND), 3);
+    assertEquals(myPm.getGemCost(Gem.ONYX), 3);
+    assertEquals(myPm.getGemCost(Gem.GOLD), 3);
   }
 
   /**
@@ -197,18 +332,36 @@ class GameServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  public void testGetPlayerBankInfoInvalid()
+  public void testGetPlayerBankInfoInvalidSessionId()
       throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<String> response;
-    //Test invalid session id
-    response =
+
+    // Arrange
+
+    // Act
+    ResponseEntity<String> response =
         gameService.getPlayerBankInfo(DummyAuths.invalidSessionIds.get(0),
             DummyAuths.validPlayerList.get(0).getName());
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    //Test invalid player name
-    response =
+    // Assert
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+  }
+
+  /**
+   * Test get player bank info invalid.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testGetPlayerBankInfoInvalidPlayerName()
+      throws com.fasterxml.jackson.core.JsonProcessingException {
+
+    // Arrange
+
+    // Act
+    ResponseEntity<String> response =
         gameService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
             DummyAuths.invalidPlayerList.get(0).getName());
+
+    // Assert
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
@@ -225,12 +378,12 @@ class GameServiceTests {
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
     });
 
-    assertEquals(myPm.getRubyAmount(), 7);
-    assertEquals(myPm.getEmeraldAmount(), 7);
-    assertEquals(myPm.getSapphireAmount(), 7);
-    assertEquals(myPm.getDiamondAmount(), 7);
-    assertEquals(myPm.getOnyxAmount(), 7);
-    assertEquals(myPm.getGoldAmount(), 5);
+    assertEquals(myPm.getGemCost(Gem.RUBY), 7);
+    assertEquals(myPm.getGemCost(Gem.EMERALD), 7);
+    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 7);
+    assertEquals(myPm.getGemCost(Gem.DIAMOND), 7);
+    assertEquals(myPm.getGemCost(Gem.ONYX), 7);
+    assertEquals(myPm.getGemCost(Gem.GOLD), 5);
   }
 
   /**
@@ -239,13 +392,20 @@ class GameServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  public void testGetGameBankInfoInvalid()
+  public void testGetGameBankInfoInvalidSessionId()
       throws com.fasterxml.jackson.core.JsonProcessingException {
-    ResponseEntity<String> response;
 
-    response =
-        gameService.getGameBankInfo(DummyAuths.invalidSessionIds.get(0));
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    // Arrange
+    when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
+
+    // Act
+    ResponseEntity<String> response;
+    response = gameService.getGameBankInfo(DummyAuths.invalidSessionIds.get(0));
+
+    // Assert
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), response.getBody());
   }
 
   /**
@@ -267,10 +427,18 @@ class GameServiceTests {
 
     LevelCard myCard = createValidCard();
 
-    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+    gameService.endCurrentPlayersTurn(gameManagerMock.getGame(sessionId));
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    try {
+      Field field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
 
+
+      ((HashMap<String, LevelCard>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
     ResponseEntity<String> response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             accessToken, 1, 1, 1, 0, 0, 1);
@@ -291,13 +459,22 @@ class GameServiceTests {
 
     LevelCard myCard = createValidCard();
 
-    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+    gameService.endCurrentPlayersTurn(validMockGame);
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
 
-    ResponseEntity<String> response =
-        gameService.reserveCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+
+      ((HashMap<String, LevelCard>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
+
+    ResponseEntity<String> response = gameService.reserveCard(sessionId,
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
 
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -315,15 +492,35 @@ class GameServiceTests {
 
     LevelCard myCard = createValidCard();
 
-    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+    gameService.endCurrentPlayersTurn(validMockGame);
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, LevelCard>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+
+      Game game = validMockGame;
+      field = game.getClass().getDeclaredField("onBoardDecks");
+      field.setAccessible(true);
+      Deck<LevelCard> testDeck = new Deck<>();
+      testDeck.addCard(myCard);
+      ((Map<Level, Deck<LevelCard>>) field.get(game)).put(Level.ONE, testDeck);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     ResponseEntity<String> response =
-        gameService.reserveFaceDownCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+        gameService.reserveFaceDownCard(sessionId, "ONE", accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
+
+    response = gameService.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
   }
 
   /**
@@ -340,14 +537,24 @@ class GameServiceTests {
 
     LevelCard myCard = createValidCard();
 
-    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+    gameService.endCurrentPlayersTurn(validMockGame);
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, LevelCard>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     // Test invalid sessionId
     ResponseEntity<String> response = gameService.buyCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken, 1, 1, 1, 0, 0, 1);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
     // Test invalid accessToken
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
@@ -356,13 +563,22 @@ class GameServiceTests {
     // Test invalid price
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 3, 1, 1, 0, 0, 1);
+            accessToken, 3, 0, 0, 0, 0, 1);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     // Test not enough funds
     LevelCard invalidCard = createInvalidCard();
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)),
-        invalidCard);
+
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, LevelCard>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
     response = gameService.buyCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken, 7, 1, 1, 0,
         0, 1);
@@ -384,27 +600,36 @@ class GameServiceTests {
 
     LevelCard myCard = createValidCard();
 
-    gameService.endCurrentPlayersTurn(gameService.getGameMap().get(sessionId));
+    gameService.endCurrentPlayersTurn(validMockGame);
 
-    DeckHash.allCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    Field field;
+    try {
+      field = DeckHash.class.getDeclaredField("allCards");
+      field.setAccessible(true);
+
+
+      ((HashMap<String, InventoryAddable>) field.get(null)).put(
+          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      fail();
+    }
 
     // Test invalid sessionId
     ResponseEntity<String> response = gameService.reserveCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
     // Test invalid accessToken
-    response =
-        gameService.reserveCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
+    response = gameService.reserveCard(sessionId,
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
   private LevelCard createValidCard() {
-    return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(1, 1, 1, 1, 0)), Level.ONE);
+    return new LevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
   }
 
   private LevelCard createInvalidCard() {
-    return new LevelCard(20, 0, "", new TokenPrice(new PriceMap(7, 1, 1, 1, 0)), Level.ONE);
+    return new LevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE);
   }
 
   /**
@@ -412,8 +637,8 @@ class GameServiceTests {
    */
   @Test
   void testFindPlayerByName() {
-    var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
-    var player = gameService.findPlayerByName(game, DummyAuths.validPlayerList.get(0).getName());
+    var player =
+        gameService.findPlayerByName(validMockGame, DummyAuths.validPlayerList.get(0).getName());
     assertEquals(DummyAuths.validPlayerList.get(0).getName(), player.getName());
     assertEquals(DummyAuths.validPlayerList.get(0).getPreferredColour(),
         player.getPreferredColour());
@@ -424,11 +649,9 @@ class GameServiceTests {
    */
   @Test
   void testFindPlayerByNameInvalid() {
-    var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
-
     //Test invalid player
-    var player = gameService.findPlayerByName(game,
-        DummyAuths.invalidPlayerList.get(0).getName());
+    var player =
+        gameService.findPlayerByName(validMockGame, DummyAuths.invalidPlayerList.get(0).getName());
     assertNull(player);
   }
 
@@ -437,9 +660,8 @@ class GameServiceTests {
    */
   @Test
   void testFindPlayerByToken() {
-    var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
-    var player =
-        gameService.findPlayerByToken(game, DummyAuths.validTokensInfos.get(0).getAccessToken());
+    var player = gameService.findPlayerByToken(validMockGame,
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(DummyAuths.validPlayerList.get(0).getName(), player.getName());
     assertEquals(DummyAuths.validPlayerList.get(0).getPreferredColour(),
         player.getPreferredColour());
@@ -450,11 +672,9 @@ class GameServiceTests {
    */
   @Test
   void testFindPlayerByTokenInvalid() {
-    var game = gameService.getGameMap().get(DummyAuths.validSessionIds.get(0));
-
     //Test invalid player
-    var player =
-        gameService.findPlayerByToken(game, DummyAuths.invalidTokensInfos.get(0).getAccessToken());
+    var player = gameService.findPlayerByToken(validMockGame,
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertNull(player);
   }
 }

@@ -76,9 +76,6 @@ public class TokenAcquiring implements PromptTypeInterface {
     myPromptMessage.setFont(GAME_FONT.newFont(atHeight / 10.));
     myPromptMessage.setFill(Config.SECONDARY_COLOR);
 
-    // set up choose 2 choice
-    StackPane chooseTwo = makeButton("TAKE 2 TOKENS SAME COLOR", 0.25,
-        PromptType.TOKEN_ACQUIRING_TWO);
 
     // set up OR text
     Text orText = new Text("OR");
@@ -89,6 +86,10 @@ public class TokenAcquiring implements PromptTypeInterface {
     // set up choose 3 choice
     StackPane chooseThree = makeButton("TAKE 3 TOKENS DIFFERENT COLOR", 0.20,
         PromptType.TOKEN_ACQUIRING_THREE);
+
+    // set up choose 2 choice
+    StackPane chooseTwo = makeButton("TAKE 2 TOKENS SAME COLOR", 0.25,
+        PromptType.TOKEN_ACQUIRING_TWO);
 
     // set up choices' layout (Choose 2) (OR) (Choose 3)
     HBox myChoices = new HBox();

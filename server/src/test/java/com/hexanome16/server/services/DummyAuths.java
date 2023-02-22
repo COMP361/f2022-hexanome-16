@@ -2,6 +2,7 @@ package com.hexanome16.server.services;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import java.io.IOException;
@@ -64,8 +65,7 @@ public class DummyAuths {
    *   {@code DummyAuths.tokensInfos.get(1)} to get the "elea" player
    * </pre>
    */
-  public static final List<Player> validPlayerList =
-      List.of(new Player("tristan", "#FFFFFF"), new Player("elea", "#FFFFFF"));
+  public static final List<Player> validPlayerList = List.of(PlayerDummies.validDummies);
 
   /**
    * Immutable static list of invalid players.
@@ -102,7 +102,7 @@ public class DummyAuths {
    * </pre>
    */
   public static final List<String> invalidJsonList =
-      List.of("{\"name\":" + "\"tris\"," + "\"preferredColour\":" + "\"#FFFFFF\"}",
+      List.of("{\"name\":" + "\"imad\"," + "\"preferredColour\":" + "\"#FFFFFF\"}",
           "{\"name\":" + "\"el\"," + "\"preferredColour\":" + "\"#FFFFFF\"}");
 
   /**
@@ -115,6 +115,9 @@ public class DummyAuths {
    */
   public static final List<Long> invalidSessionIds = List.of(0L, 1L);
 
+  /**
+   * The constant validGames.
+   */
   public static final Map<Long, Game> validGames;
 
   static {

@@ -1,13 +1,15 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.server.models.price.PriceInterface;
 import lombok.Getter;
 
 /**
  * Card instead of noble.
  */
 @Getter
-public class LevelCard extends DevelopmentCard {
+public class LevelCard implements Reservable {
   private final Level level;
+  private final CardInfo cardInfo;
   private boolean faceDown;
 
   /**
@@ -19,8 +21,9 @@ public class LevelCard extends DevelopmentCard {
    * @param price         the price
    * @param level         the level
    */
-  public LevelCard(int id, int prestigePoint, String texturePath, Price price, Level level) {
-    super(id, prestigePoint, texturePath, price);
+  public LevelCard(int id, int prestigePoint, String texturePath, PriceInterface price,
+                   Level level) {
+    cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
     this.level = level;
     this.faceDown = true;
   }

@@ -1,9 +1,15 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.server.models.price.PriceInterface;
+import lombok.Getter;
+
 /**
  * Noble class.
  */
-public class Noble extends DevelopmentCard {
+public class Noble implements Reservable, Visitable {
+
+  @Getter
+  private final CardInfo cardInfo;
 
   /**
    * Instantiates a new Noble.
@@ -13,8 +19,8 @@ public class Noble extends DevelopmentCard {
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public Noble(int id, int prestigePoint, String texturePath, Price price) {
-    super(id, prestigePoint, texturePath, price);
+  public Noble(int id, int prestigePoint, String texturePath, PriceInterface price) {
+    cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
   }
 
   @Override

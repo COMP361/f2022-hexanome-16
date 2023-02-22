@@ -2,8 +2,8 @@ package com.hexanome16.server.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.models.DevelopmentCard;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.Noble;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,21 +20,21 @@ public class NoblesHash implements BroadcastContent {
   /**
    * The constant allNobles.
    */
-  public static Map<String, DevelopmentCard> allNobles = new HashMap<String, DevelopmentCard>();
+  public static Map<String, Noble> allNobles = new HashMap<>();
 
-  private final Map<String, DevelopmentCard> nobles = new HashMap<String, DevelopmentCard>();
+  private final Map<String, Noble> nobles = new HashMap<>();
 
   /**
    * Create noble MD5.
    *
    * @param game current game
-   * @throws JsonProcessingException exception
+   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   public NoblesHash(Game game) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    for (DevelopmentCard card : game.getOnBoardNobles().getCardList()) {
-      nobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
-      allNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+    for (Noble noble : game.getOnBoardNobles().getCardList()) {
+      nobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
+      allNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }
   }
 
