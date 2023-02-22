@@ -19,7 +19,7 @@ public class ServerGameParams extends GameParams {
   private Integer port;
 
   /**
-   * Default params used for testing/UI demo.
+   * Initialize the game params with server-specific information.
    */
   @PostConstruct
   public void init() {

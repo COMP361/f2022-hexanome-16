@@ -64,7 +64,8 @@ public class GameServiceController {
   public ResponseEntity<Void> createGameService() {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
-    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/" + serverGameParams.getName(),
+    URI url = urlUtils.createLobbyServiceUri(
+        "/api/gameservices/" + serverGameParams.getName(),
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
     HttpHeaders headers = new HttpHeaders();
