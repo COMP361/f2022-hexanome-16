@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
  * This class represents the response with winners of the game.
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class WinJson implements BroadcastContent {
   private String[] winners;
+
+  public WinJson(String[] winners) {
+    this.winners = winners;
+  }
 
   @Override
   public boolean isEmpty() {
