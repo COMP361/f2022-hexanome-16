@@ -3,7 +3,12 @@ package com.hexanome16.server.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
+import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.util.CustomResponseFactory;
 import lombok.NonNull;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -165,4 +170,24 @@ public interface GameServiceInterface {
    * @return player with that token, null if no such player
    */
   Player findPlayerByToken(@NonNull Game game, String accessToken);
+
+  /**
+   * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
+   * if such an id gives is owned by a real player and if it is that player's turn.
+   * Returns HTTPS_BAD_REQUEST otherwise.
+   *
+   * <p>
+   * Returns a pair of ResponseEntity and a pair of Game and Player.
+   * If the request wasn't valid,
+   * the ResponseEntity will have an error code and the game and player will be null,
+   * If the request was valid,
+   * the ResponseEntity will have a success code and the game and player will be populated.
+   * </p>
+   *
+   * @param sessionId    game's identification number.
+   * @param authToken    access token.
+   * @return The pair of response and a pair of game and player
+   */
+  Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
+                                                                        String authToken);
 }
