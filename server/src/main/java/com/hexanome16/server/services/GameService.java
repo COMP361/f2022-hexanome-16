@@ -54,64 +54,35 @@ public class GameService implements GameServiceInterface {
   @Override
   public DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
                                                         String accessToken, String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+    Level atLevel = switch (level) {
+      case "THREE" -> Level.THREE;
+      case "TWO" -> Level.TWO;
+      case "ONE" -> Level.ONE;
+      default -> null;
+    };
+
+    if (atLevel == null) {
+      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get(level), hash);
+    return validRequestLongPolling(sessionId, accessToken, level, hash);
   }
 
   @Override
   public DeferredResult<ResponseEntity<String>> getNobles(long sessionId, String accessToken,
                                                           String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("noble"), hash);
-
+    return validRequestLongPolling(sessionId, accessToken, "noble", hash);
   }
 
   @Override
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId, String accessToken,
                                                                  String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("player"), hash);
-
+    return validRequestLongPolling(sessionId, accessToken, "player", hash);
   }
 
   @Override
   public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
                                                            String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("winners"), hash);
-
+    return validRequestLongPolling(sessionId, accessToken, "winners", hash);
   }
 
   @Override
@@ -441,7 +412,7 @@ public class GameService implements GameServiceInterface {
    * @param hash      hash to put in hashBasedUpdate.
    * @return The pair of response and a pair of game and player
    */
-  public DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
+  private DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
                                                                         String authToken,
                                                                         String key, String hash) {
     final Game currentGame = gameManagerService.getGame(sessionId);
