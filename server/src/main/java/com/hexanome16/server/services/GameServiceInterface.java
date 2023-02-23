@@ -206,4 +206,21 @@ public interface GameServiceInterface {
    */
   Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
                                                                 String authToken);
+
+  /**
+   * Returns HTTPS_OK if game with sessionId exists,
+   * Returns HTTPS_BAD_REQUEST otherwise.
+   *
+   * <p>
+   * Returns a pair of ResponseEntity and Game.
+   * If the request wasn't valid,
+   * the ResponseEntity will have an error code and the game will be null,
+   * If the request was valid,
+   * the ResponseEntity will have a success code and the game will be populated.
+   * </p>
+   *
+   * @param sessionId game's identification number.
+   * @return The pair of response and a pair of game and player
+   */
+  Pair<ResponseEntity<String>, Game> validGame(long sessionId);
 }

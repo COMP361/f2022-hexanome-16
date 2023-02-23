@@ -559,7 +559,7 @@ class GameServiceTests {
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             invalidAccessToken, 1, 1, 1, 0, 0, 1);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), response.getStatusCode());
     // Test invalid price
     response =
         gameService.buyCard(sessionId, DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
@@ -621,7 +621,7 @@ class GameServiceTests {
     // Test invalid accessToken
     response = gameService.reserveCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), response.getStatusCode());
   }
 
   private LevelCard createValidCard() {
