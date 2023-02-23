@@ -16,7 +16,7 @@ import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PriceMap;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
-import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.File;
 import java.io.IOException;
