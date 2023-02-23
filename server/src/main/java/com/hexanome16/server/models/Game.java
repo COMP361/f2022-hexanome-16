@@ -204,6 +204,7 @@ public class Game {
       LevelCard card = new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level);
       levelDecks.get(level).addCard(card);
+      levelDecks.get(level).shuffle();
     }
   }
 

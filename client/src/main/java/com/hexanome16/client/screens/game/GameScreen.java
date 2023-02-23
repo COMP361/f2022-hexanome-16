@@ -67,6 +67,7 @@ public class GameScreen {
       protected Void call() throws Exception {
         levelOneDeckJson =
             GameRequest.updateDeck(sessionId, Level.ONE, DigestUtils.md5Hex(levelOneDeckJson));
+        System.out.println(levelOneDeckJson);
         return null;
       }
     };
@@ -301,7 +302,8 @@ public class GameScreen {
     Map<String, Object> nobleHashList = (Map<String, Object>) deckHash.get("nobles");
     for (Map.Entry<String, Object> entry : nobleHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
+      System.out.println(card);
       if (!nobles.containsKey(hash)) {
         nobles.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -335,7 +337,7 @@ public class GameScreen {
     level_three.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!level_three.containsKey(hash)) {
         level_three.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -351,6 +353,7 @@ public class GameScreen {
    */
   private static void updateLevelTwoDeck() {
     Gson gson = new Gson();
+    System.out.println(levelTwoDeckJson);
     Map<String, Object> deckHash = gson.fromJson(levelTwoDeckJson, Map.class);
     Map<String, Object> cardHashList = (Map<String, Object>) deckHash.get("cards");
 
@@ -369,7 +372,7 @@ public class GameScreen {
     level_two.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!level_two.containsKey(hash)) {
         level_two.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -404,7 +407,7 @@ public class GameScreen {
     level_one.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!level_one.containsKey(hash)) {
         level_one.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -439,7 +442,7 @@ public class GameScreen {
     red_level_one.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!red_level_one.containsKey(hash)) {
         red_level_one.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -474,7 +477,7 @@ public class GameScreen {
     red_level_two.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!red_level_two.containsKey(hash)) {
         red_level_two.put(hash, card);
         PriceMap pm = getPriceMap(card);
@@ -509,7 +512,7 @@ public class GameScreen {
     red_level_three.remove(hashToRemove);
     for (Map.Entry<String, Object> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
-      Map<String, Object> card = (Map<String, Object>) entry.getValue();
+      Map<String, Object> card = (Map<String, Object>) ((Map<String, Object>)entry.getValue()).get("cardInfo");
       if (!red_level_three.containsKey(hash)) {
         red_level_three.put(hash, card);
         PriceMap pm = new PriceMap(); // need to be dealt with later
@@ -557,11 +560,11 @@ public class GameScreen {
 
   private static PriceMap getPriceMap(Map<String, Object> card) {
     Map<String, Object> priceMap = (Map) ((Map) card.get("price")).get("priceMap");
-    PriceMap pm = new PriceMap(((Double) priceMap.get("rubyAmount")).intValue(),
-        ((Double) priceMap.get("emeraldAmount")).intValue(),
-        ((Double) priceMap.get("sapphireAmount")).intValue(),
-        ((Double) priceMap.get("diamondAmount")).intValue(),
-        ((Double) priceMap.get("onyxAmount")).intValue());
+    PriceMap pm = new PriceMap(((Double) priceMap.get("RUBY")).intValue(),
+        ((Double) priceMap.get("EMERALD")).intValue(),
+        ((Double) priceMap.get("SAPPHIRE")).intValue(),
+        ((Double) priceMap.get("DIAMOND")).intValue(),
+        ((Double) priceMap.get("ONYX")).intValue());
     return pm;
   }
 

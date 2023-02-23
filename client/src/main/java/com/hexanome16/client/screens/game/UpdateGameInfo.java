@@ -94,12 +94,12 @@ public class UpdateGameInfo {
     Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
 
     // put each gem type with its value in the string
-    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("rubyAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("emeraldAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("sapphireAmount").intValue());
-    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("diamondAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("onyxAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("goldAmount").intValue());
+    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("RUBY").intValue());
+    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("EMERALD").intValue());
+    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("SAPPHIRE").intValue());
+    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("DIAMOND").intValue());
+    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("ONYX").intValue());
+    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("GOLD").intValue());
     gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
 
     return gemPlayerBank;
