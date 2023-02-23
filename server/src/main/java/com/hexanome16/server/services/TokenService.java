@@ -9,8 +9,6 @@ import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.ArrayList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +73,7 @@ public class TokenService implements TokenServiceInterface {
   public ResponseEntity<String> takeTwoTokens(long sessionId, String authenticationToken,
                                               String tokenType) {
 
-    var request = validRequest(sessionId, authenticationToken);
+    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -100,7 +98,7 @@ public class TokenService implements TokenServiceInterface {
                                                 String tokenTypeOne, String tokenTypeTwo,
                                                 String tokenTypeThree) {
 
-    var request = validRequest(sessionId, authenticationToken);
+    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -128,54 +126,4 @@ public class TokenService implements TokenServiceInterface {
                                               String tokenType) {
     return null;
   }
-
-
-  // HELPERS /////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
-   * if such an id gives is owned by a real player and if it is that player's turn.
-   * Returns HTTPS_BAD_REQUEST otherwise.
-   *
-   * <p>
-   * Returns a pair of ResponseEntity and a pair of Game and Player.
-   * If the request wasn't valid,
-   * the ResponseEntity will have an error code and the game and player will be null,
-   * If the request was valid,
-   * the ResponseEntity will have a success code and the game and player will be populated.
-   * </p>
-   *
-   * @param sessionId game's identification number.
-   * @param authToken access token.
-   * @return The pair of response and a pair of game and player
-   */
-  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
-                                                                       String authToken) {
-    Game currentGame = gameManager.getGame(sessionId);
-
-    if (currentGame == null) {
-      return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID),
-          new ImmutablePair<>(null, null));
-    }
-
-    boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
-    Player requestingPlayer = gameService.findPlayerByToken(currentGame, authToken);
-
-    if (!isValidPlayer || requestingPlayer == null) {
-      return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
-          new ImmutablePair<>(null, null));
-    }
-
-    if (currentGame.isNotPlayersTurn(requestingPlayer)) {
-      return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
-          new ImmutablePair<>(null, null));
-    }
-
-    return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
-        new ImmutablePair<>(currentGame, requestingPlayer));
-  }
-
 }
