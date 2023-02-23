@@ -91,7 +91,7 @@ public class TokenServiceTests {
   @Test
   public void testTakeTwo() {
 
-    Game validGame = gameService.validRequest(DummyAuths.validSessionIds.get(0),
+    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
     Player validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),
@@ -126,7 +126,7 @@ public class TokenServiceTests {
   @Test
   //public void testTakeThree() {
   public void testTakeThreeTokens() {
-    Game validGame = gameService.validRequest(DummyAuths.validSessionIds.get(0),
+    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
     Player validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),

@@ -43,7 +43,7 @@ public class DummyGameService {
       right = new ImmutablePair<>(newGame, newGame.getCurrentPlayer());
       var sessionId = DummyAuths.validSessionIds.get(i);
       var token = DummyAuths.validTokensInfos.get(i).getAccessToken();
-      when(mock.validRequest(sessionId, token))
+      when(mock.validRequestAndCurrentTurn(sessionId, token))
           .thenReturn(
               new ImmutablePair<>(left, right));
     }
@@ -51,13 +51,13 @@ public class DummyGameService {
     for (var id : DummyAuths.invalidSessionIds) {
       left = CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
       right = new ImmutablePair<>(null, null);
-      when(mock.validRequest(eq(id), anyString())).thenReturn(
+      when(mock.validRequestAndCurrentTurn(eq(id), anyString())).thenReturn(
           new ImmutablePair<>(left, right));
     }
     for (var id : DummyAuths.invalidTokensInfos) {
       left = CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN);
       right = new ImmutablePair<>(null, null);
-      when(mock.validRequest(anyLong(), eq(id.getAccessToken()))).thenReturn(
+      when(mock.validRequestAndCurrentTurn(anyLong(), eq(id.getAccessToken()))).thenReturn(
           new ImmutablePair<>(left, right));
     }
   }

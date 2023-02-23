@@ -73,7 +73,7 @@ public class TokenService implements TokenServiceInterface {
   public ResponseEntity<String> takeTwoTokens(long sessionId, String authenticationToken,
                                               String tokenType) {
 
-    var request = gameService.validRequest(sessionId, authenticationToken);
+    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -98,7 +98,7 @@ public class TokenService implements TokenServiceInterface {
                                                 String tokenTypeOne, String tokenTypeTwo,
                                                 String tokenTypeThree) {
 
-    var request = gameService.validRequest(sessionId, authenticationToken);
+    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;

@@ -679,6 +679,46 @@ class GameServiceTests {
   }
 
   /**
+   * Testing validRequestAndCurrentTurn(sessionId, authToken).
+   */
+  @Test
+  public void testValidRequestAndCurrentTurn() {
+    // Arrange
+    Game gameMock = Mockito.mock(Game.class);
+    when(gameMock.isNotPlayersTurn(PlayerDummies.validDummies[0])).thenReturn(false);
+    when(gameMock.isNotPlayersTurn(PlayerDummies.validDummies[1])).thenReturn(true);
+
+    // bad sessionId
+    var response = gameService.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getLeft().getStatusCode());
+
+    // good sessionId but bad player
+    response = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        response.getLeft().getStatusCode());
+
+    // good sessionId and valid token but isn't their turn
+    response = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(1).getAccessToken());
+    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
+        response.getLeft().getStatusCode());
+
+    // bad sessionId and token
+    response = gameService.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(1).getAccessToken());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getLeft().getStatusCode());
+
+    // good sessionId and valid token + is their turn
+    response = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
+    assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
+  }
+
+  /**
    * Testing validRequest(sessionId, authToken).
    */
   @Test
@@ -700,19 +740,13 @@ class GameServiceTests {
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getLeft().getStatusCode());
 
-    // good sessionId and valid token but isn't their turn
-    response = gameService.validRequest(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(1).getAccessToken());
-    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
-        response.getLeft().getStatusCode());
-
     // bad sessionId and token
     response = gameService.validRequest(DummyAuths.invalidSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(1).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode());
 
-    // good sessionId and valid token + is their turn
+    // good sessionId and valid token
     response = gameService.validRequest(DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
