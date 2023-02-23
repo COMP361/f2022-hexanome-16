@@ -422,5 +422,42 @@ public class GameService implements GameServiceInterface {
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
   }
 
+  /**
+   * /**
+   * Returns HTTPS_OK if game with sessionId exists,
+   * Returns HTTPS_BAD_REQUEST otherwise.
+   *
+   * <p>
+   * Returns a pair of ResponseEntity and Game.
+   * If the request wasn't valid,
+   * the ResponseEntity will have an error code and the game will be null,
+   * If the request was valid,
+   * the ResponseEntity will have a success code and the game will be populated.
+   * </p>
+   *
+   * @param sessionId game's identification number.
+   * @param authToken authentication token of player accessing resource.
+   * @param key       broadcast map key from which to retrieve content.
+   * @param hash      hash to put in hashBasedUpdate.
+   * @return The pair of response and a pair of game and player
+   */
+  public DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
+                                                                        String authToken,
+                                                                        String key, String hash) {
+    final Game currentGame = gameManagerService.getGame(sessionId);
+
+    if (currentGame == null) {
+      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+    }
+
+    boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
+
+    if (!isValidPlayer) {
+      return CustomResponseFactory.getDeferredErrorResponse(
+          CustomHttpResponses.INVALID_ACCESS_TOKEN);
+    }
+    return ResponseGenerator.getHashBasedUpdate(10000,
+        currentGame.getBroadcastContentManagerMap().get(key), hash);
+  }
 
 }
