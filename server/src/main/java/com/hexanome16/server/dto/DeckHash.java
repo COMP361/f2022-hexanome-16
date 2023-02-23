@@ -46,6 +46,15 @@ public class DeckHash implements BroadcastContent {
     return allCards.get(md5Hash);
   }
 
+  /**
+   * Getter for broadcast content manager.
+   *
+   * @return a list of cards in this deck.
+   */
+  public Map<String, LevelCard> getCards() {
+    return cards;
+  }
+
   @Override
   public boolean isEmpty() {
     return cards.isEmpty();

@@ -135,6 +135,11 @@ public class PromptsRequests {
           )).PUT(HttpRequest.BodyPublishers.noBody())
           .build();
 
+      System.out.println(UrlUtils.createGameServerUri(
+          "/api/games/" + sessionId + "/" + cardMd5,
+          requestParamPurchaseMap(authToken, proposedDeal)
+      ).toString());
+
       CompletableFuture<HttpResponse<String>> response =
           client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 

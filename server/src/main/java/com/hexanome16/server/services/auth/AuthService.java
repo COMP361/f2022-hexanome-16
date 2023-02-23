@@ -85,6 +85,7 @@ public class AuthService implements AuthServiceInterface {
         "access_token=" + accessToken);
     assert url != null;
     try {
+      System.out.println(url);
       return this.restTemplate.getForEntity(url, String.class);
     } catch (Exception e) {
       e.printStackTrace();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameServiceInterface;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,8 @@ public class GameController {
    */
   @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
+    System.out.println(payload.toString());
+    System.out.println(sessionId);
     return gameManager.createGame(sessionId, payload);
   }
 
@@ -61,6 +64,7 @@ public class GameController {
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash) {
+    System.out.println(gameService.getDeck(sessionId, level, accessToken, hash).getResult());
     return gameService.getDeck(sessionId, level, accessToken, hash);
   }
 
