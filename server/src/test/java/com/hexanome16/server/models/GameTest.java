@@ -13,7 +13,7 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;

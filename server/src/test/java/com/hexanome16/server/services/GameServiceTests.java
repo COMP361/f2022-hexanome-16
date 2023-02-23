@@ -25,7 +25,11 @@ import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PriceMap;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameService;
+import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
+import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import com.hexanome16.server.util.CustomHttpResponses;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.IOException;
@@ -50,6 +54,7 @@ class GameServiceTests {
   private Game validMockGame;
   private GameService gameService;
   private GameManagerServiceInterface gameManagerMock;
+  private LongPollingServiceInterface longPollingServiceMock;
 
   /**
    * Sets .
