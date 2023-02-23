@@ -20,6 +20,8 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import lombok.NonNull;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -385,4 +387,52 @@ public class GameService implements GameServiceInterface {
     }
     return null;
   }
+
+  @Override
+  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(
+      long sessionId,
+      String authToken) {
+
+    var response = validRequest(sessionId, authToken);
+    if (!response.getLeft().getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    Game currentGame = response.getRight().getLeft();
+    Player requestingPlayer = response.getRight().getRight();
+
+    if (currentGame.isNotPlayersTurn(requestingPlayer)) {
+      return new ImmutablePair<>(
+          CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
+          new ImmutablePair<>(null, null));
+    }
+
+    return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+        new ImmutablePair<>(currentGame, requestingPlayer));
+  }
+
+  @Override
+  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
+                                                                       String authToken) {
+    Game currentGame = gameManagerService.getGame(sessionId);
+
+    if (currentGame == null) {
+      return new ImmutablePair<>(
+          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID),
+          new ImmutablePair<>(null, null));
+    }
+
+    boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
+    Player requestingPlayer = findPlayerByToken(currentGame, authToken);
+
+    if (!isValidPlayer || requestingPlayer == null) {
+      return new ImmutablePair<>(
+          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
+          new ImmutablePair<>(null, null));
+    }
+
+    return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+        new ImmutablePair<>(currentGame, requestingPlayer));
+  }
+
+
 }
