@@ -85,11 +85,10 @@ class GameServiceTests {
   public void testUpdateDeckSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0), "REDTHREE",
+        (ResponseEntity<String>) gameService.getDeck(DummyAuths.validSessionIds.get(0), "ONE",
             DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
-    // TODO: does not work
-    //assertTrue(response.getStatusCode().is2xxSuccessful());
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
   /**

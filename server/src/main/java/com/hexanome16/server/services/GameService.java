@@ -58,6 +58,7 @@ public class GameService implements GameServiceInterface {
       case "THREE" -> Level.THREE;
       case "TWO" -> Level.TWO;
       case "ONE" -> Level.ONE;
+      // TODO: add red decks
       default -> null;
     };
 
