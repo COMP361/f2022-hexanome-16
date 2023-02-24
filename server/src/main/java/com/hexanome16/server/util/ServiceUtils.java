@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility class for service.
+ */
 @Component
 public class ServiceUtils {
   /**
@@ -32,8 +35,8 @@ public class ServiceUtils {
    *
    * @param sessionId          game's identification number.
    * @param authToken          access token.
-   * @param gameManagerService
-   * @param authService
+   * @param gameManagerService the game manager service used to find games
+   * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
   public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(
@@ -72,14 +75,17 @@ public class ServiceUtils {
    * the ResponseEntity will have a success code and the game and player will be populated.
    * </p>
    *
-   * @param sessionId game's identification number.
-   * @param authToken access token.
+   * @param sessionId          game's identification number.
+   * @param authToken          access token.
+   * @param gameManagerService the game manager service used to find games
+   * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
-  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
-                                                                          String authToken,
-                                                                          GameManagerServiceInterface gameManagerService,
-                                                                          AuthServiceInterface authService) {
+  public Pair<ResponseEntity<String>, Pair<Game, Player>>
+      validRequest(long sessionId,
+                   String authToken,
+                   GameManagerServiceInterface gameManagerService,
+                   AuthServiceInterface authService) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
@@ -107,14 +113,15 @@ public class ServiceUtils {
    *
    * @param game        game to search.
    * @param accessToken token associated to player
-   * @param authService
+   * @param authService the authentication service used to validate requests
    * @return player with that token, null if no such player
    */
-  public Player findPlayerByToken(@NonNull Game game, String accessToken, AuthServiceInterface authService) {
+  public Player findPlayerByToken(@NonNull Game game, String accessToken,
+                                  AuthServiceInterface authService) {
+
     ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();
-
 
     for (Player e : game.getPlayers()) {
       if (e.getName().equals(username)) {
@@ -146,5 +153,21 @@ public class ServiceUtils {
       broadcastContentManagerPlayer.updateBroadcastContent(
           new PlayerJson(game.getCurrentPlayer().getName()));
     }
+  }
+
+  /**
+   * Finds a player in a game given their username.
+   *
+   * @param game     game where player is supposed to be.
+   * @param username name of player.
+   * @return Player with that username in that game, null if no such player.
+   */
+  public Player findPlayerByName(@NonNull Game game, String username) {
+    for (Player e : game.getPlayers()) {
+      if (e.getName().equals(username)) {
+        return e;
+      }
+    }
+    return null;
   }
 }

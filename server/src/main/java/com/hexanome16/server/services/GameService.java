@@ -4,19 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import java.util.Arrays;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +30,14 @@ public class GameService implements GameServiceInterface {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
   private final GameManagerServiceInterface gameManagerService;
-  public final ServiceUtils serviceUtils;
+  private final ServiceUtils serviceUtils;
 
   /**
    * Instantiates the game service.
    *
    * @param authService        the authentication service used to validate requests
    * @param gameManagerService the game manager service used to find games
+   * @param serviceUtils the utility used by services
    */
   public GameService(@Autowired AuthServiceInterface authService,
                      @Autowired GameManagerServiceInterface gameManagerService,
@@ -133,8 +129,8 @@ public class GameService implements GameServiceInterface {
    * @return The pair of response and a pair of game and player
    */
   private DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
-                                                                        String authToken,
-                                                                        String key, String hash) {
+                                                                         String authToken,
+                                                                         String key, String hash) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {

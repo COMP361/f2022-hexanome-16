@@ -8,6 +8,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
+/**
+ * Interface for managing game state backend requests.
+ */
 public interface GameServiceInterface {
   /**
    * Long polling on update on onboard deck.

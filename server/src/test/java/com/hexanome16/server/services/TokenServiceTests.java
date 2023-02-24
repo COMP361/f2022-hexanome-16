@@ -3,8 +3,6 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,18 +11,25 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.util.ServiceUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Test of {@link TokenService}.
  */
+
 public class TokenServiceTests {
 
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
@@ -32,9 +37,10 @@ public class TokenServiceTests {
           JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
   private DummyAuthService dummyAuthService;
-  private GameServiceInterface gameService;
   private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
+  @Mock
+  private final ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
 
   /**
    * Sets .
@@ -45,10 +51,8 @@ public class TokenServiceTests {
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
     gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
-    gameService = DummyGameService.getDummyGameService();
     tokensService =
-        new TokenService(gameService, dummyAuthService, gameManagerMock);
-
+        new TokenService(dummyAuthService, gameManagerMock, serviceUtils);
     payload.setPlayers(new Player[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
         objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
@@ -90,17 +94,24 @@ public class TokenServiceTests {
    */
   @Test
   public void testTakeTwo() {
+    Game validGame = new GameDummies().validGames.get(0);
 
-    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
     Player validPlayer = PlayerDummies.validDummies[0];
-    when(gameService.findPlayerByToken(any(),
-        eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
-        validPlayer);
-    when(validGame
-        .isNotPlayersTurn(validPlayer)).thenReturn(
-        false);
+
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT CANT TAKE TWO OF TOKEN MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer)));
     when(validGame.allowedTakeTwoOf(Gem.RUBY)).thenReturn(false);
+
+    // VALID REQUEST + CAN TAKE TWO OF TOKEN MOCK
     when(validGame.allowedTakeTwoOf(Gem.DIAMOND)).thenReturn(true);
 
     // INVALID REQUEST
@@ -126,16 +137,24 @@ public class TokenServiceTests {
   @Test
   //public void testTakeThree() {
   public void testTakeThreeTokens() {
-    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
+    Game validGame = new GameDummies().validGames.get(0);
+
     Player validPlayer = PlayerDummies.validDummies[0];
-    when(gameService.findPlayerByToken(any(),
-        eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
-        validPlayer);
-    when(validGame
-        .isNotPlayersTurn(validPlayer)).thenReturn(
-        false);
+
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT CANT TAKE THREE OF TOKEN MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer)));
     when(validGame.allowedTakeThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.ONYX)).thenReturn(false);
+
+    // VALID REQUEST + CAN TAKE THREE OF TOKEN MOCK
     when(validGame.allowedTakeThreeOf(Gem.DIAMOND, Gem.SAPPHIRE, Gem.RUBY)).thenReturn(true);
 
     // INVALID REQUEST
