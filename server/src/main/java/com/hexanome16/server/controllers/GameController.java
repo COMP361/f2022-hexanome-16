@@ -113,23 +113,6 @@ public class GameController {
     return gameService.getWinners(sessionId, accessToken, hash);
   }
 
-  // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Allows client to see how many of each gem a player has.
-   *
-   * @param sessionId sessionId.
-   * @param username  username of the player.
-   * @return String representation of the Purchase map
-   * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
-   */
-  @GetMapping(value = {"/games/{sessionId}/playerBank", "/games/{sessionId}/playerBank/"})
-  public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
-                                                  @RequestParam String username)
-      throws JsonProcessingException {
-    return gameService.getPlayerBankInfo(sessionId, username);
-  }
-
   /**
    * Allows client to see how many of each gem the game bank has.
    *
@@ -141,72 +124,6 @@ public class GameController {
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
     return gameService.getGameBankInfo(sessionId);
-  }
-
-  /**
-   * Allows client to buy card, given that they send a valid way to buy that card.
-   *
-   * @param sessionId           sessionID.
-   * @param cardMd5             Card we want to purchase's md5.
-   * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
-   * @return
-   *     <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.
-   *     </p>
-   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
-  public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
-                                        @RequestParam String authenticationToken,
-                                        @RequestParam int rubyAmount,
-                                        @RequestParam int emeraldAmount,
-                                        @RequestParam int sapphireAmount,
-                                        @RequestParam int diamondAmount,
-                                        @RequestParam int onyxAmount, @RequestParam int goldAmount)
-      throws JsonProcessingException {
-    return gameService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
-  }
-
-  /**
-   * Let the player reserve a face up card.
-   *
-   * @param sessionId           game session id.
-   * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
-   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
-  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
-                                            @PathVariable String cardMd5,
-                                            @RequestParam String authenticationToken)
-      throws JsonProcessingException {
-    return gameService.reserveCard(sessionId, cardMd5, authenticationToken);
-  }
-
-  /**
-   * Let the player reserve a face down card.
-   *
-   * @param sessionId           game session id.
-   * @param level               deck level.
-   * @param authenticationToken player's authentication token.
-   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws com.fasterxml.jackson.core.JsonProcessingException exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
-  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
-                                                    @RequestParam String level,
-                                                    @RequestParam String authenticationToken)
-      throws JsonProcessingException {
-
-    return gameService.reserveFaceDownCard(sessionId, level, authenticationToken);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////
 }
