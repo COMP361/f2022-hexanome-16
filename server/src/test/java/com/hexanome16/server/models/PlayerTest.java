@@ -67,7 +67,7 @@ public class PlayerTest {
   }
 
   /**
-   * Testing addNobleListToPerform(ArrayLis)
+   * Testing addNobleListToPerform(ArrayList).
    */
   @Test
   public void testAddNobleListToPerform() throws JsonProcessingException {
