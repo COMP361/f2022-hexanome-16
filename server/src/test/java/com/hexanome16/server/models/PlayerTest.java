@@ -1,10 +1,16 @@
 package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.price.PurchaseMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +64,28 @@ public class PlayerTest {
     assertTrue(costa.hasAtLeast(0, 0, 0, 0, 0, 0));
     costa.incPlayerBank(2, 2, 0, 0, 0, 0);
     assertTrue(costa.hasAtLeast(2, 2, 0, 0, 0, 0));
+  }
+
+  /**
+   * Testing addNobleListToPerform(ArrayLis)
+   */
+  @Test
+  public void testAddNobleListToPerform() throws JsonProcessingException {
+    costa.addNobleListToPerform(
+        new ArrayList<>(
+            List.of(
+                new Noble(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1)),
+                new Noble(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1))
+                )
+        ));
+    Queue<Action> actions = costa.getActionQueue();
+    assertFalse(actions.isEmpty());
+    Action action = actions.poll();
+    assertEquals("choose-noble",
+        action.getActionDetails().getHeaders().get("action-type").get(0));
+    assertNotEquals("", action.getActionDetails().getBody());
   }
 
 }
