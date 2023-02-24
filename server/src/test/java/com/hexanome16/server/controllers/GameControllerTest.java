@@ -11,6 +11,7 @@ import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.GameService;
 import com.hexanome16.server.services.GameServiceInterface;
+import com.hexanome16.server.services.InventoryServiceInterface;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ class GameControllerTest {
    *
    * @return the game service mock
    */
-  GameServiceInterface createGameServiceMock() {
+  InventoryServiceInterface createGameServiceMock() {
     return Mockito.mock(GameService.class);
   }
 
@@ -129,7 +130,7 @@ class GameControllerTest {
   void testGetPlayerBankInfo() {
     final ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
+    InventoryServiceInterface gameServiceMock = createGameServiceMock();
     try {
       when(gameServiceMock.getPlayerBankInfo(123L, "tristan")).thenReturn(playerBankInfoStub);
     } catch (JsonProcessingException e) {
@@ -173,7 +174,7 @@ class GameControllerTest {
   void testBuyCard() {
     final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
+    InventoryServiceInterface gameServiceMock = createGameServiceMock();
     try {
       when(gameServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
           buyCardResponseStub);
@@ -197,7 +198,7 @@ class GameControllerTest {
   void testReserveCard() {
     final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
+    InventoryServiceInterface gameServiceMock = createGameServiceMock();
     try {
       when(gameServiceMock.reserveCard(123L, "md5", "abc")).thenReturn(
           reserveCardResponseStub);
@@ -221,7 +222,7 @@ class GameControllerTest {
     final ResponseEntity<String> reserveCardFaceDownResponseStub =
         new ResponseEntity<>(HttpStatus.OK);
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
+    InventoryServiceInterface gameServiceMock = createGameServiceMock();
     try {
       when(gameServiceMock.reserveFaceDownCard(123L, "md5", "abc")).thenReturn(
           reserveCardFaceDownResponseStub);
