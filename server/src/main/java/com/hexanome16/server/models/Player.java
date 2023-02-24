@@ -136,14 +136,12 @@ public class Player {
     return queueOfCascadingActionTypes;
   }
 
-  // TODO : : TEST
   /**
    * Adds Noble Choice as an action that needs to be performed.
    *
-   * @param nobleList list of nobles to choose from.
-   * @return true.
+   * @param nobleList list of nobles to choose from. Not empty please.
    */
-  public boolean addNobleListToPerform(ArrayList<Noble> nobleList) {
+  public void addNobleListToPerform(ArrayList<Noble> nobleList) {
     ObjectMapper objectMapper = new ObjectMapper();
 
     // Make and add action to queue
@@ -151,35 +149,28 @@ public class Player {
         .header("action-type", "choose-noble")
         .body(objectMapper.writeValueAsString(nobleList.toArray())));
 
-    return true;
   }
 
-  // TODO : : TEST
   /**
    * Adds Cities Choice as an action that needs to be performed.
    *
-   * @param citiesList list of cities to choose from.
-   * @return true.
+   * @param citiesList list of cities to choose from. Not empty please.
    */
-  public boolean addCitiesToPerform(ArrayList<City> citiesList) {
+  public void addCitiesToPerform(ArrayList<City> citiesList) {
     ObjectMapper objectMapper = new ObjectMapper();
 
     // Make and add action to queue
     getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
         .body(objectMapper.writeValueAsString(citiesList.toArray())));
-    return true;
   }
 
-  // TODO : : TEST
   /**
    * Adds Take Two as an action that needs to be performed.
    *
-   * @return true
    */
-  public boolean addTakeTwoToPerform() {
+  public void addTakeTwoToPerform() {
     getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "take-level-two").build());
 
-    return true;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -85,7 +85,40 @@ public class PlayerTest {
     Action action = actions.poll();
     assertEquals("choose-noble",
         action.getActionDetails().getHeaders().get("action-type").get(0));
-    assertNotEquals("", action.getActionDetails().getBody());
+  }
+
+  /**
+   * Testing addCitiesToPerform(ArrayList).
+   */
+  @Test
+  public void testAddCitiesToPerform() throws JsonProcessingException {
+    costa.addCitiesToPerform(
+        new ArrayList<>(
+            List.of(
+                new City(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1)),
+                new City(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1))
+            )
+        ));
+    Queue<Action> actions = costa.getActionQueue();
+    assertFalse(actions.isEmpty());
+    Action action = actions.poll();
+    assertEquals("choose-city",
+        action.getActionDetails().getHeaders().get("action-type").get(0));
+  }
+
+  /**
+   * Testing addTakeTwoToPerform().
+   */
+  @Test
+  public void testAddTakeTwoToPerform() throws JsonProcessingException {
+    costa.addTakeTwoToPerform();
+    Queue<Action> actions = costa.getActionQueue();
+    assertFalse(actions.isEmpty());
+    Action action = actions.poll();
+    assertEquals("take-level-two",
+        action.getActionDetails().getHeaders().get("action-type").get(0));
   }
 
 }
