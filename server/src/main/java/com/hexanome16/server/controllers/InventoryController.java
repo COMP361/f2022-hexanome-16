@@ -7,10 +7,8 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.InventoryServiceInterface;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
-import com.hexanome16.server.util.UrlUtils;
+import com.hexanome16.server.util.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Inventory controller.
@@ -28,34 +25,25 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class InventoryController {
   /* fields and controllers ********************************************************/
-  private final RestTemplate restTemplate;
-  private final UrlUtils urlUtils;
-  private final InventoryServiceInterface gameService;
+  private final InventoryServiceInterface inventoryService;
   private final GameManagerServiceInterface gameManager;
-  private final ObjectMapper objectMapper;
-  private final AuthServiceInterface authService;
+  private final ServiceUtils serviceUtils;
+
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * Controller for the Inventory.
    *
-   * @param restTemplateBuilder  server
-   * @param urlUtils             operations
    * @param gameServiceInterface controller for the whole game (used for helper)
-   * @param objectMapper         the object mapper
-   * @param authService          the authentication service
    * @param gameManager          the game manager for fetching games
+   * @param serviceUtils         the utility used by services
    */
-  public InventoryController(RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             @Autowired InventoryServiceInterface gameServiceInterface,
-                             ObjectMapper objectMapper,
-                             @Autowired AuthServiceInterface authService,
-                             @Autowired GameManagerServiceInterface gameManager) {
-    this.restTemplate = restTemplateBuilder.build();
-    this.urlUtils = urlUtils;
-    this.gameService = gameServiceInterface;
-    this.objectMapper = objectMapper;
-    this.authService = authService;
+  public InventoryController(@Autowired InventoryServiceInterface gameServiceInterface,
+                             @Autowired GameManagerServiceInterface gameManager,
+                             @Autowired ServiceUtils serviceUtils) {
+    this.inventoryService = gameServiceInterface;
     this.gameManager = gameManager;
+    this.serviceUtils = serviceUtils;
   }
 
   /* helper methods ***************************************************************************/
@@ -63,7 +51,7 @@ public class InventoryController {
   private Player getValidPlayerByName(long sessionId, String username) {
     Game game = gameManager.getGame(sessionId);
 
-    Player myPlayer = gameService.findPlayerByName(
+    Player myPlayer = serviceUtils.findPlayerByName(
         game, username
     );
     if (myPlayer == null) {
@@ -197,7 +185,7 @@ public class InventoryController {
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
-    return gameService.getPlayerBankInfo(sessionId, username);
+    return inventoryService.getPlayerBankInfo(sessionId, username);
   }
 
   /**
@@ -212,8 +200,7 @@ public class InventoryController {
    * @param diamondAmount       amount of diamond gems proposed.
    * @param onyxAmount          amount of onyx gems proposed.
    * @param goldAmount          amount of gold gems proposed.
-   * @return
-   *     <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.
    *     </p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
@@ -227,7 +214,8 @@ public class InventoryController {
                                         @RequestParam int diamondAmount,
                                         @RequestParam int onyxAmount, @RequestParam int goldAmount)
       throws JsonProcessingException {
-    return gameService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount, emeraldAmount,
+    return inventoryService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
+        emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount);
   }
 
@@ -245,7 +233,7 @@ public class InventoryController {
                                             @PathVariable String cardMd5,
                                             @RequestParam String authenticationToken)
       throws JsonProcessingException {
-    return gameService.reserveCard(sessionId, cardMd5, authenticationToken);
+    return inventoryService.reserveCard(sessionId, cardMd5, authenticationToken);
   }
 
   /**
@@ -263,7 +251,7 @@ public class InventoryController {
                                                     @RequestParam String authenticationToken)
       throws JsonProcessingException {
 
-    return gameService.reserveFaceDownCard(sessionId, level, authenticationToken);
+    return inventoryService.reserveFaceDownCard(sessionId, level, authenticationToken);
   }
 
 }

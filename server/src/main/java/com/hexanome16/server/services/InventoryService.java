@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Level;
 import com.hexanome16.server.models.LevelCard;
@@ -18,29 +16,33 @@ import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
-import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
-import java.util.Arrays;
-import lombok.NonNull;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.async.DeferredResult;
 
-
+/**
+ * Service is responsible for managing inventory related requests from
+ * the {@link com.hexanome16.server.controllers.InventoryController}.
+ */
 @Service
-public class InventoryService implements InventoryServiceInterface{
+public class InventoryService implements InventoryServiceInterface {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final AuthServiceInterface authService;
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
 
+  /**
+   * Instantiates the inventory service.
+   *
+   * @param authService        the authentication service used to validate requests
+   * @param gameManagerService the game manager service used to find games
+   * @param serviceUtils the utility used by services
+   */
   public InventoryService(@Autowired AuthServiceInterface authService,
-                     @Autowired GameManagerServiceInterface gameManagerService,
-                     @Autowired ServiceUtils serviceUtils) {
+                          @Autowired GameManagerServiceInterface gameManagerService,
+                          @Autowired ServiceUtils serviceUtils) {
     this.serviceUtils = serviceUtils;
     this.authService = authService;
     this.gameManagerService = gameManagerService;
@@ -56,7 +58,7 @@ public class InventoryService implements InventoryServiceInterface{
     }
 
     // get player with username
-    Player concernedPlayer = findPlayerByName(game, username);
+    Player concernedPlayer = serviceUtils.findPlayerByName(game, username);
 
     // Player not in game
     if (concernedPlayer == null) {
@@ -128,7 +130,7 @@ public class InventoryService implements InventoryServiceInterface{
     Level level = (cardToBuy).getLevel();
 
     // Remove card from player's reservation inventory
-    if(!player.getInventory().getReservedCards().remove(cardToBuy)){
+    if (!player.getInventory().getReservedCards().remove(cardToBuy)) {
       // Remove card from the board
       game.removeOnBoardCard(cardToBuy);
       // Add new card to the deck
@@ -241,16 +243,6 @@ public class InventoryService implements InventoryServiceInterface{
 
     serviceUtils.endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @Override
-  public Player findPlayerByName(@NonNull Game game, String username) {
-    for (Player e : game.getPlayers()) {
-      if (e.getName().equals(username)) {
-        return e;
-      }
-    }
-    return null;
   }
 
 }

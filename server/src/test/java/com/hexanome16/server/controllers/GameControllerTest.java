@@ -33,7 +33,7 @@ class GameControllerTest {
    *
    * @return the game service mock
    */
-  InventoryServiceInterface createGameServiceMock() {
+  GameServiceInterface createGameServiceMock() {
     return Mockito.mock(GameService.class);
   }
 
@@ -124,28 +124,6 @@ class GameControllerTest {
   }
 
   /**
-   * Test get player bank info.
-   */
-  @Test
-  void testGetPlayerBankInfo() {
-    final ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
-
-    InventoryServiceInterface gameServiceMock = createGameServiceMock();
-    try {
-      when(gameServiceMock.getPlayerBankInfo(123L, "tristan")).thenReturn(playerBankInfoStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-    this.gameController = new GameController(gameServiceMock, null);
-
-    try {
-      assertEquals(playerBankInfoStub, gameController.getPlayerBankInfo(123L, "tristan"));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-  }
-
-  /**
    * Test get game bank info.
    */
   @Test
@@ -162,78 +140,6 @@ class GameControllerTest {
 
     try {
       assertEquals(gameBankInfoStub, gameController.getGameBankInfo(123L));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-  }
-
-  /**
-   * Test buy card.
-   */
-  @Test
-  void testBuyCard() {
-    final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
-
-    InventoryServiceInterface gameServiceMock = createGameServiceMock();
-    try {
-      when(gameServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
-          buyCardResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-    this.gameController = new GameController(gameServiceMock, null);
-
-    try {
-      assertEquals(buyCardResponseStub,
-          gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-  }
-
-  /**
-   * Test reserve card.
-   */
-  @Test
-  void testReserveCard() {
-    final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
-
-    InventoryServiceInterface gameServiceMock = createGameServiceMock();
-    try {
-      when(gameServiceMock.reserveCard(123L, "md5", "abc")).thenReturn(
-          reserveCardResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-    this.gameController = new GameController(gameServiceMock, null);
-
-    try {
-      assertEquals(reserveCardResponseStub, gameController.reserveCard(123L, "md5", "abc"));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-  }
-
-  /**
-   * Test reserve face down card.
-   */
-  @Test
-  void testReserveFaceDownCard() {
-    final ResponseEntity<String> reserveCardFaceDownResponseStub =
-        new ResponseEntity<>(HttpStatus.OK);
-
-    InventoryServiceInterface gameServiceMock = createGameServiceMock();
-    try {
-      when(gameServiceMock.reserveFaceDownCard(123L, "md5", "abc")).thenReturn(
-          reserveCardFaceDownResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-    this.gameController = new GameController(gameServiceMock, null);
-
-    try {
-      assertEquals(reserveCardFaceDownResponseStub,
-          gameController.reserveFaceDownCard(123L, "md5", "abc"));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

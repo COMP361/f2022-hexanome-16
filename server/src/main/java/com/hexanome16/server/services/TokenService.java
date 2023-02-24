@@ -30,12 +30,11 @@ public class TokenService implements TokenServiceInterface {
   /**
    * Constructor for the Token service Class.
    *
-   * @param gameService Needed for getting games and such.
-   * @param authService Needed for player verification.
-   * @param gameManager Game manager for fetching game instances
+   * @param authService  Needed for player verification.
+   * @param gameManager  Game manager for fetching game instances
+   * @param serviceUtils the utility used by services
    */
-  public TokenService(@Autowired GameServiceInterface gameService,
-                      @Autowired AuthServiceInterface authService,
+  public TokenService(@Autowired AuthServiceInterface authService,
                       @Autowired GameManagerServiceInterface gameManager,
                       @Autowired ServiceUtils serviceUtils) {
     this.serviceUtils = serviceUtils;

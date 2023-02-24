@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Interface for managing game state backend requests.
+ * Interface for managing inventory related backend requests.
  */
 public interface InventoryServiceInterface {
 
@@ -81,14 +81,5 @@ public interface InventoryServiceInterface {
                                              @RequestParam String level,
                                              @RequestParam String authenticationToken)
       throws JsonProcessingException;
-
-  /**
-   * Finds a player in a game given their username.
-   *
-   * @param game     game where player is supposed to be.
-   * @param username name of player.
-   * @return Player with that username in that game, null if no such player.
-   */
-  Player findPlayerByName(@NonNull Game game, String username);
 
 }
