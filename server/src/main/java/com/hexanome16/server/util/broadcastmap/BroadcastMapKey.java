@@ -9,34 +9,46 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
 import lombok.Getter;
 
+/**
+ * This class describes the keys used in the broadcast map with their associated value class.
+ */
 public enum BroadcastMapKey {
-  PLAYERS("PLAYERS", PlayerJson.class),
-  WINNERS("WINNERS", WinJson.class),
-  NOBLES("NOBLES", NoblesHash.class),
-  ONE("ONE", DeckHash.class),
-  TWO("TWO", DeckHash.class),
-  THREE("THREE", DeckHash.class),
-  REDONE("REDONE", DeckHash.class),
-  REDTWO("REDTWO", DeckHash.class),
-  REDTHREE("REDTHREE", DeckHash.class);
-
-  private final String value;
+  PLAYERS(PlayerJson.class),
+  WINNERS(WinJson.class),
+  NOBLES(NoblesHash.class),
+  ONE(DeckHash.class),
+  TWO(DeckHash.class),
+  THREE(DeckHash.class),
+  REDONE(DeckHash.class),
+  REDTWO(DeckHash.class),
+  REDTHREE(DeckHash.class);
   @Getter
   private final Class<? extends BroadcastContent> assocClass;
 
-  BroadcastMapKey(String key, Class<? extends BroadcastContent> assocClass) {
-    this.value = key;
+  BroadcastMapKey(Class<? extends BroadcastContent> assocClass) {
     this.assocClass = assocClass;
   }
 
+  /**
+   * Returns the enum value associated with the given string.
+   *
+   * @param str The string.
+   * @return The enum value.
+   */
   public static BroadcastMapKey fromString(String str) {
     if (str == null || str.isBlank()) {
       return null;
     }
-    return Arrays.stream(BroadcastMapKey.values()).filter(key -> str.trim().equalsIgnoreCase(key.value))
-        .findFirst().orElse(null);
+    return Arrays.stream(BroadcastMapKey.values())
+        .filter(key -> str.trim().equalsIgnoreCase(key.name())).findFirst().orElse(null);
   }
 
+  /**
+   * Returns the enum value associated with the given level.
+   *
+   * @param level The level.
+   * @return The enum value.
+   */
   public static BroadcastMapKey fromLevel(Level level) {
     if (level == null) {
       return null;

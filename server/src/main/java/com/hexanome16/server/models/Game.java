@@ -4,20 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.dto.BagJson;
 import com.hexanome16.server.dto.CardJson;
 import com.hexanome16.server.dto.CascadeTwoJson;
-import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.dto.DoubleJson;
 import com.hexanome16.server.dto.NobleJson;
-import com.hexanome16.server.dto.NoblesHash;
-import com.hexanome16.server.dto.PlayerJson;
 import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.dto.WinJson;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.models.price.PriceMap;
 import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +28,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Game {
-  private final BroadcastMap broadcastContentManagerMap = new BroadcastMap();
+  private final BroadcastMap broadcastContentManagerMap;
   private final Map<Level, Deck<LevelCard>> levelDecks = new HashMap<>();
 
   private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
@@ -73,7 +68,7 @@ public class Game {
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
-    createBroadcastContentManagerMap();
+    this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
   /**
@@ -86,28 +81,6 @@ public class Game {
   public Game(long sessionId, SessionJson payload) throws IOException {
     this(sessionId, payload.getPlayers(), payload.getCreator(), payload.getSavegame(),
         payload.getWinCondition());
-  }
-
-  private void createBroadcastContentManagerMap() {
-    try {
-      for (Level level : Level.values()) {
-        BroadcastContentManager<DeckHash> broadcastContentManager =
-            new BroadcastContentManager<>(new DeckHash(this, level));
-        broadcastContentManagerMap.put(level.name(), broadcastContentManager);
-      }
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          new BroadcastContentManager<>(
-              new PlayerJson(getCurrentPlayer().getName()));
-      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-          new BroadcastContentManager<>(new WinJson(new String[players.length]));
-      BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
-          new BroadcastContentManager<>(new NoblesHash(this));
-      broadcastContentManagerMap.put("player", broadcastContentManagerPlayer);
-      broadcastContentManagerMap.put("winners", broadcastContentManagerWinners);
-      broadcastContentManagerMap.put("noble", broadcastContentManagerNoble);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   /**

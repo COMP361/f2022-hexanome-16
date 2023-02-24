@@ -1,8 +1,12 @@
 package com.hexanome16.server.services.longpolling;
 
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
+/**
+ * This interface defines the methods for the long polling service.
+ */
 public interface LongPollingServiceInterface {
   /**
    * Long polling on update on onboard deck.
@@ -74,5 +78,6 @@ public interface LongPollingServiceInterface {
    */
   DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
                                                                  String authToken,
-                                                                 String key, String hash);
+                                                                 BroadcastMapKey key,
+                                                                 String hash);
 }

@@ -30,6 +30,7 @@ public class GameController {
    *
    * @param gameService        game service to use for backend manipulations of individual games
    * @param gameManagerService game manager to manage different game instances
+   * @param longPollingService long polling service to use for long polling
    */
   public GameController(@Autowired GameServiceInterface gameService,
                         @Autowired GameManagerServiceInterface gameManagerService,

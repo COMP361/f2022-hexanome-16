@@ -16,6 +16,7 @@ import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
@@ -96,16 +97,16 @@ public class GameService implements GameServiceInterface {
     if (nextPlayerIndex == 0) {
       Player[] winners = game.getWinCondition().isGameWon(game);
       if (winners.length > 0) {
-        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-            (BroadcastContentManager<WinJson>) game.getBroadcastContentManagerMap().get("winners");
-        broadcastContentManagerWinners.updateBroadcastContent(
-            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new)));
+        game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.WINNERS,
+            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new))
+        );
       }
     } else {
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          (BroadcastContentManager<PlayerJson>) game.getBroadcastContentManagerMap().get("player");
-      broadcastContentManagerPlayer.updateBroadcastContent(
-          new PlayerJson(game.getCurrentPlayer().getName()));
+      game.getBroadcastContentManagerMap().updateValue(
+          BroadcastMapKey.PLAYERS,
+          new PlayerJson(game.getCurrentPlayer().getName())
+      );
     }
   }
 
@@ -173,8 +174,10 @@ public class GameService implements GameServiceInterface {
 
 
     // Update long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((cardToBuy).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     // Ends players turn, which is current player
     endCurrentPlayersTurn(game);
@@ -227,8 +230,10 @@ public class GameService implements GameServiceInterface {
     game.addOnBoardCard(level);
 
     // Notify long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((card).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);

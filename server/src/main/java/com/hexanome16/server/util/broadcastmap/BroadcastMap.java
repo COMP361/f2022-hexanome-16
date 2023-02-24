@@ -15,48 +15,33 @@ import java.util.Map;
  * This class is used to manage the broadcast content.
  */
 public class BroadcastMap {
-  private final HashMap<BroadcastMapKey, BroadcastMapValue> broadcastMap;
+  private final HashMap<BroadcastMapKey, BroadcastContentManager<BroadcastContent>> broadcastMap;
 
   /**
    * Default constructor.
+   *
+   * @param game The game.
    */
   public BroadcastMap(Game game) {
     broadcastMap = new HashMap<>();
     try {
       for (Level level : Level.values()) {
-        BroadcastContentManager<DeckHash> broadcastContentManager =
+        BroadcastContentManager<BroadcastContent> broadcastContentManager =
             new BroadcastContentManager<>(new DeckHash(game, level));
-        broadcastMap.put(BroadcastMapKey.fromLevel(level),
-            BroadcastMapValue.fromManager(broadcastContentManager));
+        broadcastMap.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
       }
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
+      BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(
               new PlayerJson(game.getCurrentPlayer().getName()));
-      BroadcastContentManager<WinJson> broadcastContentManagerWinners =
+      BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
-      BroadcastContentManager<NoblesHash> broadcastContentManagerNoble =
+      BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NoblesHash(game));
-      broadcastMap.put(BroadcastMapKey.PLAYERS, BroadcastMapValue.fromManager(broadcastContentManagerPlayer));
-      broadcastMap.put(BroadcastMapKey.WINNERS, BroadcastMapValue.fromManager(broadcastContentManagerWinners));
-      broadcastMap.put(BroadcastMapKey.NOBLES, BroadcastMapValue.fromManager(broadcastContentManagerNoble));
+      broadcastMap.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
+      broadcastMap.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
+      broadcastMap.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
     } catch (Exception e) {
       e.printStackTrace();
-    }
-  }
-
-  /**
-   * Constructor.
-   *
-   * @param map The broadcast map.
-   */
-  public BroadcastMap(HashMap<String, BroadcastContentManager<? extends BroadcastContent>> map) {
-    broadcastMap = new HashMap<>();
-    for (Map.Entry<String, BroadcastContentManager<?>> entry : map.entrySet()) {
-      BroadcastMapKey key = BroadcastMapKey.fromString(entry.getKey());
-      if (key == null) {
-        throw new IllegalArgumentException("Invalid map key");
-      }
-      broadcastMap.put(key, BroadcastMapValue.fromManager(entry.getValue()));
     }
   }
 
@@ -66,16 +51,22 @@ public class BroadcastMap {
    * @param key The key to get the broadcast content manager for.
    * @return The broadcast content manager for the given key.
    */
-  public BroadcastMapValue getManager(BroadcastMapKey key) {
+  public BroadcastContentManager<BroadcastContent> getManager(BroadcastMapKey key) {
     return broadcastMap.get(key);
   }
 
+  /**
+   * Updates the broadcast content for the given key.
+   *
+   * @param key The key to update the broadcast content for.
+   * @param value The new broadcast content.
+   */
   public void updateValue(BroadcastMapKey key, BroadcastContent value) {
     Class<? extends BroadcastContent> valueClass = key.getAssocClass();
-    BroadcastMapValue manager = broadcastMap.get(key);
-    if (!valueClass.isAssignableFrom(value.getClass())) {
+    BroadcastContentManager<BroadcastContent> manager = broadcastMap.get(key);
+    if (!valueClass.equals(value.getClass())) {
       throw new IllegalArgumentException("Invalid update value");
     }
-    manager;
+    manager.updateBroadcastContent(value);
   }
 }
