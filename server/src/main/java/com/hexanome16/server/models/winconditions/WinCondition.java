@@ -2,7 +2,7 @@ package com.hexanome16.server.models.winconditions;
 
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
-import com.hexanome16.server.services.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import java.util.Arrays;
 import java.util.function.Predicate;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +16,7 @@ import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
@@ -26,8 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
@@ -54,69 +53,6 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
-                                                        String accessToken, String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get(level), hash);
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getNobles(long sessionId, String accessToken,
-                                                          String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("noble"), hash);
-
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId, String accessToken,
-                                                                 String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("player"), hash);
-
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
-                                                           String hash) {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    if (!authService.verifyPlayer(accessToken, game)) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        game.getBroadcastContentManagerMap().get("winners"), hash);
-
-  }
-
-  @Override
   public ResponseEntity<String> getPlayerBankInfo(long sessionId, String username)
       throws JsonProcessingException {
     Game game = gameManagerService.getGame(sessionId);
@@ -140,11 +76,12 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public ResponseEntity<String> getGameBankInfo(long sessionId) throws JsonProcessingException {
-    Game game = gameManagerService.getGame(sessionId);
-    if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+    var request = validGame(sessionId);
+    ResponseEntity<String> left = request.getLeft();
+    if (!left.getStatusCode().is2xxSuccessful()) {
+      return left;
     }
-
+    Game game = request.getRight();
 
     PurchaseMap gameBankMap = game.getGameBank().toPurchaseMap();
 
@@ -160,16 +97,16 @@ public class GameService implements GameServiceInterface {
     if (nextPlayerIndex == 0) {
       Player[] winners = game.getWinCondition().isGameWon(game);
       if (winners.length > 0) {
-        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-            (BroadcastContentManager<WinJson>) game.getBroadcastContentManagerMap().get("winners");
-        broadcastContentManagerWinners.updateBroadcastContent(
-            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new)));
+        game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.WINNERS,
+            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new))
+        );
       }
     } else {
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          (BroadcastContentManager<PlayerJson>) game.getBroadcastContentManagerMap().get("player");
-      broadcastContentManagerPlayer.updateBroadcastContent(
-          new PlayerJson(game.getCurrentPlayer().getName()));
+      game.getBroadcastContentManagerMap().updateValue(
+          BroadcastMapKey.PLAYERS,
+          new PlayerJson(game.getCurrentPlayer().getName())
+      );
     }
   }
 
@@ -179,24 +116,21 @@ public class GameService implements GameServiceInterface {
                                         int diamondAmount, int onyxAmount, int goldAmount)
       throws JsonProcessingException {
 
+    var request = validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final Player player = request.getRight().getRight();
+
 
     // Fetch the card in question
     LevelCard cardToBuy = DeckHash.getCardFromDeck(cardMd5);
 
-    Game game = gameManagerService.getGame(sessionId);
-
-    //
-    if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
     // TODO test
     // TODO add http error
     if (cardToBuy == null) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    // Verify player is who they claim to be
-    if (!authService.verifyPlayer(authenticationToken, game)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -208,33 +142,28 @@ public class GameService implements GameServiceInterface {
     // Get card price as a priceMap
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
-    // Get player using found index
-    Player clientPlayer = findPlayerByToken(game, authenticationToken);
-
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    if (clientPlayer == null
-        || !proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
+    if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     System.out.println("PLAYER FOUND");
-    System.out.println(clientPlayer.getName());
+    System.out.println(player.getName());
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
-    // and is player's turn
-    if (!clientPlayer.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount) || game.isNotPlayersTurn(clientPlayer)) {
+    if (!player.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
+        onyxAmount, goldAmount)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     // Increase Game Bank and decrease player funds
-    game.incGameBankFromPlayer(clientPlayer, rubyAmount, emeraldAmount, sapphireAmount,
+    game.incGameBankFromPlayer(player, rubyAmount, emeraldAmount, sapphireAmount,
         diamondAmount, onyxAmount, goldAmount);
 
 
     // Add that card to the player's Inventory
-    clientPlayer.addCardToInventory(cardToBuy);
+    player.addCardToInventory(cardToBuy);
 
     // Remove card from the board
     game.removeOnBoardCard(cardToBuy);
@@ -245,8 +174,10 @@ public class GameService implements GameServiceInterface {
 
 
     // Update long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((cardToBuy).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     // Ends players turn, which is current player
     endCurrentPlayersTurn(game);
@@ -263,32 +194,26 @@ public class GameService implements GameServiceInterface {
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws JsonProcessingException exception
    */
-  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
-                                            @PathVariable String cardMd5,
-                                            @RequestParam String authenticationToken)
+  public ResponseEntity<String> reserveCard(long sessionId,
+                                            String cardMd5,
+                                            String authenticationToken)
       throws JsonProcessingException {
+
+    var request = validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> left = request.getLeft();
+    if (!left.getStatusCode().is2xxSuccessful()) {
+      return left;
+    }
+    final Game game = request.getRight().getLeft();
+    final Player player = request.getRight().getRight();
 
     LevelCard card = DeckHash.getCardFromDeck(cardMd5);
 
-    Game game = gameManagerService.getGame(sessionId);
 
-    if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-    //verify game and player
     if (card == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    if (!authService.verifyPlayer(authenticationToken, game)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    Player player = findPlayerByToken(game, authenticationToken);
-
-    if (game.isNotPlayersTurn(player)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -305,8 +230,10 @@ public class GameService implements GameServiceInterface {
     game.addOnBoardCard(level);
 
     // Notify long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((card).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -320,18 +247,17 @@ public class GameService implements GameServiceInterface {
    * @param authenticationToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    */
-  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
-                                                    @RequestParam String level,
-                                                    @RequestParam String authenticationToken) {
-    Game game = gameManagerService.getGame(sessionId);
-    //verify game and player
-    if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
+  public ResponseEntity<String> reserveFaceDownCard(long sessionId,
+                                                    String level,
+                                                    String authenticationToken) {
 
-    if (!authService.verifyPlayer(authenticationToken, game)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    var request = validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
     }
+    final Game game = request.getRight().getLeft();
+    final Player player = request.getRight().getRight();
 
     Level atLevel = switch (level) {
       case "THREE" -> Level.THREE;
@@ -345,12 +271,6 @@ public class GameService implements GameServiceInterface {
     }
 
     LevelCard card = game.getLevelDeck(atLevel).nextCard();
-
-    Player player = findPlayerByToken(game, authenticationToken);
-
-    if (game.isNotPlayersTurn(player)) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN);
-    }
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -397,8 +317,8 @@ public class GameService implements GameServiceInterface {
     if (!response.getLeft().getStatusCode().is2xxSuccessful()) {
       return response;
     }
-    Game currentGame = response.getRight().getLeft();
-    Player requestingPlayer = response.getRight().getRight();
+    final Game currentGame = response.getRight().getLeft();
+    final Player requestingPlayer = response.getRight().getRight();
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
@@ -413,7 +333,7 @@ public class GameService implements GameServiceInterface {
   @Override
   public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
                                                                        String authToken) {
-    Game currentGame = gameManagerService.getGame(sessionId);
+    final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
       return new ImmutablePair<>(
@@ -434,5 +354,14 @@ public class GameService implements GameServiceInterface {
         new ImmutablePair<>(currentGame, requestingPlayer));
   }
 
+  @Override
+  public Pair<ResponseEntity<String>, Game> validGame(long sessionId) {
+    final Game currentGame = gameManagerService.getGame(sessionId);
+    if (currentGame == null) {
+      return new ImmutablePair<>(
+          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
+    }
+    return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
+  }
 
 }
