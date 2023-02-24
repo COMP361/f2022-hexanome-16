@@ -1,4 +1,4 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +16,7 @@ import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
@@ -49,41 +50,6 @@ public class GameService implements GameServiceInterface {
     this.authService = authService;
     this.gameManagerService = gameManagerService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getDeck(long sessionId, String level,
-                                                        String accessToken, String hash) {
-    Level atLevel = switch (level) {
-      case "THREE" -> Level.THREE;
-      case "TWO" -> Level.TWO;
-      case "ONE" -> Level.ONE;
-      // TODO: add red decks
-      default -> null;
-    };
-
-    if (atLevel == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
-    }
-    return validRequestLongPolling(sessionId, accessToken, level, hash);
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getNobles(long sessionId, String accessToken,
-                                                          String hash) {
-    return validRequestLongPolling(sessionId, accessToken, "noble", hash);
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId, String accessToken,
-                                                                 String hash) {
-    return validRequestLongPolling(sessionId, accessToken, "player", hash);
-  }
-
-  @Override
-  public DeferredResult<ResponseEntity<String>> getWinners(long sessionId, String accessToken,
-                                                           String hash) {
-    return validRequestLongPolling(sessionId, accessToken, "winners", hash);
   }
 
   @Override
@@ -131,16 +97,16 @@ public class GameService implements GameServiceInterface {
     if (nextPlayerIndex == 0) {
       Player[] winners = game.getWinCondition().isGameWon(game);
       if (winners.length > 0) {
-        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-            (BroadcastContentManager<WinJson>) game.getBroadcastContentManagerMap().get("winners");
-        broadcastContentManagerWinners.updateBroadcastContent(
-            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new)));
+        game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.WINNERS,
+            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new))
+        );
       }
     } else {
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          (BroadcastContentManager<PlayerJson>) game.getBroadcastContentManagerMap().get("player");
-      broadcastContentManagerPlayer.updateBroadcastContent(
-          new PlayerJson(game.getCurrentPlayer().getName()));
+      game.getBroadcastContentManagerMap().updateValue(
+          BroadcastMapKey.PLAYERS,
+          new PlayerJson(game.getCurrentPlayer().getName())
+      );
     }
   }
 
@@ -208,8 +174,10 @@ public class GameService implements GameServiceInterface {
 
 
     // Update long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((cardToBuy).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     // Ends players turn, which is current player
     endCurrentPlayersTurn(game);
@@ -262,8 +230,10 @@ public class GameService implements GameServiceInterface {
     game.addOnBoardCard(level);
 
     // Notify long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((card).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckHash(game, level)
+    );
 
     endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -392,44 +362,6 @@ public class GameService implements GameServiceInterface {
           CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
     }
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
-  }
-
-  /**
-   * /**
-   * Returns HTTPS_OK if game with sessionId exists,
-   * Returns HTTPS_BAD_REQUEST otherwise.
-   *
-   * <p>
-   * Returns a pair of ResponseEntity and Game.
-   * If the request wasn't valid,
-   * the ResponseEntity will have an error code and the game will be null,
-   * If the request was valid,
-   * the ResponseEntity will have a success code and the game will be populated.
-   * </p>
-   *
-   * @param sessionId game's identification number.
-   * @param authToken authentication token of player accessing resource.
-   * @param key       broadcast map key from which to retrieve content.
-   * @param hash      hash to put in hashBasedUpdate.
-   * @return The pair of response and a pair of game and player
-   */
-  private DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
-                                                                        String authToken,
-                                                                        String key, String hash) {
-    final Game currentGame = gameManagerService.getGame(sessionId);
-
-    if (currentGame == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
-    }
-
-    boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
-
-    if (!isValidPlayer) {
-      return CustomResponseFactory.getDeferredErrorResponse(
-          CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
-    return ResponseGenerator.getHashBasedUpdate(10000,
-        currentGame.getBroadcastContentManagerMap().get(key), hash);
   }
 
 }

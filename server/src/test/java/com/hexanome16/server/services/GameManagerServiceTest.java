@@ -12,6 +12,7 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.game.GameManagerService;
 import java.lang.reflect.Field;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
