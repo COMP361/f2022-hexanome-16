@@ -13,14 +13,41 @@ import lombok.Getter;
  * This class describes the keys used in the broadcast map with their associated value class.
  */
 public enum BroadcastMapKey {
+  /**
+   * Current player.
+   */
   PLAYERS(PlayerJson.class),
+  /**
+   * Game winners.
+   */
   WINNERS(WinJson.class),
+  /**
+   * Nobles.
+   */
   NOBLES(NoblesHash.class),
+  /**
+   * Level one deck.
+   */
   ONE(DeckHash.class),
+  /**
+   * Level two deck.
+   */
   TWO(DeckHash.class),
+  /**
+   * Level three deck.
+   */
   THREE(DeckHash.class),
+  /**
+   * Red level one deck.
+   */
   REDONE(DeckHash.class),
+  /**
+   * Red level two deck.
+   */
   REDTWO(DeckHash.class),
+  /**
+   * Red level three deck.
+   */
   REDTHREE(DeckHash.class);
   @Getter
   private final Class<? extends BroadcastContent> assocClass;
