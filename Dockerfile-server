@@ -1,5 +1,15 @@
+FROM maven:3.8-eclipse-temurin-17-alpine AS common
+WORKDIR /app
+
+# Build common module
+COPY common/pom.xml .
+RUN mvn clean install
+
 FROM maven:3.8-eclipse-temurin-17-alpine AS build
 WORKDIR /app
+
+# Copy maven repository from common stage
+COPY --from=common /root/.m2 /root/.m2
 
 # Download all the dependencies first so we can cache them
 # (thank you https://stackoverflow.com/a/71066133)

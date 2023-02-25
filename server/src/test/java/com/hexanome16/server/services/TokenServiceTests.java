@@ -16,11 +16,13 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameServiceInterface;
+import com.hexanome16.server.services.token.TokenService;
 import com.hexanome16.server.util.CustomHttpResponses;
 import models.price.Gem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -33,7 +35,7 @@ public class TokenServiceTests {
           JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
   private DummyAuthService dummyAuthService;
-  private GameService gameService;
+  private GameServiceInterface gameService;
   private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
 
@@ -46,7 +48,7 @@ public class TokenServiceTests {
   void setup() throws JsonProcessingException {
     dummyAuthService = new DummyAuthService();
     gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
-    gameService = Mockito.mock(GameService.class);
+    gameService = DummyGameService.getDummyGameService();
     tokensService =
         new TokenService(gameService, dummyAuthService, gameManagerMock);
 
@@ -92,7 +94,8 @@ public class TokenServiceTests {
   @Test
   public void testTakeTwo() {
 
-    Game validGame = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
+    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
     Player validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),
         eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
@@ -126,7 +129,8 @@ public class TokenServiceTests {
   @Test
   //public void testTakeThree() {
   public void testTakeThreeTokens() {
-    Game validGame = gameManagerMock.getGame(DummyAuths.validSessionIds.get(0));
+    Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
     Player validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),
         eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
@@ -153,60 +157,4 @@ public class TokenServiceTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
 
   }
-
-
-  /**
-   * Testing validRequest(sessionId, authToken).
-   */
-  @Test
-  public void testValidRequest() {
-    // Arrange
-    when(gameService.findPlayerByToken(any(),
-        eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
-        PlayerDummies.validDummies[0]);
-    when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))
-        .isNotPlayersTurn(PlayerDummies.validDummies[0])).thenReturn(
-        false);
-    when(gameService.findPlayerByToken(any(),
-        eq(DummyAuths.validTokensInfos.get(1).getAccessToken()))).thenReturn(
-        PlayerDummies.validDummies[1]);
-    when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))
-        .isNotPlayersTurn(PlayerDummies.validDummies[1])).thenReturn(
-        true);
-
-    // bad sessionId
-    var response = tokensService.validRequest(
-        DummyAuths.invalidSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
-    );
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
-        response.getLeft().getStatusCode());
-
-    // good sessionId but bad player
-    response = tokensService.validRequest(
-        DummyAuths.validSessionIds.get(0), DummyAuths.invalidTokensInfos.get(0).getAccessToken()
-    );
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
-        response.getLeft().getStatusCode());
-
-    // good sessionId and valid token but isn't their turn
-    response = tokensService.validRequest(
-        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(1).getAccessToken()
-    );
-    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
-        response.getLeft().getStatusCode());
-
-    // bad sessionId and token
-    response = tokensService.validRequest(
-        DummyAuths.invalidSessionIds.get(0), DummyAuths.invalidTokensInfos.get(1).getAccessToken()
-    );
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
-        response.getLeft().getStatusCode());
-
-    // good sessionId and valid token + is their turn
-    response = tokensService.validRequest(
-        DummyAuths.validSessionIds.get(0), DummyAuths.validTokensInfos.get(0).getAccessToken()
-    );
-    assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
-  }
-
 }

@@ -11,7 +11,8 @@ import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import com.hexanome16.server.util.BroadcastMap;
+import com.hexanome16.server.util.broadcastmap.BroadcastMap;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -81,12 +82,11 @@ public class GameTest {
 
       var map = ((BroadcastMap) field.get(game));
       assertNotNull(map);
-      assertFalse(map.getMap().isEmpty());
-      assertNotNull(map.getMap().get("player"));
-      assertNotNull(map.getMap().get("winners"));
-      assertNotNull(map.getMap().get("noble"));
+      assertNotNull(map.getManager(BroadcastMapKey.PLAYERS));
+      assertNotNull(map.getManager(BroadcastMapKey.WINNERS));
+      assertNotNull(map.getManager(BroadcastMapKey.NOBLES));
       for (Level level : Level.values()) {
-        assertNotNull(map.getMap().get(level.name()));
+        assertNotNull(map.getManager(BroadcastMapKey.fromLevel(level)));
       }
     } catch (NoSuchFieldException e) {
       fail("gameMap not in GameManagerService");
@@ -108,12 +108,11 @@ public class GameTest {
     try {
       var map = ((BroadcastMap) field.get(game));
       assertNotNull(map);
-      assertFalse(map.getMap().isEmpty());
-      assertNotNull(map.getMap().get("player"));
-      assertNotNull(map.getMap().get("winners"));
-      assertNotNull(map.getMap().get("noble"));
+      assertNotNull(map.getManager(BroadcastMapKey.PLAYERS));
+      assertNotNull(map.getManager(BroadcastMapKey.WINNERS));
+      assertNotNull(map.getManager(BroadcastMapKey.NOBLES));
       for (Level level : Level.values()) {
-        assertNotNull(map.getMap().get(level.name()));
+        assertNotNull(map.getManager(BroadcastMapKey.fromLevel(level)));
       }
     } catch (IllegalAccessException e) {
       fail("set accessible did not work");

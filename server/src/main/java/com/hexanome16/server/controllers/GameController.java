@@ -2,8 +2,9 @@ package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.services.GameManagerServiceInterface;
-import com.hexanome16.server.services.GameServiceInterface;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameServiceInterface;
+import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
 import models.price.PurchaseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +24,21 @@ public class GameController {
 
   private final GameServiceInterface gameService;
   private final GameManagerServiceInterface gameManager;
+  private final LongPollingServiceInterface longPollingService;
 
   /**
    * Instantiates a new Game controller.
    *
    * @param gameService        game service to use for backend manipulations of individual games
    * @param gameManagerService game manager to manage different game instances
+   * @param longPollingService long polling service to use for long polling
    */
   public GameController(@Autowired GameServiceInterface gameService,
-                        @Autowired GameManagerServiceInterface gameManagerService) {
+                        @Autowired GameManagerServiceInterface gameManagerService,
+                        @Autowired LongPollingServiceInterface longPollingService) {
     this.gameService = gameService;
     this.gameManager = gameManagerService;
+    this.longPollingService = longPollingService;
   }
 
   /**
@@ -62,7 +67,7 @@ public class GameController {
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash) {
-    return gameService.getDeck(sessionId, level, accessToken, hash);
+    return longPollingService.getDeck(sessionId, level, accessToken, hash);
   }
 
   /**
@@ -77,7 +82,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
                                                           @RequestParam String accessToken,
                                                           @RequestParam String hash) {
-    return gameService.getNobles(sessionId, accessToken, hash);
+    return longPollingService.getNobles(sessionId, accessToken, hash);
   }
 
   /**
@@ -92,7 +97,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
-    return gameService.getCurrentPlayer(sessionId, accessToken, hash);
+    return longPollingService.getCurrentPlayer(sessionId, accessToken, hash);
   }
 
   /**
@@ -107,7 +112,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
                                                            @RequestParam String accessToken,
                                                            @RequestParam String hash) {
-    return gameService.getWinners(sessionId, accessToken, hash);
+    return longPollingService.getWinners(sessionId, accessToken, hash);
   }
 
   // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////

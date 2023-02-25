@@ -27,6 +27,7 @@
           </option>
           <option name="goals">
             <list>
+              <option value="clean" />
               <option value="compile" />
               <option value="javafx:run" />
               <option value="-Dcheckstyle.skip" />

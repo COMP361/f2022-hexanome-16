@@ -17,7 +17,7 @@
         <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
         <checkstyle.version>10.3.4</checkstyle.version>
 
-        <maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.compiler.version>3.1</maven.compiler.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jfx.maven.version>0.0.5</jfx.maven.version>
 
@@ -27,12 +27,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.hexanome16</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
@@ -94,6 +88,13 @@
             <artifactId>commons-codec</artifactId>
             <version>1.15</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.hexanome16.shared</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -102,9 +103,6 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
-                <configuration>
-                    <release>${source.version}</release>
-                </configuration>
             </plugin>
 
             <plugin>

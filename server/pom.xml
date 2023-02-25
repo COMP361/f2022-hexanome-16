@@ -23,13 +23,20 @@
         <docker.javadoc.skip>false</docker.javadoc.skip>
         <docker.test.skip>false</docker.test.skip>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>com.hexanome16</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0</version>
-        </dependency>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -84,18 +91,13 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.14</version>
         </dependency>
+        <dependency>
+            <groupId>com.hexanome16.shared</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <resources>
