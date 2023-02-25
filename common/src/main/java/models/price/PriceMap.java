@@ -1,11 +1,11 @@
 package models.price;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import deserializers.PriceMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import util.deserializers.PriceMapDeserializer;
 
 /**
  * Holds the token price for a development card.

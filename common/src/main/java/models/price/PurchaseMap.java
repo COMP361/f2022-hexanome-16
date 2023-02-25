@@ -3,10 +3,10 @@ package models.price;
 import static java.util.Objects.hash;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import deserializers.PurchaseMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
 import lombok.Getter;
-import util.deserializers.PurchaseMapDeserializer;
 
 
 /**
