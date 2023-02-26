@@ -3,6 +3,7 @@ WORKDIR /app/common
 
 # Build common module
 COPY common/pom.xml .
+COPY common/src ./src
 RUN mvn install
 
 WORKDIR /app/server
