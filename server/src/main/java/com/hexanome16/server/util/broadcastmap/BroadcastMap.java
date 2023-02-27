@@ -7,14 +7,16 @@ import dto.PlayerJson;
 import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import models.Level;
 
 /**
  * This class is used to manage the broadcast content.
  */
 public class BroadcastMap {
-  private final HashMap<BroadcastMapKey, BroadcastContentManager<BroadcastContent>> broadcastMap;
+  private final Map<BroadcastMapKey, BroadcastContentManager<BroadcastContent>> broadcastMap;
 
   /**
    * Default constructor.
@@ -22,12 +24,12 @@ public class BroadcastMap {
    * @param game The game.
    */
   public BroadcastMap(Game game) {
-    broadcastMap = new HashMap<>();
+    Map<BroadcastMapKey, BroadcastContentManager<BroadcastContent>> map = new HashMap<>();
     try {
       for (Level level : Level.values()) {
         BroadcastContentManager<BroadcastContent> broadcastContentManager =
             new BroadcastContentManager<>(new DeckHash(game, level));
-        broadcastMap.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
+        map.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
       }
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(
@@ -35,13 +37,14 @@ public class BroadcastMap {
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
-          new BroadcastContentManager<>(new NoblesHash(game));
-      broadcastMap.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
-      broadcastMap.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
-      broadcastMap.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
+          new BroadcastContentManager<>(new NoblesHash(game.getNobleDeck()));
+      map.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
+      map.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
+      map.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
     } catch (Exception e) {
       e.printStackTrace();
     }
+    broadcastMap = Collections.unmodifiableMap(map);
   }
 
   /**
@@ -62,10 +65,9 @@ public class BroadcastMap {
    */
   public void updateValue(BroadcastMapKey key, BroadcastContent value) {
     Class<? extends BroadcastContent> valueClass = key.getAssocClass();
-    BroadcastContentManager<BroadcastContent> manager = broadcastMap.get(key);
     if (!valueClass.equals(value.getClass())) {
       throw new IllegalArgumentException("Invalid update value");
     }
-    manager.updateBroadcastContent(value);
+    broadcastMap.get(key).updateBroadcastContent(value);
   }
 }

@@ -1,79 +1,103 @@
 package com.hexanome16.client.requests;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
+import kong.unirest.GetRequest;
+import kong.unirest.HttpRequestWithBody;
+import kong.unirest.ObjectMapper;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestInstance;
+import kong.unirest.jackson.JacksonObjectMapper;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * This class provides an HTTP client to send requests to the backend/Lobby Service.
  */
 public class RequestClient {
-
-  private static final HttpClient client = HttpClient.newBuilder()
-      .version(HttpClient.Version.HTTP_1_1)
-      .connectTimeout(Duration.ofDays(1))
-      .build();
+  private static final ObjectMapper objectMapper = new JacksonObjectMapper();
+  public static final int TIMEOUT = 60;
 
   private RequestClient() {
     super();
+    Unirest.config().concurrency(10, 1).setObjectMapper(objectMapper)
+        .setDefaultHeader("Accept", "application/json")
+        .setDefaultResponseEncoding("UTF-8");
   }
 
   /**
-   * Gets client.
+   * Returns the instance of the HTTP Unirest client.
    *
-   * @return the client
+   * @return client instance
    */
-  public static HttpClient getClient() {
-    return client;
+  public static UnirestInstance getClient() {
+    return Unirest.primaryInstance();
+  }
+
+  /**
+   * Same as {@link #longPoll(GetRequest, Class)} but also returns the hash code of the response.
+   *
+   * @param <T>     The type of the response.
+   * @param request The request to send.
+   * @param classT  The class of the response.
+   * @return (response hash code, response body as T) pair
+   */
+  public static <T extends BroadcastContent> Pair<String, T> longPollWithHash(GetRequest request,
+                                                                              Class<T> classT) {
+    T response = longPoll(request, classT);
+    return new Pair<>(DigestUtils.md5Hex(objectMapper.writeValue(response)), response);
   }
 
   /**
    * Sends a request using long polling.
    *
+   * @param <T>     The type of the response.
    * @param request The request to send.
-   * @return (response hash code, response body as string) pair
+   * @param classT  The class of the response.
+   * @return The response body as T.
    */
-  public static Pair<String, String> longPollWithHash(HttpRequest request) {
-    String response = longPoll(request);
-    return new Pair<>(DigestUtils.md5Hex(response), response);
+  @SneakyThrows
+  public static <T extends BroadcastContent> T longPoll(GetRequest request, Class<T> classT) {
+    AtomicReference<T> res = new AtomicReference<>(null);
+    AtomicBoolean gotResponse = new AtomicBoolean(false);
+    while (!gotResponse.get()) {
+      request.asObjectAsync(classT).get(TIMEOUT, TimeUnit.SECONDS).ifSuccess(response -> {
+        res.set(response.getBody());
+        gotResponse.set(true);
+      }).ifFailure(e -> {
+        switch (e.getStatus()) {
+          case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+            TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+            request.queryString("access_token", AuthUtils.getAuth().getAccessToken());
+            res.set(longPoll(request, classT));
+          }
+          case HTTP_CLIENT_TIMEOUT -> gotResponse.set(false);
+          default -> throw new RuntimeException("Unexpected response code: " + e.getStatus());
+        }
+      });
+    }
+    return res.get();
   }
 
   /**
-   * Long polling but no need to hash result.
+   * Creates a request for the specified destination.
    *
-   * @param request http request to send
-   * @return response as string
+   * @param method The HTTP method to use for the request.
+   * @param dest   The destination for the request.
+   * @param path   The path to use for the request.
+   * @return The request object.
    */
-  public static String longPoll(HttpRequest request) {
-    String response = "";
-    AtomicInteger returnCode = new AtomicInteger(408);
-    while (returnCode.get() == 408) {
-      try {
-        CompletableFuture<HttpResponse<String>> res =
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        response = res.thenApply(HttpResponse::statusCode)
-            .thenCombine(res.thenApply(HttpResponse::body), (statusCode, body) -> {
-              if (statusCode == 200) {
-                returnCode.set(200);
-              } else if (statusCode >= 400 && statusCode <= 403) {
-                TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-              }
-              return body;
-            }).get();
-      } catch (ExecutionException e) {
-        e.printStackTrace();
-      } catch (InterruptedException e) {
-        System.out.println("Interrupted long polling");
-      }
-    }
-    return response;
+  public static HttpRequestWithBody request(RequestMethod method, RequestDest dest, String path) {
+    return Unirest.request(method.name(), dest.getUrl() + path);
   }
 }

@@ -3,8 +3,8 @@ package com.hexanome16.server.dto;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import dto.CardJson;
 import dto.NobleJson;
 import dto.PlayerJson;
@@ -18,11 +18,12 @@ import org.junit.jupiter.api.Test;
  */
 public class DtoTest {
 
-  private final Game game = new Game(12345, new Player[]{}, "", "", new BaseWinCondition());
+  private final Game game =
+      new Game(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE});
 
   private final DeckHash deckHash = new DeckHash(game, Level.ONE);
 
-  private final NoblesHash noblesHash = new NoblesHash(game);
+  private final NoblesHash noblesHash = new NoblesHash(game.getNobleDeck());
 
   private final PlayerJson playerJson = new PlayerJson("player");
 

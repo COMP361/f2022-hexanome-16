@@ -3,7 +3,6 @@ package com.hexanome16.server.services.longpolling;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
+import util.CustomHttpResponses;
 
 /**
  * Service for long polling requests.

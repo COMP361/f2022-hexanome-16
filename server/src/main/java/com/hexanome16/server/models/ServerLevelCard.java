@@ -1,18 +1,15 @@
 package com.hexanome16.server.models;
 
 import lombok.Getter;
-import models.CardInfo;
 import models.Level;
+import models.LevelCard;
 import models.price.PriceInterface;
 
 /**
  * Card instead of noble.
  */
 @Getter
-public class LevelCard implements Reservable {
-  private final Level level;
-  private final CardInfo cardInfo;
-  private boolean faceDown;
+public class ServerLevelCard extends LevelCard implements InventoryAddable, Reservable {
 
   /**
    * Instantiates a new Level card.
@@ -23,11 +20,9 @@ public class LevelCard implements Reservable {
    * @param price         the price
    * @param level         the level
    */
-  public LevelCard(int id, int prestigePoint, String texturePath, PriceInterface price,
-                   Level level) {
-    cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
-    this.level = level;
-    this.faceDown = true;
+  public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceInterface price,
+                         Level level) {
+    super(level, id, prestigePoint, texturePath, price);
   }
 
   @Override
@@ -38,15 +33,6 @@ public class LevelCard implements Reservable {
   @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
-  }
-
-  /**
-   * Change this card's orientation.
-   *
-   * @param isFaceDown is this card facing down?
-   */
-  public void setIsFaceDown(boolean isFaceDown) {
-    this.faceDown = isFaceDown;
   }
 
 }

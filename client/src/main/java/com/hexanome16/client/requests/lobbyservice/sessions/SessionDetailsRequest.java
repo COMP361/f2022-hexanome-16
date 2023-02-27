@@ -1,11 +1,11 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
-import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpRequest;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
+import dto.SessionJson;
 import javafx.util.Pair;
-import models.sessions.Session;
+import kong.unirest.GetRequest;
 
 /**
  * This class provides methods to get details about a session in Lobby Service.
@@ -22,15 +22,11 @@ public class SessionDetailsRequest {
    * @param hash      A hashcode used for long polling (check session details have changed)
    * @return The session details.
    */
-  public static Pair<String, Session> execute(long sessionId, String hash) {
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(UrlUtils.createLobbyServiceUri(
-            "/api/sessions" + sessionId,
-            hash == null || hash.isBlank() ? null : "hash=" + hash
-        )).header("Content-Type", "application/json")
-        .GET()
-        .build();
-    Pair<String, String> response = RequestClient.longPollWithHash(request);
-    return new Pair<>(response.getKey(), new Gson().fromJson(response.getValue(), Session.class));
+  public static Pair<String, SessionJson> execute(long sessionId, String hash) {
+    GetRequest request = (GetRequest) RequestClient.request(
+        RequestMethod.GET, RequestDest.LS, "/api/sessions/{sessionId}")
+        .routeParam("sessionId", String.valueOf(sessionId))
+        .queryString("hash", hash);
+    return RequestClient.longPollWithHash(request, SessionJson.class);
   }
 }

@@ -14,17 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of {@link Player}.
+ * Test of {@link ServerPlayer}.
  */
-public class PlayerTest {
-  private Player costa;
+public class ServerPlayerTest {
+  private ServerPlayer costa;
 
   /**
    * Test initializer for all the tests.
    */
   @BeforeEach
   public void init() {
-    costa = new Player("costa", "#000000");
+    costa = new ServerPlayer("costa", "#000000");
   }
 
   /**

@@ -1,7 +1,9 @@
 package com.hexanome16.server.util;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
+import util.CustomHttpResponses;
 
 /**
  * Static factory for accessing pre-generated Error Responses.
@@ -18,7 +20,7 @@ public class CustomResponseFactory {
    * @return the response entity
    */
   public static ResponseEntity<String> getErrorResponse(CustomHttpResponses errorType) {
-    return new ResponseEntity<>(errorType.getBody(), errorType.getStatus());
+    return new ResponseEntity<>(errorType.getBody(), HttpStatus.valueOf(errorType.getStatus()));
   }
 
   /**
@@ -51,7 +53,7 @@ public class CustomResponseFactory {
    */
   public static ResponseEntity<String> getCustomErrorResponse(CustomHttpResponses errorType,
                                                               String body) {
-    return new ResponseEntity<>(body, errorType.getStatus());
+    return new ResponseEntity<>(body, HttpStatus.valueOf(errorType.getStatus()));
   }
 
   /**

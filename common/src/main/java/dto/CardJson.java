@@ -18,4 +18,9 @@ import lombok.ToString;
 public class CardJson extends BonusJson {
   private String level;
   private int prestigePoint;
+
+  @Override
+  public boolean isEmpty() {
+    return super.isEmpty() && (level == null || level.isBlank());
+  }
 }

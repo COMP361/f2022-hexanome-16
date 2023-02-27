@@ -10,14 +10,6 @@
     <packaging>jar</packaging>
     <name>common</name>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/COMP361/f2022-hexanome-16</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

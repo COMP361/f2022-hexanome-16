@@ -13,7 +13,8 @@ public class InventoryAddableAndReservableTests {
   private final PriceMap priceMap = new PriceMap(1, 2, 3, 4, 5);
 
 
-  private final LevelCard levelCard = new LevelCard(0, 1, "texture.png", priceMap, Level.ONE);
+  private final ServerLevelCard levelCard = new ServerLevelCard(0, 1, "texture.png", priceMap,
+      Level.ONE);
 
   private final Noble noble = new Noble(0, 3, "texture.png", priceMap);
 

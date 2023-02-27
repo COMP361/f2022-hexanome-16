@@ -1,14 +1,18 @@
 package com.hexanome16.client.requests.lobbyservice.user;
 
-import com.google.gson.Gson;
+import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import kong.unirest.json.JSONObject;
+import lombok.SneakyThrows;
 
 /**
  * This class provides methods to change the password of the user.
@@ -26,48 +30,24 @@ public class ChangePasswordRequest {
    * @param oldPassword The old password of the user.
    * @param newPassword The new password of the user.
    */
+  @SneakyThrows
   public static void execute(String accessToken, String user, String oldPassword,
                              String newPassword) {
-    HttpClient client = RequestClient.getClient();
-    try {
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createLobbyServiceUri(
-              "/api/users/" + user,
-              "access_token=" + accessToken
-          )).header("Content-Type", "application/json")
-          .POST(HttpRequest.BodyPublishers.ofString(
-              new Gson().toJson(new Payload(oldPassword, newPassword))
-          )).build();
-      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::statusCode).get();
-      if (statusCode >= 400 && statusCode <= 403) {
-        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-        execute(AuthUtils.getAuth().getAccessToken(), user, oldPassword, newPassword);
-      }
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private static class Payload {
-    /**
-     * The player's old password.
-     */
-    String oldPassword;
-    /**
-     * The player's new password.
-     */
-    String nextPassword;
-
-    /**
-     * Instantiates a new Payload.
-     *
-     * @param oldPassword the old password
-     * @param newPassword the new password
-     */
-    public Payload(String oldPassword, String newPassword) {
-      this.oldPassword = oldPassword;
-      this.nextPassword = newPassword;
-    }
+    RequestClient.request(RequestMethod.POST, RequestDest.LS, "/api/users/{user}")
+        .routeParam("user", user)
+        .queryString("access_token", accessToken)
+        .body(new JSONObject().put("oldPassword", oldPassword)
+            .put("nextPassword", newPassword).toString())
+        .asEmptyAsync()
+        .get(TIMEOUT, TimeUnit.SECONDS)
+        .ifFailure(e -> {
+          switch (e.getStatus()) {
+            case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+              TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+              execute(AuthUtils.getAuth().getAccessToken(), user, oldPassword, newPassword);
+            }
+            default -> { /* Do nothing */ }
+          }
+        });
   }
 }
