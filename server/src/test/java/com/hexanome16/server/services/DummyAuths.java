@@ -1,9 +1,9 @@
 package com.hexanome16.server.services;
 
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class DummyAuths {
    *   {@code DummyAuths.tokensInfos.get(1)} to get the "elea" player
    * </pre>
    */
-  public static final List<Player> validPlayerList = List.of(PlayerDummies.validDummies);
+  public static final List<ServerPlayer> validPlayerList = List.of(PlayerDummies.validDummies);
 
   /**
    * Immutable static list of invalid players.
@@ -76,8 +76,8 @@ public class DummyAuths {
    *   {@code DummyAuths.tokensInfos.get(1)} to get the "el" player
    * </pre>
    */
-  public static final List<Player> invalidPlayerList =
-      List.of(new Player("imad", "#FFFFFF"), new Player("el", "#FFFFFF"));
+  public static final List<ServerPlayer> invalidPlayerList =
+      List.of(new ServerPlayer("imad", "#FFFFFF"), new ServerPlayer("el", "#FFFFFF"));
 
   /**
    * Immutable static list of players in json format.
@@ -124,8 +124,8 @@ public class DummyAuths {
     try {
       validGames = Map.of(
           validSessionIds.get(0), new Game(validSessionIds.get(0),
-              validPlayerList.toArray(new Player[2]), validPlayerList.get(0).getName(),
-              "", new BaseWinCondition())
+              validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
+              "", new WinCondition[] {WinCondition.BASE})
       );
     } catch (IOException e) {
       throw new RuntimeException(e);

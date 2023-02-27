@@ -1,15 +1,14 @@
 package com.hexanome16.client.requests.lobbyservice.user;
 
-import com.google.gson.Gson;
+import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
+
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.user.User;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import lombok.SneakyThrows;
+import models.sessions.User;
 
 /**
  * This class provides methods to get details about a user in Lobby Service.
@@ -25,26 +24,14 @@ public class GetUserRequest {
    * @param user        The username of the user to get details about.
    * @param accessToken The access token of the user.
    */
+  @SneakyThrows
   public static void execute(String user, String accessToken) {
-    HttpClient client = RequestClient.getClient();
-    try {
-      URI uri = UrlUtils.createLobbyServiceUri(
-          "/api/users/" + user,
-          "access_token=" + accessToken
-      );
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(uri).header("Accept", "application/json")
-          .GET()
-          .build();
-      String response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::body).get();
-      AuthUtils.setPlayer(new Gson().fromJson(response, User.class));
-      if (AuthUtils.getPlayer().getName() == null) {
-        AuthUtils.setPlayer(null);
-      }
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-      AuthUtils.setPlayer(null);
-    }
+    RequestClient.request(RequestMethod.GET, RequestDest.LS, "/api/users/{user}")
+        .routeParam("user", user)
+        .queryString("access_token", accessToken)
+        .asObjectAsync(User.class)
+        .get(TIMEOUT, TimeUnit.SECONDS)
+        .ifSuccess(response -> AuthUtils.setPlayer(response.getBody()))
+        .ifFailure(e -> AuthUtils.setPlayer(null));
   }
 }

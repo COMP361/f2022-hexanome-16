@@ -1,24 +1,22 @@
 package com.hexanome16.server.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import lombok.Data;
+import lombok.Getter;
+import models.Player;
 import models.price.PurchaseMap;
 import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
  */
-@Data
-public class Player {
-  private final String name;
-  private final String preferredColour;
+@Getter
+public class ServerPlayer extends Player {
   private Inventory inventory; // the player has an inventory, not a bank
-  private Queue<Action> queueOfCascadingActionTypes;
+  private final Queue<Action> queueOfCascadingActionTypes;
 
   /**
    * Player Constructor.
@@ -26,10 +24,8 @@ public class Player {
    * @param name            name of the player.
    * @param preferredColour preferred color of the player.
    */
-  @JsonCreator
-  public Player(String name, String preferredColour) {
-    this.name = name;
-    this.preferredColour = preferredColour;
+  public ServerPlayer(String name, String preferredColour) {
+    super(name, preferredColour);
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
   }

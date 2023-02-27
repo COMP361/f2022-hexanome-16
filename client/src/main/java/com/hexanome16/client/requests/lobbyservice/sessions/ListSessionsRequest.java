@@ -1,12 +1,12 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
-import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.URI;
-import java.net.http.HttpRequest;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Map;
 import javafx.util.Pair;
+import kong.unirest.GetRequest;
 import models.sessions.Session;
 
 /**
@@ -24,22 +24,15 @@ public class ListSessionsRequest {
    * @return An array of sessions in Lobby Service.
    */
   public static Pair<String, Session[]> execute(String hash) {
-    URI uri = UrlUtils.createLobbyServiceUri(
-        "/api/sessions",
-        hash == null || hash.isBlank() ? null : "hash=" + hash
-    );
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(uri)
-        .header("Content-Type", "application/json")
-        .GET()
-        .build();
-    Pair<String, String> response = RequestClient.longPollWithHash(request);
-    Response res = new Gson().fromJson(response.getValue(), Response.class);
-    if (res == null || res.sessions == null) {
+    GetRequest request = (GetRequest) RequestClient.request(
+        RequestMethod.GET, RequestDest.LS, "/api/sessions")
+        .queryString("hash", hash);
+    Pair<String, Response> sessionMap = RequestClient.longPollWithHash(request, Response.class);
+    if (sessionMap.getValue() == null || sessionMap.getValue().sessions == null) {
       return new Pair<>("", null);
     }
-    Map<String, Session> sessions = res.sessions;
-    return new Pair<>(response.getKey(), sessions.entrySet().stream().map(entry -> {
+    Map<String, Session> sessions = sessionMap.getValue().sessions;
+    return new Pair<>(sessionMap.getKey(), sessions.entrySet().stream().map(entry -> {
       Session session = entry.getValue();
       return new Session(Long.valueOf(entry.getKey()), session.getCreator(),
           session.getGameParameters(), session.isLaunched(), session.getPlayers(),
@@ -47,10 +40,15 @@ public class ListSessionsRequest {
     }).toArray(Session[]::new));
   }
 
-  private static class Response {
+  private static class Response implements BroadcastContent {
     /**
      * Map of sessions.
      */
     public Map<String, Session> sessions;
+
+    @Override
+    public boolean isEmpty() {
+      return sessions == null || sessions.isEmpty();
+    }
   }
 }

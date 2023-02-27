@@ -1,5 +1,6 @@
 package dto;
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class NobleJson extends DevelopmentCardJson {
+public class NobleJson extends DevelopmentCardJson implements BroadcastContent {
   private int prestigePoint;
 }

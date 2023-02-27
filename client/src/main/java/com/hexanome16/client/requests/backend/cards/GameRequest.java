@@ -1,9 +1,14 @@
 package com.hexanome16.client.requests.backend.cards;
 
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UrlUtils;
+import dto.NobleJson;
 import java.net.http.HttpRequest;
+import kong.unirest.GetRequest;
+import kong.unirest.HttpRequestWithBody;
 import models.Level;
 
 /**
@@ -19,16 +24,13 @@ public class GameRequest {
    * @param hash      the hash
    * @return string representation of deck.
    */
-  public static String updateDeck(long sessionId, Level level, String hash) {
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/deck",
-            "level=" + level.name() + "&accessToken=" + AuthUtils.getAuth().getAccessToken()
-                + "&hash=" + hash
-        )).header("Content-Type", "application/json")
-        .GET()
-        .build();
-    return RequestClient.longPoll(request);
+  public static NobleJson updateDeck(long sessionId, Level level, String hash) {
+    GetRequest request = (GetRequest) RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
+            "/api/games/" + sessionId + "/deck")
+        .queryString("level", level.name())
+        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
+        .queryString("hash", hash);
+    return RequestClient.longPoll(request, NobleJson.class);
   }
 
   /**

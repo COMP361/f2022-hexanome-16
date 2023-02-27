@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import models.Level;
+import models.LevelCard;
 import models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,7 @@ public class InventoryTests {
   private Inventory inventory;
 
   /* fields we are using */
-  private LevelCard levelCard;
+  private ServerLevelCard levelCard;
   private Noble noble;
 
   /**
@@ -41,7 +42,7 @@ public class InventoryTests {
   @DisplayName("Acquire a Level Card successfully")
   void testAcquireCard() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
   }
@@ -55,7 +56,7 @@ public class InventoryTests {
   void testReserveFaceUp() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully
@@ -74,8 +75,8 @@ public class InventoryTests {
   void testReserveFaceDown() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
-    levelCard.setIsFaceDown(false);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard.setFaceDown(false);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully

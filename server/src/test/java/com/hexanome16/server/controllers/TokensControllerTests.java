@@ -8,15 +8,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.token.TokenService;
+import dto.SessionJson;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,12 +47,12 @@ public class TokensControllerTests {
     tokenService = Mockito.mock(TokenService.class);
     tokensController =
         new TokensController(tokenService);
-    payload.setPlayers(new Player[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
+    payload.setPlayers(new ServerPlayer[] {
+        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
+        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
-    payload.setWinCondition(new BaseWinCondition());
+    payload.setGameServer(WinCondition.BASE.getAssocServerName());
     try {
       Game game1 = new Game(DummyAuths.validSessionIds.get(0), payload);
       Game game2 = new Game(DummyAuths.validSessionIds.get(1), payload);

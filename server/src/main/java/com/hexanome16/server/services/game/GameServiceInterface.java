@@ -2,7 +2,7 @@ package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.ServerPlayer;
 import lombok.NonNull;
 import models.price.PurchaseMap;
 import org.apache.commons.lang3.tuple.Pair;
@@ -97,7 +97,7 @@ public interface GameServiceInterface {
    * @param username name of player.
    * @return Player with that username in that game, null if no such player.
    */
-  Player findPlayerByName(@NonNull Game game, String username);
+  ServerPlayer findPlayerByName(@NonNull Game game, String username);
 
   /**
    * Finds player with that authentication token in the game.
@@ -106,7 +106,7 @@ public interface GameServiceInterface {
    * @param accessToken token associated to player
    * @return player with that token, null if no such player
    */
-  Player findPlayerByToken(@NonNull Game game, String accessToken);
+  ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
@@ -125,8 +125,8 @@ public interface GameServiceInterface {
    * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
-  Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(long sessionId,
-                                                                              String authToken);
+  Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
+      long sessionId, String authToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
@@ -145,8 +145,8 @@ public interface GameServiceInterface {
    * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
-  Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
-                                                                String authToken);
+  Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(long sessionId,
+                                                                      String authToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists,

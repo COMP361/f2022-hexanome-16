@@ -1,6 +1,7 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
 import com.hexanome16.server.models.sessions.ServerGameParams;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
@@ -30,7 +31,6 @@ public class GameServiceController {
 
   private final AuthServiceInterface authService;
   private final UrlUtils urlUtils;
-  private final ServerGameParams serverGameParams;
   @Value("${gs.username}")
   private String gsUsername;
   @Value("${gs.password}")
@@ -42,26 +42,35 @@ public class GameServiceController {
    * @param restTemplateBuilder The RestTemplateBuilder.
    * @param authService         The AuthController.
    * @param urlUtils            The UrlUtils.
-   * @param serverGameParams    The ServerGameParams.
    */
   public GameServiceController(@Autowired RestTemplateBuilder restTemplateBuilder,
                                @Autowired AuthServiceInterface authService,
-                               @Autowired UrlUtils urlUtils,
-                               @Autowired ServerGameParams serverGameParams) {
+                               @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authService = authService;
-    this.serverGameParams = serverGameParams;
+  }
+
+  /**
+   * This method creates the game services in Lobby Service when the application is ready.
+   */
+  @EventListener(ApplicationReadyEvent.class)
+  public void createGameServices() {
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.BASE.getAssocServerName(), "Orient", "true"));
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.TRADEROUTES.getAssocServerName(), "Orient + Trade Routes", "true"));
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.CITIES.getAssocServerName(), "Orient + Cities", "true"));
   }
 
   /**
    * This method registers this server as a game service in Lobby Service.
-   * It is called at the startup of the server.
    *
+   * @param serverGameParams the server game params
    * @return the response entity
    */
-  @EventListener(ApplicationReadyEvent.class)
-  public ResponseEntity<Void> createGameService() {
+  public ResponseEntity<Void> createGameService(ServerGameParams serverGameParams) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri(

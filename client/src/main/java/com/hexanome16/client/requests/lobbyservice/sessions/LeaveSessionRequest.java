@@ -1,13 +1,17 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
+import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+
 import com.hexanome16.client.requests.RequestClient;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import lombok.SneakyThrows;
 
 /**
  * This class provides methods to leave a session in Lobby Service.
@@ -24,24 +28,23 @@ public class LeaveSessionRequest {
    * @param player      The user to remove from the session (must exist in the session).
    * @param accessToken The access token of the user.
    */
+  @SneakyThrows
   public static void execute(long sessionId, String player, String accessToken) {
-    HttpClient client = RequestClient.getClient();
-    try {
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createLobbyServiceUri(
-              "/api/sessions/" + sessionId + "/players/" + player,
-              "access_token=" + accessToken
-          )).DELETE()
-          .build();
-      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.discarding())
-          .thenApply(HttpResponse::statusCode)
-          .get();
-      if (statusCode >= 400 && statusCode <= 403) {
-        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-        execute(sessionId, player, AuthUtils.getAuth().getAccessToken());
-      }
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-    }
+    RequestClient.request(RequestMethod.DELETE, RequestDest.LS,
+            "/api/sessions/{sessionId}/players/{player}")
+        .routeParam("sessionId", String.valueOf(sessionId))
+        .routeParam("player", player)
+        .queryString("access_token", accessToken)
+        .asEmptyAsync()
+        .get(TIMEOUT, TimeUnit.SECONDS)
+        .ifFailure(e -> {
+          switch (e.getStatus()) {
+            case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+              TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+              execute(sessionId, player, AuthUtils.getAuth().getAccessToken());
+            }
+            default -> { /* Do nothing */ }
+          }
+        });
   }
 }

@@ -3,11 +3,10 @@ package com.hexanome16.server.services.token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.ArrayList;
 import models.price.Gem;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import util.CustomHttpResponses;
 
 /**
  * Service is responsible for managing taking tokens requests from
@@ -81,7 +81,7 @@ public class TokenService implements TokenServiceInterface {
       return validity;
     }
     Game currentGame = request.getRight().getLeft();
-    Player requestingPlayer = request.getRight().getRight();
+    ServerPlayer requestingPlayer = request.getRight().getRight();
 
     Gem desiredGem = Gem.getGem(tokenType);
 
@@ -106,7 +106,7 @@ public class TokenService implements TokenServiceInterface {
       return validity;
     }
     Game currentGame = request.getRight().getLeft();
-    Player requestingPlayer = request.getRight().getRight();
+    ServerPlayer requestingPlayer = request.getRight().getRight();
 
     Gem desiredGemOne = Gem.getGem(tokenTypeOne);
     Gem desiredGemTwo = Gem.getGem(tokenTypeTwo);

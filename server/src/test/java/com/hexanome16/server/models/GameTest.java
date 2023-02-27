@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import models.Level;
 import models.price.Gem;
@@ -30,8 +31,8 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  Player imad = new Player("imad", "white");
-  Player tristan = new Player("tristan", "blue");
+  ServerPlayer imad = new ServerPlayer("imad", "white");
+  ServerPlayer tristan = new ServerPlayer("tristan", "blue");
   private Game game;
 
   /**
@@ -42,7 +43,7 @@ public class GameTest {
   @BeforeEach
   public void init() throws IOException {
     game = new Game(12345,
-        new Player[] {imad, tristan}, "imad", "", new BaseWinCondition());
+        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[]{WinCondition.BASE});
   }
 
   /**
@@ -126,9 +127,9 @@ public class GameTest {
    */
   @Test
   public void testPlayerArrayGetsCloned() throws IOException {
-    Player[] players = new Player[] {imad, tristan};
+    ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
     game = new Game(12345,
-        players, "imad", "", new BaseWinCondition());
+        players, "imad", "", new WinCondition[]{WinCondition.BASE});
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
     players[0] = null;
@@ -168,8 +169,8 @@ public class GameTest {
    */
   @Test
   public void testRemoveOnBoardCard() {
-    List<LevelCard> cardList = game.getLevelDeck(Level.ONE).getCardList();
-    LevelCard card = cardList.get(0);
+    List<ServerLevelCard> cardList = game.getLevelDeck(Level.ONE).getCardList();
+    ServerLevelCard card = cardList.get(0);
     game.removeOnBoardCard(card);
     assertFalse(game.getOnBoardDeck(Level.ONE).getCardList().contains(card));
   }
@@ -180,7 +181,7 @@ public class GameTest {
   @Test
   public void testIncGameBank() {
     assertEquals(game.getGameBank(), new GameBank());
-    HashMap<Gem, Integer> myMap = new HashMap<Gem, Integer>();
+    HashMap<Gem, Integer> myMap = new HashMap<>();
     myMap.put(Gem.RUBY, 2);
     game.decGameBank(new PurchaseMap(myMap));
     GameBank myGameBank = new GameBank();

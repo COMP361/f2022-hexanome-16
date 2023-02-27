@@ -2,7 +2,7 @@ package com.hexanome16.server.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Noble;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
@@ -27,12 +27,12 @@ public class NoblesHash implements BroadcastContent {
   /**
    * Create noble MD5.
    *
-   * @param game current game
+   * @param nobleDeck the noble deck
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
-  public NoblesHash(Game game) throws JsonProcessingException {
+  public NoblesHash(Deck<Noble> nobleDeck) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    for (Noble noble : game.getOnBoardNobles().getCardList()) {
+    for (Noble noble : nobleDeck.getCardList()) {
       nobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
       allNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+import util.CustomHttpResponses;
 
 class CustomResponseFactoryTest {
 
@@ -19,7 +20,7 @@ class CustomResponseFactoryTest {
     var response = CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
 
     // Assert
-    assertEquals(status, response.getStatusCode());
+    assertEquals(status, response.getStatusCode().value());
     assertTrue(response.hasBody());
     assertEquals(body, response.getBody());
   }
@@ -35,7 +36,7 @@ class CustomResponseFactoryTest {
         CustomResponseFactory.getCustomErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO, body);
 
     // Assert
-    assertEquals(status, response.getStatusCode());
+    assertEquals(status, response.getStatusCode().value());
     assertTrue(response.hasBody());
     assertEquals(body, response.getBody());
   }
@@ -53,7 +54,7 @@ class CustomResponseFactoryTest {
 
     // Assert
     assertNotNull(result);
-    assertEquals(status, result.getStatusCode());
+    assertEquals(status, result.getStatusCode().value());
     assertTrue(result.hasBody());
     assertEquals(body, result.getBody());
   }
@@ -72,7 +73,7 @@ class CustomResponseFactoryTest {
 
     // Assert
     assertNotNull(result);
-    assertEquals(status, result.getStatusCode());
+    assertEquals(status, result.getStatusCode().value());
     assertTrue(result.hasBody());
     assertEquals(body, result.getBody());
   }

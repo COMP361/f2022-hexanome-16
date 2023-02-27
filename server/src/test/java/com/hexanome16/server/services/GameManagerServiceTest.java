@@ -7,12 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
+import dto.SessionJson;
 import java.lang.reflect.Field;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,10 +72,9 @@ class GameManagerServiceTest {
    * @return response of gameManagerService.createGame
    */
   private String createValidGame(long sessionId) {
-    WinCondition winCondition = new BaseWinCondition();
     SessionJson testJson =
         new SessionJson(PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(), "",
-            winCondition);
+            WinCondition.BASE.getAssocServerName());
     return gameManagerService.createGame(sessionId, testJson);
   }
 
