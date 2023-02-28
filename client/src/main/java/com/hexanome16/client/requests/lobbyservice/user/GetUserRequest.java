@@ -1,6 +1,7 @@
 package com.hexanome16.client.requests.lobbyservice.user;
 
 import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
+import static com.hexanome16.client.requests.RequestClient.mapObject;
 
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
@@ -29,7 +30,7 @@ public class GetUserRequest {
     RequestClient.request(RequestMethod.GET, RequestDest.LS, "/api/users/{user}")
         .routeParam("user", user)
         .queryString("access_token", accessToken)
-        .asObjectAsync(User.class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), User.class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(response -> AuthUtils.setPlayer(response.getBody()))
         .ifFailure(e -> AuthUtils.setPlayer(null));

@@ -5,19 +5,19 @@ import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
 import kong.unirest.HttpMethod;
 import kong.unirest.HttpRequestWithBody;
-import kong.unirest.ObjectMapper;
 import kong.unirest.Unirest;
-import kong.unirest.UnirestInstance;
-import kong.unirest.jackson.JacksonObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -25,23 +25,29 @@ import org.apache.commons.codec.digest.DigestUtils;
  * This class provides an HTTP client to send requests to the backend/Lobby Service.
  */
 public class RequestClient {
-  private static final ObjectMapper objectMapper = new JacksonObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
   public static final int TIMEOUT = 60;
 
   private RequestClient() {
     super();
-    Unirest.config().concurrency(10, 1).setObjectMapper(objectMapper)
+    Unirest.config()
         .setDefaultHeader("Accept", "application/json")
-        .setDefaultResponseEncoding("UTF-8");
+        .connectTimeout(TIMEOUT * 1000)
+        .setDefaultResponseEncoding("UTF-8")
+        .addShutdownHook(true);
   }
 
   /**
-   * Returns the instance of the HTTP Unirest client.
+   * Maps a string to an object of the given class.
    *
-   * @return client instance
+   * @param reader input reader
+   * @param classT class of the object
+   * @param <T> type of the object
+   * @return object of the given class
    */
-  public static UnirestInstance getClient() {
-    return Unirest.primaryInstance();
+  @SneakyThrows
+  public static <T> T mapObject(InputStreamReader reader, Class<T> classT) {
+    return objectMapper.readValue(reader, classT);
   }
 
   /**
@@ -52,10 +58,11 @@ public class RequestClient {
    * @param classT  The class of the response.
    * @return (response hash code, response body as T) pair
    */
+  @SneakyThrows
   public static <T extends BroadcastContent> Pair<String, T> longPollWithHash(
       HttpRequestWithBody request, Class<T> classT) {
     T response = longPoll(request, classT);
-    return new Pair<>(DigestUtils.md5Hex(objectMapper.writeValue(response)), response);
+    return new Pair<>(DigestUtils.md5Hex(objectMapper.writeValueAsString(response)), response);
   }
 
   /**
@@ -75,20 +82,23 @@ public class RequestClient {
     AtomicReference<T> res = new AtomicReference<>(null);
     AtomicBoolean gotResponse = new AtomicBoolean(false);
     while (!gotResponse.get()) {
-      request.asObjectAsync(classT).get(TIMEOUT, TimeUnit.SECONDS).ifSuccess(response -> {
-        res.set(response.getBody());
-        gotResponse.set(true);
-      }).ifFailure(e -> {
-        switch (e.getStatus()) {
-          case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
-            TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-            request.queryString("access_token", AuthUtils.getAuth().getAccessToken());
-            res.set(longPoll(request, classT));
-          }
-          case HTTP_CLIENT_TIMEOUT -> gotResponse.set(false);
-          default -> throw new RuntimeException("Unexpected response code: " + e.getStatus());
-        }
-      });
+      request.asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), classT))
+          .get(TIMEOUT, TimeUnit.SECONDS)
+          .ifSuccess(response -> {
+            res.set(response.getBody());
+            gotResponse.set(true);
+          })
+          .ifFailure(e -> {
+            switch (e.getStatus()) {
+              case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+                TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
+                request.queryString("access_token", AuthUtils.getAuth().getAccessToken());
+                res.set(longPoll(request, classT));
+              }
+              case HTTP_CLIENT_TIMEOUT -> gotResponse.set(false);
+              default -> throw new RuntimeException("Unexpected response code: " + e.getStatus());
+            }
+          });
     }
     return res.get();
   }
