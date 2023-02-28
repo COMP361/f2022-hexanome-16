@@ -83,9 +83,9 @@ public class LongPollingService implements LongPollingServiceInterface {
    */
   @Override
   public DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
-                                                                         String authToken,
-                                                                         BroadcastMapKey key,
-                                                                         String hash) {
+                                                                        String authToken,
+                                                                        BroadcastMapKey key,
+                                                                        String hash) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {

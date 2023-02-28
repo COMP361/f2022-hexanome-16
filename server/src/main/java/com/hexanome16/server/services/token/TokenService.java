@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
@@ -25,21 +24,17 @@ public class TokenService implements TokenServiceInterface {
 
   private final GameServiceInterface gameService;
   private final GameManagerServiceInterface gameManager;
-  private final AuthServiceInterface authService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * Constructor for the Token service Class.
    *
    * @param gameService Needed for getting games and such.
-   * @param authService Needed for player verification.
    * @param gameManager Game manager for fetching game instances
    */
   public TokenService(@Autowired GameServiceInterface gameService,
-                      @Autowired AuthServiceInterface authService,
                       @Autowired GameManagerServiceInterface gameManager) {
     this.gameService = gameService;
-    this.authService = authService;
     this.gameManager = gameManager;
   }
 

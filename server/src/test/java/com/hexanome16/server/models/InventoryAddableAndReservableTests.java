@@ -16,7 +16,7 @@ public class InventoryAddableAndReservableTests {
   private final ServerLevelCard levelCard = new ServerLevelCard(0, 1, "texture.png", priceMap,
       Level.ONE);
 
-  private final Noble noble = new Noble(0, 3, "texture.png", priceMap);
+  private final ServerNoble noble = new ServerNoble(0, 3, "texture.png", priceMap);
 
   private final Inventory inventory = new Inventory();
 

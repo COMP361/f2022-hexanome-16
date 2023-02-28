@@ -4,11 +4,9 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import dto.NobleJson;
-import java.net.http.HttpRequest;
-import kong.unirest.GetRequest;
-import kong.unirest.HttpRequestWithBody;
+import dto.DeckJson;
+import dto.NobleDeckJson;
+import dto.PlayerJson;
 import models.Level;
 
 /**
@@ -24,13 +22,12 @@ public class GameRequest {
    * @param hash      the hash
    * @return string representation of deck.
    */
-  public static NobleJson updateDeck(long sessionId, Level level, String hash) {
-    GetRequest request = (GetRequest) RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
+  public static DeckJson updateDeck(long sessionId, Level level, String hash) {
+    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
             "/api/games/" + sessionId + "/deck")
         .queryString("level", level.name())
         .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
-        .queryString("hash", hash);
-    return RequestClient.longPoll(request, NobleJson.class);
+        .queryString("hash", hash), DeckJson.class);
   }
 
   /**
@@ -40,16 +37,11 @@ public class GameRequest {
    * @param hash      long polling hash
    * @return noble json
    */
-  public static String updateNoble(long sessionId, String hash) {
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/nobles",
-            "&accessToken=" + AuthUtils.getAuth().getAccessToken()
-                + "&hash=" + hash
-        )).header("Content-Type", "application/json")
-        .GET()
-        .build();
-    return RequestClient.longPoll(request);
+  public static NobleDeckJson updateNoble(long sessionId, String hash) {
+    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
+            "/api/games/" + sessionId + "/nobles")
+        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
+        .queryString("hash", hash), NobleDeckJson.class);
   }
 
   /**
@@ -59,15 +51,10 @@ public class GameRequest {
    * @param hash      long polling hash
    * @return current player username
    */
-  public static String updateCurrentPlayer(long sessionId, String hash) {
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(UrlUtils.createGameServerUri(
-            "/api/games/" + sessionId + "/player",
-            "&accessToken=" + AuthUtils.getAuth().getAccessToken()
-                + "&hash=" + hash
-        )).header("Content-Type", "application/json")
-        .GET()
-        .build();
-    return RequestClient.longPoll(request);
+  public static PlayerJson updateCurrentPlayer(long sessionId, String hash) {
+    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
+            "/api/games/" + sessionId + "/player")
+        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
+        .queryString("hash", hash), PlayerJson.class);
   }
 }

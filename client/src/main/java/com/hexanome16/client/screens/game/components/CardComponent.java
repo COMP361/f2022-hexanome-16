@@ -39,7 +39,6 @@ public class CardComponent extends Component {
    */
   public static CardComponent[] red_level_three_grid = new CardComponent[2];
   public final Level level;
-  private final boolean purchased = false;
   private final String cardHash;
   private final PriceMap priceMap;
   /**
@@ -111,17 +110,25 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
-    switch (level) {
-      case ONE -> addToMat(level_one_grid);
-      case TWO -> addToMat(level_two_grid);
-      case THREE -> addToMat(level_three_grid);
-      case REDONE -> addToMat(red_level_one_grid);
-      case REDTWO -> addToMat(red_level_two_grid);
-      case REDTHREE -> addToMat(red_level_three_grid);
-      default -> throw new IllegalArgumentException("Problem adding cards to the mat.");
-    }
+    addToMat(getGrid(level));
   }
 
+  /**
+   * Returns the card grid for the given level.
+   *
+   * @param level level
+   * @return card grid
+   */
+  public static CardComponent[] getGrid(Level level) {
+    return switch (level) {
+      case ONE -> level_one_grid;
+      case TWO -> level_two_grid;
+      case THREE -> level_three_grid;
+      case REDONE -> red_level_one_grid;
+      case REDTWO -> red_level_two_grid;
+      case REDTHREE -> red_level_three_grid;
+    };
+  }
 
   private void pop() {
     position.setScaleX(0.18);

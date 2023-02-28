@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
@@ -34,9 +33,7 @@ public class TokenServiceTests {
       new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
           JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
-  private DummyAuthService dummyAuthService;
   private GameServiceInterface gameService;
-  private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
 
   /**
@@ -46,11 +43,10 @@ public class TokenServiceTests {
    */
   @BeforeEach
   void setup() throws JsonProcessingException {
-    dummyAuthService = new DummyAuthService();
-    gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
+    GameManagerServiceInterface gameManagerMock =
+        DummyGameManagerService.getDummyGameManagerService();
     gameService = DummyGameService.getDummyGameService();
-    tokensService =
-        new TokenService(gameService, dummyAuthService, gameManagerMock);
+    tokensService = new TokenService(gameService, gameManagerMock);
 
     payload.setPlayers(new ServerPlayer[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),

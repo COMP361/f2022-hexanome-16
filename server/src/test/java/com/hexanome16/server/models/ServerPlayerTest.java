@@ -73,9 +73,9 @@ public class ServerPlayerTest {
     costa.addNobleListToPerform(
         new ArrayList<>(
             List.of(
-                new Noble(123, 3, "idk",
+                new ServerNoble(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1)),
-                new Noble(123, 3, "idk",
+                new ServerNoble(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
                 )
         ));

@@ -3,9 +3,8 @@ package com.hexanome16.server.models;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
 import lombok.Getter;
-import models.LevelCard;
+import models.Noble;
 
 /**
  * Player inventory class.
@@ -33,6 +32,7 @@ public class Inventory {
   }
 
   /* add methods ******************************************************************************/
+
   /**
    * Acquire card.
    *

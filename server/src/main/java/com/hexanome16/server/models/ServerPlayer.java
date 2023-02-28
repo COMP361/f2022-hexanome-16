@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
+import models.Noble;
 import models.Player;
 import models.price.PurchaseMap;
 import org.springframework.http.ResponseEntity;
@@ -158,7 +159,6 @@ public class ServerPlayer extends Player {
 
   /**
    * Adds Take Two as an action that needs to be performed.
-   *
    */
   public void addTakeTwoToPerform() {
     getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "take-level-two").build());

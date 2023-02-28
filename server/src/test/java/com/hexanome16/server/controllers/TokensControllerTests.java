@@ -53,12 +53,8 @@ public class TokensControllerTests {
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setGameServer(WinCondition.BASE.getAssocServerName());
-    try {
-      Game game1 = new Game(DummyAuths.validSessionIds.get(0), payload);
-      Game game2 = new Game(DummyAuths.validSessionIds.get(1), payload);
-    } catch (IOException e) {
-      fail("Game creation failed");
-    }
+    Game game1 = Game.create(DummyAuths.validSessionIds.get(0), payload);
+    Game game2 = Game.create(DummyAuths.validSessionIds.get(1), payload);
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload)).thenReturn(
         "success");

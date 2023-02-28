@@ -2,14 +2,9 @@ package com.hexanome16.client.requests.lobbyservice.oauth;
 
 import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
 
-import com.google.gson.Gson;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.SneakyThrows;

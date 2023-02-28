@@ -3,7 +3,6 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewpr
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
@@ -11,16 +10,15 @@ import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import models.LevelCard;
 
 /**
  * A class responsible for populating See Own reserved Cards prompt.
@@ -36,21 +34,18 @@ public class SeeReserved extends SeeReservedAbstract {
    */
   public static void fetchReservedCards(String player) {
     // make a call to the server
-    String response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
+    LevelCard[] response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
         player, AuthUtils.getAuth().getAccessToken());
     // are these my cards?
     boolean myCards = AuthUtils.getPlayer().getName().equals(player);
-    // convert it to a list of maps
-    Gson myGson = new Gson();
-    List<Map<String, Object>> cards = myGson.fromJson(response, List.class);
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
-    for (Map<String, Object> card : cards) {
+    for (LevelCard card : response) {
       // my cards are always face up
-      if (myCards || !(boolean) card.get("faceDown")) {
-        cardTexturePaths.add(card.get("texturePath") + ".png");
+      if (myCards || !card.isFaceDown()) {
+        cardTexturePaths.add(card.getCardInfo().texturePath() + ".png");
       } else {
-        cardTexturePaths.add("level_" + ((String) card.get("level")).toLowerCase() + ".png");
+        cardTexturePaths.add("level_" + card.getLevel().name().toLowerCase() + ".png");
       }
     }
   }
@@ -104,9 +99,9 @@ public class SeeReserved extends SeeReservedAbstract {
     card.setFitHeight(atCardHeight);
     return card;
   }
-  
-  // ************************************************************* 
-  
+
+  // *************************************************************
+
   @Override
   protected void promptOpened() {
     assert (hiddenCards + viewAbleCards.size()) < 3;
@@ -122,9 +117,7 @@ public class SeeReserved extends SeeReservedAbstract {
 
   @Override
   protected void appendBehaviour(Texture t) {
-    t.setOnMouseClicked(e -> {
-      OpenPrompt.openPrompt(PromptType.BUYING_RESERVED);
-    });
+    t.setOnMouseClicked(e -> OpenPrompt.openPrompt(PromptType.BUYING_RESERVED));
   }
-  
+
 }

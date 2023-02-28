@@ -34,9 +34,9 @@ public class ServerGameParams extends GameParams {
    *
    * @param maxSessionPlayers max number of players in session
    * @param minSessionPlayers min number of players in session
-   * @param name game name
-   * @param displayName game display name
-   * @param webSupport web support
+   * @param name              game name
+   * @param displayName       game display name
+   * @param webSupport        web support
    */
   @SneakyThrows
   public ServerGameParams(int maxSessionPlayers, int minSessionPlayers,

@@ -18,8 +18,8 @@ public class StartupScreen {
   public static void backToStartupScreen() {
     // Clears all entities when coming back from any screen
     ArrayList<Entity> allEntities = getGameWorld().getEntities();
-    for (int i = 0; i < allEntities.size(); i++) {
-      getGameWorld().removeEntity(allEntities.get(i));
+    for (Entity allEntity : allEntities) {
+      getGameWorld().removeEntity(allEntity);
     }
 
     // TODO: Vbox all components of the startup screens

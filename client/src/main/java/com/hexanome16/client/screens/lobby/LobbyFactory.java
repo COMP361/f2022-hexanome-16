@@ -75,7 +75,7 @@ public class LobbyFactory implements EntityFactory {
     if (shouldFetch) {
       Task<Void> fetchSessionsTask = new Task<>() {
         @Override
-        protected Void call() throws Exception {
+        protected Void call() {
           Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
           hashCode = sessionList.getKey();
           sessions = sessionList.getValue();
@@ -87,19 +87,17 @@ public class LobbyFactory implements EntityFactory {
         }
       };
       fetchSessionsTask.setOnSucceeded(e -> {
-        fetchSessionsThread = null;
+        fetchSessionsThread.interrupt();
         if (shouldFetch) {
           Platform.runLater(LobbyFactory::updateSessionList);
           createFetchSessionThread();
         }
       });
       fetchSessionsTask.setOnFailed(e -> {
-        fetchSessionsThread = null;
+        fetchSessionsThread.interrupt();
         throw new RuntimeException(fetchSessionsTask.getException());
       });
-      fetchSessionsTask.setOnCancelled(e -> {
-        fetchSessionsThread = null;
-      });
+      fetchSessionsTask.setOnCancelled(e -> fetchSessionsThread = null);
       fetchSessionsThread = new Thread(fetchSessionsTask);
       fetchSessionsThread.setDaemon(true);
       fetchSessionsThread.start();
@@ -210,10 +208,8 @@ public class LobbyFactory implements EntityFactory {
                   join.setStyle(
                       "-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle
                   );
-                  leave.setOnAction(event -> {
-                    LeaveSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
-                        AuthUtils.getAuth().getAccessToken());
-                  });
+                  leave.setOnAction(event -> LeaveSessionRequest.execute(session.getId(),
+                      AuthUtils.getPlayer().getName(), AuthUtils.getAuth().getAccessToken()));
                   leave.setStyle(
                       "-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle
                   );
@@ -230,10 +226,8 @@ public class LobbyFactory implements EntityFactory {
                   launch.setStyle(
                       "-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle
                   );
-                  delete.setOnAction(event -> {
-                    DeleteSessionRequest.execute(session.getId(),
-                        AuthUtils.getAuth().getAccessToken());
-                  });
+                  delete.setOnAction(event -> DeleteSessionRequest.execute(session.getId(),
+                      AuthUtils.getAuth().getAccessToken()));
                   delete.setStyle(
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
                   );
@@ -308,7 +302,7 @@ public class LobbyFactory implements EntityFactory {
             + "-fx-padding: 10px;"
     );
     button.setOnAction(event -> {
-      String sessionId = CreateSessionRequest.execute(
+      Long sessionId = CreateSessionRequest.execute(
           AuthUtils.getAuth().getAccessToken(),
           AuthUtils.getPlayer().getName(),
           "Splendor",
@@ -412,9 +406,7 @@ public class LobbyFactory implements EntityFactory {
     button.setStyle(
         "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
-    button.setOnAction(event -> {
-      SettingsScreen.initUi(false);
-    });
+    button.setOnAction(event -> SettingsScreen.initUi(false));
     return entityBuilder(data)
         .type(Type.CLOSE_BUTTON)
         .viewWithBBox(button)

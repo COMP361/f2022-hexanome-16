@@ -18,9 +18,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import models.Level;
+import models.Noble;
 import models.price.Gem;
 import models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public class GameTest {
    */
   @BeforeEach
   public void init() throws IOException {
-    game = new Game(12345,
+    game = Game.create(12345,
         new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[]{WinCondition.BASE});
   }
 
@@ -128,7 +128,7 @@ public class GameTest {
   @Test
   public void testPlayerArrayGetsCloned() throws IOException {
     ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
-    game = new Game(12345,
+    game = Game.create(12345,
         players, "imad", "", new WinCondition[]{WinCondition.BASE});
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
@@ -159,7 +159,7 @@ public class GameTest {
    */
   @Test
   public void testAddOnBoardCard() {
-    List<Noble> cardList = game.getNobleDeck().getCardList();
+    List<ServerNoble> cardList = game.getNobleDeck().getCardList();
     game.addOnBoardCard(Level.ONE);
     assertNotEquals(cardList.size() + 1, game.getOnBoardDeck(Level.ONE).getCardList().size());
   }
