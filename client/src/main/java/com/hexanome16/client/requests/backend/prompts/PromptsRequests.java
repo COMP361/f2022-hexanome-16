@@ -1,6 +1,7 @@
 package com.hexanome16.client.requests.backend.prompts;
 
 import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
+import static com.hexanome16.client.requests.RequestClient.mapObject;
 
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
@@ -37,7 +38,7 @@ public class PromptsRequests {
             "/api/games/{sessionId}/inventory/cards")
         .routeParam("sessionId", String.valueOf(sessionId))
         .queryString("username", username)
-        .asObjectAsync(LevelCard[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), LevelCard[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> cards.set(res.getBody()));
     return cards.get();
@@ -58,7 +59,7 @@ public class PromptsRequests {
             "/api/games/{sessionId}/inventory/nobles")
         .routeParam("sessionId", String.valueOf(sessionId))
         .queryString("username", username)
-        .asObjectAsync(Noble[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), Noble[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> nobles.set(res.getBody()));
     return nobles.get();
@@ -81,7 +82,7 @@ public class PromptsRequests {
         .routeParam("sessionId", String.valueOf(sessionId))
         .queryString("username", username)
         .queryString("accessToken", accessToken)
-        .asObjectAsync(LevelCard[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), LevelCard[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> cards.set(res.getBody()));
     return cards.get();
@@ -102,7 +103,7 @@ public class PromptsRequests {
             "/api/games/{sessionId}/inventory/reservedNobles")
         .routeParam("sessionId", String.valueOf(sessionId))
         .queryString("username", username)
-        .asObjectAsync(Noble[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), Noble[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> nobles.set(res.getBody()));
     return nobles.get();
@@ -185,7 +186,7 @@ public class PromptsRequests {
             "/api/games/{sessionId}/playerBank")
         .routeParam("sessionId", String.valueOf(sessionId))
         .queryString("username", username)
-        .asObjectAsync(PurchaseMap.class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), PurchaseMap.class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> bank.set(res.getBody()));
     return bank.get();
@@ -203,7 +204,7 @@ public class PromptsRequests {
     RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
             "/api/games/{sessionId}/gameBank")
         .routeParam("sessionId", String.valueOf(sessionId))
-        .asObjectAsync(PurchaseMap.class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), PurchaseMap.class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> gameBank.set(res.getBody()));
     return gameBank.get();
@@ -222,7 +223,7 @@ public class PromptsRequests {
     RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
             "/api/games/{sessionId}/twoTokens")
         .routeParam("sessionId", String.valueOf(sessionId))
-        .asObjectAsync(String[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), String[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> bonuses.set(res.getBody()));
     return Arrays.stream(bonuses.get()).filter(Objects::nonNull).map(BonusType::fromString)
@@ -241,7 +242,7 @@ public class PromptsRequests {
     RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
             "/api/games/{sessionId}/threeTokens")
         .routeParam("sessionId", String.valueOf(sessionId))
-        .asObjectAsync(String[].class)
+        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), String[].class))
         .get(TIMEOUT, TimeUnit.SECONDS)
         .ifSuccess(res -> bonuses.set(res.getBody()));
     return Arrays.stream(bonuses.get()).filter(Objects::nonNull).map(BonusType::fromString)
