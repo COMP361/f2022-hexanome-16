@@ -160,9 +160,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("username")
   public Entity username(SpawnData data) {
     TextField usernameField = new TextField();
-    usernameField.setOnKeyTyped(e -> {
-      username = usernameField.getText();
-    });
+    usernameField.setOnKeyTyped(e -> username = usernameField.getText());
     animateLoginElement(usernameField, 1000);
     return FXGL.entityBuilder(data)
         .view(usernameField)
@@ -179,9 +177,7 @@ public class StartupScreenFactory implements EntityFactory {
   @Spawns("password")
   public Entity password(SpawnData data) {
     PasswordField passwordField = new PasswordField();
-    passwordField.setOnKeyTyped(e -> {
-      password = passwordField.getText();
-    });
+    passwordField.setOnKeyTyped(e -> password = passwordField.getText());
 
     passwordField.setOnAction(e -> {
       getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
@@ -238,9 +234,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity cancelButton(SpawnData data) {
     FXGLButton button = createButton("Cancel");
     button.setOpacity(0.85);
-    button.setOnMouseClicked(e -> {
-      StartupScreen.backToStartupScreen();
-    });
+    button.setOnMouseClicked(e -> StartupScreen.backToStartupScreen());
     animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
@@ -259,9 +253,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity blackSpace(SpawnData data) {
     FXGLButton button = createButton();
     button.setPrefSize(getAppWidth(), getAppHeight());
-    button.setOnMouseClicked(e -> {
-      StartupScreen.backToStartupScreen();
-    });
+    button.setOnMouseClicked(e -> StartupScreen.backToStartupScreen());
     return FXGL.entityBuilder(data)
         .view(button)
         .type(EntityType.LOGIN)
@@ -292,20 +284,14 @@ public class StartupScreenFactory implements EntityFactory {
 
   private FXGLButton createButton(String message) {
     FXGLButton button = new FXGLButton(message);
-    button.setOnMouseClicked(e -> {
-      MainMenuScreen.initUi();
-    });
+    button.setOnMouseClicked(e -> MainMenuScreen.initUi());
     // TODO: set background colour to a better looking one
-    button.setOnMouseEntered(e -> {
-      button.setStyle("-fx-background-color: #000000;"
-          + "-fx-background-radius: 25px;"
-          + "-fx-text-fill: #fff;");
-    });
-    button.setOnMouseExited(e -> {
-      button.setStyle("-fx-background-color: #603232;"
-          + "-fx-background-radius: 25px;"
-          + "-fx-text-fill: #fff;");
-    });
+    button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #000000;"
+        + "-fx-background-radius: 25px;"
+        + "-fx-text-fill: #fff;"));
+    button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #603232;"
+        + "-fx-background-radius: 25px;"
+        + "-fx-text-fill: #fff;"));
     button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
     button.setPrefSize(130, 50);
     button.setStyle("-fx-background-color: #603232;"
@@ -317,9 +303,7 @@ public class StartupScreenFactory implements EntityFactory {
 
   private FXGLButton createButton() {
     FXGLButton button = new FXGLButton();
-    button.setOnMouseClicked(e -> {
-      spawnLoginScreen();
-    });
+    button.setOnMouseClicked(e -> spawnLoginScreen());
     button.setPrefSize(500, 260);
     button.setStyle("-fx-background-color: ffffff00;");
     return button;
@@ -374,7 +358,7 @@ public class StartupScreenFactory implements EntityFactory {
     ft.setToValue(0.5);
     ft.setCycleCount(1);
     ft.setAutoReverse(false);
-    ft.setDelay(Duration.millis(duration / 2));
+    ft.setDelay(Duration.millis(duration / 2.0));
     ft.play();
   }
 

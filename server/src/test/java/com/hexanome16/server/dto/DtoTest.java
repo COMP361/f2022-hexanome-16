@@ -6,6 +6,8 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import dto.CardJson;
+import dto.DeckJson;
+import dto.NobleDeckJson;
 import dto.NobleJson;
 import dto.PlayerJson;
 import java.io.IOException;
@@ -13,17 +15,18 @@ import models.Level;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link CardJson}, {@link DeckHash}, {@link NobleJson}
- * , {@link NoblesHash} and {@link PlayerJson}.
+ * Tests for {@link CardJson}, {@link DeckJson}, {@link NobleJson}
+ * , {@link NobleDeckJson} and {@link PlayerJson}.
  */
 public class DtoTest {
 
   private final Game game =
-      new Game(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE});
+      Game.create(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE});
 
-  private final DeckHash deckHash = new DeckHash(game, Level.ONE);
+  private final DeckJson deckJson = new DeckJson(game.getLevelDeck(Level.ONE).getCardList(),
+      Level.ONE);
 
-  private final NoblesHash noblesHash = new NoblesHash(game.getNobleDeck());
+  private final NobleDeckJson nobleDeckJson = new NobleDeckJson(game.getNobleDeck().getCardList());
 
   private final PlayerJson playerJson = new PlayerJson("player");
 
@@ -40,7 +43,7 @@ public class DtoTest {
    */
   @Test
   public void testDeckEmpty() {
-    assertFalse(deckHash.isEmpty());
+    assertFalse(deckJson.isEmpty());
   }
 
   /**
@@ -48,7 +51,7 @@ public class DtoTest {
    */
   @Test
   public void testNoblesNotEmpty() {
-    assertFalse(noblesHash.isEmpty());
+    assertFalse(nobleDeckJson.isEmpty());
   }
 
   /**

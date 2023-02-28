@@ -43,7 +43,7 @@ public class LongPollingServiceTests {
   void setup() throws IOException {
 
     Game validMockGame =
-        new Game(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
+        Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
             new WinCondition[]{WinCondition.BASE});
 
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);

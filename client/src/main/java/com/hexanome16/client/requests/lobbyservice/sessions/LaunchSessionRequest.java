@@ -10,11 +10,6 @@ import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 

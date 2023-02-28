@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import models.Level;
-import models.LevelCard;
+import models.Noble;
 import models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,7 +94,7 @@ public class InventoryTests {
   @DisplayName("Acquire a visiting Noble successfully")
   void testAcquireNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    noble = new Noble(0, 3, "noble0.png", priceMap);
+    noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.acquireNoble(noble);
     assertTrue(inventory.getOwnedNobles().contains(noble));
   }
@@ -107,7 +107,7 @@ public class InventoryTests {
   @DisplayName("Reserve a Noble successfully")
   void testReserveNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    noble = new Noble(0, 3, "noble0.png", priceMap);
+    noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.reserveNoble(noble);
     assertTrue(inventory.getReservedNobles().contains(noble));
   }

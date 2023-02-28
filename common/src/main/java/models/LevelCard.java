@@ -17,11 +17,11 @@ public class LevelCard {
   /**
    * Instantiates a new Level card.
    *
-   * @param level          the level
-   * @param id             the id
-   * @param prestigePoint  number of prestige points
-   * @param texturePath    the texture path
-   * @param price          the price
+   * @param level         the level
+   * @param id            the id
+   * @param prestigePoint number of prestige points
+   * @param texturePath   the texture path
+   * @param price         the price
    */
   public LevelCard(Level level, int id, int prestigePoint, String texturePath,
                    PriceInterface price) {

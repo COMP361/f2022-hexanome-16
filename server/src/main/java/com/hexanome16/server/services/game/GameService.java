@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.dto.DeckHash;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
@@ -12,6 +11,7 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import dto.DeckJson;
 import dto.PlayerJson;
 import dto.WinJson;
 import java.util.Arrays;
@@ -111,8 +111,7 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        PurchaseMap proposedDeal)
-      throws JsonProcessingException {
+                                        PurchaseMap proposedDeal) {
 
     var request = validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
@@ -124,7 +123,7 @@ public class GameService implements GameServiceInterface {
 
 
     // Fetch the card in question
-    ServerLevelCard cardToBuy = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
     // TODO test
     // TODO add http error
@@ -157,7 +156,7 @@ public class GameService implements GameServiceInterface {
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD)
-        ) || game.isNotPlayersTurn(player)) {
+    ) || game.isNotPlayersTurn(player)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -186,7 +185,7 @@ public class GameService implements GameServiceInterface {
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckHash(game, level)
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
     );
 
     // Ends players turn, which is current player
@@ -217,7 +216,7 @@ public class GameService implements GameServiceInterface {
     final Game game = request.getRight().getLeft();
     final ServerPlayer player = request.getRight().getRight();
 
-    ServerLevelCard card = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard card = game.getCardByHash(cardMd5);
 
 
     if (card == null) {
@@ -242,7 +241,7 @@ public class GameService implements GameServiceInterface {
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckHash(game, level)
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
     );
 
     endCurrentPlayersTurn(game);

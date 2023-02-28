@@ -6,7 +6,6 @@ import com.hexanome16.client.requests.RequestMethod;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Map;
 import javafx.util.Pair;
-import kong.unirest.GetRequest;
 import models.sessions.Session;
 
 /**
@@ -24,10 +23,9 @@ public class ListSessionsRequest {
    * @return An array of sessions in Lobby Service.
    */
   public static Pair<String, Session[]> execute(String hash) {
-    GetRequest request = (GetRequest) RequestClient.request(
-        RequestMethod.GET, RequestDest.LS, "/api/sessions")
-        .queryString("hash", hash);
-    Pair<String, Response> sessionMap = RequestClient.longPollWithHash(request, Response.class);
+    Pair<String, Response> sessionMap = RequestClient.longPollWithHash(
+        RequestClient.request(RequestMethod.GET, RequestDest.LS, "/api/sessions")
+            .queryString("hash", hash), Response.class);
     if (sessionMap.getValue() == null || sessionMap.getValue().sessions == null) {
       return new Pair<>("", null);
     }

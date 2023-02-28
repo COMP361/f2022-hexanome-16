@@ -16,8 +16,9 @@ import javafx.scene.control.Slider;
 public class SettingsScreenUiController implements UIController {
   private final String[] languages = {"English", "French", "Spanish"};
 
+  @SuppressWarnings("checkstyle:Indentation")
   private final String[] resolutions =
-    {"1280 x 1024", "1366 x 768", "1600 x 900", "1920 x 1080", "1920 x 1200", "2560 x 1440"};
+      {"1280 x 1024", "1366 x 768", "1600 x 900", "1920 x 1080", "1920 x 1200", "2560 x 1440"};
   /**
    * The Done button.
    */

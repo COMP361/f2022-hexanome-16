@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
-import kong.unirest.GetRequest;
+import kong.unirest.HttpMethod;
 import kong.unirest.HttpRequestWithBody;
 import kong.unirest.ObjectMapper;
 import kong.unirest.Unirest;
@@ -45,15 +45,15 @@ public class RequestClient {
   }
 
   /**
-   * Same as {@link #longPoll(GetRequest, Class)} but also returns the hash code of the response.
+   * Same as {@link #longPoll(HttpRequestWithBody, Class)} but also returns the response hash.
    *
    * @param <T>     The type of the response.
    * @param request The request to send.
    * @param classT  The class of the response.
    * @return (response hash code, response body as T) pair
    */
-  public static <T extends BroadcastContent> Pair<String, T> longPollWithHash(GetRequest request,
-                                                                              Class<T> classT) {
+  public static <T extends BroadcastContent> Pair<String, T> longPollWithHash(
+      HttpRequestWithBody request, Class<T> classT) {
     T response = longPoll(request, classT);
     return new Pair<>(DigestUtils.md5Hex(objectMapper.writeValue(response)), response);
   }
@@ -67,7 +67,11 @@ public class RequestClient {
    * @return The response body as T.
    */
   @SneakyThrows
-  public static <T extends BroadcastContent> T longPoll(GetRequest request, Class<T> classT) {
+  public static <T extends BroadcastContent> T longPoll(HttpRequestWithBody request,
+                                                        Class<T> classT) {
+    if (request.getHttpMethod() != HttpMethod.GET) {
+      throw new IllegalArgumentException("Long polling only works with GET requests.");
+    }
     AtomicReference<T> res = new AtomicReference<>(null);
     AtomicBoolean gotResponse = new AtomicBoolean(false);
     while (!gotResponse.get()) {

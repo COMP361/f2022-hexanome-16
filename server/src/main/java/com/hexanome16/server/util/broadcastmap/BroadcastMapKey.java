@@ -1,7 +1,7 @@
 package com.hexanome16.server.util.broadcastmap;
 
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.NoblesHash;
+import dto.DeckJson;
+import dto.NobleDeckJson;
 import dto.PlayerJson;
 import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
@@ -24,31 +24,31 @@ public enum BroadcastMapKey {
   /**
    * Nobles.
    */
-  NOBLES(NoblesHash.class),
+  NOBLES(NobleDeckJson.class),
   /**
    * Level one deck.
    */
-  ONE(DeckHash.class),
+  ONE(DeckJson.class),
   /**
    * Level two deck.
    */
-  TWO(DeckHash.class),
+  TWO(DeckJson.class),
   /**
    * Level three deck.
    */
-  THREE(DeckHash.class),
+  THREE(DeckJson.class),
   /**
    * Red level one deck.
    */
-  REDONE(DeckHash.class),
+  REDONE(DeckJson.class),
   /**
    * Red level two deck.
    */
-  REDTWO(DeckHash.class),
+  REDTWO(DeckJson.class),
   /**
    * Red level three deck.
    */
-  REDTHREE(DeckHash.class);
+  REDTHREE(DeckJson.class);
   @Getter
   private final Class<? extends BroadcastContent> assocClass;
 

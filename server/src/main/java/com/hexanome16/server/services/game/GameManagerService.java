@@ -21,7 +21,7 @@ public class GameManagerService implements GameManagerServiceInterface {
   @Override
   public String createGame(long sessionId, SessionJson payload) {
     try {
-      Game game = new Game(sessionId, payload);
+      Game game = Game.create(sessionId, payload);
       gameMap.put(sessionId, game);
     } catch (Exception e) {
       // Returns to lobby service,

@@ -118,7 +118,7 @@ public abstract class BonusChoiceAbstract extends ChoicePromptAbstract {
   /**
    * Getter function, gets all valid bonuses that can be chosen for the prompt.
    *
-   * @return an Array of the available bonuses.
+   * @return an ArrayList of the available bonuses.
    */
   protected abstract ArrayList<BonusType> getAvailableBonuses();
 

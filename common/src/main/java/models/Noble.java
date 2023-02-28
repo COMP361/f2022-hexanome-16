@@ -1,19 +1,17 @@
-package com.hexanome16.server.models;
+package models;
 
 import lombok.Getter;
-import models.CardInfo;
 import models.price.PriceInterface;
 
 /**
- * Noble class.
+ * This class represents a noble card.
  */
-public class Noble implements Reservable, Visitable {
-
+public class Noble {
   @Getter
-  private final CardInfo cardInfo;
+  protected final CardInfo cardInfo;
 
   /**
-   * Instantiates a new Noble.
+   * Constructor.
    *
    * @param id            the id
    * @param prestigePoint the number of prestige points
@@ -22,15 +20,5 @@ public class Noble implements Reservable, Visitable {
    */
   public Noble(int id, int prestigePoint, String texturePath, PriceInterface price) {
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
-  }
-
-  @Override
-  public boolean addToInventory(Inventory inventory) {
-    return inventory.acquireNoble(this);
-  }
-
-  @Override
-  public boolean reserveCard(Inventory inventory) {
-    return inventory.reserveNoble(this);
   }
 }

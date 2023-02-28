@@ -5,7 +5,6 @@ import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import dto.SessionJson;
 import javafx.util.Pair;
-import kong.unirest.GetRequest;
 
 /**
  * This class provides methods to get details about a session in Lobby Service.
@@ -23,10 +22,9 @@ public class SessionDetailsRequest {
    * @return The session details.
    */
   public static Pair<String, SessionJson> execute(long sessionId, String hash) {
-    GetRequest request = (GetRequest) RequestClient.request(
-        RequestMethod.GET, RequestDest.LS, "/api/sessions/{sessionId}")
+    return RequestClient.longPollWithHash(RequestClient.request(
+            RequestMethod.GET, RequestDest.LS, "/api/sessions/{sessionId}")
         .routeParam("sessionId", String.valueOf(sessionId))
-        .queryString("hash", hash);
-    return RequestClient.longPollWithHash(request, SessionJson.class);
+        .queryString("hash", hash), SessionJson.class);
   }
 }

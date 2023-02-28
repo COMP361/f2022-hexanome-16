@@ -1,9 +1,7 @@
 package dto;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * This class represents the response with winners of the game.

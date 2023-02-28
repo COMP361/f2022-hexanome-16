@@ -118,19 +118,11 @@ public class DummyAuths {
   /**
    * The constant validGames.
    */
-  public static final Map<Long, Game> validGames;
-
-  static {
-    try {
-      validGames = Map.of(
-          validSessionIds.get(0), new Game(validSessionIds.get(0),
-              validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
-              "", new WinCondition[] {WinCondition.BASE})
-      );
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public static final Map<Long, Game> validGames = Map.of(
+      validSessionIds.get(0), Game.create(validSessionIds.get(0),
+          validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
+          "", new WinCondition[] {WinCondition.BASE})
+  );
 
   /**
    * Immutable static list of valid passwords.

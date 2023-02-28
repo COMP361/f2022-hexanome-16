@@ -1,8 +1,8 @@
 package com.hexanome16.server.util.broadcastmap;
 
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.NoblesHash;
 import com.hexanome16.server.models.Game;
+import dto.DeckJson;
+import dto.NobleDeckJson;
 import dto.PlayerJson;
 import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
@@ -28,7 +28,8 @@ public class BroadcastMap {
     try {
       for (Level level : Level.values()) {
         BroadcastContentManager<BroadcastContent> broadcastContentManager =
-            new BroadcastContentManager<>(new DeckHash(game, level));
+            new BroadcastContentManager<>(new DeckJson(
+                game.getLevelDeck(level).getCardList(), level));
         map.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
       }
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
@@ -37,7 +38,7 @@ public class BroadcastMap {
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
-          new BroadcastContentManager<>(new NoblesHash(game.getNobleDeck()));
+          new BroadcastContentManager<>(new NobleDeckJson(game.getNobleDeck().getCardList()));
       map.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
       map.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
       map.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
@@ -60,7 +61,7 @@ public class BroadcastMap {
   /**
    * Updates the broadcast content for the given key.
    *
-   * @param key The key to update the broadcast content for.
+   * @param key   The key to update the broadcast content for.
    * @param value The new broadcast content.
    */
   public void updateValue(BroadcastMapKey key, BroadcastContent value) {

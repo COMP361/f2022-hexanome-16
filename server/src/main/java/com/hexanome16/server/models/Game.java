@@ -18,11 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import models.Level;
 import models.price.Gem;
 import models.price.PriceMap;
 import models.price.PurchaseMap;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Game class that holds all the information.
@@ -30,11 +32,11 @@ import models.price.PurchaseMap;
 @Getter
 @ToString
 public class Game {
-  private final BroadcastMap broadcastContentManagerMap;
-  private final Map<Level, Deck<ServerLevelCard>> levelDecks = new HashMap<>();
+  private BroadcastMap broadcastContentManagerMap;
+  private final Map<Level, Deck<ServerLevelCard>> levelDecks;
 
-  private final Map<Level, Deck<ServerLevelCard>> redDecks = new HashMap<>();
-  private final Map<Level, Deck<ServerLevelCard>> onBoardDecks = new HashMap<>();
+  private final Map<Level, Deck<ServerLevelCard>> redDecks;
+  private final Map<Level, Deck<ServerLevelCard>> onBoardDecks;
   private final int levelCardsTotal = 90;
 
   private final long sessionId;
@@ -45,8 +47,10 @@ public class Game {
   private final GameBank gameBank;
   private final WinCondition[] winConditions;
   private int currentPlayerIndex = 0;
-  private Deck<Noble> nobleDeck = new Deck<>();
-  private Deck<Noble> onBoardNobles = new Deck<>();
+  private Deck<ServerNoble> nobleDeck;
+  private Deck<ServerNoble> onBoardNobles;
+  private final Map<String, ServerLevelCard> remainingCards;
+  private final Map<String, ServerNoble> remainingNobles;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -56,21 +60,26 @@ public class Game {
    * @param creator       the creator
    * @param savegame      the savegame
    * @param winConditions the win conditions
-   * @throws java.io.IOException object mapper IO exception
    */
-  public Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
-              WinCondition[] winConditions)
-      throws IOException {
+  @SneakyThrows
+  private Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
+               WinCondition[] winConditions) {
     this.sessionId = sessionId;
     this.players = players.clone();
     this.creator = creator;
     this.savegame = savegame;
     this.winConditions = winConditions;
     this.gameBank = new GameBank();
+    this.levelDecks = createLevelMap();
+    this.redDecks = createRedMap();
+    this.onBoardDecks = createBoardMap();
+    this.nobleDeck = new Deck<>();
+    this.onBoardNobles = new Deck<>();
+    this.remainingCards = new HashMap<>();
+    this.remainingNobles = new HashMap<>();
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
-    this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
   /**
@@ -78,13 +87,71 @@ public class Game {
    *
    * @param sessionId session id
    * @param payload   the payload
-   * @throws java.io.IOException exception
    */
-  public Game(long sessionId, SessionJson payload) throws IOException {
+  private Game(long sessionId, SessionJson payload) {
     this(sessionId, Arrays.stream(payload.getPlayers()).map(player -> new ServerPlayer(
             player.getName(), player.getPreferredColour())).toArray(ServerPlayer[]::new),
         payload.getCreator(), payload.getSavegame(),
         new WinCondition[] {WinCondition.fromServerName(payload.getGameServer())});
+  }
+
+  @SneakyThrows
+  private void init() {
+    this.broadcastContentManagerMap = new BroadcastMap(this);
+  }
+
+  /**
+   * Creates a new game instance from a session payload.
+   *
+   * @param sessionId session id
+   * @param payload   the payload
+   * @return the game
+   */
+  @SneakyThrows
+  public static Game create(long sessionId, SessionJson payload) {
+    Game game = new Game(sessionId, payload);
+    game.init();
+    return game;
+  }
+
+  /**
+   * Creates a new game instance.
+   *
+   * @param sessionId     session id
+   * @param players       a non-null list of players
+   * @param creator       the creator
+   * @param savegame      the savegame
+   * @param winConditions the win conditions
+   * @return the game
+   */
+  @SneakyThrows
+  public static Game create(long sessionId, ServerPlayer[] players, String creator, String savegame,
+                            WinCondition[] winConditions) {
+    Game game = new Game(sessionId, players, creator, savegame, winConditions);
+    game.init();
+    return game;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createLevelMap() {
+    HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
+    levelMap.put(Level.ONE, new Deck<>());
+    levelMap.put(Level.TWO, new Deck<>());
+    levelMap.put(Level.THREE, new Deck<>());
+    return levelMap;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createRedMap() {
+    HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
+    levelMap.put(Level.REDONE, new Deck<>());
+    levelMap.put(Level.REDTWO, new Deck<>());
+    levelMap.put(Level.REDTHREE, new Deck<>());
+    return levelMap;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createBoardMap() {
+    Map<Level, Deck<ServerLevelCard>> levelMap = createLevelMap();
+    levelMap.putAll(createRedMap());
+    return levelMap;
   }
 
   /**
@@ -181,15 +248,17 @@ public class Game {
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level);
       levelDecks.get(level).addCard(card);
+      remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
     }
   }
 
   private void createNobleDeck(NobleJson[] nobleJsonList) {
-    Deck<Noble> deck = new Deck<>();
+    Deck<ServerNoble> deck = new Deck<>();
     for (int i = 0; i < 10; i++) {
       NobleJson nobleJson = nobleJsonList[i];
-      Noble noble = new Noble(i, 3, "noble" + i, nobleJson.getPrice());
+      ServerNoble noble = new ServerNoble(i, 3, "noble" + i, nobleJson.getPrice());
       deck.addCard(noble);
+      remainingNobles.put(DigestUtils.md5Hex(noble.toString()), noble);
     }
     deck.shuffle();
     this.nobleDeck = deck;
@@ -204,11 +273,13 @@ public class Game {
           bagJson.getPrice(),
           Level.REDONE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
   }
 
+  @SuppressWarnings("checkstyle:Indentation")
   private void createGoldDeck() {
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDONE);
     int[][] prices =
@@ -221,6 +292,7 @@ public class Game {
           priceMap,
           Level.REDONE);
       deck.addCard(gold);
+      remainingCards.put(DigestUtils.md5Hex(gold.toString()), gold);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
@@ -235,6 +307,7 @@ public class Game {
           doubleJson.getPrice(),
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
@@ -251,6 +324,7 @@ public class Game {
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
@@ -267,6 +341,7 @@ public class Game {
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
@@ -283,6 +358,7 @@ public class Game {
           priceMap,
           Level.REDTHREE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
@@ -297,6 +373,7 @@ public class Game {
           cascadeTwoJson.getPrice(),
           Level.REDTHREE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
@@ -328,7 +405,7 @@ public class Game {
     this.onBoardDecks.put(Level.THREE, baseThreeDeck);
 
     // same thing but with the nobles
-    Deck<Noble> nobleDeck = new Deck<>();
+    Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
       nobleDeck.addCard(this.nobleDeck.nextCard());
     }
@@ -350,13 +427,36 @@ public class Game {
   }
 
   /**
+   * Gets card by hash.
+   *
+   * @param hash hash of the card
+   * @return the card
+   */
+  public ServerLevelCard getCardByHash(String hash) {
+    return remainingCards.get(hash);
+  }
+
+  /**
+   * Gets noble by hash.
+   *
+   * @param hash hash of the noble
+   * @return the noble
+   */
+  public ServerNoble getNobleByHash(String hash) {
+    return remainingNobles.get(hash);
+  }
+
+  /**
    * Gets deck.
    *
    * @param level deck level
    * @return the deck
    */
   public Deck<ServerLevelCard> getLevelDeck(Level level) {
-    return levelDecks.get(level);
+    return switch (level) {
+      case ONE, TWO, THREE -> levelDecks.get(level);
+      case REDONE, REDTWO, REDTHREE -> redDecks.get(level);
+    };
   }
 
   /**
@@ -376,7 +476,7 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    ServerLevelCard card = this.levelDecks.get(level).nextCard();
+    ServerLevelCard card = this.levelDecks.get(level).removeNextCard();
     card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
   }
@@ -388,6 +488,7 @@ public class Game {
    */
   public void removeOnBoardCard(ServerLevelCard card) {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
+    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
   }
 
 
