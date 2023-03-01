@@ -88,12 +88,6 @@ public class LobbyFactory implements EntityFactory {
               = ListSessionsRequest.execute(hashCode.get());
           hashCode.set(sessionList.getKey());
           sessions.set(sessionList.getValue());
-          try {
-            System.out.println("Fetched sessions: "
-                + objectMapper.writeValueAsString(sessions.get()));
-          } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-          }
           if (sessions.get() == null) {
             hashCode.set("");
             sessions.set(new HashMap<>());

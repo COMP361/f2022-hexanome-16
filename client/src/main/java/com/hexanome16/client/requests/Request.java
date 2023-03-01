@@ -19,7 +19,6 @@ public class Request<T> {
   private final Class<T> responseClass;
   private Map<String, Object> queryParams;
   private Map<String, String> headers;
-  @Setter
   private Object body;
   @Setter
   private int status;

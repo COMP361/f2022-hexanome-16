@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
+import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -30,8 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class RequestClient {
   public static final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
       JsonInclude.Include.NON_NULL)
-      .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
-      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+      .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
   public static final int TIMEOUT = 5;
   public static final int LONG_POLL_TIMEOUT = 60;
 
@@ -205,9 +205,9 @@ public class RequestClient {
                   : e.getParsingError().get().toString());
             }
           });
+      return res.get();
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       return null;
     }
-    return res.get();
   }
 }
