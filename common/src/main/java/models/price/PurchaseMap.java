@@ -6,14 +6,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import deserializers.PurchaseMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 /**
  * Class responsible for representing the gems the player decided to put down
  * to buy a card.
  */
-@Getter
+@Data
 @JsonDeserialize(using = PurchaseMapDeserializer.class)
 public class PurchaseMap extends PriceMap implements PriceInterface {
 

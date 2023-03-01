@@ -1,14 +1,18 @@
 package models;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import models.price.PriceInterface;
 
 /**
  * This class represents a noble card.
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Noble {
-  @Getter
-  protected final CardInfo cardInfo;
+  protected CardInfo cardInfo;
 
   /**
    * Constructor.

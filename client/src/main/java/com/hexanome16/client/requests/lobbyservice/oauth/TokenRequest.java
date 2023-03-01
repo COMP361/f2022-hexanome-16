@@ -1,17 +1,11 @@
 package com.hexanome16.client.requests.lobbyservice.oauth;
 
-import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
-import static com.hexanome16.client.requests.RequestClient.mapObject;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import lombok.SneakyThrows;
 import models.auth.TokensInfo;
 
 /**
@@ -25,20 +19,14 @@ public class TokenRequest {
   /**
    * Sends a request to log in the user and sets global user token information.
    *
-   * @param params The parameters of the request.
+   * @param queryParams The parameters of the request.
    */
-  @SneakyThrows
-  private static void execute(Map<String, Object> params) {
-    RequestClient.request(RequestMethod.POST, RequestDest.LS, "/oauth/token")
-        .queryString(params)
-        .basicAuth("bgp-client-name", "bgp-client-pw")
-        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), TokensInfo.class))
-        .get(TIMEOUT, TimeUnit.SECONDS)
-        .ifSuccess(response -> {
-          System.out.println(response.getParsingError());
-          AuthUtils.setAuth(response.getBody());
-        })
-        .ifFailure(response -> AuthUtils.setAuth(null));
+  private static void execute(Map<String, Object> queryParams) {
+    AuthUtils.setAuth(RequestClient.sendRequest(new Request<>(
+        RequestMethod.POST, RequestDest.LS, "/oauth/token", queryParams,
+        Map.of("Authorization",
+            AuthUtils.getBasicHeader("bgp-client-name", "bgp-client-pw")),
+        TokensInfo.class)));
   }
 
   /**

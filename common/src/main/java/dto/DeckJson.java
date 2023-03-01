@@ -5,7 +5,10 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import models.Level;
 import models.LevelCard;
@@ -14,10 +17,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 /**
  * A deck class made for long polling.
  */
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DeckJson implements BroadcastContent {
-  private final Map<String, LevelCard> cards;
-  private final Level deckLevel;
+  private Map<String, LevelCard> cards;
+  private Level deckLevel;
 
   /**
    * Default constructor.

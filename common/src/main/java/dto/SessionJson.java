@@ -16,11 +16,11 @@ public class SessionJson implements BroadcastContent {
   private Player[] players;
   private String creator;
   private String savegame;
-  private String gameServer;
+  private String game;
 
   @Override
   public boolean isEmpty() {
     return players == null || players.length == 0 || creator == null || creator.isBlank()
-        || gameServer == null || gameServer.isBlank();
+        || game == null || game.isBlank();
   }
 }

@@ -17,7 +17,6 @@ import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.token.TokenService;
 import dto.SessionJson;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -52,7 +51,7 @@ public class TokensControllerTests {
         objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
-    payload.setGameServer(WinCondition.BASE.getAssocServerName());
+    payload.setGame(WinCondition.BASE.getAssocServerName());
     Game game1 = Game.create(DummyAuths.validSessionIds.get(0), payload);
     Game game2 = Game.create(DummyAuths.validSessionIds.get(1), payload);
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);

@@ -1,14 +1,11 @@
 package com.hexanome16.client.requests.lobbyservice.user;
 
-import static com.hexanome16.client.requests.RequestClient.TIMEOUT;
-import static com.hexanome16.client.requests.RequestClient.mapObject;
-
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import java.util.concurrent.TimeUnit;
-import lombok.SneakyThrows;
+import java.util.Map;
 import models.sessions.User;
 
 /**
@@ -25,14 +22,8 @@ public class GetUserRequest {
    * @param user        The username of the user to get details about.
    * @param accessToken The access token of the user.
    */
-  @SneakyThrows
   public static void execute(String user, String accessToken) {
-    RequestClient.request(RequestMethod.GET, RequestDest.LS, "/api/users/{user}")
-        .routeParam("user", user)
-        .queryString("access_token", accessToken)
-        .asObjectAsync(rawResponse -> mapObject(rawResponse.getContentReader(), User.class))
-        .get(TIMEOUT, TimeUnit.SECONDS)
-        .ifSuccess(response -> AuthUtils.setPlayer(response.getBody()))
-        .ifFailure(e -> AuthUtils.setPlayer(null));
+    AuthUtils.setPlayer(RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.LS,
+        "/api/users/" + user, Map.of("access_token", accessToken), User.class)));
   }
 }

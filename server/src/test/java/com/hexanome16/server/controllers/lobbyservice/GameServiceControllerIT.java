@@ -34,7 +34,9 @@ public class GameServiceControllerIT {
    */
   @Test
   public void deleteGameService() {
-    ResponseEntity<Void> response = gameServiceController.deleteGameService();
+    ResponseEntity<Void> response = gameServiceController.deleteGameService(
+        ServerGameParams.testInit().getName()
+    );
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
@@ -44,7 +46,7 @@ public class GameServiceControllerIT {
   @Test
   public void createGameService() {
     ResponseEntity<Void> response = gameServiceController.createGameService(
-        (ServerGameParams) ServerGameParams.testInit());
+        ServerGameParams.testInit());
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 }

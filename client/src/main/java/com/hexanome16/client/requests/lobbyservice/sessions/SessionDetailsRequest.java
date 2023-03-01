@@ -1,9 +1,11 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import dto.SessionJson;
+import java.util.Map;
 import javafx.util.Pair;
 
 /**
@@ -22,9 +24,7 @@ public class SessionDetailsRequest {
    * @return The session details.
    */
   public static Pair<String, SessionJson> execute(long sessionId, String hash) {
-    return RequestClient.longPollWithHash(RequestClient.request(
-            RequestMethod.GET, RequestDest.LS, "/api/sessions/{sessionId}")
-        .routeParam("sessionId", String.valueOf(sessionId))
-        .queryString("hash", hash), SessionJson.class);
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.LS,
+        "/api/sessions/" + sessionId, Map.of("hash", hash), SessionJson.class));
   }
 }

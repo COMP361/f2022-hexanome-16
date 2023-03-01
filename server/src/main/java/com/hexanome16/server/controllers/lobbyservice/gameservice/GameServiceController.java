@@ -57,11 +57,13 @@ public class GameServiceController {
   @EventListener(ApplicationReadyEvent.class)
   public void createGameServices() {
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.BASE.getAssocServerName(), "Orient", "true"));
+        WinCondition.BASE.getAssocServerName(), WinCondition.BASE.getAssocServerName(), "true"));
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.TRADEROUTES.getAssocServerName(), "Orient + Trade Routes", "true"));
+        WinCondition.TRADEROUTES.getAssocServerName(),
+        WinCondition.TRADEROUTES.getAssocServerName(), "true"));
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.CITIES.getAssocServerName(), "Orient + Cities", "true"));
+        WinCondition.CITIES.getAssocServerName(),
+        WinCondition.CITIES.getAssocServerName(), "true"));
   }
 
   /**
@@ -90,15 +92,25 @@ public class GameServiceController {
   }
 
   /**
-   * This method deletes the associated game service in Lobby Service.
-   *
-   * @return the response entity
+   * This method deletes the game services in Lobby Service when the application is destroyed.
    */
   @PreDestroy
-  public ResponseEntity<Void> deleteGameService() {
+  public void deleteGameServices() {
+    deleteGameService(WinCondition.BASE.getAssocServerName());
+    deleteGameService(WinCondition.TRADEROUTES.getAssocServerName());
+    deleteGameService(WinCondition.CITIES.getAssocServerName());
+  }
+
+  /**
+   * This method deletes the associated game service in Lobby Service.
+   *
+   * @param serviceName the service name
+   * @return the response entity
+   */
+  public ResponseEntity<Void> deleteGameService(String serviceName) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
-    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
+    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/" + serviceName,
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
     try {
