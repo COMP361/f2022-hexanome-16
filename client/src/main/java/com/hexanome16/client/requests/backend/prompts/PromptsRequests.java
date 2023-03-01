@@ -156,8 +156,9 @@ public class PromptsRequests {
    * @return An array List of the possible bonus types.
    */
   public static ArrayList<BonusType> getAvailableTwoBonuses(long sessionId) {
-    return Arrays.stream(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
-            RequestDest.SERVER, "/api/games/" + sessionId + "/twoTokens", String[].class)))
+    return Arrays.stream(
+            Objects.requireNonNull(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/twoTokens", String[].class))))
         .filter(Objects::nonNull).map(BonusType::fromString)
         .collect(Collectors.toCollection(ArrayList::new));
   }
@@ -170,8 +171,9 @@ public class PromptsRequests {
    */
   @SneakyThrows
   public static ArrayList<BonusType> getAvailableThreeBonuses(long sessionId) {
-    return Arrays.stream(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
-            RequestDest.SERVER, "/api/games/" + sessionId + "/threeTokens", String[].class)))
+    return Arrays.stream(
+            Objects.requireNonNull(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/threeTokens", String[].class))))
         .filter(Objects::nonNull).map(BonusType::fromString)
         .collect(Collectors.toCollection(ArrayList::new));
   }
