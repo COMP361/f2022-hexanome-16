@@ -1,17 +1,21 @@
 package models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import models.price.PriceInterface;
 
 /**
  * This class represents a card in a deck of a certain level.
  */
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LevelCard {
-  protected final Level level;
-  protected final CardInfo cardInfo;
-  @Setter
+  protected Level level;
+  protected CardInfo cardInfo;
   protected boolean faceDown;
 
   /**

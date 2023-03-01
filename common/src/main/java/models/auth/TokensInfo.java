@@ -1,12 +1,16 @@
 package models.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * This class contains information about OAuth user tokens.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TokensInfo {
   @JsonProperty("access_token")
   private String accessToken;

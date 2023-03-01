@@ -6,6 +6,7 @@ import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import models.Noble;
@@ -16,9 +17,10 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class NobleDeckJson implements BroadcastContent {
 
-  private final Map<String, Noble> nobles = new HashMap<>();
+  private Map<String, Noble> nobles = new HashMap<>();
 
   /**
    * Create noble MD5.

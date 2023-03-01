@@ -53,7 +53,7 @@ public class TokenServiceTests {
         objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
-    payload.setGameServer(WinCondition.BASE.getAssocServerName());
+    payload.setGame(WinCondition.BASE.getAssocServerName());
     gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload);
     gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload);
   }

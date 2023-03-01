@@ -1,5 +1,6 @@
 package com.hexanome16.client.requests.backend.cards;
 
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
@@ -7,6 +8,7 @@ import com.hexanome16.client.utils.AuthUtils;
 import dto.DeckJson;
 import dto.NobleDeckJson;
 import dto.PlayerJson;
+import java.util.Map;
 import models.Level;
 
 /**
@@ -23,11 +25,9 @@ public class GameRequest {
    * @return string representation of deck.
    */
   public static DeckJson updateDeck(long sessionId, Level level, String hash) {
-    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
-            "/api/games/" + sessionId + "/deck")
-        .queryString("level", level.name())
-        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
-        .queryString("hash", hash), DeckJson.class);
+    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/deck", Map.of("level", level.name(),
+        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash), DeckJson.class));
   }
 
   /**
@@ -38,10 +38,10 @@ public class GameRequest {
    * @return noble json
    */
   public static NobleDeckJson updateNoble(long sessionId, String hash) {
-    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
-            "/api/games/" + sessionId + "/nobles")
-        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
-        .queryString("hash", hash), NobleDeckJson.class);
+    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/deck", Map.of(
+        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash),
+        NobleDeckJson.class));
   }
 
   /**
@@ -52,9 +52,9 @@ public class GameRequest {
    * @return current player username
    */
   public static PlayerJson updateCurrentPlayer(long sessionId, String hash) {
-    return RequestClient.longPoll(RequestClient.request(RequestMethod.GET, RequestDest.SERVER,
-            "/api/games/" + sessionId + "/player")
-        .queryString("accessToken", AuthUtils.getAuth().getAccessToken())
-        .queryString("hash", hash), PlayerJson.class);
+    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/player", Map.of(
+        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash),
+        PlayerJson.class));
   }
 }

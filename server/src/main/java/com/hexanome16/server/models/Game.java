@@ -92,7 +92,7 @@ public class Game {
     this(sessionId, Arrays.stream(payload.getPlayers()).map(player -> new ServerPlayer(
             player.getName(), player.getPreferredColour())).toArray(ServerPlayer[]::new),
         payload.getCreator(), payload.getSavegame(),
-        new WinCondition[] {WinCondition.fromServerName(payload.getGameServer())});
+        new WinCondition[] {WinCondition.fromServerName(payload.getGame())});
   }
 
   @SneakyThrows
