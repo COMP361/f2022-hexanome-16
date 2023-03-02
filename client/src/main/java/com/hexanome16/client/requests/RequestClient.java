@@ -64,7 +64,7 @@ public class RequestClient {
   }
 
   /**
-   * Same as {@link #longPoll(Request)} but also returns response hash.
+   * Send a long polling request and returns response with associated hash.
    *
    * @param <T>     The type of the response.
    * @param request The request to send.
@@ -72,40 +72,17 @@ public class RequestClient {
    */
   public static <T> Pair<String, T> longPollWithHash(Request<T> request) {
     Pair<String, String> response = longPollStringWithHash(request);
-    return new Pair<>(response.getKey(), response.getValue() == null ? null :
+    return new Pair<>(response.getKey(), response.getValue() == null
+        || response.getValue().isBlank() ? null :
         mapObject(response.getValue(), request.getResponseClass()));
   }
 
-  /**
-   * Same as {@link #longPollString(Request)} but also returns response hash.
-   *
-   * @param request The request to send.
-   * @return (response hash code, response body as String) pair
-   */
-  public static Pair<String, String> longPollStringWithHash(Request<?> request) {
+  private static Pair<String, String> longPollStringWithHash(Request<?> request) {
     String response = longPollString(request);
     String hash = DigestUtils.md5Hex(response);
     return new Pair<>(hash, response);
   }
 
-  /**
-   * Sends a request using long polling.
-   *
-   * @param <T>     The type of the response.
-   * @param request The request to send.
-   * @return The response body as T.
-   */
-  public static <T> T longPoll(Request<T> request) {
-    String response = longPollString(request);
-    return response == null ? null : mapObject(response, request.getResponseClass());
-  }
-
-  /**
-   * Same as {@link #longPoll(Request)} but specifically for String.
-   *
-   * @param req The request to send.
-   * @return The response body as String.
-   */
   private static String longPollString(Request<?> req) {
     AtomicReference<String> res = new AtomicReference<>(null);
     final AtomicBoolean gotResponse = new AtomicBoolean(false);
@@ -136,6 +113,8 @@ public class RequestClient {
                     req.getQueryParams().put("access_token", AuthUtils.getAuth().getAccessToken());
                     res.set(longPollString(req));
                   }
+                  res.set(e.getParsingError().isEmpty() ? e.getBody()
+                      : e.getParsingError().get().toString());
                   gotResponse.set(true);
                 }
                 case HTTP_CLIENT_TIMEOUT -> {
@@ -206,9 +185,7 @@ public class RequestClient {
                   res.set(sendRequestString(request));
                 }
               }
-              case HTTP_NOT_FOUND -> {
-                res.set(CustomHttpResponses.INVALID_SESSION_ID.getBody());
-              }
+              case HTTP_NOT_FOUND -> res.set(CustomHttpResponses.INVALID_SESSION_ID.getBody());
               default -> res.set(e.getParsingError().isEmpty() ? e.getBody()
                   : e.getParsingError().get().toString());
             }
