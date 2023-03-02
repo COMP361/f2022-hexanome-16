@@ -162,7 +162,7 @@ public class GameController {
    *
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
-   * @param authenticationToken username of the player trying to buy the card.
+   * @param accessToken         token of the player trying to buy the card.
    * @param purchaseMap         PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
@@ -170,10 +170,10 @@ public class GameController {
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
-                                        @RequestParam String authenticationToken,
+                                        @RequestParam String accessToken,
                                         @RequestBody PurchaseMap purchaseMap)
       throws JsonProcessingException {
-    return gameService.buyCard(sessionId, cardMd5, authenticationToken, purchaseMap);
+    return gameService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
 
   /**
@@ -181,16 +181,16 @@ public class GameController {
    *
    * @param sessionId           game session id.
    * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken         player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
   public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
                                             @PathVariable String cardMd5,
-                                            @RequestParam String authenticationToken)
+                                            @RequestParam String accessToken)
       throws JsonProcessingException {
-    return gameService.reserveCard(sessionId, cardMd5, authenticationToken);
+    return gameService.reserveCard(sessionId, cardMd5, accessToken);
   }
 
   /**
@@ -198,17 +198,17 @@ public class GameController {
    *
    * @param sessionId           game session id.
    * @param level               deck level.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken         player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
   public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                                     @RequestParam String level,
-                                                    @RequestParam String authenticationToken)
+                                                    @RequestParam String accessToken)
       throws JsonProcessingException {
 
-    return gameService.reserveFaceDownCard(sessionId, level, authenticationToken);
+    return gameService.reserveFaceDownCard(sessionId, level, accessToken);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////
 }

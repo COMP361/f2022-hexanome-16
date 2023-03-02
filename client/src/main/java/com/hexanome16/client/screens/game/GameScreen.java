@@ -34,13 +34,13 @@ public class GameScreen {
 
   private static final Map<String, Noble> nobles = new HashMap<>();
 
-  private static final Map<Level, DeckJson> levelDecks = new HashMap<>();
+  private static final Map<Level, Pair<String, DeckJson>> levelDecks = new HashMap<>();
   private static final Map<Level, Thread> levelThreads = new HashMap<>();
 
-  private static NobleDeckJson nobleJson = new NobleDeckJson();
+  private static Pair<String, NobleDeckJson> nobleJson = new Pair<>("", new NobleDeckJson());
   private static Thread updateNobles;
 
-  private static PlayerJson currentPlayerJson = new PlayerJson("");
+  private static Pair<String, PlayerJson> currentPlayerJson = new Pair<>("", new PlayerJson(""));
 
   private static Thread updateCurrentPlayer;
 
@@ -52,8 +52,8 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() {
-        levelDecks.put(level, GameRequest.updateDeck(sessionId, level, DigestUtils.md5Hex(
-            levelDecks.get(level).toString())));
+        levelDecks.put(level, GameRequest.updateDeck(
+            sessionId, level, levelDecks.get(level).getKey()));
         return null;
       }
     };
@@ -72,11 +72,7 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() {
-        Pair<String, NobleDeckJson> nbolePair = GameRequest.updateNoble(
-            sessionId, DigestUtils.md5Hex(nobleJson.toString()));
-        if (nbolePair.getValue() != null) {
-          nobleJson = nbolePair.getValue();
-        }
+        nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey());
         return null;
       }
     };
@@ -95,15 +91,14 @@ public class GameScreen {
     Task<Void> updateCurrentPlayerTask = new Task<>() {
       @Override
       protected Void call() {
-        currentPlayerJson = GameRequest.updateCurrentPlayer(sessionId,
-            DigestUtils.md5Hex(currentPlayerJson.toString()));
+        currentPlayerJson = GameRequest.updateCurrentPlayer(sessionId, currentPlayerJson.getKey());
         return null;
       }
     };
     updateCurrentPlayerTask.setOnSucceeded(e -> {
       updateCurrentPlayer.interrupt();
       Platform.runLater(() -> {
-        currentPlayer = currentPlayerJson.getUsername();
+        currentPlayer = currentPlayerJson.getValue().getUsername();
         UpdateGameInfo.fetchGameBank(getSessionId());
         UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
         UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
@@ -140,7 +135,7 @@ public class GameScreen {
 
     for (Level level : Level.values()) {
       levelCards.put(level, new HashMap<>());
-      levelDecks.put(level, new DeckJson(level));
+      levelDecks.put(level, new Pair<>("", new DeckJson(level)));
       levelThreads.put(level, createFetchLevelThread(level));
     }
 
@@ -169,7 +164,7 @@ public class GameScreen {
    * Updates on board nobles.
    */
   private static void updateNobles() {
-    Map<String, Noble> nobleMap = nobleJson.getNobles();
+    Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
         nobles.put(entry.getKey(), entry.getValue());
@@ -189,7 +184,7 @@ public class GameScreen {
    * @param level level of the deck
    */
   private static void updateLevelDeck(Level level) {
-    Map<String, LevelCard> cardHashList = levelDecks.get(level).getCards();
+    Map<String, LevelCard> cardHashList = levelDecks.get(level).getValue().getCards();
     Map<String, LevelCard> cardMap = levelCards.get(level);
     CardComponent[] grid = CardComponent.getGrid(level);
     String cardName = getLevelCardEntity(level);

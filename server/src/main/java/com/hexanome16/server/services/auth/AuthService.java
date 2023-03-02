@@ -84,6 +84,7 @@ public class AuthService implements AuthServiceInterface {
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
         "access_token=" + accessToken);
     assert url != null;
+    System.out.println(url.toASCIIString());
     try {
       return this.restTemplate.getForEntity(url, String.class);
     } catch (Exception e) {
