@@ -69,7 +69,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.ONE,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.ONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -87,7 +87,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 360)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.TWO,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.TWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -105,7 +105,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 155)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.THREE,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.THREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -123,7 +123,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 155)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTHREE,
+        .with(new CardComponent((Integer) data.getData().get("id"), Level.REDTHREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -141,7 +141,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 360)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTWO,
+        .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDTWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -159,7 +159,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 565)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDONE,
+        .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
             (String) data.getData().get("MD5")))
         .build();
@@ -394,7 +394,8 @@ public class GameFactory implements EntityFactory {
     Text number = new Text();
     // Binds number to world property associated with the currency type in the bank and session.
     number.textProperty().bind(
-        FXGL.getWorldProperties().intProperty(GameScreen.getSessionId() + currencyType.toString())
+        FXGL.getWorldProperties()
+            .intProperty(GameScreen.getSessionId() + currencyType.getGem().name())
             .asString());
 
     number.setFont(CURSIVE_FONT_FACTORY.newFont(50));

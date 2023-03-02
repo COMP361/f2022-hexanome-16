@@ -44,6 +44,9 @@ public class PriceMapDeserializer extends StdDeserializer<PriceMap> {
     if (node.get("price") != null) {
       node = node.get("price");
     }
+    if (node.get("priceMap") != null) {
+      node = node.get("priceMap");
+    }
     return new PriceMap(
         node.get("RUBY").asInt(),
         node.get("EMERALD").asInt(),

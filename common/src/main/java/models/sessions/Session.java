@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder(alphabetic = true)
 public final class Session {
   private String creator;
   private GameParams gameParameters;

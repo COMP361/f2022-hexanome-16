@@ -2,6 +2,7 @@ package com.hexanome16.server.models;
 
 import models.Noble;
 import models.price.PriceInterface;
+import models.price.PriceMap;
 
 /**
  * Noble class.
@@ -16,7 +17,7 @@ public class ServerNoble extends Noble implements Reservable, Visitable {
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public ServerNoble(int id, int prestigePoint, String texturePath, PriceInterface price) {
+  public ServerNoble(int id, int prestigePoint, String texturePath, PriceMap price) {
     super(id, prestigePoint, texturePath, price);
   }
 

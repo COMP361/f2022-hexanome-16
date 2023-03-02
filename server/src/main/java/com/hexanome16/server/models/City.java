@@ -3,6 +3,7 @@ package com.hexanome16.server.models;
 import lombok.Getter;
 import models.CardInfo;
 import models.price.PriceInterface;
+import models.price.PriceMap;
 
 /**
  * City class for the Cities expansion.
@@ -20,7 +21,7 @@ public class City implements Visitable {
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public City(int id, int prestigePoint, String texturePath, PriceInterface price) {
+  public City(int id, int prestigePoint, String texturePath, PriceMap price) {
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
   }
 

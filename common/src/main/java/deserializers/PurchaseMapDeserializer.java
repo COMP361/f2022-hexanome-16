@@ -41,6 +41,9 @@ public class PurchaseMapDeserializer extends StdDeserializer<PurchaseMap> {
     if (node.get("price") != null) {
       node = node.get("price");
     }
+    if (node.get("priceMap") != null) {
+      node = node.get("priceMap");
+    }
     int goldAmount = node.get("GOLD").asInt();
     return new PurchaseMap(priceMap, goldAmount);
   }

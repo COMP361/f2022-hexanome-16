@@ -9,6 +9,7 @@ import dto.DeckJson;
 import dto.NobleDeckJson;
 import dto.PlayerJson;
 import java.util.Map;
+import javafx.util.Pair;
 import models.Level;
 
 /**
@@ -37,9 +38,9 @@ public class GameRequest {
    * @param hash      long polling hash
    * @return noble json
    */
-  public static NobleDeckJson updateNoble(long sessionId, String hash) {
-    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/deck", Map.of(
+  public static Pair<String, NobleDeckJson> updateNoble(long sessionId, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/nobles", Map.of(
         "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash),
         NobleDeckJson.class));
   }

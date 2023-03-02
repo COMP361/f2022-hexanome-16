@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class CardJson extends BonusJson {
   private String level;
   private int prestigePoint;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return super.isEmpty() && (level == null || level.isBlank());

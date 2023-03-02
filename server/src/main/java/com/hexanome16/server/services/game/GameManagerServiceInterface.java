@@ -24,4 +24,11 @@ public interface GameManagerServiceInterface {
    * @return error if present
    */
   String createGame(long sessionId, SessionJson payload);
+
+  /**
+   * Deletes a game from the game server.
+   *
+   * @param sessionId the id of the game to delete
+   */
+  void deleteGame(long sessionId);
 }

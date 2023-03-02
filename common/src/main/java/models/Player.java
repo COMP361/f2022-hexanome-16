@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class Player implements BroadcastContent {
   private String name;
   private String preferredColour;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return name == null || name.isBlank();

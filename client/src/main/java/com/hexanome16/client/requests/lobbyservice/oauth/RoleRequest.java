@@ -5,7 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import java.util.Map;
-import kong.unirest.JsonNode;
+import kong.unirest.core.JsonNode;
 
 /**
  * This class provides methods to get the role of the user.

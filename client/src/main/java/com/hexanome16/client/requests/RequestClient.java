@@ -3,6 +3,7 @@ package com.hexanome16.client.requests;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -12,18 +13,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
-import kong.unirest.GetRequest;
-import kong.unirest.HttpRequestWithBody;
-import kong.unirest.RequestBodyEntity;
-import kong.unirest.Unirest;
+import kong.unirest.core.GetRequest;
+import kong.unirest.core.HttpRequestWithBody;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
+import util.CustomHttpResponses;
 
 /**
  * This class provides an HTTP client to send requests to the backend/Lobby Service.
@@ -37,11 +40,10 @@ public class RequestClient {
 
   private RequestClient() {
     super();
-    Unirest.config().concurrency(1, 1)
+    Unirest.config()
         .setObjectMapper(new JacksonObjectMapper(objectMapper))
         .setDefaultResponseEncoding("UTF-8")
-        .connectTimeout(TIMEOUT * 1000)
-        .addShutdownHook(true);
+        .connectTimeout(TIMEOUT * 1000);
   }
 
   /**
@@ -159,7 +161,8 @@ public class RequestClient {
    */
   public static <T> T sendRequest(Request<T> request) {
     String response = sendRequestString(request);
-    return response == null ? null : mapObject(response, request.getResponseClass());
+    return response == null || response.isBlank() ? null :
+        mapObject(response, request.getResponseClass());
   }
 
   /**
@@ -178,13 +181,15 @@ public class RequestClient {
     if (request.getHeaders() != null) {
       req.headers(request.getHeaders());
     }
+    CompletableFuture<HttpResponse<String>> future;
     if (request.getBody() != null) {
       req.contentType("application/json");
-      req.body(request.getBody());
+      future = req.body(request.getBody()).asStringAsync();
+    } else {
+      future = req.asStringAsync();
     }
     try {
-      req.asStringAsync()
-          .get(TIMEOUT, TimeUnit.SECONDS)
+      future.get(TIMEOUT, TimeUnit.SECONDS)
           .ifSuccess(response -> {
             res.set(response.getBody());
             request.setStatus(response.getStatus());
@@ -200,6 +205,9 @@ public class RequestClient {
                       .put("access_token", AuthUtils.getAuth().getAccessToken());
                   res.set(sendRequestString(request));
                 }
+              }
+              case HTTP_NOT_FOUND -> {
+                res.set(CustomHttpResponses.INVALID_SESSION_ID.getBody());
               }
               default -> res.set(e.getParsingError().isEmpty() ? e.getBody()
                   : e.getParsingError().get().toString());

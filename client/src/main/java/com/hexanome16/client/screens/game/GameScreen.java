@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.util.Pair;
 import models.Level;
 import models.LevelCard;
 import models.Noble;
@@ -71,7 +72,11 @@ public class GameScreen {
     Task<Void> updateDeckTask = new Task<>() {
       @Override
       protected Void call() {
-        nobleJson = GameRequest.updateNoble(sessionId, DigestUtils.md5Hex(nobleJson.toString()));
+        Pair<String, NobleDeckJson> nbolePair = GameRequest.updateNoble(
+            sessionId, DigestUtils.md5Hex(nobleJson.toString()));
+        if (nbolePair.getValue() != null) {
+          nobleJson = nbolePair.getValue();
+        }
         return null;
       }
     };

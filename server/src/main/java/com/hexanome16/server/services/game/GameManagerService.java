@@ -30,4 +30,9 @@ public class GameManagerService implements GameManagerServiceInterface {
     }
     return "success";
   }
+
+  @Override
+  public void deleteGame(long sessionId) {
+    gameMap.remove(sessionId);
+  }
 }

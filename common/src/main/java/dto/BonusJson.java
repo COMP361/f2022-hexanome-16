@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class BonusJson extends BagJson implements BroadcastContent {
   private String bonus;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return super.isEmpty() && (bonus == null || bonus.isBlank());

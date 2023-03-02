@@ -8,6 +8,7 @@ import dto.SessionJson;
 import models.price.PurchaseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,6 +53,16 @@ public class GameController {
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
     System.out.println(payload);
     return gameManager.createGame(sessionId, payload);
+  }
+
+  /**
+   * Deletes a game from the game server. (callback from LS)
+   *
+   * @param sessionId the id of the game to delete
+   */
+  @DeleteMapping(value = {"/games/{sessionId}"})
+  public void deleteGame(@PathVariable long sessionId) {
+    gameManager.deleteGame(sessionId);
   }
 
   /**
