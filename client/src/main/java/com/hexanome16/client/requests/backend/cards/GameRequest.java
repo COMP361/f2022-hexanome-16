@@ -25,10 +25,10 @@ public class GameRequest {
    * @param hash      the hash
    * @return string representation of deck.
    */
-  public static DeckJson updateDeck(long sessionId, Level level, String hash) {
-    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+  public static Pair<String, DeckJson> updateDeck(long sessionId, Level level, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/deck", Map.of("level", level.name(),
-        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash), DeckJson.class));
+        "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash), DeckJson.class));
   }
 
   /**
@@ -41,7 +41,7 @@ public class GameRequest {
   public static Pair<String, NobleDeckJson> updateNoble(long sessionId, String hash) {
     return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/nobles", Map.of(
-        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash),
+        "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash),
         NobleDeckJson.class));
   }
 
@@ -52,10 +52,10 @@ public class GameRequest {
    * @param hash      long polling hash
    * @return current player username
    */
-  public static PlayerJson updateCurrentPlayer(long sessionId, String hash) {
-    return RequestClient.longPoll(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+  public static Pair<String, PlayerJson> updateCurrentPlayer(long sessionId, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/player", Map.of(
-        "accessToken", AuthUtils.getAuth().getAccessToken(), "hash", hash),
+        "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash),
         PlayerJson.class));
   }
 }

@@ -90,7 +90,7 @@ public class PromptsRequests {
                              String authToken,
                              PurchaseMap proposedDeal) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5, Map.of("authenticationToken", authToken),
+        "/api/games/" + sessionId + "/" + cardMd5, Map.of("access_token", authToken),
         proposedDeal, Void.class));
   }
 
@@ -106,7 +106,7 @@ public class PromptsRequests {
                                  String authToken) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
-        Map.of("authenticationToken", authToken), Void.class));
+        Map.of("access_token", authToken), Void.class));
   }
 
   /**
@@ -121,7 +121,7 @@ public class PromptsRequests {
                                  String authToken) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/deck/reservation",
-        Map.of("authenticationToken", authToken, "level", level.name()), Void.class));
+        Map.of("access_token", authToken, "level", level.name()), Void.class));
   }
 
   /**
@@ -191,7 +191,7 @@ public class PromptsRequests {
                              BonusType bonusType) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
-        Map.of("authenticationToken", authToken, "tokenType", bonusType.name()), Void.class));
+        Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
   }
 
   /**
@@ -211,7 +211,7 @@ public class PromptsRequests {
                                BonusType bonusTypeThree) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
-        Map.of("authenticationToken", authToken, "tokenTypeOne", bonusTypeOne.name(),
+        Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
         Void.class));
   }
