@@ -8,7 +8,10 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import models.auth.TokensInfo;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -74,7 +77,6 @@ public class GameServiceController {
    */
   public ResponseEntity<Void> createGameService(ServerGameParams serverGameParams) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
-    System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri(
         "/api/gameservices/" + serverGameParams.getName(),
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
@@ -96,9 +98,13 @@ public class GameServiceController {
    */
   @PreDestroy
   public void deleteGameServices() {
+    System.out.println("Deleting game services");
     deleteGameService(WinCondition.BASE.getAssocServerName());
+    System.out.println("Deleted base service");
     deleteGameService(WinCondition.TRADEROUTES.getAssocServerName());
+    System.out.println("Deleted trade service");
     deleteGameService(WinCondition.CITIES.getAssocServerName());
+    System.out.println("Deleted cities service");
   }
 
   /**

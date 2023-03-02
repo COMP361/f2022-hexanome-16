@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class WinJson implements BroadcastContent {
     this.winners = winners;
   }
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return winners == null || winners.length == 0;

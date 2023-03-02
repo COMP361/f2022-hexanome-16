@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class DevelopmentCardJson implements BroadcastContent {
   @JsonProperty("price")
   private PriceMap price;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return price == null;

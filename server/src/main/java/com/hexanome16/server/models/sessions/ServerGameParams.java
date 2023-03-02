@@ -46,7 +46,7 @@ public class ServerGameParams extends GameParams {
     Resource resource = new ClassPathResource("application.properties");
     Properties props = PropertiesLoaderUtils.loadProperties(resource);
     location = props.getProperty("server.protocol") + "://"
-        + props.getProperty("server.host") + ":" + props.getProperty("server.port") + "/" + name;
+        + props.getProperty("server.host") + ":" + props.getProperty("server.port");
   }
 
   /**

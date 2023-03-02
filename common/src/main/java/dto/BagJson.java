@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class BagJson extends DevelopmentCardJson implements BroadcastContent {
   private int id;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return super.isEmpty() || id == 0;

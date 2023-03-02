@@ -3,14 +3,12 @@ package com.hexanome16.client.screens.lobby;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
-import static com.hexanome16.client.requests.RequestClient.objectMapper;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;

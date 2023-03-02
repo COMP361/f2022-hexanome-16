@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import models.price.PriceInterface;
+import models.price.PriceMap;
 
 /**
  * This class represents a card in a deck of a certain level.
@@ -27,8 +28,7 @@ public class LevelCard {
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public LevelCard(Level level, int id, int prestigePoint, String texturePath,
-                   PriceInterface price) {
+  public LevelCard(Level level, int id, int prestigePoint, String texturePath, PriceMap price) {
     this.level = level;
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
     this.faceDown = true;

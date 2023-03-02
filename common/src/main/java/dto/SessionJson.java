@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class SessionJson implements BroadcastContent {
   private String savegame;
   private String game;
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return players == null || players.length == 0 || creator == null || creator.isBlank()

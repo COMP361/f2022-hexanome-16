@@ -1,5 +1,7 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ public class DeckJson implements BroadcastContent {
     }
   }
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return cards.isEmpty();

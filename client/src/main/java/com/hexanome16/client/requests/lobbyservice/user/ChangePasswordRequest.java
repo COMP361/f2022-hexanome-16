@@ -5,7 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import java.util.Map;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.json.JSONObject;
 import lombok.SneakyThrows;
 
 /**

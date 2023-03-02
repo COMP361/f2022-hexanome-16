@@ -93,14 +93,14 @@
 
         <dependency>
             <groupId>com.konghq</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>3.14.1</version>
+            <artifactId>unirest-java-core</artifactId>
+            <version>4.0.0-RC7</version>
         </dependency>
 
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>3.14.1</version>
+            <version>4.0.0-RC7</version>
         </dependency>
 
         <dependency>

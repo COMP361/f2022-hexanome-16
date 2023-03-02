@@ -4,6 +4,7 @@ import lombok.Getter;
 import models.Level;
 import models.LevelCard;
 import models.price.PriceInterface;
+import models.price.PriceMap;
 
 /**
  * Card instead of noble.
@@ -20,7 +21,7 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
    * @param price         the price
    * @param level         the level
    */
-  public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceInterface price,
+  public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceMap price,
                          Level level) {
     super(level, id, prestigePoint, texturePath, price);
   }

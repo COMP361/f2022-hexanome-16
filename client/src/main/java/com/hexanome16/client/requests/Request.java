@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This class contains information about a request.
@@ -12,6 +13,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 public class Request<T> {
   private final RequestMethod method;
   private final RequestDest dest;

@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
@@ -35,6 +36,7 @@ public class NobleDeckJson implements BroadcastContent {
     }
   }
 
+  @JsonIgnore
   @Override
   public boolean isEmpty() {
     return nobles.isEmpty();
