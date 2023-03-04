@@ -1,10 +1,6 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,7 +17,6 @@ import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
-import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
@@ -29,7 +24,6 @@ import com.hexanome16.server.util.ServiceUtils;
 import java.io.IOException;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,6 +84,21 @@ class InventoryServiceTests {
     assertEquals(myPm.getGemCost(Gem.DIAMOND), 3);
     assertEquals(myPm.getGemCost(Gem.ONYX), 3);
     assertEquals(myPm.getGemCost(Gem.GOLD), 3);
+  }
+
+  /**
+   * Test get invalid player bank info.
+   */
+  @Test
+  @SneakyThrows
+  @DisplayName("Get Player Bank info with invalid username should return http error")
+  public void testGetInvalidPlayerBankInfo() {
+    ResponseEntity<String> response =
+        inventoryService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
+            DummyAuths.invalidPlayerList.get(0).getName());
+
+    assertEquals(CustomHttpResponses.PLAYER_NOT_IN_GAME.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.PLAYER_NOT_IN_GAME.getBody(), response.getBody());
   }
 
   /**

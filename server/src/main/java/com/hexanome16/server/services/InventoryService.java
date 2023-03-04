@@ -62,11 +62,9 @@ public class InventoryService implements InventoryServiceInterface {
     // get player with username
     ServerPlayer concernedPlayer = serviceUtils.findPlayerByName(game, username);
 
-    // TODO: add custom for this
-
     // Player not in game
     if (concernedPlayer == null) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.PLAYER_NOT_IN_GAME);
     }
 
     PurchaseMap playerBankMap = concernedPlayer.getBank().toPurchaseMap();
