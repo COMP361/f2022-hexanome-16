@@ -29,7 +29,7 @@ public class BroadcastMap {
       for (Level level : Level.values()) {
         BroadcastContentManager<BroadcastContent> broadcastContentManager =
             new BroadcastContentManager<>(new DeckJson(
-                game.getLevelDeck(level).getCardList(), level));
+                game.getOnBoardDeck(level).getCardList(), level));
         map.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
       }
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =

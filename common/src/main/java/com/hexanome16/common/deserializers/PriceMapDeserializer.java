@@ -51,8 +51,8 @@ public class PriceMapDeserializer extends StdDeserializer<PriceMap> {
         node.get("RUBY").asInt(),
         node.get("EMERALD").asInt(),
         node.get("SAPPHIRE").asInt(),
-        node.get("ONYX").asInt(),
-        node.get("DIAMOND").asInt()
+        node.get("DIAMOND").asInt(),
+        node.get("ONYX").asInt()
     );
   }
 }

@@ -6,9 +6,11 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,26 +24,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService implements TokenServiceInterface {
 
-  private final GameServiceInterface gameService;
-  private final GameManagerServiceInterface gameManager;
+  private final GameManagerServiceInterface gameManagerService;
+  private final AuthServiceInterface authService;
+
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ServiceUtils serviceUtils;
 
   /**
    * Constructor for the Token service Class.
    *
-   * @param gameService Needed for getting games and such.
-   * @param gameManager Game manager for fetching game instances
+   * @param authService  Needed for player verification.
+   * @param gameManager  Game manager for fetching game instances
+   * @param serviceUtils the utility used by services
    */
-  public TokenService(@Autowired GameServiceInterface gameService,
-                      @Autowired GameManagerServiceInterface gameManager) {
-    this.gameService = gameService;
-    this.gameManager = gameManager;
+  public TokenService(@Autowired AuthServiceInterface authService,
+                      @Autowired GameManagerServiceInterface gameManager,
+                      @Autowired ServiceUtils serviceUtils) {
+    this.serviceUtils = serviceUtils;
+    this.authService = authService;
+    this.gameManagerService = gameManager;
   }
 
   @Override
   public ResponseEntity<String> availableTwoTokensType(long sessionId)
       throws JsonProcessingException {
-    Game currentGame = gameManager.getGame(sessionId);
+    Game currentGame = gameManagerService.getGame(sessionId);
     if (currentGame == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
@@ -55,7 +62,7 @@ public class TokenService implements TokenServiceInterface {
   @Override
   public ResponseEntity<String> availableThreeTokensType(long sessionId)
       throws JsonProcessingException {
-    Game currentGame = gameManager.getGame(sessionId);
+    Game currentGame = gameManagerService.getGame(sessionId);
     if (currentGame == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
@@ -70,7 +77,8 @@ public class TokenService implements TokenServiceInterface {
   public ResponseEntity<String> takeTwoTokens(long sessionId, String authenticationToken,
                                               String tokenType) {
 
-    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
+        gameManagerService, authService);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -85,7 +93,7 @@ public class TokenService implements TokenServiceInterface {
     }
 
     currentGame.giveTwoOf(desiredGem, requestingPlayer);
-    gameService.endCurrentPlayersTurn(currentGame);
+    serviceUtils.endCurrentPlayersTurn(currentGame);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -95,7 +103,8 @@ public class TokenService implements TokenServiceInterface {
                                                 String tokenTypeOne, String tokenTypeTwo,
                                                 String tokenTypeThree) {
 
-    var request = gameService.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
+        gameManagerService, authService);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -112,7 +121,7 @@ public class TokenService implements TokenServiceInterface {
     }
 
     currentGame.giveThreeOf(desiredGemOne, desiredGemTwo, desiredGemThree, requestingPlayer);
-    gameService.endCurrentPlayersTurn(currentGame);
+    serviceUtils.endCurrentPlayersTurn(currentGame);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
