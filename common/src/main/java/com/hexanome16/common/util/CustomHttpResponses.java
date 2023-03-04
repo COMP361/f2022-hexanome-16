@@ -43,6 +43,21 @@ public enum CustomHttpResponses implements BroadcastContent {
   NOT_PLAYERS_TURN("Not your turn yet", HTTP_BAD_REQUEST),
 
   /**
+   * Used for invalid card md5 hash.
+   */
+  BAD_CARD_HASH("Card hash is not valid", HTTP_BAD_REQUEST),
+  /**
+   * Used for when player does not have enough funds for purchase.
+   */
+  INSUFFICIENT_FUNDS("You do not have enough funds to buy this card", HTTP_BAD_REQUEST),
+  /**
+   * Used for when proposed deal does not work for current card.
+   */
+  INVALID_PROPOSED_DEAL(
+      "The deal you've proposed is incompatible with the card you're trying to purchase",
+      HTTP_BAD_REQUEST),
+
+  /**
    * OK.
    */
   OK("Ok", HTTP_OK),
