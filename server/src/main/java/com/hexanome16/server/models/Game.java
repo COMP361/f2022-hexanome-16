@@ -424,18 +424,34 @@ public class Game {
     Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
       nobleDeck.addCard(this.nobleDeck.removeNextCard());
+      ServerNoble noble = this.nobleDeck.removeNextCard();
+      nobleDeck.addCard(noble);
+      remainingNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }
     this.onBoardNobles = nobleDeck;
   }
 
+  @SneakyThrows
   private void createOnBoardRedDecks() {
     Deck<ServerLevelCard> redOneDeck = new Deck<>();
     Deck<ServerLevelCard> redTwoDeck = new Deck<>();
     Deck<ServerLevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
-      redOneDeck.addCard(redDecks.get(Level.REDONE).removeNextCard());
-      redTwoDeck.addCard(redDecks.get(Level.REDTWO).removeNextCard());
-      redThreeDeck.addCard(redDecks.get(Level.REDTHREE).removeNextCard());
+      ServerLevelCard levelOne = levelDecks.get(Level.REDONE).removeNextCard();
+      levelOne.setFaceDown(false);
+      redOneDeck.addCard(levelOne);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)), levelOne);
+
+      ServerLevelCard levelTwo = levelDecks.get(Level.REDTWO).removeNextCard();
+      levelTwo.setFaceDown(false);
+      redTwoDeck.addCard(levelTwo);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)), levelTwo);
+
+      ServerLevelCard levelThree = levelDecks.get(Level.REDTHREE).removeNextCard();
+      levelThree.setFaceDown(false);
+      redThreeDeck.addCard(levelThree);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+          levelThree);
     }
     this.onBoardDecks.put(Level.REDONE, redOneDeck);
     this.onBoardDecks.put(Level.REDTWO, redTwoDeck);
