@@ -4,20 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
  */
 @Getter
 public class ServerPlayer extends Player {
-  private Inventory inventory; // the player has an inventory, not a bank
   private final Queue<Action> queueOfCascadingActionTypes;
+  private Inventory inventory; // the player has an inventory, not a bank
 
   /**
    * Player Constructor.
@@ -136,12 +137,9 @@ public class ServerPlayer extends Player {
    */
   public void addNobleListToPerform(ArrayList<Noble> nobleList) {
     ObjectMapper objectMapper = new ObjectMapper();
-
-    // Make and add action to queue
-    getActionQueue().add(() -> ResponseEntity.ok()
-        .header("action-type", "choose-noble")
-        .body(objectMapper.writeValueAsString(nobleList.toArray())));
-
+    queueOfCascadingActionTypes.add(() ->
+        CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_NOBLE,
+            objectMapper.writeValueAsString(nobleList.toArray()), null));
   }
 
   /**
@@ -151,18 +149,17 @@ public class ServerPlayer extends Player {
    */
   public void addCitiesToPerform(ArrayList<City> citiesList) {
     ObjectMapper objectMapper = new ObjectMapper();
-
-    // Make and add action to queue
-    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
-        .body(objectMapper.writeValueAsString(citiesList.toArray())));
+    queueOfCascadingActionTypes.add(
+        () -> CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_CITY,
+            objectMapper.writeValueAsString(citiesList.toArray()), null));
   }
 
   /**
    * Adds Take Two as an action that needs to be performed.
    */
   public void addTakeTwoToPerform() {
-    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "take-level-two").build());
-
+    queueOfCascadingActionTypes.add(() ->
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
