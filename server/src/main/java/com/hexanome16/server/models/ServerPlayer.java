@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
@@ -159,17 +158,26 @@ public class ServerPlayer extends Player {
   public void addCitiesToPerform(ArrayList<City> citiesList) {
     ObjectMapper objectMapper = new ObjectMapper();
 
-    // Make and add action to queue
-    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
-        .body(objectMapper.writeValueAsString(citiesList.toArray())));
+    /*
+        // Make and add action to queue
+        getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
+            .body(objectMapper.writeValueAsString(citiesList.toArray())));
+    */
+
+    queueOfCascadingActionTypes.add(
+        () -> CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_CITY,
+            objectMapper.writeValueAsString(citiesList.toArray()), null));
   }
 
   /**
    * Adds Take Two as an action that needs to be performed.
    */
   public void addTakeTwoToPerform() {
-    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "take-level-two").build());
+    //getActionQueue().add(() ->
+    // ResponseEntity.ok().header("action-type", "take-level-two").build());
 
+    queueOfCascadingActionTypes.add(() ->
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
