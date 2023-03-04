@@ -207,12 +207,7 @@ public class InventoryController {
                                         @RequestParam String accessToken,
                                         @RequestBody PurchaseMap purchaseMap)
       throws JsonProcessingException {
-    System.out.println(cardMd5);
-    System.out.println(purchaseMap);
-    ResponseEntity<String> response = inventoryService.buyCard(
-        sessionId, cardMd5, accessToken, purchaseMap);
-    System.out.println(response);
-    return response;
+    return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
 
   /**
