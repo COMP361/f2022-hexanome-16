@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import com.hexanome16.common.models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +77,7 @@ public class ServerPlayerTest {
                     new PurchaseMap(1, 1, 1, 1, 1, 1)),
                 new ServerNoble(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
-                )
+            )
         ));
     Queue<Action> actions = costa.getActionQueue();
     assertFalse(actions.isEmpty());

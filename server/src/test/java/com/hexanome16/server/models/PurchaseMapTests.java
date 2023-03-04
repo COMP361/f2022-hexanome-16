@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**

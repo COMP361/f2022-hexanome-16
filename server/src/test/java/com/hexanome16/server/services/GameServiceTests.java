@@ -1,10 +1,8 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,6 +10,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
@@ -20,17 +23,12 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
-import com.hexanome16.common.models.Level;
-import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PriceMap;
-import com.hexanome16.common.models.price.PurchaseMap;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.hexanome16.common.util.CustomHttpResponses;
 
 /**
  * The type Game service tests.

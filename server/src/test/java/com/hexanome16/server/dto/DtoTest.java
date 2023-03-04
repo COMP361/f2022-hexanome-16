@@ -2,16 +2,16 @@ package com.hexanome16.server.dto;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.common.dto.CardJson;
 import com.hexanome16.common.dto.DeckJson;
 import com.hexanome16.common.dto.NobleDeckJson;
 import com.hexanome16.common.dto.NobleJson;
 import com.hexanome16.common.dto.PlayerJson;
-import java.io.IOException;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -62,8 +62,8 @@ public class InventoryTests {
     // assert it was reserved successfully
     assertTrue(inventory.getReservedCards().contains(levelCard));
     assertTrue(inventory.getReservedCards()
-            .get(inventory.getReservedCards().size() - 1)
-            .isFaceDown());
+        .get(inventory.getReservedCards().size() - 1)
+        .isFaceDown());
   }
 
   /**
@@ -82,8 +82,8 @@ public class InventoryTests {
     // assert it was reserved successfully
     assertTrue(inventory.getReservedCards().contains(levelCard));
     assertFalse(inventory.getReservedCards()
-            .get(inventory.getReservedCards().size() - 1)
-            .isFaceDown());
+        .get(inventory.getReservedCards().size() - 1)
+        .isFaceDown());
   }
 
   /**
