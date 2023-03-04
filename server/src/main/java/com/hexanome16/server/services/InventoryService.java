@@ -262,4 +262,19 @@ public class InventoryService implements InventoryServiceInterface {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @Override
+  public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
+                                             String authenticationToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
+            authService);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+  }
 }

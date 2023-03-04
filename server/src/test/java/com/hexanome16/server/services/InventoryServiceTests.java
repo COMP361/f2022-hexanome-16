@@ -22,6 +22,7 @@ import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
 import java.io.IOException;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -288,6 +289,45 @@ class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
+  }
+
+  /**
+   * Test acquire noble invalid session id.
+   */
+  @Test
+  @SneakyThrows
+  public void testAcquireNobleInvalidSessionId() {
+    // Arrange
+    final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "";
+
+    // Act
+    var response = inventoryService.acquireNoble(invalidSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), response.getBody());
+  }
+
+  /**
+   * Test acquire noble invalid access token.
+   */
+  @Test
+  @SneakyThrows
+  public void testAcquireNobleInvalidAccessToken() {
+    // Arrange
+    final var invalidSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "";
+
+    // Act
+    var response = inventoryService.acquireNoble(invalidSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), response.getBody());
   }
 
   private ServerLevelCard createValidCard() {
