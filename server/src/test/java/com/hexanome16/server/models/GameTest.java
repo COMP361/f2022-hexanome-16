@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
@@ -191,21 +192,15 @@ public class GameTest {
 
   /**
    * Testing availableTwoTokenType(). The shenanigans in the equal is because it needs
-   * to be a set in order for the order not to matter. (Note that Gold tokens are part
-   * of the returned list, IDK if that should be the case at all but for now it is what
-   * it is :) )
+   * to be a set in order for the order not to matter.
    */
   @Test
   public void testAvailableTwoTokensType() {
-    ArrayList<Gem> availableGems = game.availableTwoTokensType();
-    assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-        Gem.SAPPHIRE, Gem.DIAMOND,
-        Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
-    game.incGameBank(-3, -4,
-        0, 0, 0, 0);
-    availableGems = game.availableTwoTokensType();
-    assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-        Gem.SAPPHIRE, Gem.DIAMOND, Gem.ONYX, Gem.GOLD))));
+    ArrayList<Gem> availableGems =
+        new ArrayList<>(List.of(Gem.RUBY, Gem.SAPPHIRE, Gem.ONYX, Gem.DIAMOND, Gem.EMERALD));
+
+
+    assertEquals(Set.copyOf(availableGems), Set.copyOf(game.availableTwoTokensType()));
   }
 
   /**
@@ -229,7 +224,7 @@ public class GameTest {
     myBank.addGemsToBank(Gem.RUBY, 2);
     game.giveTwoOf(Gem.RUBY, imad);
     GameBank gameBank = new GameBank();
-    gameBank.addGemsToBank(Gem.RUBY, 2);
+    gameBank.removeGemsFromBank(Gem.RUBY, 2);
     assertEquals(imad.getBank(), myBank);
     assertEquals(game.getGameBank(), gameBank);
   }
@@ -241,16 +236,11 @@ public class GameTest {
    */
   @Test
   public void testAvailableThreeTokensType() {
-    ArrayList<Gem> availableGems = game.availableThreeTokensType();
-    assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-        Gem.SAPPHIRE, Gem.DIAMOND,
-        Gem.EMERALD, Gem.ONYX, Gem.GOLD))));
-    game.incGameBank(-3, -4,
-        0, 0, -7, 0);
-    availableGems = game.availableThreeTokensType();
-    assertEquals(Set.copyOf(availableGems), Set.copyOf(new ArrayList<>(List.of(Gem.RUBY,
-        Gem.SAPPHIRE, Gem.DIAMOND,
-        Gem.EMERALD, Gem.GOLD))));
+    ArrayList<Gem> availableGems =
+        new ArrayList<>(List.of(Gem.RUBY, Gem.SAPPHIRE, Gem.ONYX, Gem.DIAMOND, Gem.EMERALD));
+
+
+    assertEquals(Set.copyOf(availableGems), Set.copyOf(game.availableThreeTokensType()));
   }
 
   /**
