@@ -263,11 +263,10 @@ class InventoryServiceTests {
 
   /**
    * Test reserve card.
-   *
-   * @throws JsonProcessingException the json processing exception
    */
   @Test
-  public void testReserveCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+  @SneakyThrows
+  public void testReserveCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
@@ -282,6 +281,29 @@ class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  @SneakyThrows
+  @DisplayName("Reserve invalid card hash should return error http")
+  public void testReserveInvalidCard() {
+    // Arrange
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+
+    ServerLevelCard myCard = createValidCard();
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
+
+    // Act
+    ResponseEntity<String> response = inventoryService.reserveCard(sessionId,
+        "invalid hash", accessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
   }
 
   /**
