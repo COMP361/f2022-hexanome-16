@@ -57,13 +57,14 @@ public class GameServiceController {
   @EventListener(ApplicationReadyEvent.class)
   public void createGameServices() {
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.BASE.getAssocServerName(), WinCondition.BASE.getAssocServerName(), "true"));
+        WinCondition.BASE.getGameServiceJson().getName(),
+        WinCondition.BASE.getGameServiceJson().getDisplayName(), "true"));
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.TRADEROUTES.getAssocServerName(),
-        WinCondition.TRADEROUTES.getAssocServerName(), "true"));
+        WinCondition.TRADEROUTES.getGameServiceJson().getName(),
+        WinCondition.TRADEROUTES.getGameServiceJson().getDisplayName(), "true"));
     createGameService(new ServerGameParams(4, 2,
-        WinCondition.CITIES.getAssocServerName(),
-        WinCondition.CITIES.getAssocServerName(), "true"));
+        WinCondition.CITIES.getGameServiceJson().getName(),
+        WinCondition.CITIES.getGameServiceJson().getDisplayName(), "true"));
   }
 
   /**
@@ -96,11 +97,11 @@ public class GameServiceController {
   @PreDestroy
   public void deleteGameServices() {
     System.out.println("Deleting game services");
-    deleteGameService(WinCondition.BASE.getAssocServerName());
+    deleteGameService(WinCondition.BASE.getGameServiceJson().getName());
     System.out.println("Deleted base service");
-    deleteGameService(WinCondition.TRADEROUTES.getAssocServerName());
+    deleteGameService(WinCondition.TRADEROUTES.getGameServiceJson().getName());
     System.out.println("Deleted trade service");
-    deleteGameService(WinCondition.CITIES.getAssocServerName());
+    deleteGameService(WinCondition.CITIES.getGameServiceJson().getName());
     System.out.println("Deleted cities service");
   }
 

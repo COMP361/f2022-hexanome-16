@@ -1,5 +1,6 @@
 package com.hexanome16.server.models.winconditions;
 
+import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.server.models.ServerPlayer;
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -16,23 +17,24 @@ public enum WinCondition {
       player.getInventory().getOwnedCards().stream()
           .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
           + player.getInventory().getOwnedNobles().stream()
-          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15, "Splendor"),
+          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15,
+      new GameServiceJson("Splendor", "Orient")),
   /**
    * Win condition for Trade Routes (15 prestige points + 3 trade routes).
    */
-  TRADEROUTES(null, "SplendorTradeRoutes"),
+  TRADEROUTES(null, new GameServiceJson("SplendorTradeRoutes", "Orient + Trade Routes")),
   /**
    * Win condition for Cities (15 prestige points + 4 cities).
    */
-  CITIES(null, "SplendorCities");
+  CITIES(null, new GameServiceJson("SplendorCities", "Orient + Cities"));
 
   private final Predicate<ServerPlayer> winCondition;
   @Getter
-  private final String assocServerName;
+  private final GameServiceJson gameServiceJson;
 
-  WinCondition(Predicate<ServerPlayer> winCondition, String assocServerName) {
+  WinCondition(Predicate<ServerPlayer> winCondition, GameServiceJson gameServiceJson) {
     this.winCondition = winCondition;
-    this.assocServerName = assocServerName;
+    this.gameServiceJson = gameServiceJson;
   }
 
   /**
@@ -43,8 +45,9 @@ public enum WinCondition {
    */
   public static WinCondition fromServerName(String serverName) {
     return Arrays.stream(WinCondition.values())
-        .filter(winCondition -> winCondition.assocServerName.equals(serverName)).findFirst()
-        .orElse(null);
+        .filter(winCondition -> winCondition.gameServiceJson.getName().equals(serverName)
+            || winCondition.gameServiceJson.getDisplayName().equals(serverName))
+        .findFirst().orElse(null);
   }
 
   /**

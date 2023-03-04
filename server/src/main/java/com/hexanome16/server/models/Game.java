@@ -1,12 +1,12 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.common.dto.BagJson;
-import com.hexanome16.common.dto.CardJson;
-import com.hexanome16.common.dto.CascadeTwoJson;
-import com.hexanome16.common.dto.DoubleJson;
-import com.hexanome16.common.dto.NobleJson;
 import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.dto.cards.BagJson;
+import com.hexanome16.common.dto.cards.CardJson;
+import com.hexanome16.common.dto.cards.CascadeTwoJson;
+import com.hexanome16.common.dto.cards.DoubleJson;
+import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
