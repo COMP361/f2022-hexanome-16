@@ -52,8 +52,15 @@ public enum CustomHttpResponses implements BroadcastContent {
    * (Object mapper stuff for example)
    */
   SERVER_SIDE_ERROR("There was an error on the server, please try again later",
-      HTTP_INTERNAL_ERROR);
+      HTTP_INTERNAL_ERROR),
 
+  /**
+   * Used for indicating that player must choose a noble.
+   * <p>
+   * Only use with CustomResponse to pass in list of nobles in body.
+   * </p>
+   */
+  CHOOSE_NOBLE("Insert custom body", HTTP_OK, Map.of("action-type", List.of("choose-noble")));
   private final String body;
   private final Map<String, List<String>> headers;
   private final int status;
