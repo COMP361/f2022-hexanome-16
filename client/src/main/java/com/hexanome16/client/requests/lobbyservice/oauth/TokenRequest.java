@@ -5,8 +5,8 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.auth.TokensInfo;
 import java.util.Map;
-import models.auth.TokensInfo;
 
 /**
  * This class provides methods to log in the user and get the associated OAuth tokens.

@@ -14,7 +14,7 @@ import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
-import models.auth.TokensInfo;
+import com.hexanome16.common.models.auth.TokensInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

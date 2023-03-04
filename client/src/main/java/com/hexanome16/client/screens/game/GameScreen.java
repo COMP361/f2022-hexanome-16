@@ -10,21 +10,20 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
-import dto.DeckJson;
-import dto.NobleDeckJson;
-import dto.PlayerJson;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
-import models.Level;
-import models.LevelCard;
-import models.Noble;
-import models.price.Gem;
-import models.price.PriceInterface;
-import models.price.PurchaseMap;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * GameScreen class spawns all the entities for game board.

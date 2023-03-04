@@ -9,7 +9,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
-import models.Level;
+import com.hexanome16.common.models.Level;
 
 /**
  * FXGL factory for Prompts.

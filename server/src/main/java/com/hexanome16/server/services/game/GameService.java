@@ -4,6 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
@@ -11,22 +19,14 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
-import dto.DeckJson;
-import dto.PlayerJson;
-import dto.WinJson;
 import java.util.Arrays;
 import lombok.NonNull;
-import models.Level;
-import models.price.Gem;
-import models.price.PriceInterface;
-import models.price.PurchaseMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import util.CustomHttpResponses;
 
 /**
  * Service is responsible for managing game state requests from

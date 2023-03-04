@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
-import util.CustomHttpResponses;
+import com.hexanome16.common.util.CustomHttpResponses;
 
 class CustomResponseFactoryTest {
 

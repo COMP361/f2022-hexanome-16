@@ -3,10 +3,10 @@ package com.hexanome16.client.screens.game;
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
 import java.util.Map;
-import models.price.Gem;
-import models.price.PurchaseMap;
 
 /**
  * Class with a bunch of methods to update various game information.

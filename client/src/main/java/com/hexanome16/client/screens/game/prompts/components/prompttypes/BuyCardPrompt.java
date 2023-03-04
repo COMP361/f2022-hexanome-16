@@ -17,6 +17,8 @@ import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -35,8 +37,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import models.price.PriceMap;
-import models.price.PurchaseMap;
 
 /**
  * A class responsible for populating Buy card prompt.

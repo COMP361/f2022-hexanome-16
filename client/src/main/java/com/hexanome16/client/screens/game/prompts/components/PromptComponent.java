@@ -12,6 +12,7 @@ import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
+import com.hexanome16.common.models.Level;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -21,7 +22,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import models.Level;
 
 /**
  * FXGL Component for prompts, used for Prompt entity.

@@ -6,7 +6,7 @@ import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.List;
 import java.util.Objects;
 import lombok.NonNull;
-import models.auth.TokensInfo;
+import com.hexanome16.common.models.auth.TokensInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

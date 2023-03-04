@@ -24,8 +24,8 @@ public interface TokenServiceInterface {
    *
    * @param sessionId the session's Identification number.
    * @return <p>CustomHttpResponse.INVALID_SESSION_ID if no such session, HttpStatus_OK
-   *     otherwise with a body containing a string representation of the available token
-   *     types that you can take one of</p>
+   * otherwise with a body containing a string representation of the available token
+   * types that you can take one of</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
   ResponseEntity<String> availableThreeTokensType(long sessionId) throws JsonProcessingException;
@@ -39,7 +39,7 @@ public interface TokenServiceInterface {
    * @param tokenType           String representing the token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.</p>
+   * HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> takeTwoTokens(long sessionId,
                                        String authenticationToken,
@@ -58,7 +58,7 @@ public interface TokenServiceInterface {
    * @param tokenTypeThree      String representing the 3rd token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.</p>
+   * HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> takeThreeTokens(long sessionId,
                                          String authenticationToken,
@@ -74,7 +74,7 @@ public interface TokenServiceInterface {
    * @param tokenType           String representing the token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.</p>
+   * HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> giveBackToken(long sessionId,
                                        String authenticationToken,

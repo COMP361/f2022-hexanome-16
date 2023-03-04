@@ -1,9 +1,8 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.common.models.CardInfo;
+import com.hexanome16.common.models.price.PriceMap;
 import lombok.Getter;
-import models.CardInfo;
-import models.price.PriceInterface;
-import models.price.PriceMap;
 
 /**
  * City class for the Cities expansion.

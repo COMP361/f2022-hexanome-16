@@ -1,16 +1,16 @@
 package com.hexanome16.server.util.broadcastmap;
 
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.Game;
-import dto.DeckJson;
-import dto.NobleDeckJson;
-import dto.PlayerJson;
-import dto.WinJson;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import models.Level;
 
 /**
  * This class is used to manage the broadcast content.

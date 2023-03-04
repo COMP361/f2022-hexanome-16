@@ -5,16 +5,16 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
-import models.Level;
-import models.LevelCard;
-import models.Noble;
-import models.price.PurchaseMap;
 
 /**
  * Class responsible for sending HTTP requests related to the prompts.

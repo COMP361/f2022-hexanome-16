@@ -10,6 +10,7 @@ import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.ScrollPane;
@@ -20,7 +21,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import models.LevelCard;
 
 /**
  * Class responsible for populating See Cards prompt.

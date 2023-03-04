@@ -8,6 +8,7 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.ScrollPane;
@@ -18,7 +19,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import models.LevelCard;
 
 /**
  * A class responsible for populating See Own reserved Cards prompt.

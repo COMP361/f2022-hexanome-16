@@ -5,8 +5,8 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.sessions.User;
 import java.util.Map;
-import models.sessions.User;
 
 /**
  * This class provides methods to get details about a user in Lobby Service.

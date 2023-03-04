@@ -17,12 +17,12 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
-import dto.SessionJson;
-import models.price.Gem;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.Gem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import util.CustomHttpResponses;
+import com.hexanome16.common.util.CustomHttpResponses;
 
 /**
  * Test of {@link TokenService}.

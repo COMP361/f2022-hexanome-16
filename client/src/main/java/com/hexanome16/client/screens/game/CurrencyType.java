@@ -2,10 +2,10 @@ package com.hexanome16.client.screens.game;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.common.models.price.Gem;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import lombok.Getter;
-import models.price.Gem;
 
 /**
  * An enum of the possible currency types in a card purchase.

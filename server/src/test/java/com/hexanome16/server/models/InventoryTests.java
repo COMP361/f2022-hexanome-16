@@ -3,9 +3,9 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import models.Level;
-import models.Noble;
-import models.price.PriceMap;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

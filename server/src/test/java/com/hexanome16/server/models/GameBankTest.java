@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.hexanome16.server.models.bank.GameBank;
 import java.util.ArrayList;
 import java.util.Set;
-import models.price.Gem;
-import models.price.PurchaseMap;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

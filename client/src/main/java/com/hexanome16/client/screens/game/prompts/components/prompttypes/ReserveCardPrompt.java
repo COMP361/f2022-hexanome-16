@@ -13,6 +13,7 @@ import com.hexanome16.client.screens.game.UpdateGameInfo;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.Level;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import models.Level;
 
 /**
  * A class responsible for populating Reserve card prompt.

@@ -1,13 +1,13 @@
 package com.hexanome16.server.util.broadcastmap;
 
-import dto.DeckJson;
-import dto.NobleDeckJson;
-import dto.PlayerJson;
-import dto.WinJson;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
 import lombok.Getter;
-import models.Level;
 
 /**
  * This class describes the keys used in the broadcast map with their associated value class.

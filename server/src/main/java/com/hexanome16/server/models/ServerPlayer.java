@@ -1,14 +1,14 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.Player;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
-import models.Noble;
-import models.Player;
-import models.price.PurchaseMap;
 import org.springframework.http.ResponseEntity;
 
 /**

@@ -1,15 +1,19 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.common.dto.BagJson;
+import com.hexanome16.common.dto.CardJson;
+import com.hexanome16.common.dto.CascadeTwoJson;
+import com.hexanome16.common.dto.DoubleJson;
+import com.hexanome16.common.dto.NobleJson;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
-import dto.BagJson;
-import dto.CardJson;
-import dto.CascadeTwoJson;
-import dto.DoubleJson;
-import dto.NobleJson;
-import dto.SessionJson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,10 +24,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import models.Level;
-import models.price.Gem;
-import models.price.PriceMap;
-import models.price.PurchaseMap;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**

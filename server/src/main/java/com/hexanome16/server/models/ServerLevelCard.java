@@ -1,10 +1,9 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.price.PriceMap;
 import lombok.Getter;
-import models.Level;
-import models.LevelCard;
-import models.price.PriceInterface;
-import models.price.PriceMap;
 
 /**
  * Card instead of noble.

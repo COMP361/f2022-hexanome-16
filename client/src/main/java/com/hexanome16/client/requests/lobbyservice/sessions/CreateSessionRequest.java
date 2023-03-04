@@ -4,7 +4,7 @@ import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
-import dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
 import java.util.Map;
 
 /**
