@@ -38,7 +38,7 @@ public class LongPollingService implements LongPollingServiceInterface {
                                                         String accessToken, String hash) {
     Level atLevel = Level.fromString(level);
     if (atLevel == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
+      return CustomResponseFactory.getDeferredResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
     return validRequestLongPolling(sessionId, accessToken,
         BroadcastMapKey.fromLevel(atLevel), hash);
@@ -89,13 +89,13 @@ public class LongPollingService implements LongPollingServiceInterface {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
-      return CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+      return CustomResponseFactory.getDeferredResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
 
     boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
 
     if (!isValidPlayer) {
-      return CustomResponseFactory.getDeferredErrorResponse(
+      return CustomResponseFactory.getDeferredResponse(
           CustomHttpResponses.INVALID_ACCESS_TOKEN);
     }
     return ResponseGenerator.getHashBasedUpdate(
