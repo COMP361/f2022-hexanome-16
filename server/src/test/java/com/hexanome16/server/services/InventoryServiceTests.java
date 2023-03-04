@@ -101,7 +101,8 @@ class InventoryServiceTests {
         inventoryService.getPlayerBankInfo(DummyAuths.invalidSessionIds.get(0),
             DummyAuths.validPlayerList.get(0).getName());
     // Assert
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode().value());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getStatusCode().value());
   }
 
   /**

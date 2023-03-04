@@ -387,15 +387,15 @@ public class Game {
 
     // lay the cards face up on the game board
     for (int i = 0; i < 4; i++) {
-      ServerLevelCard levelOne = levelDecks.get(Level.ONE).nextCard();
+      ServerLevelCard levelOne = levelDecks.get(Level.ONE).removeNextCard();
       levelOne.setFaceDown(false);
       baseOneDeck.addCard(levelOne);
 
-      ServerLevelCard levelTwo = levelDecks.get(Level.TWO).nextCard();
+      ServerLevelCard levelTwo = levelDecks.get(Level.TWO).removeNextCard();
       levelTwo.setFaceDown(false);
       baseTwoDeck.addCard(levelTwo);
 
-      ServerLevelCard levelThree = levelDecks.get(Level.THREE).nextCard();
+      ServerLevelCard levelThree = levelDecks.get(Level.THREE).removeNextCard();
       levelThree.setFaceDown(false);
       baseThreeDeck.addCard(levelThree);
     }
@@ -408,7 +408,7 @@ public class Game {
     // same thing but with the nobles
     Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
-      nobleDeck.addCard(this.nobleDeck.nextCard());
+      nobleDeck.addCard(this.nobleDeck.removeNextCard());
     }
     this.onBoardNobles = nobleDeck;
   }
@@ -418,9 +418,9 @@ public class Game {
     Deck<ServerLevelCard> redTwoDeck = new Deck<>();
     Deck<ServerLevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
-      redOneDeck.addCard(redDecks.get(Level.REDONE).nextCard());
-      redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
-      redThreeDeck.addCard(redDecks.get(Level.REDTHREE).nextCard());
+      redOneDeck.addCard(redDecks.get(Level.REDONE).removeNextCard());
+      redTwoDeck.addCard(redDecks.get(Level.REDTWO).removeNextCard());
+      redThreeDeck.addCard(redDecks.get(Level.REDTHREE).removeNextCard());
     }
     this.onBoardDecks.put(Level.REDONE, redOneDeck);
     this.onBoardDecks.put(Level.REDTWO, redTwoDeck);
