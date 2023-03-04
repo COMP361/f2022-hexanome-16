@@ -56,7 +56,7 @@ public class ServiceUtils {
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
           new ImmutablePair<>(null, null));
     }
 
@@ -91,7 +91,7 @@ public class ServiceUtils {
 
     if (currentGame == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID),
           new ImmutablePair<>(null, null));
     }
 
@@ -100,7 +100,7 @@ public class ServiceUtils {
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
           new ImmutablePair<>(null, null));
     }
 

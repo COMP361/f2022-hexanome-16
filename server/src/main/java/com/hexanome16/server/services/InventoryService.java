@@ -56,7 +56,7 @@ public class InventoryService implements InventoryServiceInterface {
       throws JsonProcessingException {
     Game game = gameManagerService.getGame(sessionId);
     if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
 
     // get player with username
@@ -79,6 +79,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
         gameManagerService, authService);
+    ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
     }

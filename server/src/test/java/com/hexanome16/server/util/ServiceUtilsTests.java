@@ -14,6 +14,7 @@ import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.GameManagerService;
 import com.hexanome16.server.services.GameManagerServiceInterface;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
