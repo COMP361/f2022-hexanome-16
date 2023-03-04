@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.models.Level;

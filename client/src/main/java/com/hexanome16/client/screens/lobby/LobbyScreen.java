@@ -29,20 +29,20 @@ public class LobbyScreen {
    * Removes all related elements from the lobby screen.
    */
   public static void exitLobby() {
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.BACKGROUND).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.OWN_SESSION_LIST)
+    getGameWorld().getEntitiesByType(EntityType.BACKGROUND).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.OWN_SESSION_LIST)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.OTHER_SESSION_LIST)
+    getGameWorld().getEntitiesByType(EntityType.OTHER_SESSION_LIST)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.CREATE_SESSION_BUTTON)
+    getGameWorld().getEntitiesByType(EntityType.CREATE_SESSION_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.CLOSE_BUTTON)
+    getGameWorld().getEntitiesByType(EntityType.CLOSE_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.PREFERENCES_BUTTON)
+    getGameWorld().getEntitiesByType(EntityType.PREFERENCES_BUTTON)
         .forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.LOGO).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.OWN_HEADER).forEach(Entity::removeFromWorld);
-    getGameWorld().getEntitiesByType(LobbyFactory.Type.OTHER_HEADER)
+    getGameWorld().getEntitiesByType(EntityType.LOGO).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.OWN_HEADER).forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.OTHER_HEADER)
         .forEach(Entity::removeFromWorld);
   }
 }
