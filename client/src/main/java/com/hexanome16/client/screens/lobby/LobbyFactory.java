@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;
@@ -19,6 +20,7 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +53,10 @@ public class LobbyFactory implements EntityFactory {
   private static final AtomicBoolean shouldFetch = new AtomicBoolean(true);
   private static TableView<Map.Entry<String, Session>> activeSessionList;
   private static TableView<Map.Entry<String, Session>> otherSessionList;
+  private static final AtomicReference<Pair<String, GameServiceJson[]>> gameServices =
+      new AtomicReference<>(new Pair<>("", new GameServiceJson[0]));
+  private static final AtomicReference<Thread> fetchGameServicesThread
+      = new AtomicReference<>(null);
 
   /**
    * This method updates the list of sessions shown in the lobby screen.
@@ -71,6 +77,39 @@ public class LobbyFactory implements EntityFactory {
           otherSessionList.getItems().add(entry);
         }
       }
+    }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of game services from the Lobby
+   * Service.
+   */
+  private static void createFetchGameServicesThread() {
+    if (shouldFetch.get()) {
+      Task<Void> fetchGameServicesTask = new Task<>() {
+        @Override
+        protected Void call() {
+          gameServices.set(ListGameServicesRequest.execute());
+          return null;
+        }
+      };
+      fetchGameServicesTask.setOnSucceeded(e -> {
+        fetchGameServicesThread.get().interrupt();
+        Platform.runLater(LobbyFactory::updateGameServicesList);
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      fetchGameServicesTask.setOnFailed(e -> {
+        fetchGameServicesThread.get().interrupt();
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      Thread thread = new Thread(fetchGameServicesTask);
+      thread.setDaemon(true);
+      thread.start();
+      fetchGameServicesThread.set(thread);
     }
   }
 
@@ -295,7 +334,7 @@ public class LobbyFactory implements EntityFactory {
     }
 
     return entityBuilder(data)
-        .type(isActive ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
+        .type(isActive ? EntityType.OWN_SESSION_LIST : EntityType.OTHER_SESSION_LIST)
         .viewWithBBox(sessionTableView)
         .at(160, isActive ? 350 : 450 + getAppHeight() / 4.0)
         .build();
@@ -325,7 +364,7 @@ public class LobbyFactory implements EntityFactory {
       //ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
-        .type(Type.CREATE_SESSION_BUTTON)
+        .type(EntityType.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
         .at(870, 200)
         .build();
@@ -342,7 +381,7 @@ public class LobbyFactory implements EntityFactory {
     Label label = new Label("Active Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(Type.OWN_HEADER)
+        .type(EntityType.OWN_HEADER)
         .viewWithBBox(label)
         .at(870, 300)
         .build();
@@ -359,7 +398,7 @@ public class LobbyFactory implements EntityFactory {
     Label label = new Label("Other Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(Type.OTHER_HEADER)
+        .type(EntityType.OTHER_HEADER)
         .viewWithBBox(label)
         .at(880, 400 + getAppHeight() / 4.0)
         .build();
@@ -384,7 +423,7 @@ public class LobbyFactory implements EntityFactory {
       MainMenuScreen.initUi();
     });
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(1700, 100)
         .build();
@@ -399,7 +438,7 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("logo")
   public Entity logo(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.LOGO)
+        .type(EntityType.LOGO)
         .viewWithBBox("splendor.png")
         .at(450, 25)
         .scaleOrigin(450, 25)
@@ -421,7 +460,7 @@ public class LobbyFactory implements EntityFactory {
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> SettingsScreen.initUi(false));
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(150, 90)
         .build();
@@ -436,51 +475,9 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("background")
   public Entity background(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.BACKGROUND)
+        .type(EntityType.BACKGROUND)
         .viewWithBBox(new Rectangle(1920, 1080, Paint.valueOf("#282C34")))
         .at(0, 0)
         .build();
-  }
-
-  /**
-   * Enum of possible entities in the lobby screen.
-   */
-  public enum Type {
-    /**
-     * Own session list.
-     */
-    OWN_SESSION_LIST,
-    /**
-     * Other session list.
-     */
-    OTHER_SESSION_LIST,
-    /**
-     * Create session button.
-     */
-    CREATE_SESSION_BUTTON,
-    /**
-     * Close button.
-     */
-    CLOSE_BUTTON,
-    /**
-     * Preferences button.
-     */
-    PREFERENCES_BUTTON,
-    /**
-     * Logo.
-     */
-    LOGO,
-    /**
-     * Own header.
-     */
-    OWN_HEADER,
-    /**
-     * Other header.
-     */
-    OTHER_HEADER,
-    /**
-     * Background.
-     */
-    BACKGROUND
   }
 }

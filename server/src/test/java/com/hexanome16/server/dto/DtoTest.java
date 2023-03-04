@@ -2,10 +2,10 @@ package com.hexanome16.server.dto;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import com.hexanome16.common.dto.CardJson;
-import com.hexanome16.common.dto.DeckJson;
-import com.hexanome16.common.dto.NobleDeckJson;
-import com.hexanome16.common.dto.NobleJson;
+import com.hexanome16.common.dto.cards.CardJson;
+import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.dto.cards.NobleDeckJson;
+import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.Game;
