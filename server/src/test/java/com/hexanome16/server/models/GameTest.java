@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
@@ -19,9 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import com.hexanome16.common.models.Level;
-import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ public class GameTest {
   @BeforeEach
   public void init() throws IOException {
     game = Game.create(12345,
-        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[]{WinCondition.BASE});
+        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[] {WinCondition.BASE});
   }
 
   /**
@@ -128,7 +128,7 @@ public class GameTest {
   public void testPlayerArrayGetsCloned() throws IOException {
     ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
     game = Game.create(12345,
-        players, "imad", "", new WinCondition[]{WinCondition.BASE});
+        players, "imad", "", new WinCondition[] {WinCondition.BASE});
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
     players[0] = null;

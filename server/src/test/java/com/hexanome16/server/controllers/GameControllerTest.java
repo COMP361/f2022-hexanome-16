@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingService;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
-import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.common.models.price.PurchaseMap;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;

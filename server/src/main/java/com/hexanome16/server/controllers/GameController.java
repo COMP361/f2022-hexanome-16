@@ -165,7 +165,7 @@ public class GameController {
    * @param accessToken token of the player trying to buy the card.
    * @param purchaseMap PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.</p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})

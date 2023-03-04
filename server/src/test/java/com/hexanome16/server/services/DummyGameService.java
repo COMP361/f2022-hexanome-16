@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.ServerPlayer;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.hexanome16.common.util.CustomHttpResponses;
 
 /**
  * Dummy Game service for usage in tests.

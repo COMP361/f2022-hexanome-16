@@ -65,7 +65,7 @@ public class TokensController {
    * @param tokenType           String representing the token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.</p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    */
   @PutMapping(value = {"/games/{sessionId}/twoTokens"})
   public ResponseEntity<String> takeTwoTokens(@PathVariable long sessionId,
@@ -88,7 +88,7 @@ public class TokensController {
    * @param tokenTypeThree      String representing the 3rd token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.</p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    */
   @PutMapping(value = {"/games/{sessionId}/threeTokens"})
   public ResponseEntity<String> takeThreeTokens(@PathVariable long sessionId,

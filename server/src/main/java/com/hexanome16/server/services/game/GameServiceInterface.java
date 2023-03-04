@@ -51,7 +51,7 @@ public interface GameServiceInterface {
    * @param authenticationToken username of the player trying to buy the card.
    * @param purchaseMap         Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.</p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   ResponseEntity<String> buyCard(long sessionId,

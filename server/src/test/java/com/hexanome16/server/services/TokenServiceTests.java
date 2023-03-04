@@ -10,6 +10,9 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
@@ -17,12 +20,9 @@ import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
-import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.common.models.price.Gem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import com.hexanome16.common.util.CustomHttpResponses;
 
 /**
  * Test of {@link TokenService}.
