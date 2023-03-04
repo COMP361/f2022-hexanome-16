@@ -74,7 +74,7 @@ class GameManagerServiceTest {
   private String createValidGame(long sessionId) {
     SessionJson testJson =
         new SessionJson(PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(), "",
-            WinCondition.BASE.getAssocServerName());
+            WinCondition.BASE.getGameServiceJson().getName());
     return gameManagerService.createGame(sessionId, testJson);
   }
 
