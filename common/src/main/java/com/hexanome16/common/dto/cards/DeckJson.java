@@ -23,6 +23,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class DeckJson implements BroadcastContent {
   private Map<String, LevelCard> cards;
   private Level deckLevel;
+  @JsonIgnore
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * Default constructor.
@@ -44,7 +46,6 @@ public class DeckJson implements BroadcastContent {
   public DeckJson(List<? extends LevelCard> cardList, Level level) {
     deckLevel = level;
     cards = new HashMap<>();
-    ObjectMapper objectMapper = new ObjectMapper();
     for (LevelCard card : cardList) {
       cards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
