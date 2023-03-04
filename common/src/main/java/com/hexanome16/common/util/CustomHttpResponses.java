@@ -41,6 +41,10 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Used for when it is not players turn.
    */
   NOT_PLAYERS_TURN("Not your turn yet", HTTP_BAD_REQUEST),
+  /**
+   * Used for when searching for player by username.
+   */
+  PLAYER_NOT_IN_GAME("No player with given username found in game", HTTP_BAD_REQUEST),
 
   /**
    * Used for invalid card md5 hash.
