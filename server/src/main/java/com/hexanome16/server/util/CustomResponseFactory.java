@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -57,7 +56,7 @@ public class CustomResponseFactory {
    * @return the response entity
    */
   public static ResponseEntity<String> getCustomResponse(CustomHttpResponses responseType,
-                                                         String body, @Nullable
+                                                         String body,
                                                          Map<String, List<String>> headers) {
     return new ResponseEntity<>(body, headers == null ? null : new LinkedMultiValueMap<>(headers),
         HttpStatus.valueOf(responseType.getStatus()));
@@ -69,14 +68,14 @@ public class CustomResponseFactory {
    * <p>Prioritize using {@link #getDeferredResponse} when possible,
    * if really out of the ordinary and unique
    * use this
-   *
+ *
    * @param responseType enum to put in ResponseEntity
    * @param body         custom body to add instead of the responseType body
    * @param headers      the headers to add to the response
    * @return the response entity
    */
   public static DeferredResult<ResponseEntity<String>> getDeferredCustomResponse(
-      CustomHttpResponses responseType, String body, @Nullable Map<String, List<String>> headers) {
+      CustomHttpResponses responseType, String body, Map<String, List<String>> headers) {
     var result = new DeferredResult<ResponseEntity<String>>();
     result.setResult(getCustomResponse(responseType, body, headers));
     return result;
