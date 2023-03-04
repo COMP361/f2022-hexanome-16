@@ -2,16 +2,19 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 /**
  * Test of {@link ServerPlayer}.
@@ -84,8 +87,10 @@ public class ServerPlayerTest {
     Action action = actions.poll();
     var response = action.getActionDetails();
     var headers = response.getHeaders();
-    assertEquals("choose-noble",
-        action.getActionDetails().getHeaders().get("action-type").get(0));
+    assertEquals("choose-noble", headers.get("action-type").get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertFalse(response.getBody().isBlank());
   }
 
   /**
@@ -105,8 +110,12 @@ public class ServerPlayerTest {
     Queue<Action> actions = costa.getActionQueue();
     assertFalse(actions.isEmpty());
     Action action = actions.poll();
-    assertEquals("choose-city",
-        action.getActionDetails().getHeaders().get("action-type").get(0));
+    var response = action.getActionDetails();
+    var headers = response.getHeaders();
+    assertEquals("choose-city", headers.get("action-type").get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertFalse(response.getBody().isBlank());
   }
 
   /**
@@ -118,8 +127,11 @@ public class ServerPlayerTest {
     Queue<Action> actions = costa.getActionQueue();
     assertFalse(actions.isEmpty());
     Action action = actions.poll();
-    assertEquals("take-level-two",
-        action.getActionDetails().getHeaders().get("action-type").get(0));
+    var response = action.getActionDetails();
+    var headers = response.getHeaders();
+    assertEquals("take-level-two", headers.get("action-type").get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
   }
 
 }
