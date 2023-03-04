@@ -22,6 +22,7 @@ import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
 import java.io.IOException;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -86,6 +87,21 @@ class InventoryServiceTests {
   }
 
   /**
+   * Test get invalid player bank info.
+   */
+  @Test
+  @SneakyThrows
+  @DisplayName("Get Player Bank info with invalid username should return http error")
+  public void testGetInvalidPlayerBankInfo() {
+    ResponseEntity<String> response =
+        inventoryService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
+            DummyAuths.invalidPlayerList.get(0).getName());
+
+    assertEquals(CustomHttpResponses.PLAYER_NOT_IN_GAME.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.PLAYER_NOT_IN_GAME.getBody(), response.getBody());
+  }
+
+  /**
    * Test get player bank info invalid.
    *
    * @throws JsonProcessingException the json processing exception
@@ -133,6 +149,7 @@ class InventoryServiceTests {
    */
   @Test
   public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+    // Arrange
     var sessionId = DummyAuths.validSessionIds.get(0);
     final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
@@ -145,21 +162,111 @@ class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
     );
 
+    // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
 
+    // Assert
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 
   /**
-   * Test reserve card.
-   *
-   * @throws JsonProcessingException the json processing exception
+   * Test buy invalid card using invalid hash.
    */
   @Test
-  public void testReserveCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+  @SneakyThrows
+  @DisplayName("BuyCard should fail if given invalid hash")
+  public void testBuyInvalidCardInvalidHash() {
+    // Arrange
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    // Card is created but not added to deck hash
+    ServerLevelCard myCard = createValidCard();
+
+    Game gameMock = gameManagerMock.getGame(sessionId);
+    serviceUtils.endCurrentPlayersTurn(gameMock);
+
+    // Act
+    ResponseEntity<String> response =
+        inventoryService.buyCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+
+    // Assert
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
+  }
+
+  /**
+   * Test buy invalid card using invalid proposed deal.
+   */
+  @Test
+  @SneakyThrows
+  @DisplayName("BuyCard should fail if given invalid proposed deal")
+  public void testBuyInvalidCardInvalidDeal() {
+    // Arrange
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    ServerLevelCard myCard = createValidCard();
+    Game gameMock = gameManagerMock.getGame(sessionId);
+    serviceUtils.endCurrentPlayersTurn(gameMock);
+
+    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    gameMock.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
+
+    // Act
+    ResponseEntity<String> response =
+        inventoryService.buyCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+            accessToken, new PurchaseMap(0, 0, 1, 0, 0, 1));
+
+    // Assert
+    assertEquals(CustomHttpResponses.INVALID_PROPOSED_DEAL.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.INVALID_PROPOSED_DEAL.getBody(), response.getBody());
+  }
+
+  @Test
+  @SneakyThrows
+  @DisplayName("BuyCard should fail if player does not have funds for given deal")
+  public void testBuyInvalidCardInsufficientFunds() {
+    // Arrange
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+
+    ServerLevelCard myCard = createTooExpensiveValidCard();
+    Game gameMock = gameManagerMock.getGame(sessionId);
+    serviceUtils.endCurrentPlayersTurn(gameMock);
+
+    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    gameMock.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
+
+    // Act
+    ResponseEntity<String> response =
+        inventoryService.buyCard(sessionId,
+            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+            accessToken, new PurchaseMap(20, 1, 1, 0, 0, 1));
+
+    // Assert
+    assertEquals(CustomHttpResponses.INSUFFICIENT_FUNDS.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.INSUFFICIENT_FUNDS.getBody(), response.getBody());
+  }
+
+  /**
+   * Test reserve card.
+   */
+  @Test
+  @SneakyThrows
+  public void testReserveCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
@@ -174,6 +281,29 @@ class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  @SneakyThrows
+  @DisplayName("Reserve invalid card hash should return error http")
+  public void testReserveInvalidCard() {
+    // Arrange
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+
+    ServerLevelCard myCard = createValidCard();
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
+
+    // Act
+    ResponseEntity<String> response = inventoryService.reserveCard(sessionId,
+        "invalid hash", accessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
   }
 
   /**
@@ -292,6 +422,10 @@ class InventoryServiceTests {
 
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
+  }
+
+  private ServerLevelCard createTooExpensiveValidCard() {
+    return new ServerLevelCard(20, 0, "", new PriceMap(20, 1, 1, 1, 0), Level.ONE);
   }
 
   private ServerLevelCard createInvalidCard() {
