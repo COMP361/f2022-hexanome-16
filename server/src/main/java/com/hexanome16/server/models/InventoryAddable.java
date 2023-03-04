@@ -1,5 +1,7 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.common.models.CardInfo;
+
 /**
  * Interface to enabling adding object to an inventory.
  */

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.common.models.price.PriceMap;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +23,11 @@ public class DeckTest {
   /**
    * The Noble 1.
    */
-  public final Noble noble1 = new Noble(0, 3, "texture.png", priceMap);
+  public final ServerNoble noble1 = new ServerNoble(0, 3, "texture.png", priceMap);
   /**
    * The Noble 2.
    */
-  public final Noble noble2 = new Noble(1, 3, "texture.png", priceMap);
+  public final ServerNoble noble2 = new ServerNoble(1, 3, "texture.png", priceMap);
   /**
    * The Deck.
    */
@@ -75,7 +75,7 @@ public class DeckTest {
    */
   @Test
   public void testNextCardNull() {
-    deck.nextCard();
+    deck.removeNextCard();
     assertNull(deck.nextCard());
   }
 
@@ -107,7 +107,7 @@ public class DeckTest {
    */
   @Test
   public void testRemainingAmount() {
-    deck.nextCard();
+    deck.removeNextCard();
     assertEquals(0, deck.remainingAmount());
   }
 

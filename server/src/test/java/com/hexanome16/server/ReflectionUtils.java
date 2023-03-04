@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
  */
 public class ReflectionUtils {
   //TODO: use where possible
+
   /**
    * Get field of class and make it public.
    *

@@ -3,9 +3,6 @@ package com.hexanome16.client.screens.startup;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
 
-import com.almasb.fxgl.entity.Entity;
-import java.util.ArrayList;
-
 /**
  * The Startup Screen is the first screen the user sees
  * after launching the MainApp.
@@ -17,11 +14,8 @@ public class StartupScreen {
    */
   public static void backToStartupScreen() {
     // Clears all entities when coming back from any screen
-    ArrayList<Entity> allEntities = getGameWorld().getEntities();
-    for (int i = 0; i < allEntities.size(); i++) {
-      getGameWorld().removeEntity(allEntities.get(i));
-    }
-
+    getGameWorld().removeEntities(getGameWorld().getEntitiesByType(
+        EntityType.STARTUP, EntityType.LOGIN, EntityType.MESSAGE));
     // TODO: Vbox all components of the startup screens
     spawn("mainScreen", 0, 0);
     spawn("diamond", 730, 360);

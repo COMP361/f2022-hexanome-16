@@ -1,14 +1,11 @@
 package com.hexanome16.client.requests.lobbyservice.user;
 
-import com.google.gson.Gson;
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
-import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
+import java.util.Map;
+import kong.unirest.core.json.JSONObject;
 
 /**
  * This class provides methods to change the colour of the user.
@@ -26,41 +23,8 @@ public class ChangeColourRequest {
    * @param colour      The new colour of the user.
    */
   public static void execute(String accessToken, String user, String colour) {
-    HttpClient client = RequestClient.getClient();
-    try {
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(UrlUtils.createLobbyServiceUri(
-              "/api/users/" + user + "/colour",
-              "access_token=" + accessToken
-          )).header("Content-Type", "application/json")
-          .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new Payload(colour))))
-          .build();
-      int statusCode = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::statusCode).get();
-      if (statusCode == 200) {
-        AuthUtils.getPlayer().setPreferredColour(colour);
-      } else if (statusCode >= 400 && statusCode <= 403) {
-        TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-        execute(AuthUtils.getAuth().getAccessToken(), user, colour);
-      }
-    } catch (ExecutionException | InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private static class Payload {
-    /**
-     * The player's new color.
-     */
-    String colour;
-
-    /**
-     * Instantiates a new Payload.
-     *
-     * @param colour player's colour new color
-     */
-    public Payload(String colour) {
-      this.colour = colour;
-    }
+    RequestClient.sendRequest(new Request<>(RequestMethod.POST, RequestDest.LS,
+        "/api/users/" + user + "/colour", Map.of("access_token", accessToken),
+        new JSONObject().put("colour", colour).toString(), Void.class));
   }
 }

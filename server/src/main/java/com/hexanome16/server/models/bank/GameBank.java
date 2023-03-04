@@ -1,8 +1,7 @@
 package com.hexanome16.server.models.bank;
 
-import com.hexanome16.server.models.price.Gem;
+import com.hexanome16.common.models.price.Gem;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.stream.Stream;
 

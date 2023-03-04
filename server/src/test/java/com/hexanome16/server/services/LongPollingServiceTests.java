@@ -9,15 +9,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingService;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import java.io.IOException;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -43,8 +43,8 @@ public class LongPollingServiceTests {
   void setup() throws IOException {
 
     Game validMockGame =
-        new Game(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new BaseWinCondition());
+        Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
+            new WinCondition[] {WinCondition.BASE});
 
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
@@ -86,7 +86,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -106,7 +107,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        result.getStatusCode().value());
   }
 
   @SneakyThrows
@@ -145,7 +147,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -165,7 +168,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -205,7 +209,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -225,7 +230,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -260,7 +266,8 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        result.getStatusCode().value());
   }
 
   /**
@@ -280,6 +287,7 @@ public class LongPollingServiceTests {
     // Assert
     assertNotNull(result);
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), result.getBody());
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), result.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        result.getStatusCode().value());
   }
 }

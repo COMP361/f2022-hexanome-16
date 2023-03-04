@@ -1,7 +1,7 @@
 package com.hexanome16.server.services.auth;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ResponseBody;
