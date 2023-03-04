@@ -24,7 +24,8 @@ public class GameBank extends Bank {
    */
   public ArrayList<Gem> availableTwoTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));
-    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) >= 4);
+    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) >= 4
+        && gem != Gem.GOLD);
     return new ArrayList<>(myStream.toList());
   }
 
@@ -35,7 +36,8 @@ public class GameBank extends Bank {
    */
   public ArrayList<Gem> availableThreeTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));
-    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) > 0);
+    Stream<Gem> myStream = myList.stream().filter(gem -> getBank().get(gem) > 0
+        && gem != Gem.GOLD);
     return new ArrayList<>(myStream.toList());
   }
 
