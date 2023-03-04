@@ -1,9 +1,18 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.price.PurchaseMap;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import lombok.Data;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
@@ -13,6 +22,7 @@ public class Player {
   private final String name;
   private final String preferredColour;
   private Inventory inventory; // the player has an inventory, not a bank
+  private Queue<Action> queueOfCascadingActionTypes;
 
   /**
    * Player Constructor.
@@ -25,6 +35,7 @@ public class Player {
     this.name = name;
     this.preferredColour = preferredColour;
     this.inventory = new Inventory();
+    this.queueOfCascadingActionTypes = new LinkedList<>();
   }
 
 
@@ -114,6 +125,53 @@ public class Player {
   }
 
 
-  // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
+  // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////
 
+  /**
+   * Gets the action queue.
+   *
+   * @return the queue of actions.
+   */
+  public Queue<Action> getActionQueue() {
+    return queueOfCascadingActionTypes;
+  }
+
+  /**
+   * Adds Noble Choice as an action that needs to be performed.
+   *
+   * @param nobleList list of nobles to choose from. Not empty please.
+   */
+  public void addNobleListToPerform(ArrayList<Noble> nobleList) {
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    // Make and add action to queue
+    getActionQueue().add(() -> ResponseEntity.ok()
+        .header("action-type", "choose-noble")
+        .body(objectMapper.writeValueAsString(nobleList.toArray())));
+
+  }
+
+  /**
+   * Adds Cities Choice as an action that needs to be performed.
+   *
+   * @param citiesList list of cities to choose from. Not empty please.
+   */
+  public void addCitiesToPerform(ArrayList<City> citiesList) {
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    // Make and add action to queue
+    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
+        .body(objectMapper.writeValueAsString(citiesList.toArray())));
+  }
+
+  /**
+   * Adds Take Two as an action that needs to be performed.
+   *
+   */
+  public void addTakeTwoToPerform() {
+    getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "take-level-two").build());
+
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 }

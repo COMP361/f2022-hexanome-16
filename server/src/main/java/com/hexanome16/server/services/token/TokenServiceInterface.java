@@ -1,4 +1,4 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.token;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
