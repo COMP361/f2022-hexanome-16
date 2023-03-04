@@ -1,12 +1,14 @@
 package com.hexanome16.server.util;
 
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.services.GameManagerServiceInterface;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.Arrays;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -39,7 +41,7 @@ public class ServiceUtils {
    * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
-  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(
+  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
       long sessionId,
       String authToken,
       GameManagerServiceInterface gameManagerService,
@@ -50,7 +52,7 @@ public class ServiceUtils {
       return response;
     }
     final Game currentGame = response.getRight().getLeft();
-    final Player requestingPlayer = response.getRight().getRight();
+    final ServerPlayer requestingPlayer = response.getRight().getRight();
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
@@ -81,11 +83,10 @@ public class ServiceUtils {
    * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
-  public Pair<ResponseEntity<String>, Pair<Game, Player>>
-      validRequest(long sessionId,
-                   String authToken,
-                   GameManagerServiceInterface gameManagerService,
-                   AuthServiceInterface authService) {
+  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(long sessionId,
+                                                                             String authToken,
+                                                                             GameManagerServiceInterface gameManagerService,
+                                                                             AuthServiceInterface authService) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
@@ -95,8 +96,7 @@ public class ServiceUtils {
     }
 
     boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
-
-    Player requestingPlayer = findPlayerByToken(currentGame, authToken, authService);
+    ServerPlayer requestingPlayer = findPlayerByToken(currentGame, authToken, authService);
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(
@@ -116,14 +116,13 @@ public class ServiceUtils {
    * @param authService the authentication service used to validate requests
    * @return player with that token, null if no such player
    */
-  public Player findPlayerByToken(@NonNull Game game, String accessToken,
-                                  AuthServiceInterface authService) {
-
+  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken, AuthServiceInterface authService) {
     ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();
 
-    for (Player e : game.getPlayers()) {
+
+    for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;
       }
@@ -140,18 +139,18 @@ public class ServiceUtils {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
-      Player[] winners = game.getWinCondition().isGameWon(game);
+      ServerPlayer[] winners = WinCondition.getWinners(game.getWinConditions(), game.getPlayers());
       if (winners.length > 0) {
-        BroadcastContentManager<WinJson> broadcastContentManagerWinners =
-            (BroadcastContentManager<WinJson>) game.getBroadcastContentManagerMap().get("winners");
-        broadcastContentManagerWinners.updateBroadcastContent(
-            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new)));
+        game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.WINNERS,
+            new WinJson(Arrays.stream(winners).map(ServerPlayer::getName).toArray(String[]::new))
+        );
       }
     } else {
-      BroadcastContentManager<PlayerJson> broadcastContentManagerPlayer =
-          (BroadcastContentManager<PlayerJson>) game.getBroadcastContentManagerMap().get("player");
-      broadcastContentManagerPlayer.updateBroadcastContent(
-          new PlayerJson(game.getCurrentPlayer().getName()));
+      game.getBroadcastContentManagerMap().updateValue(
+          BroadcastMapKey.PLAYERS,
+          new PlayerJson(game.getCurrentPlayer().getName())
+      );
     }
   }
 
@@ -162,8 +161,8 @@ public class ServiceUtils {
    * @param username name of player.
    * @return Player with that username in that game, null if no such player.
    */
-  public Player findPlayerByName(@NonNull Game game, String username) {
-    for (Player e : game.getPlayers()) {
+  public ServerPlayer findPlayerByName(@NonNull Game game, String username) {
+    for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;
       }

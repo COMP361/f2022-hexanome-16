@@ -15,7 +15,6 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
@@ -23,13 +22,11 @@ import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
 import com.hexanome16.server.util.ServiceUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Test of {@link TokenService}.
