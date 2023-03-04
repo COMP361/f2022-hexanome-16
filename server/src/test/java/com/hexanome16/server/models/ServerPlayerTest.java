@@ -82,6 +82,8 @@ public class ServerPlayerTest {
     Queue<Action> actions = costa.getActionQueue();
     assertFalse(actions.isEmpty());
     Action action = actions.poll();
+    var response = action.getActionDetails();
+    var headers = response.getHeaders();
     assertEquals("choose-noble",
         action.getActionDetails().getHeaders().get("action-type").get(0));
   }
