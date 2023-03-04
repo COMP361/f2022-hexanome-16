@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;
@@ -19,6 +20,7 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +30,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,13 +50,20 @@ import javafx.util.Pair;
  * This class is used to create the entities of the lobby screen.
  */
 public class LobbyFactory implements EntityFactory {
+  private static final AtomicBoolean shouldFetch = new AtomicBoolean(true);
   private static final AtomicReference<Map<String, Session>> sessions =
       new AtomicReference<>(new HashMap<>());
   private static final AtomicReference<String> hashCode = new AtomicReference<>("");
-  private static final AtomicReference<Thread> fetchSessionsThread = new AtomicReference<>(null);
-  private static final AtomicBoolean shouldFetch = new AtomicBoolean(true);
+  private static final AtomicReference<Thread> fetchSessionsThread =
+      new AtomicReference<>(null);
   private static TableView<Map.Entry<String, Session>> activeSessionList;
   private static TableView<Map.Entry<String, Session>> otherSessionList;
+  private static final AtomicReference<GameServiceJson[]> gameServices =
+      new AtomicReference<>(new GameServiceJson[0]);
+  private static final AtomicReference<Thread> fetchGameServicesThread
+      = new AtomicReference<>(null);
+  private static final AtomicReference<String> selectedGameService = new AtomicReference<>("");
+  private static ComboBox<GameServiceJson> gameServiceDropdown;
 
   /**
    * This method updates the list of sessions shown in the lobby screen.
@@ -71,6 +84,53 @@ public class LobbyFactory implements EntityFactory {
           otherSessionList.getItems().add(entry);
         }
       }
+    }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of game services from Lobby Service.
+   */
+  public static void updateGameServicesList() {
+    if (gameServices.get() != null && gameServices.get().length > 0) {
+      ObservableList<GameServiceJson> newItems = Arrays.stream(gameServices.get()).collect(
+          javafx.collections.FXCollections::observableArrayList,
+          javafx.collections.ObservableList::add,
+          javafx.collections.ObservableList::addAll);
+      gameServiceDropdown.setItems(newItems);
+    }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of game services from the Lobby
+   * Service.
+   */
+  private static void createFetchGameServicesThread() {
+    if (shouldFetch.get()) {
+      Task<Void> fetchGameServicesTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          gameServices.set(ListGameServicesRequest.execute());
+          Thread.sleep(5000);
+          return null;
+        }
+      };
+      fetchGameServicesTask.setOnSucceeded(e -> {
+        fetchGameServicesThread.get().interrupt();
+        Platform.runLater(LobbyFactory::updateGameServicesList);
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      fetchGameServicesTask.setOnFailed(e -> {
+        fetchGameServicesThread.get().interrupt();
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      Thread thread = new Thread(fetchGameServicesTask);
+      thread.setDaemon(true);
+      thread.start();
+      fetchGameServicesThread.set(thread);
     }
   }
 
@@ -102,6 +162,7 @@ public class LobbyFactory implements EntityFactory {
       });
       fetchSessionsTask.setOnFailed(e -> {
         fetchSessionsThread.get().interrupt();
+        shouldFetch.set(false);
         throw new RuntimeException(fetchSessionsTask.getException());
       });
       fetchSessionsTask.setOnCancelled(e -> fetchSessionsThread.get().interrupt());
@@ -176,6 +237,12 @@ public class LobbyFactory implements EntityFactory {
             + cellData.getValue().getValue().getGameParameters().getMaxSessionPlayers()
     ));
     playersColumn.setStyle(columnStyle);
+
+    TableColumn<Map.Entry<String, Session>, String> serverColumn = new TableColumn<>("Extensions");
+    serverColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
+        cellData.getValue().getValue().getGameParameters().getDisplayName()
+    ));
+    serverColumn.setStyle(columnStyle);
 
     TableColumn<Map.Entry<String, Session>, String> actionsColumn = new TableColumn<>("Actions");
     actionsColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper("actions"));
@@ -275,27 +342,33 @@ public class LobbyFactory implements EntityFactory {
     sessionTableView.setPlaceholder(placeholder);
 
     sessionTableView.getColumns().add(creatorColumn);
+    sessionTableView.getColumns().add(serverColumn);
     sessionTableView.getColumns().add(launchedColumn);
     sessionTableView.getColumns().add(playersColumn);
     sessionTableView.getColumns().add(actionsColumn);
 
-    sessionTableView.resizeColumn(creatorColumn, 320);
-    sessionTableView.resizeColumn(launchedColumn, 318);
-    sessionTableView.resizeColumn(playersColumn, 320);
-    sessionTableView.resizeColumn(actionsColumn, 320);
+    sessionTableView.resizeColumn(creatorColumn, 240);
+    sessionTableView.resizeColumn(serverColumn, 240);
+    sessionTableView.resizeColumn(launchedColumn, 238);
+    sessionTableView.resizeColumn(playersColumn, 240);
+    sessionTableView.resizeColumn(actionsColumn, 240);
     sessionTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
     sessionTableView.setFixedCellSize(50);
 
     sessionTableView.getItems().addAll(sessionArr.entrySet());
     sessionTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
 
-    if (fetchSessionsThread.get() == null) {
+    if (fetchSessionsThread.get() == null || !fetchSessionsThread.get().isAlive()) {
       shouldFetch.set(true);
       createFetchSessionThread();
     }
 
+    if (fetchGameServicesThread.get() == null) {
+      createFetchGameServicesThread();
+    }
+
     return entityBuilder(data)
-        .type(isActive ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
+        .type(isActive ? EntityType.OWN_SESSION_LIST : EntityType.OTHER_SESSION_LIST)
         .viewWithBBox(sessionTableView)
         .at(160, isActive ? 350 : 450 + getAppHeight() / 4.0)
         .build();
@@ -318,16 +391,57 @@ public class LobbyFactory implements EntityFactory {
       Long sessionId = CreateSessionRequest.execute(
           AuthUtils.getAuth().getAccessToken(),
           AuthUtils.getPlayer().getName(),
-          "Splendor",
+          selectedGameService.get(),
           ""
       );
       System.out.println("Created session with id: " + sessionId);
-      //ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
-        .type(Type.CREATE_SESSION_BUTTON)
+        .type(EntityType.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
-        .at(870, 200)
+        .at(750, 200)
+        .build();
+  }
+
+  /**
+   * Adds a dropdown menu that allows to select a game service for game creation.
+   *
+   * @param data The data of the entity.
+   * @return Game Service dropdown menu.
+   */
+  @Spawns("gameServiceList")
+  public Entity gameServiceList(SpawnData data) {
+    gameServiceDropdown = new ComboBox<>();
+    gameServiceDropdown.setPrefSize(250, 60);
+    gameServiceDropdown.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; "
+        + "-fx-border-color: #ffffff; -fx-font-size: 24px;");
+    Callback<ListView<GameServiceJson>, ListCell<GameServiceJson>> cellFactory = new Callback<>() {
+      @Override
+      public ListCell<GameServiceJson> call(ListView<GameServiceJson> gameServiceJsonListView) {
+        return new ListCell<>() {
+          @Override
+          protected void updateItem(GameServiceJson gameServiceJson, boolean b) {
+            super.updateItem(gameServiceJson, b);
+            if (gameServiceJson != null) {
+              setText(gameServiceJson.getDisplayName());
+            }
+          }
+        };
+      }
+    };
+    gameServiceDropdown.setButtonCell(cellFactory.call(null));
+    gameServiceDropdown.setCellFactory(cellFactory);
+    gameServiceDropdown.getItems().addAll(Arrays.stream(gameServices.get()).toList());
+    gameServiceDropdown.setOnAction(event -> {
+      GameServiceJson selected = gameServiceDropdown.getSelectionModel().getSelectedItem();
+      if (selected != null) {
+        selectedGameService.set(selected.getName());
+      }
+    });
+    return entityBuilder(data)
+        .type(EntityType.GAME_SERVICE_LIST)
+        .viewWithBBox(gameServiceDropdown)
+        .at(950, 200)
         .build();
   }
 
@@ -342,7 +456,7 @@ public class LobbyFactory implements EntityFactory {
     Label label = new Label("Active Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(Type.OWN_HEADER)
+        .type(EntityType.OWN_HEADER)
         .viewWithBBox(label)
         .at(870, 300)
         .build();
@@ -359,7 +473,7 @@ public class LobbyFactory implements EntityFactory {
     Label label = new Label("Other Sessions");
     label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
     return entityBuilder(data)
-        .type(Type.OTHER_HEADER)
+        .type(EntityType.OTHER_HEADER)
         .viewWithBBox(label)
         .at(880, 400 + getAppHeight() / 4.0)
         .build();
@@ -384,7 +498,7 @@ public class LobbyFactory implements EntityFactory {
       MainMenuScreen.initUi();
     });
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(1700, 100)
         .build();
@@ -399,7 +513,7 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("logo")
   public Entity logo(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.LOGO)
+        .type(EntityType.LOGO)
         .viewWithBBox("splendor.png")
         .at(450, 25)
         .scaleOrigin(450, 25)
@@ -421,7 +535,7 @@ public class LobbyFactory implements EntityFactory {
             + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
     button.setOnAction(event -> SettingsScreen.initUi(false));
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(150, 90)
         .build();
@@ -436,51 +550,9 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("background")
   public Entity background(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.BACKGROUND)
+        .type(EntityType.BACKGROUND)
         .viewWithBBox(new Rectangle(1920, 1080, Paint.valueOf("#282C34")))
         .at(0, 0)
         .build();
-  }
-
-  /**
-   * Enum of possible entities in the lobby screen.
-   */
-  public enum Type {
-    /**
-     * Own session list.
-     */
-    OWN_SESSION_LIST,
-    /**
-     * Other session list.
-     */
-    OTHER_SESSION_LIST,
-    /**
-     * Create session button.
-     */
-    CREATE_SESSION_BUTTON,
-    /**
-     * Close button.
-     */
-    CLOSE_BUTTON,
-    /**
-     * Preferences button.
-     */
-    PREFERENCES_BUTTON,
-    /**
-     * Logo.
-     */
-    LOGO,
-    /**
-     * Own header.
-     */
-    OWN_HEADER,
-    /**
-     * Other header.
-     */
-    OTHER_HEADER,
-    /**
-     * Background.
-     */
-    BACKGROUND
   }
 }

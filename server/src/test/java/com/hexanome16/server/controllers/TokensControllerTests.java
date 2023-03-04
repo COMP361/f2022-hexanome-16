@@ -50,7 +50,7 @@ public class TokensControllerTests {
         objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
-    payload.setGame(WinCondition.BASE.getAssocServerName());
+    payload.setGame(WinCondition.BASE.getGameServiceJson().getName());
     Game game1 = Game.create(DummyAuths.validSessionIds.get(0), payload);
     Game game2 = Game.create(DummyAuths.validSessionIds.get(1), payload);
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);

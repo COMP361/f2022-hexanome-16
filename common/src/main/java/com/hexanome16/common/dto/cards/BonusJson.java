@@ -1,11 +1,11 @@
-package com.hexanome16.common.dto;
+package com.hexanome16.common.dto.cards;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * For converting json file to level card objects.
@@ -13,16 +13,14 @@ import lombok.ToString;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardJson extends BonusJson {
-  private String level;
-  private int prestigePoint;
+public class BonusJson extends BagJson implements BroadcastContent {
+  private String bonus;
 
   @JsonIgnore
   @Override
   public boolean isEmpty() {
-    return super.isEmpty() && (level == null || level.isBlank());
+    return super.isEmpty() && (bonus == null || bonus.isBlank());
   }
 }
