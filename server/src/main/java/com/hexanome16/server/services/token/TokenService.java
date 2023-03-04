@@ -27,29 +27,22 @@ public class TokenService implements TokenServiceInterface {
   private final GameManagerServiceInterface gameManagerService;
   private final AuthServiceInterface authService;
 
-  private final GameServiceInterface gameService;
-  private final GameManagerServiceInterface gameManager;
-
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final ServiceUtils serviceUtils;
 
   /**
    * Constructor for the Token service Class.
+   *
    * @param authService  Needed for player verification.
    * @param gameManager  Game manager for fetching game instances
    * @param serviceUtils the utility used by services
-   * @param gameService Needed for getting games and such.
-   * @param gameManager Game manager for fetching game instances
    */
   public TokenService(@Autowired AuthServiceInterface authService,
                       @Autowired GameManagerServiceInterface gameManager,
-                      @Autowired ServiceUtils serviceUtils,
-                      @Autowired GameServiceInterface gameService) {
+                      @Autowired ServiceUtils serviceUtils) {
     this.serviceUtils = serviceUtils;
     this.authService = authService;
     this.gameManagerService = gameManager;
-    this.gameService = gameService;
-    this.gameManager = gameManager;
   }
 
   @Override

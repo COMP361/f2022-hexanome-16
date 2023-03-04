@@ -40,7 +40,7 @@ public class InventoryService implements InventoryServiceInterface {
    *
    * @param authService        the authentication service used to validate requests
    * @param gameManagerService the game manager service used to find games
-   * @param serviceUtils the utility used by services
+   * @param serviceUtils       the utility used by services
    */
   public InventoryService(@Autowired AuthServiceInterface authService,
                           @Autowired GameManagerServiceInterface gameManagerService,
@@ -173,7 +173,9 @@ public class InventoryService implements InventoryServiceInterface {
                                             String authenticationToken)
       throws JsonProcessingException {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService, authService);
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
+            authService);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
@@ -226,7 +228,9 @@ public class InventoryService implements InventoryServiceInterface {
                                                     String level,
                                                     String authenticationToken) {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService, authService);
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
+            authService);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;

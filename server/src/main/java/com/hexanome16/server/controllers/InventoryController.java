@@ -1,19 +1,17 @@
 package com.hexanome16.server.controllers;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.services.InventoryServiceInterface;
-import com.hexanome16.server.services.game.GameServiceInterface;
-import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.UrlUtils;
+import com.hexanome16.server.util.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Inventory controller.
@@ -33,58 +30,31 @@ import org.springframework.web.client.RestTemplate;
 public class InventoryController {
   /* fields and controllers ********************************************************/
   private final InventoryServiceInterface inventoryService;
-  private final RestTemplate restTemplate;
-  private final UrlUtils urlUtils;
-  private final GameServiceInterface gameServiceInterface;
   private final GameManagerServiceInterface gameManager;
-  private final ObjectMapper objectMapper;
-
-  private final AuthServiceInterface authService;
+  private final ObjectMapper objectMapper = new ObjectMapper();
   private final ServiceUtils serviceUtils;
 
 
   /**
    * Controller for the Inventory.
    *
-   * @param gameServiceInterface controller for the whole game (used for helper)
+   * @param inventoryServiceInterface controller for the whole game (used for helper)
    * @param gameManager          the game manager for fetching games
    * @param serviceUtils         the utility used by services
    */
   public InventoryController(@Autowired InventoryServiceInterface inventoryServiceInterface,
-                             RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
-                             @Autowired GameServiceInterface gameServiceInterface,
-                             ObjectMapper objectMapper,
-                             @Autowired AuthServiceInterface authService,
                              @Autowired GameManagerServiceInterface gameManager,
                              @Autowired ServiceUtils serviceUtils) {
-    this.restTemplate = restTemplateBuilder.build();
-    this.urlUtils = urlUtils;
-    this.gameServiceInterface = gameServiceInterface;
-    this.objectMapper = objectMapper;
-    this.authService = authService;
     this.gameManager = gameManager;
     this.inventoryService = inventoryServiceInterface;
     this.serviceUtils = serviceUtils;
+    objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
-
-  /* helper methods ***************************************************************************/
-  private ServerPlayer getValidPlayer(long sessionId, String accessToken) {
-    Game game = gameManager.getGame(sessionId);
-    // verify that the request is valid
-    if (!authService.verifyPlayer(accessToken, game)) {
-      throw new IllegalArgumentException("Invalid Player.");
-    }
-    // get the player from the session id and access token
-    return gameServiceInterface.findPlayerByToken(
-        game, accessToken
-    );
-  }
-
 
   private ServerPlayer getValidPlayerByName(long sessionId, String username) {
     Game game = gameManager.getGame(sessionId);
 
-    ServerPlayer myPlayer = gameServiceInterface.findPlayerByName(
+    ServerPlayer myPlayer = serviceUtils.findPlayerByName(
         game, username
     );
     if (myPlayer == null) {

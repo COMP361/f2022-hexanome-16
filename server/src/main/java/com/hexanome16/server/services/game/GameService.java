@@ -81,7 +81,8 @@ public class GameService implements GameServiceInterface {
       );
     }
   }
-  
+
+  @Override
   public ServerPlayer findPlayerByName(@NonNull Game game, String username) {
     for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
@@ -123,7 +124,6 @@ public class GameService implements GameServiceInterface {
           CustomResponseFactory.getResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
           new ImmutablePair<>(null, null));
     }
-
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
         new ImmutablePair<>(currentGame, requestingPlayer));
   }

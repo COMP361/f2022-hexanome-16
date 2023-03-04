@@ -83,10 +83,11 @@ public class ServiceUtils {
    * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
-  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(long sessionId,
-                                                                             String authToken,
-                                                                             GameManagerServiceInterface gameManagerService,
-                                                                             AuthServiceInterface authService) {
+  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(
+      long sessionId,
+      String authToken,
+      GameManagerServiceInterface gameManagerService,
+      AuthServiceInterface authService) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
@@ -116,7 +117,8 @@ public class ServiceUtils {
    * @param authService the authentication service used to validate requests
    * @return player with that token, null if no such player
    */
-  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken, AuthServiceInterface authService) {
+  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken,
+                                        AuthServiceInterface authService) {
     ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();
