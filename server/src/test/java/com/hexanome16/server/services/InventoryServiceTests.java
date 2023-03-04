@@ -317,17 +317,37 @@ class InventoryServiceTests {
   @SneakyThrows
   public void testAcquireNobleInvalidAccessToken() {
     // Arrange
-    final var invalidSessionId = DummyAuths.validSessionIds.get(0);
-    final var validAccessToken = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
     final var nobleHash = "";
 
     // Act
-    var response = inventoryService.acquireNoble(invalidSessionId, nobleHash, validAccessToken);
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), response.getBody());
+  }
+
+  /**
+   * Test acquire noble not your turn.
+   */
+  @Test
+  @SneakyThrows
+  public void testAcquireNobleNotPlayerTurn() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var invalidAccessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var nobleHash = "";
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getBody(), response.getBody());
   }
 
   private ServerLevelCard createValidCard() {
