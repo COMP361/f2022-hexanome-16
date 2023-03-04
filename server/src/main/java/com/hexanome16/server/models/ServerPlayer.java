@@ -137,14 +137,6 @@ public class ServerPlayer extends Player {
    */
   public void addNobleListToPerform(ArrayList<Noble> nobleList) {
     ObjectMapper objectMapper = new ObjectMapper();
-
-    // Make and add action to queue
-    /*
-      getActionQueue().add(() -> ResponseEntity.ok()
-          .header("action-type", "choose-noble")
-          .body(objectMapper.writeValueAsString(nobleList.toArray())));
-    */
-
     queueOfCascadingActionTypes.add(() ->
         CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_NOBLE,
             objectMapper.writeValueAsString(nobleList.toArray()), null));
@@ -157,13 +149,6 @@ public class ServerPlayer extends Player {
    */
   public void addCitiesToPerform(ArrayList<City> citiesList) {
     ObjectMapper objectMapper = new ObjectMapper();
-
-    /*
-        // Make and add action to queue
-        getActionQueue().add(() -> ResponseEntity.ok().header("action-type", "choose-city")
-            .body(objectMapper.writeValueAsString(citiesList.toArray())));
-    */
-
     queueOfCascadingActionTypes.add(
         () -> CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_CITY,
             objectMapper.writeValueAsString(citiesList.toArray()), null));
@@ -173,9 +158,6 @@ public class ServerPlayer extends Player {
    * Adds Take Two as an action that needs to be performed.
    */
   public void addTakeTwoToPerform() {
-    //getActionQueue().add(() ->
-    // ResponseEntity.ok().header("action-type", "take-level-two").build());
-
     queueOfCascadingActionTypes.add(() ->
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
   }
