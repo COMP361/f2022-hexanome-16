@@ -189,9 +189,10 @@ public class PromptsRequests {
   public static void takeTwo(long sessionId,
                              String authToken,
                              BonusType bonusType) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+    RequestClient.sendRequestString(
+        new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
-        Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
+        Map.of("authenticationToken", authToken, "tokenType", bonusType.name()), Void.class));
   }
 
   /**
@@ -211,7 +212,7 @@ public class PromptsRequests {
                                BonusType bonusTypeThree) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
-        Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
+        Map.of("authenticationToken", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
         Void.class));
   }

@@ -1,6 +1,8 @@
 package com.hexanome16.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hexanome16.common.models.Player;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,8 @@ public class SessionJson implements BroadcastContent {
   private Player[] players;
   private String creator;
   private String savegame;
+  @JsonProperty("game")
+  @JsonAlias("gameServer")
   private String game;
 
   @JsonIgnore
