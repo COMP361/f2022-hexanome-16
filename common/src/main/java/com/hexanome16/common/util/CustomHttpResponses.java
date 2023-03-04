@@ -41,6 +41,25 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Used for when it is not players turn.
    */
   NOT_PLAYERS_TURN("Not your turn yet", HTTP_BAD_REQUEST),
+  /**
+   * Used for when searching for player by username.
+   */
+  PLAYER_NOT_IN_GAME("No player with given username found in game", HTTP_BAD_REQUEST),
+
+  /**
+   * Used for invalid card md5 hash.
+   */
+  BAD_CARD_HASH("Card hash is not valid", HTTP_BAD_REQUEST),
+  /**
+   * Used for when player does not have enough funds for purchase.
+   */
+  INSUFFICIENT_FUNDS("You do not have enough funds to buy this card", HTTP_BAD_REQUEST),
+  /**
+   * Used for when proposed deal does not work for current card.
+   */
+  INVALID_PROPOSED_DEAL(
+      "The deal you've proposed is incompatible with the card you're trying to purchase",
+      HTTP_BAD_REQUEST),
 
   /**
    * OK.
@@ -52,8 +71,32 @@ public enum CustomHttpResponses implements BroadcastContent {
    * (Object mapper stuff for example)
    */
   SERVER_SIDE_ERROR("There was an error on the server, please try again later",
-      HTTP_INTERNAL_ERROR);
+      HTTP_INTERNAL_ERROR),
 
+  /**
+   * Used for indicating that player must choose a noble.
+   * <p>
+   * Only use with CustomResponse to pass in list of nobles in body.
+   * </p>
+   */
+  CHOOSE_NOBLE("Insert custom body containing list of nobles", HTTP_OK,
+      Map.of("action-type", List.of("choose-noble"))),
+  /**
+   * Used for indicating that player must choose a city.
+   * <p>
+   * Only use with CustomResponse to pass in list of cities in body.
+   * </p>
+   */
+  CHOOSE_CITY("Insert custom body containing list of cities", HTTP_OK,
+      Map.of("action-type", List.of("choose-city"))),
+  /**
+   * Used for indicating that player must take a level two card.
+   * <p>
+   * No need for a body so just use with getResponse
+   * </p>
+   */
+  TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
+      Map.of("action-type", List.of("take-level-two")));
   private final String body;
   private final Map<String, List<String>> headers;
   private final int status;

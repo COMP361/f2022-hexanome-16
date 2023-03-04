@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
@@ -23,7 +24,7 @@ public class CustomResponseFactory {
    * @return the response entity
    */
   public static ResponseEntity<String> getResponse(CustomHttpResponses responseType) {
-    return getCustomResponse(responseType, responseType.getBody(), responseType.getHeaders());
+    return getCustomResponse(responseType, responseType.getBody(), null);
   }
 
   /**
@@ -53,12 +54,18 @@ public class CustomResponseFactory {
    * @param responseType enum to put in ResponseEntity
    * @param body         custom body to add instead of the responseType body
    * @param headers      the headers to add to the response
+   *                     (leave null to use those in the CustomHttpResponse)
    * @return the response entity
    */
   public static ResponseEntity<String> getCustomResponse(CustomHttpResponses responseType,
                                                          String body,
                                                          Map<String, List<String>> headers) {
-    return new ResponseEntity<>(body, headers == null ? null : new LinkedMultiValueMap<>(headers),
+    if (headers == null && responseType.getHeaders() != null) {
+      headers = new LinkedMultiValueMap<>();
+      headers.putAll(responseType.getHeaders());
+    }
+    return new ResponseEntity<>(body,
+        (MultiValueMap<String, String>) headers,
         HttpStatus.valueOf(responseType.getStatus()));
   }
 
@@ -68,7 +75,7 @@ public class CustomResponseFactory {
    * <p>Prioritize using {@link #getDeferredResponse} when possible,
    * if really out of the ordinary and unique
    * use this
- *
+   *
    * @param responseType enum to put in ResponseEntity
    * @param body         custom body to add instead of the responseType body
    * @param headers      the headers to add to the response
