@@ -10,6 +10,8 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 
 /**
@@ -53,11 +55,19 @@ public enum CustomHttpResponses implements BroadcastContent {
       HTTP_INTERNAL_ERROR);
 
   private final String body;
+  private final Map<String, List<String>> headers;
   private final int status;
 
   CustomHttpResponses(String body, int status) {
     this.body = body;
     this.status = status;
+    this.headers = null;
+  }
+
+  CustomHttpResponses(String body, int status, Map<String, List<String>> headers) {
+    this.body = body;
+    this.status = status;
+    this.headers = headers;
   }
 
   @Override
