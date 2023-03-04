@@ -1,6 +1,7 @@
 package com.hexanome16.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import lombok.NonNull;
@@ -31,26 +32,15 @@ public interface InventoryServiceInterface {
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
    * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
+   * @param proposedDeal         Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
-   *         </p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
                                  String authenticationToken,
-                                 int rubyAmount,
-                                 int emeraldAmount,
-                                 int sapphireAmount,
-                                 int diamondAmount,
-                                 int onyxAmount,
-                                 int goldAmount)
+                                 PurchaseMap proposedDeal)
       throws JsonProcessingException;
 
   /**

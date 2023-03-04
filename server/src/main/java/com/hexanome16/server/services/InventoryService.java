@@ -4,18 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.dto.DeckHash;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.price.PriceInterface;
-import com.hexanome16.server.models.price.PurchaseMap;
+import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +60,7 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     // get player with username
-    Player concernedPlayer = serviceUtils.findPlayerByName(game, username);
+    ServerPlayer concernedPlayer = serviceUtils.findPlayerByName(game, username);
 
     // Player not in game
     if (concernedPlayer == null) {
@@ -73,22 +75,19 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        int rubyAmount, int emeraldAmount, int sapphireAmount,
-                                        int diamondAmount, int onyxAmount, int goldAmount)
-      throws JsonProcessingException {
+                                        PurchaseMap proposedDeal) {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
         gameManagerService, authService);
-    ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
 
     // Fetch the card in question
-    LevelCard cardToBuy = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
     // TODO test
     // TODO add http error
@@ -96,10 +95,10 @@ public class InventoryService implements InventoryServiceInterface {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // Get proposed Deal as a purchase map
-    PurchaseMap proposedDeal =
-        new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount,
-            goldAmount);
+    // Verify player is who they claim to be
+    if (!authService.verifyPlayer(authenticationToken, game)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
     // Get card price as a priceMap
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
@@ -113,33 +112,45 @@ public class InventoryService implements InventoryServiceInterface {
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
-    if (!player.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount)) {
+    // and is player's turn
+    if (!player.hasAtLeast(
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD)
+    ) || game.isNotPlayersTurn(player)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     // Increase Game Bank and decrease player funds
-    game.incGameBankFromPlayer(player, rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount);
+    game.incGameBankFromPlayer(player,
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD));
 
 
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
 
-    Level level = (cardToBuy).getLevel();
+    // Remove card from the board
+    game.removeOnBoardCard(cardToBuy);
 
-    // Remove card from player's reservation inventory
-    if (!player.getInventory().getReservedCards().remove(cardToBuy)) {
-      // Remove card from the board
-      game.removeOnBoardCard(cardToBuy);
-      // Add new card to the deck
-      game.addOnBoardCard(level);
-    }
+    Level level = (cardToBuy).getLevel();
+    // Add new card to the deck
+    game.addOnBoardCard(level);
+
 
     // Update long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((cardToBuy).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
+    );
 
     // Ends players turn, which is current player
     serviceUtils.endCurrentPlayersTurn(game);
@@ -161,16 +172,15 @@ public class InventoryService implements InventoryServiceInterface {
                                             String authenticationToken)
       throws JsonProcessingException {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
-        gameManagerService, authService);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService, authService);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
-    LevelCard card = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard card = game.getCardByHash(cardMd5);
 
 
     if (card == null) {
@@ -193,12 +203,15 @@ public class InventoryService implements InventoryServiceInterface {
     game.addOnBoardCard(level);
 
     // Notify long polling
-    ((BroadcastContentManager<DeckHash>) (game.getBroadcastContentManagerMap()
-        .get((card).getLevel().name()))).updateBroadcastContent(new DeckHash(game, level));
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
+    );
 
     serviceUtils.endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
 
   /**
    * Let the player reserve a face down card.
@@ -212,14 +225,13 @@ public class InventoryService implements InventoryServiceInterface {
                                                     String level,
                                                     String authenticationToken) {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
-        gameManagerService, authService);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService, authService);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
     Level atLevel = switch (level) {
       case "THREE" -> Level.THREE;
@@ -229,10 +241,10 @@ public class InventoryService implements InventoryServiceInterface {
     };
 
     if (atLevel == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    LevelCard card = game.getLevelDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getLevelDeck(atLevel).nextCard();
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
