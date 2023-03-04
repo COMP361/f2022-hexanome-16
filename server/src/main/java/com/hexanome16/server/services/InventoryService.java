@@ -62,6 +62,8 @@ public class InventoryService implements InventoryServiceInterface {
     // get player with username
     ServerPlayer concernedPlayer = serviceUtils.findPlayerByName(game, username);
 
+    // TODO: add custom for this
+
     // Player not in game
     if (concernedPlayer == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -91,14 +93,8 @@ public class InventoryService implements InventoryServiceInterface {
     ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
     // TODO test
-    // TODO add http error
     if (cardToBuy == null) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    // Verify player is who they claim to be
-    if (!authService.verifyPlayer(authenticationToken, game)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
 
     // Get card price as a priceMap
@@ -106,7 +102,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
     }
     System.out.println("PLAYER FOUND");
     System.out.println(player.getName());
@@ -121,8 +117,8 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD)
-    ) || game.isNotPlayersTurn(player)) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    )) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_FUNDS);
     }
 
 
