@@ -444,13 +444,14 @@ public class Game {
 
       ServerLevelCard levelTwo = levelDecks.get(Level.REDTWO).removeNextCard();
       levelTwo.setFaceDown(false);
-      redOneDeck.addCard(levelTwo);
+      redTwoDeck.addCard(levelTwo);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)), levelTwo);
 
       ServerLevelCard levelThree = levelDecks.get(Level.REDTHREE).removeNextCard();
       levelThree.setFaceDown(false);
-      redOneDeck.addCard(levelThree);
-      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)), levelThree);
+      redThreeDeck.addCard(levelThree);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+          levelThree);
     }
     this.onBoardDecks.put(Level.REDONE, redOneDeck);
     this.onBoardDecks.put(Level.REDTWO, redTwoDeck);
