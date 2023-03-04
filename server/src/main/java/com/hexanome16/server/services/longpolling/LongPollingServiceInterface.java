@@ -1,17 +1,13 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.longpolling;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import lombok.NonNull;
-import org.apache.commons.lang3.tuple.Pair;
+import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
- * Interface for managing game state backend requests.
+ * This interface defines the methods for the long polling service.
  */
-public interface GameServiceInterface {
+public interface LongPollingServiceInterface {
   /**
    * Long polling on update on onboard deck.
    *
@@ -62,16 +58,7 @@ public interface GameServiceInterface {
                                                     String hash);
 
   /**
-   * Allows client to see how many of each gem the game bank has.
-   *
-   * @param sessionId sessionId.
-   * @return String representation of the Purchase map
-   * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
-   */
-  ResponseEntity<String> getGameBankInfo(long sessionId)
-      throws JsonProcessingException;
-
-  /**
+   * /**
    * Returns HTTPS_OK if game with sessionId exists,
    * Returns HTTPS_BAD_REQUEST otherwise.
    *
@@ -84,7 +71,13 @@ public interface GameServiceInterface {
    * </p>
    *
    * @param sessionId game's identification number.
+   * @param authToken authentication token of player accessing resource.
+   * @param key       broadcast map key from which to retrieve content.
+   * @param hash      hash to put in hashBasedUpdate.
    * @return The pair of response and a pair of game and player
    */
-  Pair<ResponseEntity<String>, Game> validGame(long sessionId);
+  DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
+                                                                 String authToken,
+                                                                 BroadcastMapKey key,
+                                                                 String hash);
 }

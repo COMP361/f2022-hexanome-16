@@ -1,7 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.services.TokenServiceInterface;
+import com.hexanome16.server.services.token.TokenServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

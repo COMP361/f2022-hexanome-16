@@ -1,4 +1,4 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.game;
 
 import com.hexanome16.server.dto.SessionJson;
 import com.hexanome16.server.models.Game;

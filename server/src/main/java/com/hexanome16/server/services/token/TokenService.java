@@ -1,4 +1,4 @@
-package com.hexanome16.server.services;
+package com.hexanome16.server.services.token;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,8 @@ import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.price.Gem;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
