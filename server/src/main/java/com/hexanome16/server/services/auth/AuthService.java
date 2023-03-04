@@ -86,6 +86,7 @@ public class AuthService implements AuthServiceInterface {
     assert url != null;
     System.out.println(url.toASCIIString());
     try {
+      System.out.println(url);
       return this.restTemplate.getForEntity(url, String.class);
     } catch (Exception e) {
       e.printStackTrace();
