@@ -627,7 +627,7 @@ public class Game {
 
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
     gemIntegerMapGame.put(gem, 2);
-    incGameBank(new PurchaseMap(gemIntegerMapGame));
+    gameBank.removeGemsFromBank(new PurchaseMap(gemIntegerMapGame));
     Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
     gemIntegerMapPlayer.put(gem, 2);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
