@@ -1,6 +1,6 @@
 package com.hexanome16.server.services.game;
 
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class GameManagerService implements GameManagerServiceInterface {
   @Override
   public String createGame(long sessionId, SessionJson payload) {
     try {
-      Game game = new Game(sessionId, payload);
+      Game game = Game.create(sessionId, payload);
       gameMap.put(sessionId, game);
     } catch (Exception e) {
       // Returns to lobby service,
@@ -29,5 +29,10 @@ public class GameManagerService implements GameManagerServiceInterface {
       e.printStackTrace();
     }
     return "success";
+  }
+
+  @Override
+  public void deleteGame(long sessionId) {
+    gameMap.remove(sessionId);
   }
 }

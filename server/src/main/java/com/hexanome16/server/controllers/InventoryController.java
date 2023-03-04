@@ -3,19 +3,26 @@ package com.hexanome16.server.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
 import com.hexanome16.server.services.InventoryServiceInterface;
+import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.util.UrlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Inventory controller.
@@ -26,10 +33,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class InventoryController {
   /* fields and controllers ********************************************************/
   private final InventoryServiceInterface inventoryService;
+  private final RestTemplate restTemplate;
+  private final UrlUtils urlUtils;
+  private final GameServiceInterface gameServiceInterface;
   private final GameManagerServiceInterface gameManager;
+  private final ObjectMapper objectMapper;
+
+  private final AuthServiceInterface authService;
   private final ServiceUtils serviceUtils;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * Controller for the Inventory.
@@ -38,20 +50,41 @@ public class InventoryController {
    * @param gameManager          the game manager for fetching games
    * @param serviceUtils         the utility used by services
    */
-  public InventoryController(@Autowired InventoryServiceInterface gameServiceInterface,
+  public InventoryController(@Autowired InventoryServiceInterface inventoryServiceInterface,
+                             RestTemplateBuilder restTemplateBuilder, UrlUtils urlUtils,
+                             @Autowired GameServiceInterface gameServiceInterface,
+                             ObjectMapper objectMapper,
+                             @Autowired AuthServiceInterface authService,
                              @Autowired GameManagerServiceInterface gameManager,
                              @Autowired ServiceUtils serviceUtils) {
-    this.inventoryService = gameServiceInterface;
+    this.restTemplate = restTemplateBuilder.build();
+    this.urlUtils = urlUtils;
+    this.gameServiceInterface = gameServiceInterface;
+    this.objectMapper = objectMapper;
+    this.authService = authService;
     this.gameManager = gameManager;
+    this.inventoryService = inventoryServiceInterface;
     this.serviceUtils = serviceUtils;
   }
 
   /* helper methods ***************************************************************************/
+  private ServerPlayer getValidPlayer(long sessionId, String accessToken) {
+    Game game = gameManager.getGame(sessionId);
+    // verify that the request is valid
+    if (!authService.verifyPlayer(accessToken, game)) {
+      throw new IllegalArgumentException("Invalid Player.");
+    }
+    // get the player from the session id and access token
+    return gameServiceInterface.findPlayerByToken(
+        game, accessToken
+    );
+  }
 
-  private Player getValidPlayerByName(long sessionId, String username) {
+
+  private ServerPlayer getValidPlayerByName(long sessionId, String username) {
     Game game = gameManager.getGame(sessionId);
 
-    Player myPlayer = serviceUtils.findPlayerByName(
+    ServerPlayer myPlayer = gameServiceInterface.findPlayerByName(
         game, username
     );
     if (myPlayer == null) {
@@ -61,7 +94,7 @@ public class InventoryController {
     return myPlayer;
   }
 
-  private JsonNode getInventoryNode(Player player) throws JsonProcessingException {
+  private JsonNode getInventoryNode(ServerPlayer player) throws JsonProcessingException {
     // convert the inventory to string and return it as a String
     String inventoryString = objectMapper.writeValueAsString(player.getInventory());
     return objectMapper.readTree(inventoryString);
@@ -104,7 +137,7 @@ public class InventoryController {
                                          @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
@@ -125,7 +158,7 @@ public class InventoryController {
                                           @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
@@ -148,7 +181,7 @@ public class InventoryController {
       throws JsonProcessingException {
 
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
         player.getInventory().getReservedCards()), HttpStatus.OK);
@@ -167,7 +200,7 @@ public class InventoryController {
                                                   @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
         player.getInventory().getReservedNobles()), HttpStatus.OK);
@@ -191,32 +224,20 @@ public class InventoryController {
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
    *
-   * @param sessionId           sessionID.
-   * @param cardMd5             Card we want to purchase's md5.
-   * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
+   * @param sessionId   sessionID.
+   * @param cardMd5     Card we want to purchase's md5.
+   * @param accessToken token of the player trying to buy the card.
+   * @param purchaseMap PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.
-   *     </p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
-                                        @RequestParam String authenticationToken,
-                                        @RequestParam int rubyAmount,
-                                        @RequestParam int emeraldAmount,
-                                        @RequestParam int sapphireAmount,
-                                        @RequestParam int diamondAmount,
-                                        @RequestParam int onyxAmount, @RequestParam int goldAmount)
+                                        @RequestParam String accessToken,
+                                        @RequestBody PurchaseMap purchaseMap)
       throws JsonProcessingException {
-    return inventoryService.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
-        emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+    return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
 
   /**

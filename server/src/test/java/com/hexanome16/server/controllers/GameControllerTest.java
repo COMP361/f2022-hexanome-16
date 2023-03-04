@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
@@ -152,6 +153,83 @@ class GameControllerTest {
 
     try {
       assertEquals(gameBankInfoStub, gameController.getGameBankInfo(123L));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+  }
+
+  /**
+   * Test buy card.
+   */
+  @Test
+  void testBuyCard() {
+    final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
+    try {
+      when(gameServiceMock.buyCard(123L, "md5", "abc",
+          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
+          buyCardResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+
+    try {
+      assertEquals(buyCardResponseStub,
+          gameController.buyCard(123L, "md5", "abc",
+              new PurchaseMap(1, 1, 1, 1, 1, 1)));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+  }
+
+  /**
+   * Test reserve card.
+   */
+  @Test
+  void testReserveCard() {
+    final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
+    try {
+      when(gameServiceMock.reserveCard(123L, "md5", "abc")).thenReturn(
+          reserveCardResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+
+    try {
+      assertEquals(reserveCardResponseStub, gameController.reserveCard(123L, "md5", "abc"));
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+  }
+
+  /**
+   * Test reserve face down card.
+   */
+  @Test
+  void testReserveFaceDownCard() {
+    final ResponseEntity<String> reserveCardFaceDownResponseStub =
+        new ResponseEntity<>(HttpStatus.OK);
+
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
+    try {
+      when(gameServiceMock.reserveFaceDownCard(123L, "md5", "abc")).thenReturn(
+          reserveCardFaceDownResponseStub);
+    } catch (JsonProcessingException e) {
+      fail("Mock threw a JsonProcessingException");
+    }
+    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+
+    try {
+      assertEquals(reserveCardFaceDownResponseStub,
+          gameController.reserveFaceDownCard(123L, "md5", "abc"));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

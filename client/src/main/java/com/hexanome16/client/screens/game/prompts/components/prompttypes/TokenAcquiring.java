@@ -6,7 +6,6 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
@@ -15,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -47,7 +45,6 @@ public class TokenAcquiring implements PromptTypeInterface {
    * The top left y.
    */
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
-
 
 
   @Override
@@ -129,9 +126,8 @@ public class TokenAcquiring implements PromptTypeInterface {
     PromptTypeInterface.setOnHoverEffectOpacity(stackPane, buttonRectangle, 0.5, 1.0);
 
     // add onClick (Spawns Prompt of type promptToOpen)
-    stackPane.setOnMouseClicked(e -> {
-      FXGL.spawn("PromptBox", new SpawnData().put("promptType", promptToOpen));
-    });
+    stackPane.setOnMouseClicked(
+        e -> FXGL.spawn("PromptBox", new SpawnData().put("promptType", promptToOpen)));
 
     //
     stackPane.getChildren().addAll(buttonRectangle, buttonMessage);

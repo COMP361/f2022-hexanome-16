@@ -62,12 +62,8 @@ public interface PromptTypeInterface {
    */
   static void setOnHoverEffectOpacity(Node hoveredOver, Node affectedNode,
                                       double lowerOpacity, double upperOpacity) {
-    hoveredOver.setOnMouseEntered(e -> {
-      affectedNode.setOpacity(upperOpacity);
-    });
-    hoveredOver.setOnMouseExited(e -> {
-      affectedNode.setOpacity(lowerOpacity);
-    });
+    hoveredOver.setOnMouseEntered(e -> affectedNode.setOpacity(upperOpacity));
+    hoveredOver.setOnMouseExited(e -> affectedNode.setOpacity(lowerOpacity));
   }
 
   /**

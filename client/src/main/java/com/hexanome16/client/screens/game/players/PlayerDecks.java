@@ -7,8 +7,6 @@ import static com.hexanome16.client.Config.OPPONENT_SCALE;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.utils.AuthUtils;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,9 +45,7 @@ public class PlayerDecks {
     // spawn the players
     int curr = 0;
     // spawn the current player
-    if (curr < numOfPlayers) {
-      decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
-    }
+    decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
     // spawn a player on the left
     if (curr < numOfPlayers) {
       decks.spawnLeftPlayer(players[curr++], 150.0, OPPONENT_SCALE);
@@ -140,13 +136,13 @@ public class PlayerDecks {
         .setScaleUniform(0.1 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
   }
 
   private void spawnRightPlayer(String name, double horizontalShift,
@@ -195,13 +191,13 @@ public class PlayerDecks {
             verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
     FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 180 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards",  new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 240 + vertical * scale)
+        verticalShift + 180 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 300 + vertical * scale)
+        verticalShift + 240 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
+        verticalShift + 300 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
   }
 }

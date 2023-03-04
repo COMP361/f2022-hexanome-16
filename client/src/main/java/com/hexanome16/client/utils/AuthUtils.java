@@ -1,7 +1,7 @@
 package com.hexanome16.client.utils;
 
-import com.hexanome16.client.types.auth.TokensInfo;
-import com.hexanome16.client.types.user.User;
+import com.hexanome16.common.models.auth.TokensInfo;
+import com.hexanome16.common.models.sessions.User;
 import java.util.Base64;
 
 /**
@@ -13,16 +13,6 @@ public class AuthUtils {
 
   private AuthUtils() {
     super();
-  }
-
-  /**
-   * Creates a Bearer authorization header for a request.
-   *
-   * @param accessToken The access token of the user.
-   * @return The Bearer authorization header.
-   */
-  public static String getBearerHeader(String accessToken) {
-    return "Bearer " + accessToken;
   }
 
   /**

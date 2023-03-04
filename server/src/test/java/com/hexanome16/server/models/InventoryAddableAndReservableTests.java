@@ -2,7 +2,8 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.PriceMap;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -12,9 +13,10 @@ public class InventoryAddableAndReservableTests {
   private final PriceMap priceMap = new PriceMap(1, 2, 3, 4, 5);
 
 
-  private final LevelCard levelCard = new LevelCard(0, 1, "texture.png", priceMap, Level.ONE);
+  private final ServerLevelCard levelCard = new ServerLevelCard(0, 1, "texture.png", priceMap,
+      Level.ONE);
 
-  private final Noble noble = new Noble(0, 3, "texture.png", priceMap);
+  private final ServerNoble noble = new ServerNoble(0, 3, "texture.png", priceMap);
 
   private final Inventory inventory = new Inventory();
 

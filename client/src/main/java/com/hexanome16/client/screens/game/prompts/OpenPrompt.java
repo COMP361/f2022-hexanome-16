@@ -3,8 +3,8 @@ package com.hexanome16.client.screens.game.prompts;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.common.models.Level;
 
 /**
  * Class containing 2 methods to open prompts.

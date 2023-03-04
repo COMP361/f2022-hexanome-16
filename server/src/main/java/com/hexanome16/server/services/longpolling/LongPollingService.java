@@ -1,10 +1,10 @@
 package com.hexanome16.server.services.longpolling;
 
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
@@ -83,9 +83,9 @@ public class LongPollingService implements LongPollingServiceInterface {
    */
   @Override
   public DeferredResult<ResponseEntity<String>> validRequestLongPolling(long sessionId,
-                                                                         String authToken,
-                                                                         BroadcastMapKey key,
-                                                                         String hash) {
+                                                                        String authToken,
+                                                                        BroadcastMapKey key,
+                                                                        String hash) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
