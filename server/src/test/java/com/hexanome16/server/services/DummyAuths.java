@@ -1,11 +1,10 @@
 package com.hexanome16.server.services;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.auth.TokensInfo;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import java.io.IOException;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class DummyAuths {
    *   {@code DummyAuths.tokensInfos.get(1)} to get the "elea" player
    * </pre>
    */
-  public static final List<Player> validPlayerList = List.of(PlayerDummies.validDummies);
+  public static final List<ServerPlayer> validPlayerList = List.of(PlayerDummies.validDummies);
 
   /**
    * Immutable static list of invalid players.
@@ -76,8 +75,8 @@ public class DummyAuths {
    *   {@code DummyAuths.tokensInfos.get(1)} to get the "el" player
    * </pre>
    */
-  public static final List<Player> invalidPlayerList =
-      List.of(new Player("imad", "#FFFFFF"), new Player("el", "#FFFFFF"));
+  public static final List<ServerPlayer> invalidPlayerList =
+      List.of(new ServerPlayer("imad", "#FFFFFF"), new ServerPlayer("el", "#FFFFFF"));
 
   /**
    * Immutable static list of players in json format.
@@ -118,19 +117,11 @@ public class DummyAuths {
   /**
    * The constant validGames.
    */
-  public static final Map<Long, Game> validGames;
-
-  static {
-    try {
-      validGames = Map.of(
-          validSessionIds.get(0), new Game(validSessionIds.get(0),
-              validPlayerList.toArray(new Player[2]), validPlayerList.get(0).getName(),
-              "", new BaseWinCondition())
-      );
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public static final Map<Long, Game> validGames = Map.of(
+      validSessionIds.get(0), Game.create(validSessionIds.get(0),
+          validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
+          "", new WinCondition[] {WinCondition.BASE})
+  );
 
   /**
    * Immutable static list of valid passwords.

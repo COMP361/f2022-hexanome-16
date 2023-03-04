@@ -1,7 +1,7 @@
 package com.hexanome16.server.services.auth;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Arrays;
@@ -84,6 +84,7 @@ public class AuthService implements AuthServiceInterface {
     URI url = urlUtils.createLobbyServiceUri("/oauth/username",
         "access_token=" + accessToken);
     assert url != null;
+    System.out.println(url.toASCIIString());
     try {
       return this.restTemplate.getForEntity(url, String.class);
     } catch (Exception e) {

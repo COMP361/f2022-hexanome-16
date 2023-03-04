@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.LevelCard;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.price.PriceInterface;
-import com.hexanome16.server.models.price.PurchaseMap;
+import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
-import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.Arrays;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * Service is responsible for managing game state requests from
@@ -61,7 +60,7 @@ public class GameService implements GameServiceInterface {
     }
 
     // get player with username
-    Player concernedPlayer = findPlayerByName(game, username);
+    ServerPlayer concernedPlayer = findPlayerByName(game, username);
 
     // Player not in game
     if (concernedPlayer == null) {
@@ -95,11 +94,11 @@ public class GameService implements GameServiceInterface {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
-      Player[] winners = game.getWinCondition().isGameWon(game);
+      ServerPlayer[] winners = WinCondition.getWinners(game.getWinConditions(), game.getPlayers());
       if (winners.length > 0) {
         game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.WINNERS,
-            new WinJson(Arrays.stream(winners).map(Player::getName).toArray(String[]::new))
+            new WinJson(Arrays.stream(winners).map(ServerPlayer::getName).toArray(String[]::new))
         );
       }
     } else {
@@ -112,9 +111,7 @@ public class GameService implements GameServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        int rubyAmount, int emeraldAmount, int sapphireAmount,
-                                        int diamondAmount, int onyxAmount, int goldAmount)
-      throws JsonProcessingException {
+                                        PurchaseMap proposedDeal) {
 
     var request = validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
@@ -122,11 +119,11 @@ public class GameService implements GameServiceInterface {
       return response;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
 
     // Fetch the card in question
-    LevelCard cardToBuy = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
     // TODO test
     // TODO add http error
@@ -134,10 +131,10 @@ public class GameService implements GameServiceInterface {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    // Get proposed Deal as a purchase map
-    PurchaseMap proposedDeal =
-        new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount, onyxAmount,
-            goldAmount);
+    // Verify player is who they claim to be
+    if (!authService.verifyPlayer(authenticationToken, game)) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
     // Get card price as a priceMap
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
@@ -151,15 +148,27 @@ public class GameService implements GameServiceInterface {
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
-    if (!player.hasAtLeast(rubyAmount, emeraldAmount, sapphireAmount, diamondAmount,
-        onyxAmount, goldAmount)) {
+    // and is player's turn
+    if (!player.hasAtLeast(
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD)
+    ) || game.isNotPlayersTurn(player)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     // Increase Game Bank and decrease player funds
-    game.incGameBankFromPlayer(player, rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount);
+    game.incGameBankFromPlayer(player,
+        proposedDeal.getGemCost(Gem.RUBY),
+        proposedDeal.getGemCost(Gem.EMERALD),
+        proposedDeal.getGemCost(Gem.SAPPHIRE),
+        proposedDeal.getGemCost(Gem.DIAMOND),
+        proposedDeal.getGemCost(Gem.ONYX),
+        proposedDeal.getGemCost(Gem.GOLD));
 
 
     // Add that card to the player's Inventory
@@ -176,7 +185,7 @@ public class GameService implements GameServiceInterface {
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckHash(game, level)
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
     );
 
     // Ends players turn, which is current player
@@ -205,9 +214,9 @@ public class GameService implements GameServiceInterface {
       return left;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
-    LevelCard card = DeckHash.getCardFromDeck(cardMd5);
+    ServerLevelCard card = game.getCardByHash(cardMd5);
 
 
     if (card == null) {
@@ -232,7 +241,7 @@ public class GameService implements GameServiceInterface {
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckHash(game, level)
+        new DeckJson(game.getLevelDeck(level).getCardList(), level)
     );
 
     endCurrentPlayersTurn(game);
@@ -257,7 +266,7 @@ public class GameService implements GameServiceInterface {
       return response;
     }
     final Game game = request.getRight().getLeft();
-    final Player player = request.getRight().getRight();
+    final ServerPlayer player = request.getRight().getRight();
 
     Level atLevel = switch (level) {
       case "THREE" -> Level.THREE;
@@ -270,7 +279,7 @@ public class GameService implements GameServiceInterface {
       return CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    LevelCard card = game.getLevelDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getLevelDeck(atLevel).nextCard();
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -284,8 +293,8 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Player findPlayerByName(@NonNull Game game, String username) {
-    for (Player e : game.getPlayers()) {
+  public ServerPlayer findPlayerByName(@NonNull Game game, String username) {
+    for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;
       }
@@ -294,13 +303,13 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Player findPlayerByToken(@NonNull Game game, String accessToken) {
+  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken) {
     ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();
 
 
-    for (Player e : game.getPlayers()) {
+    for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
         return e;
       }
@@ -309,7 +318,7 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(
+  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
       long sessionId,
       String authToken) {
 
@@ -318,7 +327,7 @@ public class GameService implements GameServiceInterface {
       return response;
     }
     final Game currentGame = response.getRight().getLeft();
-    final Player requestingPlayer = response.getRight().getRight();
+    final ServerPlayer requestingPlayer = response.getRight().getRight();
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
@@ -331,8 +340,8 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
-  public Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
-                                                                       String authToken) {
+  public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(long sessionId,
+                                                                             String authToken) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
@@ -342,7 +351,7 @@ public class GameService implements GameServiceInterface {
     }
 
     boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
-    Player requestingPlayer = findPlayerByToken(currentGame, authToken);
+    ServerPlayer requestingPlayer = findPlayerByToken(currentGame, authToken);
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(

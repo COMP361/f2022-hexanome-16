@@ -1,21 +1,22 @@
 package com.hexanome16.server.models;
 
+import com.hexanome16.common.models.Noble;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Player inventory class.
  */
-@Data
+@Getter
 public class Inventory {
   /* fields *************************************************************************************/
-  private PlayerBank playerBank;
-  private List<Noble> ownedNobles;
-  private List<Noble> reservedNobles;
-  private List<LevelCard> ownedCards;
-  private List<LevelCard> reservedCards;
+  private final PlayerBank playerBank;
+  private final List<Noble> ownedNobles;
+  private final List<Noble> reservedNobles;
+  private final List<ServerLevelCard> ownedCards;
+  private final List<ServerLevelCard> reservedCards;
 
   /* Constructor *********************************************************************************/
 
@@ -31,13 +32,14 @@ public class Inventory {
   }
 
   /* add methods ******************************************************************************/
+
   /**
    * Acquire card.
    *
    * @param card the card to add
    * @return true if the card was added to inventory
    */
-  public boolean acquireCard(LevelCard card) {
+  public boolean acquireCard(ServerLevelCard card) {
     return ownedCards.add(card);
   }
 
@@ -47,7 +49,7 @@ public class Inventory {
    * @param card card to reserve
    * @return if the card has been reserved successfully
    */
-  public boolean reserveCard(LevelCard card) {
+  public boolean reserveCard(ServerLevelCard card) {
     // if the player already has three reserved cards
     if (reservedCards.size() >= 3) {
       return false;

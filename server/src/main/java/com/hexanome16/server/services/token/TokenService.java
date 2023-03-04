@@ -2,13 +2,12 @@ package com.hexanome16.server.services.token;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +24,17 @@ public class TokenService implements TokenServiceInterface {
 
   private final GameServiceInterface gameService;
   private final GameManagerServiceInterface gameManager;
-  private final AuthServiceInterface authService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * Constructor for the Token service Class.
    *
    * @param gameService Needed for getting games and such.
-   * @param authService Needed for player verification.
    * @param gameManager Game manager for fetching game instances
    */
   public TokenService(@Autowired GameServiceInterface gameService,
-                      @Autowired AuthServiceInterface authService,
                       @Autowired GameManagerServiceInterface gameManager) {
     this.gameService = gameService;
-    this.authService = authService;
     this.gameManager = gameManager;
   }
 
@@ -81,7 +76,7 @@ public class TokenService implements TokenServiceInterface {
       return validity;
     }
     Game currentGame = request.getRight().getLeft();
-    Player requestingPlayer = request.getRight().getRight();
+    ServerPlayer requestingPlayer = request.getRight().getRight();
 
     Gem desiredGem = Gem.getGem(tokenType);
 
@@ -106,7 +101,7 @@ public class TokenService implements TokenServiceInterface {
       return validity;
     }
     Game currentGame = request.getRight().getLeft();
-    Player requestingPlayer = request.getRight().getRight();
+    ServerPlayer requestingPlayer = request.getRight().getRight();
 
     Gem desiredGemOne = Gem.getGem(tokenTypeOne);
     Gem desiredGemTwo = Gem.getGem(tokenTypeTwo);

@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
@@ -190,7 +191,8 @@ class GameControllerTest {
     GameServiceInterface gameServiceMock = createGameServiceMock();
     LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
     try {
-      when(gameServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
+      when(gameServiceMock.buyCard(123L, "md5", "abc",
+          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
           buyCardResponseStub);
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
@@ -199,7 +201,8 @@ class GameControllerTest {
 
     try {
       assertEquals(buyCardResponseStub,
-          gameController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
+          gameController.buyCard(123L, "md5", "abc",
+              new PurchaseMap(1, 1, 1, 1, 1, 1)));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

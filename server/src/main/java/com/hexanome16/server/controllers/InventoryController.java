@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
@@ -60,7 +60,7 @@ public class InventoryController {
 
   /* helper methods ***************************************************************************/
 
-  private Player getValidPlayer(long sessionId, String accessToken) {
+  private ServerPlayer getValidPlayer(long sessionId, String accessToken) {
     Game game = gameManager.getGame(sessionId);
     // verify that the request is valid
     if (!authService.verifyPlayer(accessToken, game)) {
@@ -73,10 +73,10 @@ public class InventoryController {
   }
 
 
-  private Player getValidPlayerByName(long sessionId, String username) {
+  private ServerPlayer getValidPlayerByName(long sessionId, String username) {
     Game game = gameManager.getGame(sessionId);
 
-    Player myPlayer = gameServiceInterface.findPlayerByName(
+    ServerPlayer myPlayer = gameServiceInterface.findPlayerByName(
         game, username
     );
     if (myPlayer == null) {
@@ -86,7 +86,7 @@ public class InventoryController {
     return myPlayer;
   }
 
-  private JsonNode getInventoryNode(Player player) throws JsonProcessingException {
+  private JsonNode getInventoryNode(ServerPlayer player) throws JsonProcessingException {
     // convert the inventory to string and return it as a String
     String inventoryString = objectMapper.writeValueAsString(player.getInventory());
     return objectMapper.readTree(inventoryString);
@@ -129,7 +129,7 @@ public class InventoryController {
                                          @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
@@ -150,7 +150,7 @@ public class InventoryController {
                                           @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the cards in the inventory as a response entity
     return new ResponseEntity<>(
         objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
@@ -173,7 +173,7 @@ public class InventoryController {
       throws JsonProcessingException {
 
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
         player.getInventory().getReservedCards()), HttpStatus.OK);
@@ -192,7 +192,7 @@ public class InventoryController {
                                                   @RequestParam String username)
       throws JsonProcessingException {
     // get the player (if valid) from the session id and access token
-    Player player = getValidPlayerByName(sessionId, username);
+    ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved nobles in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(
         player.getInventory().getReservedNobles()), HttpStatus.OK);

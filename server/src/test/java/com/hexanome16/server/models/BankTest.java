@@ -3,9 +3,9 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.models.price.PurchaseMap;
 import org.junit.jupiter.api.Test;
 
 /**

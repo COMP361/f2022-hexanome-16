@@ -1,17 +1,16 @@
 package com.hexanome16.server.services;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameDummies;
-import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.game.GameServiceInterface;
-import com.hexanome16.server.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mockito.Mockito;
@@ -38,7 +37,7 @@ public class DummyGameService {
     GameDummies gameDummies = new GameDummies();
     Game newGame;
     ResponseEntity<String> left;
-    ImmutablePair<Game, Player> right;
+    ImmutablePair<Game, ServerPlayer> right;
     for (int i = 0; i < DummyAuths.validSessionIds.size(); i++) {
       newGame = gameDummies.validGames.get(i);
       left = new ResponseEntity<>(HttpStatus.OK);

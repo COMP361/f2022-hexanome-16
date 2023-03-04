@@ -1,9 +1,10 @@
 package com.hexanome16.server.models;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 import lombok.ToString;
 
 /**
@@ -13,14 +14,13 @@ import lombok.ToString;
  */
 @ToString
 public class Deck<T extends InventoryAddable> implements BroadcastContent {
-  private final List<T> cardList = new ArrayList<>();
-  private int index;
+  private final Stack<T> cardList;
 
   /**
    * Instantiates a new Deck.
    */
   public Deck() {
-    this.index = 0;
+    cardList = new Stack<>();
   }
 
   /**
@@ -38,7 +38,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * @param card the card to be added.
    */
   public void addCard(T card) {
-    cardList.add(card);
+    cardList.push(card);
   }
 
   /**
@@ -63,10 +63,24 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * @return card, null if deck is empty
    */
   public T nextCard() {
-    if (remainingAmount() <= 0) {
+    try {
+      return cardList.peek();
+    } catch (EmptyStackException e) {
       return null;
     }
-    return cardList.get(index++);
+  }
+
+  /**
+   * Remove and return next card from the deck.
+   *
+   * @return card, null if deck is empty
+   */
+  public T removeNextCard() {
+    try {
+      return cardList.pop();
+    } catch (EmptyStackException e) {
+      return null;
+    }
   }
 
   /**
@@ -75,7 +89,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * @return amount of remaining cards
    */
   public int remainingAmount() {
-    return cardList.size() - index;
+    return cardList.size();
   }
 
   @Override
@@ -94,7 +108,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
     if (!(o instanceof final Deck<?> otherDeck)) {
       return false;
     }
-    if (!otherDeck.canEqual((Object) this)) {
+    if (!otherDeck.canEqual(this)) {
       return false;
     }
     if (this.getCardList().size() != otherDeck.getCardList().size()) {

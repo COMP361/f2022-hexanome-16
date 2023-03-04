@@ -16,7 +16,9 @@ public class AuthRequest {
   public static void execute(String username, String password) {
     TokenRequest.execute(username, password);
     if (AuthUtils.getAuth() != null) {
+      System.out.println(AuthUtils.getAuth());
       GetUserRequest.execute(username, AuthUtils.getAuth().getAccessToken());
+      System.out.println(AuthUtils.getPlayer());
     }
   }
 }

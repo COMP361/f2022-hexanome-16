@@ -1,14 +1,14 @@
 package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
+import com.hexanome16.server.models.ServerPlayer;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * Interface for managing game state backend requests.
@@ -49,26 +49,15 @@ public interface GameServiceInterface {
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
    * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
+   * @param purchaseMap         Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
-   *         </p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
                                  String authenticationToken,
-                                 int rubyAmount,
-                                 int emeraldAmount,
-                                 int sapphireAmount,
-                                 int diamondAmount,
-                                 int onyxAmount,
-                                 int goldAmount)
+                                 PurchaseMap purchaseMap)
       throws JsonProcessingException;
 
   /**
@@ -107,7 +96,7 @@ public interface GameServiceInterface {
    * @param username name of player.
    * @return Player with that username in that game, null if no such player.
    */
-  Player findPlayerByName(@NonNull Game game, String username);
+  ServerPlayer findPlayerByName(@NonNull Game game, String username);
 
   /**
    * Finds player with that authentication token in the game.
@@ -116,7 +105,7 @@ public interface GameServiceInterface {
    * @param accessToken token associated to player
    * @return player with that token, null if no such player
    */
-  Player findPlayerByToken(@NonNull Game game, String accessToken);
+  ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
@@ -135,8 +124,8 @@ public interface GameServiceInterface {
    * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
-  Pair<ResponseEntity<String>, Pair<Game, Player>> validRequestAndCurrentTurn(long sessionId,
-                                                                              String authToken);
+  Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
+      long sessionId, String authToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
@@ -155,8 +144,8 @@ public interface GameServiceInterface {
    * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
-  Pair<ResponseEntity<String>, Pair<Game, Player>> validRequest(long sessionId,
-                                                                String authToken);
+  Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(long sessionId,
+                                                                      String authToken);
 
   /**
    * Returns HTTPS_OK if game with sessionId exists,

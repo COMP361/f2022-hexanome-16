@@ -2,8 +2,9 @@ package com.hexanome16.server.controllers.lobbyservice;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.common.models.sessions.GameParams;
 import com.hexanome16.server.controllers.lobbyservice.gameservice.GameServiceController;
-import com.hexanome16.server.models.sessions.GameParams;
+import com.hexanome16.server.models.sessions.ServerGameParams;
 import com.hexanome16.server.services.auth.AuthService;
 import com.hexanome16.server.util.UrlUtils;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,9 @@ public class GameServiceControllerIT {
    */
   @Test
   public void deleteGameService() {
-    ResponseEntity<Void> response = gameServiceController.deleteGameService();
+    ResponseEntity<Void> response = gameServiceController.deleteGameService(
+        ServerGameParams.testInit().getName()
+    );
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
@@ -42,7 +45,8 @@ public class GameServiceControllerIT {
    */
   @Test
   public void createGameService() {
-    ResponseEntity<Void> response = gameServiceController.createGameService();
+    ResponseEntity<Void> response = gameServiceController.createGameService(
+        ServerGameParams.testInit());
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 }

@@ -16,7 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -70,9 +69,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     promptOpens();
     // This is just to reinitialize myChoices when the prompt is closed
     // (These objects are unique, and so they don't get destroyed when the prompt closes)
-    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
-      handlePromptForceQuit();
-    });
+    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> handlePromptForceQuit());
 
     //initiate BorderPane Top will be Text, Center will be Token types and right will be the button
     BorderPane myPrompt = new BorderPane();
@@ -163,7 +160,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   }
 
   // ^^^^^^^^^^^^^    BASIC SETUP   ^^^^^^^^^^^^^^^
-  // VVVVVVVVVVVVV ABSTRACT METHODS VVVVVVVVVVVVVVV
+  // ------------- ABSTRACT METHODS ---------------
 
   /**
    * To override if there is a need to do something when prompt opens.
