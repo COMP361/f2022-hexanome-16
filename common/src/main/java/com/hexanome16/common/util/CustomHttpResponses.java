@@ -52,8 +52,32 @@ public enum CustomHttpResponses implements BroadcastContent {
    * (Object mapper stuff for example)
    */
   SERVER_SIDE_ERROR("There was an error on the server, please try again later",
-      HTTP_INTERNAL_ERROR);
+      HTTP_INTERNAL_ERROR),
 
+  /**
+   * Used for indicating that player must choose a noble.
+   * <p>
+   * Only use with CustomResponse to pass in list of nobles in body.
+   * </p>
+   */
+  CHOOSE_NOBLE("Insert custom body containing list of nobles", HTTP_OK,
+      Map.of("action-type", List.of("choose-noble"))),
+  /**
+   * Used for indicating that player must choose a city.
+   * <p>
+   * Only use with CustomResponse to pass in list of cities in body.
+   * </p>
+   */
+  CHOOSE_CITY("Insert custom body containing list of cities", HTTP_OK,
+      Map.of("action-type", List.of("choose-city"))),
+  /**
+   * Used for indicating that player must take a level two card.
+   * <p>
+   * No need for a body so just use with getResponse
+   * </p>
+   */
+  TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
+      Map.of("action-type", List.of("take-level-two")));
   private final String body;
   private final Map<String, List<String>> headers;
   private final int status;
