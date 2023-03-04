@@ -201,11 +201,13 @@ public class GameScreen {
       }
     }
     cardMap.remove(hashToRemove);
+    System.out.println("number in deck: " + cardHashList.size());
     for (Map.Entry<String, LevelCard> entry : cardHashList.entrySet()) {
       String hash = entry.getKey();
       LevelCard card = entry.getValue();
       if (!cardMap.containsKey(hash)) {
         cardMap.put(hash, card);
+        System.out.println("adding -- " + card.getLevel().name() + " : " + card.getCardInfo().id());
         FXGL.spawn(cardName,
             new SpawnData().put("id", card.getCardInfo().id())
                 .put("texture", card.getCardInfo().texturePath())
