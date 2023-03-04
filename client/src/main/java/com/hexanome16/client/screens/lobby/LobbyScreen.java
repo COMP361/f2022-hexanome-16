@@ -23,6 +23,7 @@ public class LobbyScreen {
     spawn("logo");
     spawn("ownHeader");
     spawn("otherHeader");
+    spawn("gameServiceList");
   }
 
   /**
@@ -43,6 +44,8 @@ public class LobbyScreen {
     getGameWorld().getEntitiesByType(EntityType.LOGO).forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(EntityType.OWN_HEADER).forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(EntityType.OTHER_HEADER)
+        .forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.GAME_SERVICE_LIST)
         .forEach(Entity::removeFromWorld);
   }
 }

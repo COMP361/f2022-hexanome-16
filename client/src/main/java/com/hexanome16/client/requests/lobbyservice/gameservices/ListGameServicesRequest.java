@@ -5,6 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.common.dto.GameServiceJson;
+import java.util.Map;
 import javafx.util.Pair;
 
 /**
@@ -14,10 +15,10 @@ public class ListGameServicesRequest {
   /**
    * Executes the request.
    *
-   * @return the list of game services
+   * @return the array of game services
    */
-  public static Pair<String, GameServiceJson[]> execute() {
-    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.LS,
+  public static GameServiceJson[] execute() {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.LS,
         "/api/gameservices", GameServiceJson[].class));
   }
 }
