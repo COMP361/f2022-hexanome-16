@@ -17,7 +17,7 @@ class CustomResponseFactoryTest {
     final var body = CustomHttpResponses.BAD_LEVEL_INFO.getBody();
 
     // Act
-    var response = CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
+    var response = CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
 
     // Assert
     assertEquals(status, response.getStatusCode().value());
@@ -33,7 +33,7 @@ class CustomResponseFactoryTest {
 
     // Act
     var response =
-        CustomResponseFactory.getCustomErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO, body);
+        CustomResponseFactory.getCustomResponse(CustomHttpResponses.BAD_LEVEL_INFO, body, null);
 
     // Assert
     assertEquals(status, response.getStatusCode().value());
@@ -49,7 +49,7 @@ class CustomResponseFactoryTest {
 
     // Act
     var response =
-        CustomResponseFactory.getDeferredErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
+        CustomResponseFactory.getDeferredResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     var result = (ResponseEntity<String>) response.getResult();
 
     // Assert
@@ -67,8 +67,8 @@ class CustomResponseFactoryTest {
 
     // Act
     var response =
-        CustomResponseFactory.getDeferredCustomErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO,
-            body);
+        CustomResponseFactory.getDeferredCustomResponse(CustomHttpResponses.BAD_LEVEL_INFO,
+            body, null);
     var result = (ResponseEntity<String>) response.getResult();
 
     // Assert

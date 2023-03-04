@@ -56,7 +56,7 @@ public class GameService implements GameServiceInterface {
       throws JsonProcessingException {
     Game game = gameManagerService.getGame(sessionId);
     if (game == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID);
     }
 
     // get player with username
@@ -276,7 +276,7 @@ public class GameService implements GameServiceInterface {
     };
 
     if (atLevel == null) {
-      return CustomResponseFactory.getErrorResponse(CustomHttpResponses.BAD_LEVEL_INFO);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
     ServerLevelCard card = game.getLevelDeck(atLevel).nextCard();
@@ -331,7 +331,7 @@ public class GameService implements GameServiceInterface {
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
           new ImmutablePair<>(null, null));
     }
 
@@ -346,7 +346,7 @@ public class GameService implements GameServiceInterface {
 
     if (currentGame == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID),
           new ImmutablePair<>(null, null));
     }
 
@@ -355,7 +355,7 @@ public class GameService implements GameServiceInterface {
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
           new ImmutablePair<>(null, null));
     }
 
@@ -368,7 +368,7 @@ public class GameService implements GameServiceInterface {
     final Game currentGame = gameManagerService.getGame(sessionId);
     if (currentGame == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
     }
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
   }
