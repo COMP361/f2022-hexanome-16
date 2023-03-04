@@ -50,8 +50,6 @@ public class AuthUtils {
    * @return The player information.
    */
   public static User getPlayer() {
-
-    System.out.println(auth.getAccessToken());
     return player;
   }
 
