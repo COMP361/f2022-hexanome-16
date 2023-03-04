@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -26,14 +27,13 @@ import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
-import util.CustomHttpResponses;
 
 /**
  * This class provides an HTTP client to send requests to the backend/Lobby Service.
  */
 public class RequestClient {
   public static final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
-      JsonInclude.Include.NON_NULL)
+          JsonInclude.Include.NON_NULL)
       .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
   public static final int TIMEOUT = 5;
   public static final int LONG_POLL_TIMEOUT = 60;

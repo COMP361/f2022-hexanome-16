@@ -9,7 +9,7 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import models.price.PurchaseMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

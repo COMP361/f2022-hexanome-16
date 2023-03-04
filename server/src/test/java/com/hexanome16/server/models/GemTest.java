@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import models.price.Gem;
+import com.hexanome16.common.models.price.Gem;
 import org.junit.jupiter.api.Test;
 
 /**

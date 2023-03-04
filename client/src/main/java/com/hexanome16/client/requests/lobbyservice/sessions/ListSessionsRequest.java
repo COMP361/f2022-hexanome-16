@@ -4,9 +4,9 @@ import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
+import com.hexanome16.common.models.sessions.Session;
 import java.util.Map;
 import javafx.util.Pair;
-import models.sessions.Session;
 
 /**
  * This class provides methods to list sessions in Lobby Service.

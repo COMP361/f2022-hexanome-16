@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
-import dto.CardJson;
-import dto.DeckJson;
-import dto.NobleDeckJson;
-import dto.NobleJson;
-import dto.PlayerJson;
+import com.hexanome16.common.dto.CardJson;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.NobleJson;
+import com.hexanome16.common.dto.PlayerJson;
 import java.io.IOException;
-import models.Level;
+import com.hexanome16.common.models.Level;
 import org.junit.jupiter.api.Test;
 
 /**

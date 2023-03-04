@@ -1,11 +1,11 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
-import dto.SessionJson;
-import models.price.PurchaseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -160,12 +160,12 @@ public class GameController {
   /**
    * Allows client to buy card, given that they send a valid way to buy that card.
    *
-   * @param sessionId           sessionID.
-   * @param cardMd5             Card we want to purchase's md5.
-   * @param accessToken         token of the player trying to buy the card.
-   * @param purchaseMap         PurchaseMap denoting player's offer.
+   * @param sessionId   sessionID.
+   * @param cardMd5     Card we want to purchase's md5.
+   * @param accessToken token of the player trying to buy the card.
+   * @param purchaseMap PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.</p>
+   * HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
@@ -179,9 +179,9 @@ public class GameController {
   /**
    * Let the player reserve a face up card.
    *
-   * @param sessionId           game session id.
-   * @param cardMd5             card hash.
-   * @param accessToken         player's authentication token.
+   * @param sessionId   game session id.
+   * @param cardMd5     card hash.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
@@ -196,9 +196,9 @@ public class GameController {
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId           game session id.
-   * @param level               deck level.
-   * @param accessToken         player's authentication token.
+   * @param sessionId   game session id.
+   * @param level       deck level.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */

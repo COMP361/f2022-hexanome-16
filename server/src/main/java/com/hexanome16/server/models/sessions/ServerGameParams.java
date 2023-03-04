@@ -1,8 +1,8 @@
 package com.hexanome16.server.models.sessions;
 
+import com.hexanome16.common.models.sessions.GameParams;
 import java.util.Properties;
 import lombok.SneakyThrows;
-import models.sessions.GameParams;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -55,6 +55,7 @@ public class ServerGameParams extends GameParams {
    * @return GameParams object
    */
   public static ServerGameParams testInit() {
-    return new ServerGameParams("http://localhost:4243/Splendor", 4, 2, "Splendor", "Splendor", "true");
+    return new ServerGameParams("http://localhost:4243/Splendor", 4, 2, "Splendor", "Splendor",
+        "true");
   }
 }

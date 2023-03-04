@@ -5,12 +5,12 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import dto.DeckJson;
-import dto.NobleDeckJson;
-import dto.PlayerJson;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.Level;
 import java.util.Map;
 import javafx.util.Pair;
-import models.Level;
 
 /**
  * This class provides methods to perform development card related requests to the game server.

@@ -1,9 +1,9 @@
 package com.hexanome16.server.util;
 
+import com.hexanome16.common.util.CustomHttpResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
-import util.CustomHttpResponses;
 
 /**
  * Static factory for accessing pre-generated Error Responses.

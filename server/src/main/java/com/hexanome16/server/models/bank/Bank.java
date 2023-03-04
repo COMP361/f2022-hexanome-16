@@ -1,12 +1,12 @@
 package com.hexanome16.server.models.bank;
 
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.Hashtable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import models.price.Gem;
-import models.price.PriceInterface;
-import models.price.PurchaseMap;
 
 /**
  * Bank class. Used for storing tokens.

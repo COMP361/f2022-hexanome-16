@@ -1,5 +1,6 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.ServerGameParams;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
@@ -8,10 +9,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import models.auth.TokensInfo;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

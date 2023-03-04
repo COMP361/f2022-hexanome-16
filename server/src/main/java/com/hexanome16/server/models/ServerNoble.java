@@ -1,8 +1,7 @@
 package com.hexanome16.server.models;
 
-import models.Noble;
-import models.price.PriceInterface;
-import models.price.PriceMap;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceMap;
 
 /**
  * Noble class.

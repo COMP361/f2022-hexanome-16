@@ -15,7 +15,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import util.CustomHttpResponses;
+import com.hexanome16.common.util.CustomHttpResponses;
 
 /**
  * Dummy Game service for usage in tests.
