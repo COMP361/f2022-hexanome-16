@@ -15,8 +15,10 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerNoble;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
@@ -289,6 +291,51 @@ class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
+  }
+
+  /**
+   * Test noble happy path.
+   */
+  @Test
+  @SneakyThrows
+  public void testNobleHappyPath() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+    GameDummies gameDummies = new GameDummies();
+    Game gameMock = gameDummies.validGames.get(0);
+    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.OK.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
+  }
+
+  @Test
+  @SneakyThrows
+  public void testNobleInvalidHash() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "invalid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+    GameDummies gameDummies = new GameDummies();
+    Game gameMock = gameDummies.validGames.get(0);
+    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(null);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
   }
 
   /**

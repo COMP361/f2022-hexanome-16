@@ -275,6 +275,12 @@ public class InventoryService implements InventoryServiceInterface {
     final Game game = request.getRight().getLeft();
     final ServerPlayer player = request.getRight().getRight();
 
+    var noble = game.getNobleByHash(nobleHash);
+
+    if (noble == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
 }
