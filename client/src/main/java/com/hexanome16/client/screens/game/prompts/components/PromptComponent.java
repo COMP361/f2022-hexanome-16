@@ -9,10 +9,10 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
-import com.hexanome16.client.screens.game.Level;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
+import com.hexanome16.common.models.Level;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -88,7 +88,7 @@ public class PromptComponent extends Component {
    * Based on card level.
    *
    * @param promptType Type of prompt to be associated to the entity with this component.
-   * @param level The level of the card whose view will be displayed in the prompt.
+   * @param level      The level of the card whose view will be displayed in the prompt.
    */
   public PromptComponent(PromptTypeInterface promptType, Level level) {
     this(promptType);
@@ -197,12 +197,8 @@ public class PromptComponent extends Component {
 
     // Customizing elements ////////////////////////////////////////////////////////////////////////
     // customizing Component : Button
-    button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-      myBox.setOpacity(1);
-    });
-    button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-      myBox.setOpacity(0);
-    });
+    button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> myBox.setOpacity(1));
+    button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> myBox.setOpacity(0));
     button.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       closePrompts();
       e.consume();

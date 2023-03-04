@@ -10,17 +10,16 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
-import com.hexanome16.server.util.CustomHttpResponses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -34,9 +33,7 @@ public class TokenServiceTests {
       new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
           JsonCreator.Mode.PROPERTIES));
   private final SessionJson payload = new SessionJson();
-  private DummyAuthService dummyAuthService;
   private GameServiceInterface gameService;
-  private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
 
   /**
@@ -46,18 +43,17 @@ public class TokenServiceTests {
    */
   @BeforeEach
   void setup() throws JsonProcessingException {
-    dummyAuthService = new DummyAuthService();
-    gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
+    GameManagerServiceInterface gameManagerMock =
+        DummyGameManagerService.getDummyGameManagerService();
     gameService = DummyGameService.getDummyGameService();
-    tokensService =
-        new TokenService(gameService, dummyAuthService, gameManagerMock);
+    tokensService = new TokenService(gameService, gameManagerMock);
 
-    payload.setPlayers(new Player[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), Player.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), Player.class)});
+    payload.setPlayers(new ServerPlayer[] {
+        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
+        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
     payload.setCreator("tristan");
     payload.setSavegame("");
-    payload.setWinCondition(new BaseWinCondition());
+    payload.setGame(WinCondition.BASE.getAssocServerName());
     gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload);
     gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload);
   }
@@ -72,7 +68,8 @@ public class TokenServiceTests {
     var response = tokensService.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     response = tokensService.availableTwoTokensType(DummyAuths.invalidSessionIds.get(0));
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getStatusCode().value());
   }
 
   /**
@@ -85,7 +82,8 @@ public class TokenServiceTests {
     var response = tokensService.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     response = tokensService.availableThreeTokensType(DummyAuths.invalidSessionIds.get(0));
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getStatusCode().value());
   }
 
   /**
@@ -96,7 +94,7 @@ public class TokenServiceTests {
 
     Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
-    Player validPlayer = PlayerDummies.validDummies[0];
+    ServerPlayer validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),
         eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
         validPlayer);
@@ -131,7 +129,7 @@ public class TokenServiceTests {
   public void testTakeThreeTokens() {
     Game validGame = gameService.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken()).getRight().getLeft();
-    Player validPlayer = PlayerDummies.validDummies[0];
+    ServerPlayer validPlayer = PlayerDummies.validDummies[0];
     when(gameService.findPlayerByToken(any(),
         eq(DummyAuths.validTokensInfos.get(0).getAccessToken()))).thenReturn(
         validPlayer);

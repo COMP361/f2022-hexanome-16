@@ -1,6 +1,6 @@
 package com.hexanome16.server.services.game;
 
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.server.models.Game;
 
 /**
@@ -24,4 +24,11 @@ public interface GameManagerServiceInterface {
    * @return error if present
    */
   String createGame(long sessionId, SessionJson payload);
+
+  /**
+   * Deletes a game from the game server.
+   *
+   * @param sessionId the id of the game to delete
+   */
+  void deleteGame(long sessionId);
 }

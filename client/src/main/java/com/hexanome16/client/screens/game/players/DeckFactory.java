@@ -148,9 +148,7 @@ public class DeckFactory implements EntityFactory {
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.2, 0.2)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
+        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS))
         .build();
   }
 
@@ -187,12 +185,8 @@ public class DeckFactory implements EntityFactory {
 
     mytokens.getChildren().addAll(myRectangle, tokens);
 
-    mytokens.setOnMouseEntered(e -> {
-      myRectangle.setOpacity(0.7);
-    });
-    mytokens.setOnMouseExited(e -> {
-      myRectangle.setOpacity(0.5);
-    });
+    mytokens.setOnMouseEntered(e -> myRectangle.setOpacity(0.7));
+    mytokens.setOnMouseExited(e -> myRectangle.setOpacity(0.5));
     //.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder(data)
         .view(mytokens)

@@ -1,11 +1,10 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
-import com.google.gson.Gson;
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.sessions.Session;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.URI;
-import java.net.http.HttpRequest;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
+import com.hexanome16.common.models.sessions.Session;
 import java.util.Map;
 import javafx.util.Pair;
 
@@ -23,26 +22,13 @@ public class ListSessionsRequest {
    * @param hash A hashcode used for long polling (to see if there are changes to the list).
    * @return An array of sessions in Lobby Service.
    */
-  public static Pair<String, Session[]> execute(String hash) {
-    URI uri = UrlUtils.createLobbyServiceUri(
-        "/api/sessions",
-        hash == null || hash.isBlank() ? null : "hash=" + hash
-    );
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(uri)
-        .header("Content-Type", "application/json")
-        .GET()
-        .build();
-    Pair<String, String> response = RequestClient.longPollWithHash(request);
-    Response res = new Gson().fromJson(response.getValue(), Response.class);
-    if (res == null || res.sessions == null) {
+  public static Pair<String, Map<String, Session>> execute(String hash) {
+    Pair<String, Response> sessionMap = RequestClient.longPollWithHash(new Request<>(
+        RequestMethod.GET, RequestDest.LS, "/api/sessions", Map.of("hash", hash), Response.class));
+    if (sessionMap.getValue() == null || sessionMap.getValue().sessions == null) {
       return new Pair<>("", null);
     }
-    Map<String, Session> sessions = res.sessions;
-    return new Pair<>(response.getKey(), sessions.entrySet().stream().map(entry -> {
-      entry.getValue().setId(Long.valueOf(entry.getKey()));
-      return entry.getValue();
-    }).toArray(Session[]::new));
+    return new Pair<>(sessionMap.getKey(), sessionMap.getValue().sessions);
   }
 
   private static class Response {

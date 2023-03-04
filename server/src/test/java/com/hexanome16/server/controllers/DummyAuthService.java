@@ -1,7 +1,7 @@
 package com.hexanome16.server.controllers;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.List;

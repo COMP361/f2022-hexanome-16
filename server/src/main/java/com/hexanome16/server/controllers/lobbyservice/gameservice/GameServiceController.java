@@ -1,7 +1,8 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
-import com.hexanome16.server.models.auth.TokensInfo;
-import com.hexanome16.server.models.sessions.GameParams;
+import com.hexanome16.common.models.auth.TokensInfo;
+import com.hexanome16.server.models.sessions.ServerGameParams;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
@@ -30,7 +31,6 @@ public class GameServiceController {
 
   private final AuthServiceInterface authService;
   private final UrlUtils urlUtils;
-  private final GameParams gameParams;
   @Value("${gs.username}")
   private String gsUsername;
   @Value("${gs.password}")
@@ -42,35 +42,46 @@ public class GameServiceController {
    * @param restTemplateBuilder The RestTemplateBuilder.
    * @param authService         The AuthController.
    * @param urlUtils            The UrlUtils.
-   * @param gameParams          The GameParams.
    */
   public GameServiceController(@Autowired RestTemplateBuilder restTemplateBuilder,
                                @Autowired AuthServiceInterface authService,
-                               @Autowired UrlUtils urlUtils,
-                               @Autowired GameParams gameParams) {
+                               @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authService = authService;
-    this.gameParams = gameParams;
+  }
+
+  /**
+   * This method creates the game services in Lobby Service when the application is ready.
+   */
+  @EventListener(ApplicationReadyEvent.class)
+  public void createGameServices() {
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.BASE.getAssocServerName(), WinCondition.BASE.getAssocServerName(), "true"));
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.TRADEROUTES.getAssocServerName(),
+        WinCondition.TRADEROUTES.getAssocServerName(), "true"));
+    createGameService(new ServerGameParams(4, 2,
+        WinCondition.CITIES.getAssocServerName(),
+        WinCondition.CITIES.getAssocServerName(), "true"));
   }
 
   /**
    * This method registers this server as a game service in Lobby Service.
-   * It is called at the startup of the server.
    *
+   * @param serverGameParams the server game params
    * @return the response entity
    */
-  @EventListener(ApplicationReadyEvent.class)
-  public ResponseEntity<Void> createGameService() {
+  public ResponseEntity<Void> createGameService(ServerGameParams serverGameParams) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
-    System.out.println(tokensInfo.getBody());
-    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
+    URI url = urlUtils.createLobbyServiceUri(
+        "/api/gameservices/" + serverGameParams.getName(),
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    HttpEntity<GameParams> entity = new HttpEntity<>(gameParams, headers);
+    HttpEntity<ServerGameParams> entity = new HttpEntity<>(serverGameParams, headers);
     try {
       this.restTemplate.put(url, entity);
     } catch (HttpClientErrorException.BadRequest e) {
@@ -80,15 +91,29 @@ public class GameServiceController {
   }
 
   /**
-   * This method deletes the associated game service in Lobby Service.
-   *
-   * @return the response entity
+   * This method deletes the game services in Lobby Service when the application is destroyed.
    */
   @PreDestroy
-  public ResponseEntity<Void> deleteGameService() {
+  public void deleteGameServices() {
+    System.out.println("Deleting game services");
+    deleteGameService(WinCondition.BASE.getAssocServerName());
+    System.out.println("Deleted base service");
+    deleteGameService(WinCondition.TRADEROUTES.getAssocServerName());
+    System.out.println("Deleted trade service");
+    deleteGameService(WinCondition.CITIES.getAssocServerName());
+    System.out.println("Deleted cities service");
+  }
+
+  /**
+   * This method deletes the associated game service in Lobby Service.
+   *
+   * @param serviceName the service name
+   * @return the response entity
+   */
+  public ResponseEntity<Void> deleteGameService(String serviceName) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     System.out.println(tokensInfo.getBody());
-    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/Splendor",
+    URI url = urlUtils.createLobbyServiceUri("/api/gameservices/" + serviceName,
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;
     try {

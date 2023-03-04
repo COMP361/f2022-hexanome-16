@@ -6,21 +6,19 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -34,27 +32,27 @@ public class SeeCards implements PromptTypeInterface {
   /**
    * The width.
    */
-  private double atWidth = getAppWidth() / 2.;
+  private final double atWidth = getAppWidth() / 2.;
   /**
    * The height.
    */
-  private double atHeight = getAppHeight() / 2.;
+  private final double atHeight = getAppHeight() / 2.;
   /**
    * The card width.
    */
-  private double atCardWidth = atWidth / 4;
+  private final double atCardWidth = atWidth / 4;
   /**
    * The card height.
    */
-  private double atCardHeight = atCardWidth * 1.39;
+  private final double atCardHeight = atCardWidth * 1.39;
   /**
    * The top left x.
    */
-  private double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  private final double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
   /**
    * The top left y.
    */
-  private double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+  private final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
   //List<String> cards = List.of("card1.png", "card2.png");
 
   /**
@@ -65,14 +63,11 @@ public class SeeCards implements PromptTypeInterface {
   public static void fetchCards(String player) {
     // make a call to the server
     long sessionId = GameScreen.getSessionId();
-    String response = PromptsRequests.getCards(sessionId, player);
-    // convert it to a list of maps
-    Gson myGson = new Gson();
-    List<Map<String, String>> cards = myGson.fromJson(response, List.class);
+    LevelCard[] response = PromptsRequests.getCards(sessionId, player);
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
-    for (Map<String, String> card : cards) {
-      cardTexturePaths.add(card.get("texturePath") + ".png");
+    for (LevelCard card : response) {
+      cardTexturePaths.add(card.getCardInfo().texturePath() + ".png");
     }
   }
 

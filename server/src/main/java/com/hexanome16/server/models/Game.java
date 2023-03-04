@@ -1,26 +1,30 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.server.dto.BagJson;
-import com.hexanome16.server.dto.CardJson;
-import com.hexanome16.server.dto.CascadeTwoJson;
-import com.hexanome16.server.dto.DoubleJson;
-import com.hexanome16.server.dto.NobleJson;
-import com.hexanome16.server.dto.SessionJson;
+import com.hexanome16.common.dto.BagJson;
+import com.hexanome16.common.dto.CardJson;
+import com.hexanome16.common.dto.CascadeTwoJson;
+import com.hexanome16.common.dto.DoubleJson;
+import com.hexanome16.common.dto.NobleJson;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PriceMap;
-import com.hexanome16.server.models.price.PurchaseMap;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.ToString;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Game class that holds all the information.
@@ -28,47 +32,54 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Game {
-  private final BroadcastMap broadcastContentManagerMap;
-  private final Map<Level, Deck<LevelCard>> levelDecks = new HashMap<>();
+  private BroadcastMap broadcastContentManagerMap;
+  private final Map<Level, Deck<ServerLevelCard>> levelDecks;
 
-  private final Map<Level, Deck<LevelCard>> redDecks = new HashMap<>();
-  private final Map<Level, Deck<LevelCard>> onBoardDecks = new HashMap<>();
+  private final Map<Level, Deck<ServerLevelCard>> redDecks;
+  private final Map<Level, Deck<ServerLevelCard>> onBoardDecks;
   private final int levelCardsTotal = 90;
 
   private final long sessionId;
 
-  private final Player[] players;
+  private final ServerPlayer[] players;
   private final String creator;
   private final String savegame;
   private final GameBank gameBank;
-  private final WinCondition winCondition;
+  private final WinCondition[] winConditions;
   private int currentPlayerIndex = 0;
-  private Deck<Noble> nobleDeck = new Deck<>();
-  private Deck<Noble> onBoardNobles = new Deck<>();
+  private Deck<ServerNoble> nobleDeck;
+  private Deck<ServerNoble> onBoardNobles;
+  private final Map<String, ServerLevelCard> remainingCards;
+  private final Map<String, ServerNoble> remainingNobles;
 
   /**
    * Game constructor, create a new with a unique session id.
    *
-   * @param sessionId    session id
-   * @param players      a non-null list of players
-   * @param creator      the creator
-   * @param savegame     the savegame
-   * @param winCondition the win condition
-   * @throws java.io.IOException object mapper IO exception
+   * @param sessionId     session id
+   * @param players       a non-null list of players
+   * @param creator       the creator
+   * @param savegame      the savegame
+   * @param winConditions the win conditions
    */
-  public Game(long sessionId, @NonNull Player[] players, String creator, String savegame,
-              WinCondition winCondition)
-      throws IOException {
+  @SneakyThrows
+  private Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
+               WinCondition[] winConditions) {
     this.sessionId = sessionId;
     this.players = players.clone();
     this.creator = creator;
     this.savegame = savegame;
-    this.winCondition = winCondition;
-    gameBank = new GameBank();
+    this.winConditions = winConditions;
+    this.gameBank = new GameBank();
+    this.levelDecks = createLevelMap();
+    this.redDecks = createRedMap();
+    this.onBoardDecks = createBoardMap();
+    this.nobleDeck = new Deck<>();
+    this.onBoardNobles = new Deck<>();
+    this.remainingCards = new HashMap<>();
+    this.remainingNobles = new HashMap<>();
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
-    this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
   /**
@@ -76,11 +87,71 @@ public class Game {
    *
    * @param sessionId session id
    * @param payload   the payload
-   * @throws java.io.IOException exception
    */
-  public Game(long sessionId, SessionJson payload) throws IOException {
-    this(sessionId, payload.getPlayers(), payload.getCreator(), payload.getSavegame(),
-        payload.getWinCondition());
+  private Game(long sessionId, SessionJson payload) {
+    this(sessionId, Arrays.stream(payload.getPlayers()).map(player -> new ServerPlayer(
+            player.getName(), player.getPreferredColour())).toArray(ServerPlayer[]::new),
+        payload.getCreator(), payload.getSavegame(),
+        new WinCondition[] {WinCondition.fromServerName(payload.getGame())});
+  }
+
+  @SneakyThrows
+  private void init() {
+    this.broadcastContentManagerMap = new BroadcastMap(this);
+  }
+
+  /**
+   * Creates a new game instance from a session payload.
+   *
+   * @param sessionId session id
+   * @param payload   the payload
+   * @return the game
+   */
+  @SneakyThrows
+  public static Game create(long sessionId, SessionJson payload) {
+    Game game = new Game(sessionId, payload);
+    game.init();
+    return game;
+  }
+
+  /**
+   * Creates a new game instance.
+   *
+   * @param sessionId     session id
+   * @param players       a non-null list of players
+   * @param creator       the creator
+   * @param savegame      the savegame
+   * @param winConditions the win conditions
+   * @return the game
+   */
+  @SneakyThrows
+  public static Game create(long sessionId, ServerPlayer[] players, String creator, String savegame,
+                            WinCondition[] winConditions) {
+    Game game = new Game(sessionId, players, creator, savegame, winConditions);
+    game.init();
+    return game;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createLevelMap() {
+    HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
+    levelMap.put(Level.ONE, new Deck<>());
+    levelMap.put(Level.TWO, new Deck<>());
+    levelMap.put(Level.THREE, new Deck<>());
+    return levelMap;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createRedMap() {
+    HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
+    levelMap.put(Level.REDONE, new Deck<>());
+    levelMap.put(Level.REDTWO, new Deck<>());
+    levelMap.put(Level.REDTHREE, new Deck<>());
+    return levelMap;
+  }
+
+  private Map<Level, Deck<ServerLevelCard>> createBoardMap() {
+    Map<Level, Deck<ServerLevelCard>> levelMap = createLevelMap();
+    levelMap.putAll(createRedMap());
+    return levelMap;
   }
 
   /**
@@ -88,7 +159,7 @@ public class Game {
    *
    * @return the current player
    */
-  public Player getCurrentPlayer() {
+  public ServerPlayer getCurrentPlayer() {
     return players[currentPlayerIndex];
   }
 
@@ -97,7 +168,7 @@ public class Game {
    *
    * @return a cloned copy of the internal array of players.
    */
-  public Player[] getPlayers() {
+  public ServerPlayer[] getPlayers() {
     return players.clone();
   }
 
@@ -174,147 +245,157 @@ public class Game {
       CardJson cardJson = cardJsonList[i];
       String textureLevel = i < 40 ? "level_one" : i < 70 ? "level_two" : "level_three";
       Level level = i < 40 ? Level.ONE : i < 70 ? Level.TWO : Level.THREE;
-      LevelCard card = new LevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
+      ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level);
       levelDecks.get(level).addCard(card);
+      remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
     }
   }
 
   private void createNobleDeck(NobleJson[] nobleJsonList) {
-    Deck<Noble> deck = new Deck<>();
+    Deck<ServerNoble> deck = new Deck<>();
     for (int i = 0; i < 10; i++) {
       NobleJson nobleJson = nobleJsonList[i];
-      Noble noble = new Noble(i, 3, "noble" + i, nobleJson.getPrice());
+      ServerNoble noble = new ServerNoble(i, 3, "noble" + i, nobleJson.getPrice());
       deck.addCard(noble);
+      remainingNobles.put(DigestUtils.md5Hex(noble.toString()), noble);
     }
     deck.shuffle();
     this.nobleDeck = deck;
   }
 
   private void createBagDeck(BagJson[] bagJsonList) {
-    Deck<LevelCard> deck = new Deck<>();
+    Deck<ServerLevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
       BagJson bagJson = bagJsonList[i];
-      LevelCard bag = new LevelCard(bagJson.getId(), 0,
+      ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
           Level.REDONE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
   }
 
+  @SuppressWarnings("checkstyle:Indentation")
   private void createGoldDeck() {
-    Deck<LevelCard> deck = redDecks.get(Level.REDONE);
+    Deck<ServerLevelCard> deck = redDecks.get(Level.REDONE);
     int[][] prices =
-      {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
+        {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
     for (int i = 0; i < 4; i++) {
       PriceMap priceMap =
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      LevelCard gold = new LevelCard(i, 0,
+      ServerLevelCard gold = new ServerLevelCard(i, 0,
           "gold" + i,
           priceMap,
           Level.REDONE);
       deck.addCard(gold);
+      remainingCards.put(DigestUtils.md5Hex(gold.toString()), gold);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
   }
 
   private void createDoubleDeck(DoubleJson[] doubleJsonList) {
-    Deck<LevelCard> deck = new Deck<>();
+    Deck<ServerLevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
       DoubleJson doubleJson = doubleJsonList[i];
-      LevelCard bag = new LevelCard(doubleJson.getId(), 0,
+      ServerLevelCard bag = new ServerLevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
           doubleJson.getPrice(),
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
   private void createNobleReserveDeck() {
-    Deck<LevelCard> deck = redDecks.get(Level.REDTWO);
+    Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{2, 2, 2, 0, 2}, {2, 0, 2, 2, 2}, {0, 2, 2, 2, 2}};
     for (int i = 0; i < 2; i++) {
       PriceMap priceMap =
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      LevelCard bag = new LevelCard(i, 1,
+      ServerLevelCard bag = new ServerLevelCard(i, 1,
           "noble_reserve" + i,
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
   private void createBagCascadeDeck() {
-    Deck<LevelCard> deck = redDecks.get(Level.REDTWO);
+    Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{3, 4, 0, 0, 1}, {0, 0, 3, 4, 1}};
     for (int i = 0; i < 1; i++) {
       PriceMap priceMap =
           new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      LevelCard bag = new LevelCard(i, 0,
+      ServerLevelCard bag = new ServerLevelCard(i, 0,
           "bag_cascade" + i,
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
   private void createSacrificeDeck() {
-    Deck<LevelCard> deck = new Deck<>();
+    Deck<ServerLevelCard> deck = new Deck<>();
     Gem[] gems = {Gem.SAPPHIRE, Gem.RUBY, Gem.EMERALD, Gem.ONYX, Gem.DIAMOND};
     for (int i = 0; i < 4; i++) {
       PriceMap priceMap = new PriceMap(0, 0, 0, 0, 0);
       priceMap.addGems(gems[i], 1);
-      LevelCard bag = new LevelCard(i, 3,
+      ServerLevelCard bag = new ServerLevelCard(i, 3,
           "sacrifice" + i,
           priceMap,
           Level.REDTHREE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
   private void createCascadeTwoDeck(CascadeTwoJson[] cascadeTwoJsonList) {
-    Deck<LevelCard> deck = redDecks.get(Level.REDTHREE);
+    Deck<ServerLevelCard> deck = redDecks.get(Level.REDTHREE);
     for (int i = 0; i < 4; i++) {
       CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList[i];
-      LevelCard bag = new LevelCard(cascadeTwoJson.getId(), 0,
+      ServerLevelCard bag = new ServerLevelCard(cascadeTwoJson.getId(), 0,
           "cascade_two" + cascadeTwoJson.getId(),
           cascadeTwoJson.getPrice(),
           Level.REDTHREE);
       deck.addCard(bag);
+      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
   private void createOnBoardDecks() {
-    Deck<LevelCard> baseOneDeck = new Deck<>();
-    Deck<LevelCard> baseTwoDeck = new Deck<>();
-    Deck<LevelCard> baseThreeDeck = new Deck<>();
+    Deck<ServerLevelCard> baseOneDeck = new Deck<>();
+    Deck<ServerLevelCard> baseTwoDeck = new Deck<>();
+    Deck<ServerLevelCard> baseThreeDeck = new Deck<>();
 
     // lay the cards face up on the game board
     for (int i = 0; i < 4; i++) {
-      LevelCard levelOne = levelDecks.get(Level.ONE).nextCard();
-      levelOne.setIsFaceDown(false);
+      ServerLevelCard levelOne = levelDecks.get(Level.ONE).nextCard();
+      levelOne.setFaceDown(false);
       baseOneDeck.addCard(levelOne);
 
-      LevelCard levelTwo = levelDecks.get(Level.TWO).nextCard();
-      levelTwo.setIsFaceDown(false);
+      ServerLevelCard levelTwo = levelDecks.get(Level.TWO).nextCard();
+      levelTwo.setFaceDown(false);
       baseTwoDeck.addCard(levelTwo);
 
-      LevelCard levelThree = levelDecks.get(Level.THREE).nextCard();
-      levelThree.setIsFaceDown(false);
+      ServerLevelCard levelThree = levelDecks.get(Level.THREE).nextCard();
+      levelThree.setFaceDown(false);
       baseThreeDeck.addCard(levelThree);
     }
 
@@ -324,7 +405,7 @@ public class Game {
     this.onBoardDecks.put(Level.THREE, baseThreeDeck);
 
     // same thing but with the nobles
-    Deck<Noble> nobleDeck = new Deck<>();
+    Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
       nobleDeck.addCard(this.nobleDeck.nextCard());
     }
@@ -332,9 +413,9 @@ public class Game {
   }
 
   private void createOnBoardRedDecks() {
-    Deck<LevelCard> redOneDeck = new Deck<>();
-    Deck<LevelCard> redTwoDeck = new Deck<>();
-    Deck<LevelCard> redThreeDeck = new Deck<>();
+    Deck<ServerLevelCard> redOneDeck = new Deck<>();
+    Deck<ServerLevelCard> redTwoDeck = new Deck<>();
+    Deck<ServerLevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
       redOneDeck.addCard(redDecks.get(Level.REDONE).nextCard());
       redTwoDeck.addCard(redDecks.get(Level.REDTWO).nextCard());
@@ -346,13 +427,36 @@ public class Game {
   }
 
   /**
+   * Gets card by hash.
+   *
+   * @param hash hash of the card
+   * @return the card
+   */
+  public ServerLevelCard getCardByHash(String hash) {
+    return remainingCards.get(hash);
+  }
+
+  /**
+   * Gets noble by hash.
+   *
+   * @param hash hash of the noble
+   * @return the noble
+   */
+  public ServerNoble getNobleByHash(String hash) {
+    return remainingNobles.get(hash);
+  }
+
+  /**
    * Gets deck.
    *
    * @param level deck level
    * @return the deck
    */
-  public Deck<LevelCard> getLevelDeck(Level level) {
-    return levelDecks.get(level);
+  public Deck<ServerLevelCard> getLevelDeck(Level level) {
+    return switch (level) {
+      case ONE, TWO, THREE -> levelDecks.get(level);
+      case REDONE, REDTWO, REDTHREE -> redDecks.get(level);
+    };
   }
 
   /**
@@ -361,7 +465,7 @@ public class Game {
    * @param level deck level
    * @return the deck
    */
-  public Deck<LevelCard> getOnBoardDeck(Level level) {
+  public Deck<ServerLevelCard> getOnBoardDeck(Level level) {
     return onBoardDecks.get(level);
   }
 
@@ -372,8 +476,8 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    LevelCard card = this.levelDecks.get(level).nextCard();
-    card.setIsFaceDown(false);
+    ServerLevelCard card = this.levelDecks.get(level).removeNextCard();
+    card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
   }
 
@@ -382,8 +486,9 @@ public class Game {
    *
    * @param card card to be removed
    */
-  public void removeOnBoardCard(LevelCard card) {
+  public void removeOnBoardCard(ServerLevelCard card) {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
+    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
   }
 
 
@@ -393,7 +498,7 @@ public class Game {
    * @param player player we want to check.
    * @return true if is player's turn, false otherwise
    */
-  public boolean isNotPlayersTurn(Player player) {
+  public boolean isNotPlayersTurn(ServerPlayer player) {
     return findPlayerIndex(player) != currentPlayerIndex;
   }
 
@@ -463,7 +568,7 @@ public class Game {
    * @param onyxAmount     amount to increase onyx stack by.
    * @param goldAmount     amount to increase gold stack by.
    */
-  public void incGameBankFromPlayer(Player player, int rubyAmount, int emeraldAmount,
+  public void incGameBankFromPlayer(ServerPlayer player, int rubyAmount, int emeraldAmount,
                                     int sapphireAmount, int diamondAmount, int onyxAmount,
                                     int goldAmount) {
     player.getBank().removeGemsFromBank(new PurchaseMap(rubyAmount, emeraldAmount,
@@ -489,7 +594,7 @@ public class Game {
                                     int diamondAmount, int onyxAmount, int goldAmount) {
     return getGameBank().toPurchaseMap().canBeUsedToBuy(
         new PurchaseMap(rubyAmount, emeraldAmount, sapphireAmount,
-        diamondAmount, onyxAmount, goldAmount));
+            diamondAmount, onyxAmount, goldAmount));
   }
 
   /**
@@ -518,7 +623,7 @@ public class Game {
    * @param gem    Gem we want to give 2 of.
    * @param player player who will receive the gems.
    */
-  public void giveTwoOf(Gem gem, Player player) {
+  public void giveTwoOf(Gem gem, ServerPlayer player) {
 
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
     gemIntegerMapGame.put(gem, 2);
@@ -563,7 +668,7 @@ public class Game {
    * @param player          player who will receive the gems.
    */
   public void giveThreeOf(Gem desiredGemOne, Gem desiredGemTwo, Gem desiredGemThree,
-                          Player player) {
+                          ServerPlayer player) {
     // Remove from game bank
     Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
     gemIntegerMapGame.put(desiredGemOne, 1);
@@ -581,9 +686,9 @@ public class Game {
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 
-  private int findPlayerIndex(Player player) {
+  private int findPlayerIndex(ServerPlayer player) {
     int i = 0;
-    for (Player e : getPlayers()) {
+    for (ServerPlayer e : getPlayers()) {
       if (e == player) {
         return i;
       }

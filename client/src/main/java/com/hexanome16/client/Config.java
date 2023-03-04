@@ -46,5 +46,4 @@ public class Config {
    */
   public static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
       .loadFont("EnchantedLand.otf");
-
 }

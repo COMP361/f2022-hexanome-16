@@ -2,9 +2,9 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;

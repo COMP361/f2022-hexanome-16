@@ -1,10 +1,10 @@
 package com.hexanome16.server.util.broadcastmap;
 
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.NoblesHash;
-import com.hexanome16.server.dto.PlayerJson;
-import com.hexanome16.server.dto.WinJson;
-import com.hexanome16.server.models.Level;
+import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.NobleDeckJson;
+import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
 import lombok.Getter;
@@ -24,31 +24,31 @@ public enum BroadcastMapKey {
   /**
    * Nobles.
    */
-  NOBLES(NoblesHash.class),
+  NOBLES(NobleDeckJson.class),
   /**
    * Level one deck.
    */
-  ONE(DeckHash.class),
+  ONE(DeckJson.class),
   /**
    * Level two deck.
    */
-  TWO(DeckHash.class),
+  TWO(DeckJson.class),
   /**
    * Level three deck.
    */
-  THREE(DeckHash.class),
+  THREE(DeckJson.class),
   /**
    * Red level one deck.
    */
-  REDONE(DeckHash.class),
+  REDONE(DeckJson.class),
   /**
    * Red level two deck.
    */
-  REDTWO(DeckHash.class),
+  REDTWO(DeckJson.class),
   /**
    * Red level three deck.
    */
-  REDTHREE(DeckHash.class);
+  REDTHREE(DeckJson.class);
   @Getter
   private final Class<? extends BroadcastContent> assocClass;
 

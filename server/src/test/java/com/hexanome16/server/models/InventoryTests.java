@@ -3,7 +3,9 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.hexanome16.server.models.price.PriceMap;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,7 @@ public class InventoryTests {
   private Inventory inventory;
 
   /* fields we are using */
-  private LevelCard levelCard;
+  private ServerLevelCard levelCard;
   private Noble noble;
 
   /**
@@ -40,7 +42,7 @@ public class InventoryTests {
   @DisplayName("Acquire a Level Card successfully")
   void testAcquireCard() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
   }
@@ -54,14 +56,14 @@ public class InventoryTests {
   void testReserveFaceUp() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully
     assertTrue(inventory.getReservedCards().contains(levelCard));
     assertTrue(inventory.getReservedCards()
-            .get(inventory.getReservedCards().size() - 1)
-            .isFaceDown());
+        .get(inventory.getReservedCards().size() - 1)
+        .isFaceDown());
   }
 
   /**
@@ -73,15 +75,15 @@ public class InventoryTests {
   void testReserveFaceDown() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new LevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
-    levelCard.setIsFaceDown(false);
+    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard.setFaceDown(false);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully
     assertTrue(inventory.getReservedCards().contains(levelCard));
     assertFalse(inventory.getReservedCards()
-            .get(inventory.getReservedCards().size() - 1)
-            .isFaceDown());
+        .get(inventory.getReservedCards().size() - 1)
+        .isFaceDown());
   }
 
   /**
@@ -92,7 +94,7 @@ public class InventoryTests {
   @DisplayName("Acquire a visiting Noble successfully")
   void testAcquireNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    noble = new Noble(0, 3, "noble0.png", priceMap);
+    noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.acquireNoble(noble);
     assertTrue(inventory.getOwnedNobles().contains(noble));
   }
@@ -105,7 +107,7 @@ public class InventoryTests {
   @DisplayName("Reserve a Noble successfully")
   void testReserveNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
-    noble = new Noble(0, 3, "noble0.png", priceMap);
+    noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.reserveNoble(noble);
     assertTrue(inventory.getReservedNobles().contains(noble));
   }
