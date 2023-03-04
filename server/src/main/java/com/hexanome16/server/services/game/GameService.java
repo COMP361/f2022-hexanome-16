@@ -81,8 +81,7 @@ public class GameService implements GameServiceInterface {
       );
     }
   }
-
-  @Override
+  
   public ServerPlayer findPlayerByName(@NonNull Game game, String username) {
     for (ServerPlayer e : game.getPlayers()) {
       if (e.getName().equals(username)) {
@@ -121,7 +120,7 @@ public class GameService implements GameServiceInterface {
 
     if (currentGame.isNotPlayersTurn(requestingPlayer)) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.NOT_PLAYERS_TURN),
           new ImmutablePair<>(null, null));
     }
 
@@ -136,7 +135,7 @@ public class GameService implements GameServiceInterface {
 
     if (currentGame == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID),
           new ImmutablePair<>(null, null));
     }
 
@@ -145,7 +144,7 @@ public class GameService implements GameServiceInterface {
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN),
           new ImmutablePair<>(null, null));
     }
 
@@ -158,7 +157,7 @@ public class GameService implements GameServiceInterface {
     final Game currentGame = gameManagerService.getGame(sessionId);
     if (currentGame == null) {
       return new ImmutablePair<>(
-          CustomResponseFactory.getErrorResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
+          CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
     }
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
   }
