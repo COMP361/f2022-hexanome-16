@@ -181,7 +181,7 @@ public class InventoryService implements InventoryServiceInterface {
 
 
     if (card == null) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
 
 
