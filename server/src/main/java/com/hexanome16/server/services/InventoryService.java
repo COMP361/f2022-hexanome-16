@@ -185,6 +185,7 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
 
+    // TODO: what is this for?
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
