@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.services.GameManagerService;
-import com.hexanome16.server.services.GameManagerServiceInterface;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.InventoryServiceInterface;
+import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -101,7 +102,8 @@ class InventoryControllerTests {
     final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
 
     try {
-      when(this.inventoryServiceMock.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1)).thenReturn(
+      when(this.inventoryServiceMock.buyCard(123L, "md5", "abc",
+          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
           buyCardResponseStub);
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
@@ -113,7 +115,7 @@ class InventoryControllerTests {
 
     try {
       assertEquals(buyCardResponseStub,
-          this.inventoryController.buyCard(123L, "md5", "abc", 1, 1, 1, 1, 1, 1));
+          this.inventoryController.buyCard(123L, "md5", "abc", new PurchaseMap(1, 1, 1, 1, 1, 1)));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

@@ -55,7 +55,7 @@ public class TokenServiceTests {
     GameManagerServiceInterface gameManagerMock =
         DummyGameManagerService.getDummyGameManagerService();
     gameService = DummyGameService.getDummyGameService();
-    tokensService = new TokenService(gameService, gameManagerMock);
+    tokensService = new TokenService(dummyAuthService, gameManagerMock, serviceUtils);
 
     payload.setPlayers(new ServerPlayer[] {
         objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),

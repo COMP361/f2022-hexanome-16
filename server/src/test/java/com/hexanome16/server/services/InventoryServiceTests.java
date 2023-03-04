@@ -1,7 +1,6 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,27 +8,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.dto.DeckHash;
-import com.hexanome16.server.dto.NoblesHash;
-import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.InventoryAddable;
-import com.hexanome16.server.models.Level;
-import com.hexanome16.server.models.LevelCard;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.price.Gem;
-import com.hexanome16.server.models.price.PriceMap;
-import com.hexanome16.server.models.price.PurchaseMap;
-import com.hexanome16.server.models.winconditions.BaseWinCondition;
-import com.hexanome16.server.util.BroadcastMap;
-import com.hexanome16.server.util.CustomHttpResponses;
+import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
-import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,13 +50,8 @@ class InventoryServiceTests {
   void setup() throws IOException {
 
     validMockGame =
-        new Game(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new BaseWinCondition());
-
-    BroadcastMap broadcastMap = new BroadcastMap();
-    BroadcastContentManager<NoblesHash> noblesHashBroadcastContentManager =
-        new BroadcastContentManager<>(new NoblesHash(validMockGame));
-    broadcastMap.put("noble", noblesHashBroadcastContentManager);
+        Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
+            new WinCondition[] {WinCondition.BASE});
 
     gameManagerMock = Mockito.mock(GameManagerService.class);
     serviceUtils = new ServiceUtils();
@@ -114,7 +101,7 @@ class InventoryServiceTests {
         inventoryService.getPlayerBankInfo(DummyAuths.invalidSessionIds.get(0),
             DummyAuths.validPlayerList.get(0).getName());
     // Assert
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode().value());
   }
 
   /**
@@ -144,30 +131,23 @@ class InventoryServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  @DisplayName("Buy a Level Card successfully")
   public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
     var sessionId = DummyAuths.validSessionIds.get(0);
-    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
-    LevelCard myCard = createValidCard();
+    ServerLevelCard myCard = createValidCard();
+    Game gameMock = gameManagerMock.getGame(sessionId);
+    serviceUtils.endCurrentPlayersTurn(gameMock);
 
-    this.serviceUtils.endCurrentPlayersTurn(gameManagerMock.getGame(sessionId));
+    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    gameMock.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
 
-    try {
-      Field field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, LevelCard>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 1, 1, 1, 0, 0, 1);
-
+            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
@@ -178,30 +158,19 @@ class InventoryServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  @DisplayName("Reserve a face up Level Card successfully")
   public void testReserveCard() throws com.fasterxml.jackson.core.JsonProcessingException {
-    var sessionId = DummyAuths.validSessionIds.get(0);
-    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
-    LevelCard myCard = createValidCard();
-
-    this.serviceUtils.endCurrentPlayersTurn(validMockGame);
-
-    Field field;
-    try {
-      field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, LevelCard>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
+    serviceUtils.endCurrentPlayersTurn(validMockGame);
+    ServerLevelCard myCard = createValidCard();
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
 
     ResponseEntity<String> response = inventoryService.reserveCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
-
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
@@ -212,36 +181,19 @@ class InventoryServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  @DisplayName("Reserve a face down Level Card successfully")
   public void testReserveFaceDownCard() throws com.fasterxml.jackson.core.JsonProcessingException {
-    var sessionId = DummyAuths.validSessionIds.get(0);
-    var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
 
-    LevelCard myCard = createValidCard();
-
-    this.serviceUtils.endCurrentPlayersTurn(validMockGame);
-
-    Field field;
-    try {
-      field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, LevelCard>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-
-      Game game = validMockGame;
-      field = game.getClass().getDeclaredField("onBoardDecks");
-      field.setAccessible(true);
-      Deck<LevelCard> testDeck = new Deck<>();
-      testDeck.addCard(myCard);
-      ((Map<Level, Deck<LevelCard>>) field.get(game)).put(Level.ONE, testDeck);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
+    serviceUtils.endCurrentPlayersTurn(validMockGame);
+    ServerLevelCard myCard = createValidCard();
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
+    );
 
     ResponseEntity<String> response =
-        inventoryService.reserveFaceDownCard(sessionId, "ONE", accessToken);
+        inventoryService.reserveFaceDownCard(sessionId, Level.ONE.name(), accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -256,62 +208,51 @@ class InventoryServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  @DisplayName("Buy a Level Card unsuccessfully")
   public void testBuyCardInvalidCard() throws com.fasterxml.jackson.core.JsonProcessingException {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
     final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
     final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
 
-    LevelCard myCard = createValidCard();
+    ServerLevelCard myCard = createValidCard();
 
-    this.serviceUtils.endCurrentPlayersTurn(validMockGame);
+    serviceUtils.endCurrentPlayersTurn(validMockGame);
 
-    Field field;
-    try {
-      field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, LevelCard>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId
     ResponseEntity<String> response = inventoryService.buyCard(invalidSessionId,
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken, 1, 1, 1, 0, 0, 1);
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
+        new PurchaseMap(1, 1, 1, 0, 0, 1));
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getStatusCode().value());
+
     // Test invalid accessToken
     response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            invalidAccessToken, 1, 1, 1, 0, 0, 1);
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), response.getStatusCode());
+            invalidAccessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        response.getStatusCode().value());
     // Test invalid price
     response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, 3, 0, 0, 0, 0, 1);
+            accessToken, new PurchaseMap(3, 0, 0, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     // Test not enough funds
-    LevelCard invalidCard = createInvalidCard();
+    ServerLevelCard invalidCard = createInvalidCard();
+    validMockGame.getLevelDeck(invalidCard.getLevel()).addCard(invalidCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard
+    );
 
-    try {
-      field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, LevelCard>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
     response = inventoryService.buyCard(sessionId,
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken, 7, 1, 1, 0,
-        0, 1);
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken,
+        new PurchaseMap(7, 1, 1, 0, 0, 1));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
@@ -321,7 +262,6 @@ class InventoryServiceTests {
    * @throws JsonProcessingException the json processing exception
    */
   @Test
-  @DisplayName("Reserve a face up Level Card unsuccessfully")
   public void testReserveCardInvalidCard()
       throws com.fasterxml.jackson.core.JsonProcessingException {
     final var sessionId = DummyAuths.validSessionIds.get(0);
@@ -329,37 +269,31 @@ class InventoryServiceTests {
     final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
     final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
 
-    LevelCard myCard = createValidCard();
+    ServerLevelCard myCard = createValidCard();
 
-    this.serviceUtils.endCurrentPlayersTurn(validMockGame);
+    serviceUtils.endCurrentPlayersTurn(validMockGame);
 
-    Field field;
-    try {
-      field = DeckHash.class.getDeclaredField("allCards");
-      field.setAccessible(true);
-
-
-      ((HashMap<String, InventoryAddable>) field.get(null)).put(
-          DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      fail();
-    }
+    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
+    validMockGame.getRemainingCards().put(
+        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId
     ResponseEntity<String> response = inventoryService.reserveCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
-    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
+        response.getStatusCode().value());
     // Test invalid accessToken
     response = inventoryService.reserveCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
-    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(), response.getStatusCode());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
+        response.getStatusCode().value());
   }
 
-  private LevelCard createValidCard() {
-    return new LevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
+  private ServerLevelCard createValidCard() {
+    return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
   }
 
-  private LevelCard createInvalidCard() {
-    return new LevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE);
+  private ServerLevelCard createInvalidCard() {
+    return new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE);
   }
 }
