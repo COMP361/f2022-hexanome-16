@@ -55,7 +55,7 @@ public class UpdateGameInfo {
    */
   public static void fetchGameBank(long sessionId) {
     PurchaseMap bankPriceMap = PromptsRequests.getGameBankInfo(sessionId);
-    setGameBank(sessionId, toGemAmountMap(bankPriceMap));
+    setGameBank(sessionId, bankPriceMap);
   }
 
   /**
@@ -116,9 +116,9 @@ public class UpdateGameInfo {
     }
   }
 
-  private static void setGameBank(long sessionId, Map<CurrencyType, Integer> gameBankMap) {
-    for (CurrencyType e : gameBankMap.keySet()) {
-      FXGL.getWorldProperties().setValue(sessionId + e.toString(), gameBankMap.get(e));
+  private static void setGameBank(long sessionId, PurchaseMap gameBankMap) {
+    for (Map.Entry<Gem, Integer> gemEntry : gameBankMap.getPriceMap().entrySet()) {
+      FXGL.getWorldProperties().setValue(sessionId + gemEntry.getKey().name(), gemEntry.getValue());
     }
   }
 
