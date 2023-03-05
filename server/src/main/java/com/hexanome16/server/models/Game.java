@@ -222,7 +222,7 @@ public class Game {
 
     createNobleReserveDeck();
 
-    createBagCascadeDeck();
+    //createBagCascadeDeck();
 
     createSacrificeDeck();
 
@@ -386,7 +386,7 @@ public class Game {
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 

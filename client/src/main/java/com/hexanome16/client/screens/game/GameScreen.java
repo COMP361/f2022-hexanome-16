@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
@@ -98,6 +99,7 @@ public class GameScreen {
       updateCurrentPlayer.interrupt();
       Platform.runLater(() -> {
         currentPlayer = currentPlayerJson.getValue().getUsername();
+        System.out.println(currentPlayer);
         UpdateGameInfo.fetchGameBank(getSessionId());
         UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
         UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
@@ -128,6 +130,7 @@ public class GameScreen {
 
     FXGL.spawn("Background");
     FXGL.spawn("Mat");
+    FXGL.spawn("TradeRoutesPlaceholder");
     FXGL.spawn("LevelOneDeck");
     FXGL.spawn("LevelTwoDeck");
     FXGL.spawn("LevelThreeDeck");
@@ -137,6 +140,11 @@ public class GameScreen {
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
+    String name =
+        SessionDetailsRequest.execute(sessionId, "").getValue().getGameParameters().getName();
+    if (name.contains("TradeRoutes")) {
+      FXGL.spawn("TradeRoutes");
+    }
     for (Level level : Level.values()) {
       levelCards.put(level, new HashMap<>());
       levelDecks.put(level, new Pair<>("", new DeckJson(level)));
@@ -147,11 +155,11 @@ public class GameScreen {
       nobleJson = new Pair<>("", new NobleDeckJson());
       fetchNoblesThread();
     }
+    UpdateGameInfo.initPlayerTurn();
     if (updateCurrentPlayer == null) {
       currentPlayerJson = new Pair<>("", new PlayerJson(""));
       fetchCurrentPlayerThread();
     }
-    UpdateGameInfo.initPlayerTurn();
     usernames = FXGL.getWorldProperties().getValue("players");
     UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
@@ -199,10 +207,22 @@ public class GameScreen {
       String hash = entry.getKey();
       if (!cardHashList.containsKey(hash)) {
         hashToRemove = hash;
-        for (int i = 0; i < 4; i++) {
-          if (hash.equals(grid[i].getCardHash())) {
-            grid[i].removeFromMat();
+        switch (level) {
+          case ONE, TWO, THREE -> {
+            for (int i = 0; i < 4; i++) {
+              if (hash.equals(grid[i].getCardHash())) {
+                grid[i].removeFromMat();
+              }
+            }
           }
+          case REDONE, REDTWO, REDTHREE -> {
+            for (int i = 0; i < 2; i++) {
+              if (hash.equals(grid[i].getCardHash())) {
+                grid[i].removeFromMat();
+              }
+            }
+          }
+          default -> throw new IllegalStateException("Unexpected value: " + level);
         }
         break;
       }
@@ -234,6 +254,8 @@ public class GameScreen {
     levelDecks.clear();
     levelThreads.clear();
     nobleJson = null;
+    currentPlayerJson = null;
+    currentPlayer = null;
     updateNobles = null;
     updateCurrentPlayer = null;
     nobles.clear();
