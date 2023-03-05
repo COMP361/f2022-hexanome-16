@@ -5,6 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.sessions.Session;
 import java.util.Map;
 import javafx.util.Pair;
 
@@ -23,8 +24,8 @@ public class SessionDetailsRequest {
    * @param hash      A hashcode used for long polling (check session details have changed)
    * @return The session details.
    */
-  public static Pair<String, SessionJson> execute(long sessionId, String hash) {
+  public static Pair<String, Session> execute(long sessionId, String hash) {
     return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.LS,
-        "/api/sessions/" + sessionId, Map.of("hash", hash), SessionJson.class));
+        "/api/sessions/" + sessionId, Map.of("hash", hash), Session.class));
   }
 }
