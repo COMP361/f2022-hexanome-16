@@ -222,7 +222,7 @@ public class Game {
 
     createNobleReserveDeck();
 
-    createBagCascadeDeck();
+    //createBagCascadeDeck();
 
     createSacrificeDeck();
 
@@ -386,7 +386,7 @@ public class Game {
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
@@ -507,7 +507,7 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    ServerLevelCard card = this.levelDecks.get(level).removeNextCard();
+    ServerLevelCard card = this.getLevelDeck(level).removeNextCard();
     remainingCards.remove(DigestUtils.md5Hex(card.toString()));
     card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
