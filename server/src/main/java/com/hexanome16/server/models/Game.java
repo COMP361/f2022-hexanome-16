@@ -507,23 +507,11 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    switch (level) {
-      case ONE, TWO, THREE -> {
-        ServerLevelCard card = this.levelDecks.get(level).removeNextCard();
-        remainingCards.remove(DigestUtils.md5Hex(card.toString()));
-        card.setFaceDown(false);
-        this.onBoardDecks.get(level).addCard(card);
-        remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
-      }
-      case REDONE, REDTWO, REDTHREE -> {
-        ServerLevelCard card = this.redDecks.get(level).removeNextCard();
-        remainingCards.remove(DigestUtils.md5Hex(card.toString()));
-        card.setFaceDown(false);
-        this.onBoardDecks.get(level).addCard(card);
-        remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
-      }
-      default -> throw new IllegalStateException("Unexpected value: " + level);
-    }
+    ServerLevelCard card = this.getLevelDeck(level).removeNextCard();
+    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
+    card.setFaceDown(false);
+    this.onBoardDecks.get(level).addCard(card);
+    remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
   }
 
   /**
