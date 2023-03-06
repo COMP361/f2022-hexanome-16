@@ -222,7 +222,7 @@ public class Game {
 
     createNobleReserveDeck();
 
-    //createBagCascadeDeck();
+    createBagCascadeDeck();
 
     createSacrificeDeck();
 
@@ -506,22 +506,22 @@ public class Game {
    *
    * @param level level of the deck
    */
+  @SneakyThrows
   public void addOnBoardCard(Level level) {
     ServerLevelCard card = this.getLevelDeck(level).removeNextCard();
-    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
     card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
-    remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
+    remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
   }
 
   /**
    * Removes a card from game board.
    *
    * @param card card to be removed
+   * @return if the card was in the deck.
    */
-  public void removeOnBoardCard(ServerLevelCard card) {
-    this.onBoardDecks.get(card.getLevel()).removeCard(card);
-    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
+  public boolean removeOnBoardCard(ServerLevelCard card) {
+    return onBoardDecks.get(card.getLevel()).removeCard(card);
   }
 
 
