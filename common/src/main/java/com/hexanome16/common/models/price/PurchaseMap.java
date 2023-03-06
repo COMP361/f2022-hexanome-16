@@ -7,6 +7,7 @@ import com.hexanome16.common.deserializers.PurchaseMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
 import lombok.Data;
+import lombok.ToString;
 
 
 /**
@@ -14,6 +15,7 @@ import lombok.Data;
  * to buy a card.
  */
 @Data
+@ToString(callSuper = true)
 @JsonDeserialize(using = PurchaseMapDeserializer.class)
 public class PurchaseMap extends PriceMap implements PriceInterface {
 
@@ -85,7 +87,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
    *
    * @return total amount
    */
-  public int getTotalGemsNonJokers() {
+  public int getTotalNonJokers() {
     return this.getTotalGems() - this.getGemCost(Gem.GOLD);
   }
 
@@ -124,16 +126,18 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     if (this == otherPriceMap) {
       return true;
     }
-    int goldAmount = this.getGemCost(Gem.GOLD);
-    for (Gem gem : Gem.values()) {
-      if (this.getGemCost(gem) < otherPriceMap.getGemCost(gem)) {
-        goldAmount -= otherPriceMap.getGemCost(gem) - this.getGemCost(gem);
-        if (goldAmount < otherPriceMap.getGemCost(Gem.GOLD)) {
-          return false;
-        }
-      }
+
+    if (this.getTotalNonJokers() <= otherPriceMap.getTotalNonJokers()
+        && this.getGemCost(Gem.RUBY) <= otherPriceMap.getGemCost(Gem.RUBY)
+        && this.getGemCost(Gem.EMERALD) <= otherPriceMap.getGemCost(Gem.EMERALD)
+        && this.getGemCost(Gem.SAPPHIRE) <= otherPriceMap.getGemCost(Gem.SAPPHIRE)
+        && this.getGemCost(Gem.DIAMOND) <= otherPriceMap.getGemCost(Gem.DIAMOND)
+        && this.getGemCost(Gem.ONYX) <= otherPriceMap.getGemCost(Gem.ONYX)
+    ) {
+      return (otherPriceMap.getTotalNonJokers() - this.getTotalNonJokers())
+          == this.getGemCost(Gem.GOLD);
     }
-    return true;
+    return false;
   }
 
   @Override

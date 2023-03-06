@@ -56,7 +56,7 @@ public class PlayerDecks {
     }
     // spawn a player at the right
     if (curr < numOfPlayers) {
-      decks.spawnRightPlayer(players[curr], APP_WIDTH / 4.0 + 7 * horizontal + 10,
+      decks.spawnRightPlayer(players[curr], APP_WIDTH / 4.0 + 7 * horizontal + 100,
           150.0, OPPONENT_SCALE);
     }
   }
@@ -94,6 +94,7 @@ public class PlayerDecks {
 
   // helper
   private void spawnLeftPlayer(String name, double verticalShift, double scale) {
+    int horizontal = 120;
     // spawn the player icon
     FXGL.spawn("Player",
         new SpawnData(horizontal + horizontal * scale, verticalShift + 110)

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.common.dto.DeckJson;
+import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
@@ -140,11 +140,10 @@ public class InventoryService implements InventoryServiceInterface {
     // Add new card to the deck
     game.addOnBoardCard(level);
 
-
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckJson(game.getLevelDeck(level).getCardList(), level)
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
     // Ends players turn, which is current player
@@ -203,7 +202,7 @@ public class InventoryService implements InventoryServiceInterface {
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.fromLevel(level),
-        new DeckJson(game.getLevelDeck(level).getCardList(), level)
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
     serviceUtils.endCurrentPlayersTurn(game);
@@ -244,7 +243,7 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    ServerLevelCard card = game.getLevelDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getOnBoardDeck(atLevel).nextCard();
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -1,12 +1,12 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexanome16.common.dto.BagJson;
-import com.hexanome16.common.dto.CardJson;
-import com.hexanome16.common.dto.CascadeTwoJson;
-import com.hexanome16.common.dto.DoubleJson;
-import com.hexanome16.common.dto.NobleJson;
 import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.dto.cards.BagJson;
+import com.hexanome16.common.dto.cards.CardJson;
+import com.hexanome16.common.dto.cards.CascadeTwoJson;
+import com.hexanome16.common.dto.cards.DoubleJson;
+import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Getter
 @ToString
 public class Game {
+  private static final ObjectMapper objectMapper = new ObjectMapper();
   private BroadcastMap broadcastContentManagerMap;
   private final Map<Level, Deck<ServerLevelCard>> levelDecks;
 
@@ -221,7 +222,7 @@ public class Game {
 
     createNobleReserveDeck();
 
-    createBagCascadeDeck();
+    //createBagCascadeDeck();
 
     createSacrificeDeck();
 
@@ -237,6 +238,7 @@ public class Game {
     createCascadeTwoDeck(cascadeTwoJsonList);
   }
 
+  @SneakyThrows
   private void createBaseLevelDecks(CardJson[] cardJsonList) {
     levelDecks.put(Level.ONE, new Deck<>());
     levelDecks.put(Level.TWO, new Deck<>());
@@ -249,22 +251,24 @@ public class Game {
           textureLevel + cardJson.getId(), cardJson.getPrice(), level);
       levelDecks.get(level).addCard(card);
       levelDecks.get(level).shuffle();
-      remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
   }
 
+  @SneakyThrows
   private void createNobleDeck(NobleJson[] nobleJsonList) {
     Deck<ServerNoble> deck = new Deck<>();
     for (int i = 0; i < 10; i++) {
       NobleJson nobleJson = nobleJsonList[i];
       ServerNoble noble = new ServerNoble(i, 3, "noble" + i, nobleJson.getPrice());
       deck.addCard(noble);
-      remainingNobles.put(DigestUtils.md5Hex(noble.toString()), noble);
+      remainingNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }
     deck.shuffle();
     this.nobleDeck = deck;
   }
 
+  @SneakyThrows
   private void createBagDeck(BagJson[] bagJsonList) {
     Deck<ServerLevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
@@ -274,12 +278,13 @@ public class Game {
           bagJson.getPrice(),
           Level.REDONE);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
   }
 
+  @SneakyThrows
   @SuppressWarnings("checkstyle:Indentation")
   private void createGoldDeck() {
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDONE);
@@ -293,12 +298,13 @@ public class Game {
           priceMap,
           Level.REDONE);
       deck.addCard(gold);
-      remainingCards.put(DigestUtils.md5Hex(gold.toString()), gold);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
     }
     deck.shuffle();
     redDecks.put(Level.REDONE, deck);
   }
 
+  @SneakyThrows
   private void createDoubleDeck(DoubleJson[] doubleJsonList) {
     Deck<ServerLevelCard> deck = new Deck<>();
     for (int i = 0; i < 4; i++) {
@@ -308,12 +314,13 @@ public class Game {
           doubleJson.getPrice(),
           Level.REDTWO);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
+  @SneakyThrows
   private void createNobleReserveDeck() {
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{2, 2, 2, 0, 2}, {2, 0, 2, 2, 2}, {0, 2, 2, 2, 2}};
@@ -325,12 +332,13 @@ public class Game {
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
+  @SneakyThrows
   private void createBagCascadeDeck() {
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     int[][] prices = {{3, 4, 0, 0, 1}, {0, 0, 3, 4, 1}};
@@ -342,12 +350,13 @@ public class Game {
           priceMap,
           Level.REDTWO);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
+  @SneakyThrows
   private void createSacrificeDeck() {
     Deck<ServerLevelCard> deck = new Deck<>();
     Gem[] gems = {Gem.SAPPHIRE, Gem.RUBY, Gem.EMERALD, Gem.ONYX, Gem.DIAMOND};
@@ -359,12 +368,13 @@ public class Game {
           priceMap,
           Level.REDTHREE);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
+  @SneakyThrows
   private void createCascadeTwoDeck(CascadeTwoJson[] cascadeTwoJsonList) {
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTHREE);
     for (int i = 0; i < 4; i++) {
@@ -374,12 +384,13 @@ public class Game {
           cascadeTwoJson.getPrice(),
           Level.REDTHREE);
       deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(bag.toString()), bag);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
+  @SneakyThrows
   private void createOnBoardDecks() {
     Deck<ServerLevelCard> baseOneDeck = new Deck<>();
     Deck<ServerLevelCard> baseTwoDeck = new Deck<>();
@@ -390,14 +401,18 @@ public class Game {
       ServerLevelCard levelOne = levelDecks.get(Level.ONE).removeNextCard();
       levelOne.setFaceDown(false);
       baseOneDeck.addCard(levelOne);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)), levelOne);
 
       ServerLevelCard levelTwo = levelDecks.get(Level.TWO).removeNextCard();
       levelTwo.setFaceDown(false);
       baseTwoDeck.addCard(levelTwo);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)), levelTwo);
 
       ServerLevelCard levelThree = levelDecks.get(Level.THREE).removeNextCard();
       levelThree.setFaceDown(false);
       baseThreeDeck.addCard(levelThree);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+          levelThree);
     }
 
     // make into data structures (hash map)
@@ -408,19 +423,34 @@ public class Game {
     // same thing but with the nobles
     Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
-      nobleDeck.addCard(this.nobleDeck.removeNextCard());
+      ServerNoble noble = this.nobleDeck.removeNextCard();
+      nobleDeck.addCard(noble);
+      remainingNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }
     this.onBoardNobles = nobleDeck;
   }
 
+  @SneakyThrows
   private void createOnBoardRedDecks() {
     Deck<ServerLevelCard> redOneDeck = new Deck<>();
     Deck<ServerLevelCard> redTwoDeck = new Deck<>();
     Deck<ServerLevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
-      redOneDeck.addCard(redDecks.get(Level.REDONE).removeNextCard());
-      redTwoDeck.addCard(redDecks.get(Level.REDTWO).removeNextCard());
-      redThreeDeck.addCard(redDecks.get(Level.REDTHREE).removeNextCard());
+      ServerLevelCard levelOne = redDecks.get(Level.REDONE).removeNextCard();
+      levelOne.setFaceDown(false);
+      redOneDeck.addCard(levelOne);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)), levelOne);
+
+      ServerLevelCard levelTwo = redDecks.get(Level.REDTWO).removeNextCard();
+      levelTwo.setFaceDown(false);
+      redTwoDeck.addCard(levelTwo);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)), levelTwo);
+
+      ServerLevelCard levelThree = redDecks.get(Level.REDTHREE).removeNextCard();
+      levelThree.setFaceDown(false);
+      redThreeDeck.addCard(levelThree);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+          levelThree);
     }
     this.onBoardDecks.put(Level.REDONE, redOneDeck);
     this.onBoardDecks.put(Level.REDTWO, redTwoDeck);
@@ -477,9 +507,11 @@ public class Game {
    * @param level level of the deck
    */
   public void addOnBoardCard(Level level) {
-    ServerLevelCard card = this.levelDecks.get(level).removeNextCard();
+    ServerLevelCard card = this.getLevelDeck(level).removeNextCard();
+    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
     card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
+    remainingCards.put(DigestUtils.md5Hex(card.toString()), card);
   }
 
   /**
