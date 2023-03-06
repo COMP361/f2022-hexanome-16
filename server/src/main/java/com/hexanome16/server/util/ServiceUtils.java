@@ -148,12 +148,11 @@ public class ServiceUtils {
             new WinJson(Arrays.stream(winners).map(ServerPlayer::getName).toArray(String[]::new))
         );
       }
-    } else {
-      game.getBroadcastContentManagerMap().updateValue(
-          BroadcastMapKey.PLAYERS,
-          new PlayerJson(game.getCurrentPlayer().getName())
-      );
     }
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.PLAYERS,
+        new PlayerJson(game.getCurrentPlayer().getName())
+    );
   }
 
   /**

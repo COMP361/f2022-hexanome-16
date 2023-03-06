@@ -78,6 +78,11 @@ public class PriceMap implements PriceInterface {
   }
 
   @Override
+  public int getTotalNonJokers() {
+    return getTotalGems();
+  }
+
+  @Override
   public void addGems(Gem gem, int amount) {
     if (amount < 0) {
       throw new IllegalArgumentException("Cannot add negative amount of gems");
