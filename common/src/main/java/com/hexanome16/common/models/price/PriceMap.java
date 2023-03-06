@@ -5,13 +5,11 @@ import com.hexanome16.common.deserializers.PriceMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Holds the token price for a development card.
  */
 @Data
-@NoArgsConstructor
 @JsonDeserialize(using = PriceMapDeserializer.class)
 public class PriceMap implements PriceInterface {
   /**
@@ -37,6 +35,16 @@ public class PriceMap implements PriceInterface {
         throw new IllegalArgumentException("Price map cannot contain gold");
       }
       this.addGems(entry.getKey(), entry.getValue());
+    }
+  }
+
+  /**
+   * Empty constructor, sets all gems to 0.
+   */
+  public PriceMap() {
+    this.priceMap = new Hashtable<>();
+    for (Gem gem : Gem.values()) {
+      priceMap.put(gem, 0);
     }
   }
 

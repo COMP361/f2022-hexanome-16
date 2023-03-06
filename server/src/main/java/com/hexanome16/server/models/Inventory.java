@@ -1,6 +1,8 @@
 package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class Inventory {
   private final List<Noble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
+  private final PriceInterface gemBonuses;
 
   /* Constructor *********************************************************************************/
 
@@ -29,6 +32,7 @@ public class Inventory {
     reservedNobles = new ArrayList<>();
     ownedCards = new ArrayList<>();
     reservedCards = new ArrayList<>();
+    gemBonuses = new PriceMap();
   }
 
   /* add methods ******************************************************************************/
@@ -40,6 +44,7 @@ public class Inventory {
    * @return true if the card was added to inventory
    */
   public boolean acquireCard(ServerLevelCard card) {
+    var info = card.getCardInfo();
     return ownedCards.add(card);
   }
 
