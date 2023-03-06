@@ -518,9 +518,10 @@ public class Game {
    * Removes a card from game board.
    *
    * @param card card to be removed
+   * @return if the card was in the deck.
    */
-  public void removeOnBoardCard(ServerLevelCard card) {
-    this.onBoardDecks.get(card.getLevel()).removeCard(card);
+  public boolean removeOnBoardCard(ServerLevelCard card) {
+    return onBoardDecks.get(card.getLevel()).removeCard(card);
     //remainingCards.remove(DigestUtils.md5Hex(card.toString()));
   }
 

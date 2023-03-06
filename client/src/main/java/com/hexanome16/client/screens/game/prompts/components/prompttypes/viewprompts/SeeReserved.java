@@ -10,9 +10,12 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.OpenPrompt;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -22,15 +25,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import lombok.SneakyThrows;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * A class responsible for populating See Own reserved Cards prompt.
  */
 public class SeeReserved extends SeeReservedAbstract {
-
-  private static List<LevelCard> cards = new ArrayList<>();
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  static Map<String, LevelCard> cardHashList = new HashMap<String, LevelCard>();
 
   private static boolean myCards = false;
 
@@ -40,16 +40,14 @@ public class SeeReserved extends SeeReservedAbstract {
    * @param player player
    */
   public static void fetchReservedCards(String player) {
-    cards.clear();
+    cardHashList.clear();
     // make a call to the server
-    LevelCard[] response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
+    DeckJson response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
         player, AuthUtils.getAuth().getAccessToken());
     // are these my cards?
     myCards = AuthUtils.getPlayer().getName().equals(player);
     // add the paths to our list
-    for (LevelCard card : response) {
-      cards.add(card);
-    }
+    cardHashList = response.getCards();
   }
 
   @Override
@@ -80,8 +78,8 @@ public class SeeReserved extends SeeReservedAbstract {
     myScrollPane.setContent(myCards);
 
     // add cards to player's hand
-    for (LevelCard card : cards) {
-      myCards.getChildren().add(getCardTexture(card));
+    for (Map.Entry<String, LevelCard> entry : cardHashList.entrySet()) {
+      myCards.getChildren().add(getCardTexture(entry));
     }
 
     myCards.setPrefWidth(atWidth);
@@ -95,8 +93,8 @@ public class SeeReserved extends SeeReservedAbstract {
    * @param card card
    * @return card as a texture
    */
-  private Texture getCardTexture(LevelCard card) {
-    Texture cardTexture = FXGL.texture(card.getCardInfo().texturePath() + ".png");
+  private Texture getCardTexture(Map.Entry<String, LevelCard> card) {
+    Texture cardTexture = FXGL.texture(card.getValue().getCardInfo().texturePath() + ".png");
     cardTexture.setFitWidth(atCardWidth);
     cardTexture.setFitHeight(atCardHeight);
     if (myCards) {
@@ -106,23 +104,24 @@ public class SeeReserved extends SeeReservedAbstract {
   }
 
   @SneakyThrows
-  private Entity getCardEntity(LevelCard card) {
+  private Entity getCardEntity(Map.Entry<String, LevelCard> card) {
     if (myCards) {
       return FXGL.entityBuilder()
-          .view(card.getCardInfo().texturePath() + ".png")
+          .view(card.getValue().getCardInfo().texturePath() + ".png")
           .scale(0.15, 0.15)
-          .with(new CardComponent(card.getCardInfo().id(), card.getLevel(),
-              card.getCardInfo().texturePath() + ".png", card.getCardInfo().price(),
-              DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), false))
+          .with(new CardComponent(card.getValue().getCardInfo().id(), card.getValue().getLevel(),
+              card.getValue().getCardInfo().texturePath() + ".png",
+              card.getValue().getCardInfo().price(),
+              card.getKey(), false))
           .build();
-    } else if (card.isFaceDown()) {
+    } else if (card.getValue().isFaceDown()) {
       return FXGL.entityBuilder()
-          .view(card.getLevel().name().toLowerCase() + ".png")
+          .view(card.getValue().getLevel().name().toLowerCase() + ".png")
           .scale(0.15, 0.15)
           .build();
     } else {
       return FXGL.entityBuilder()
-          .view(card.getCardInfo().texturePath() + ".png")
+          .view(card.getValue().getCardInfo().texturePath() + ".png")
           .scale(0.15, 0.15)
           .build();
     }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
@@ -153,8 +155,8 @@ public class InventoryController {
     // get the player (if valid) from the session id and access token
     ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
-    return new ResponseEntity<>(objectMapper.writeValueAsString(
-        player.getInventory().getReservedCards()), HttpStatus.OK);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
   }
 
   /**

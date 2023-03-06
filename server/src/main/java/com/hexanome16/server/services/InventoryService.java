@@ -133,12 +133,15 @@ public class InventoryService implements InventoryServiceInterface {
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
 
-    // Remove card from the board
-    game.removeOnBoardCard(cardToBuy);
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
 
     Level level = (cardToBuy).getLevel();
-    // Add new card to the deck
-    game.addOnBoardCard(level);
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
 
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
