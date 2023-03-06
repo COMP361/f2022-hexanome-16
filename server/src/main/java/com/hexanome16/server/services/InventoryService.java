@@ -133,12 +133,15 @@ public class InventoryService implements InventoryServiceInterface {
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
 
-    // Remove card from the board
-    game.removeOnBoardCard(cardToBuy);
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
 
     Level level = (cardToBuy).getLevel();
-    // Add new card to the deck
-    game.addOnBoardCard(level);
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
 
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -192,12 +195,11 @@ public class InventoryService implements InventoryServiceInterface {
     // give player a gold token
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
-    //TODO: probably need a check to only remove level cards from board
-
-    // replace this card with a new one on board
-    game.removeOnBoardCard(card);
-    Level level = (card).getLevel();
-    game.addOnBoardCard(level);
+    Level level = card.getLevel();
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(card)) {
+      game.addOnBoardCard(level);
+    }
 
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -243,7 +245,7 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    ServerLevelCard card = game.getOnBoardDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getLevelDeck(atLevel).removeNextCard();
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
