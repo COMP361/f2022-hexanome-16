@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -14,7 +15,9 @@ import java.util.List;
 import java.util.Queue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.testcontainers.shaded.com.google.common.annotations.VisibleForTesting;
 
 /**
  * Test of {@link ServerPlayer}.
@@ -134,4 +137,37 @@ public class ServerPlayerTest {
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
   }
 
+  /**
+   * Test can be visited by.
+   */
+  @Test
+  public void testCanBeVisitedBy() {
+    // Arrange
+    Visitable visitable = Mockito.mock(Visitable.class);
+    Inventory inventory = costa.getInventory();
+    when(visitable.playerMeetsRequirements(inventory)).thenReturn(true);
+
+    // Act
+    var response = costa.canBeVisitedBy(visitable);
+
+    // Assert
+    assertTrue(response);
+  }
+
+  /**
+   * Test can not be visited by.
+   */
+  @Test
+  public void testCanBeVisitedByFail() {
+    // Arrange
+    Visitable visitable = Mockito.mock(Visitable.class);
+    Inventory inventory = costa.getInventory();
+    when(visitable.playerMeetsRequirements(inventory)).thenReturn(false);
+
+    // Act
+    var response = costa.canBeVisitedBy(visitable);
+
+    // Assert
+    assertFalse(response);
+  }
 }
