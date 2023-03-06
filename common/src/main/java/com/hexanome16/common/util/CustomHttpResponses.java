@@ -80,7 +80,7 @@ public enum CustomHttpResponses implements BroadcastContent {
    * </p>
    */
   CHOOSE_NOBLE("Insert custom body containing list of nobles", HTTP_OK,
-      Map.of("action-type", List.of("choose-noble"))),
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.NOBLE.getMessage()))),
   /**
    * Used for indicating that player must choose a city.
    * <p>
@@ -88,7 +88,7 @@ public enum CustomHttpResponses implements BroadcastContent {
    * </p>
    */
   CHOOSE_CITY("Insert custom body containing list of cities", HTTP_OK,
-      Map.of("action-type", List.of("choose-city"))),
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.CITY.getMessage()))),
   /**
    * Used for indicating that player must take a level two card.
    * <p>
@@ -96,7 +96,39 @@ public enum CustomHttpResponses implements BroadcastContent {
    * </p>
    */
   TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
-      Map.of("action-type", List.of("take-level-two")));
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_TWO.getMessage()))),
+  /**
+   * Used for indicating that player doesn't have to perform any additional actions.
+   */
+  END_OF_TURN("No Further Actions needed", HTTP_OK, Map.of(ActionType.ACTION_TYPE, List.of(ActionType.END_TURN.getMessage())));
+
+  /**
+   * Class for ActionTypes, holds strings used all over the code.
+   */
+  public enum ActionType {
+    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"), END_TURN("done");
+
+    private final String message;
+
+    /**
+     * Action Type string.
+     */
+    public static final String ACTION_TYPE = "action-type";
+
+    ActionType(String message) {
+      this.message = message;
+    }
+
+    /**
+     * Gets the message.
+     *
+     * @return message.
+     */
+    public String getMessage() {
+      return message;
+    }
+  }
+
   private final String body;
   private final Map<String, List<String>> headers;
   private final int status;

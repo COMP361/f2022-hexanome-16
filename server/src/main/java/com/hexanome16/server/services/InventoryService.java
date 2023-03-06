@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -75,7 +76,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        PurchaseMap proposedDeal) {
+                                        PurchaseMap proposedDeal) throws JsonProcessingException {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
         gameManagerService, authService);
@@ -102,8 +103,6 @@ public class InventoryService implements InventoryServiceInterface {
     if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
     }
-    System.out.println("PLAYER FOUND");
-    System.out.println(player.getName());
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
@@ -146,10 +145,14 @@ public class InventoryService implements InventoryServiceInterface {
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
-    // Ends players turn, which is current player
-    serviceUtils.endCurrentPlayersTurn(game);
+    // ACTION RELATED SHENANIGANS
+    if (cardToBuy.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
+      player.addTakeTwoToPerform();
+    }
+    // TODO : ADD MORE ACTION
 
-    return new ResponseEntity<>(HttpStatus.OK);
+    player.addEndTurnToPerform(serviceUtils, game);
+    return player.peekTopAction();
   }
 
   /**

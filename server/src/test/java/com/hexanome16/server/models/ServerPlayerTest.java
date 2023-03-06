@@ -9,12 +9,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Test of {@link ServerPlayer}.
@@ -82,12 +84,11 @@ public class ServerPlayerTest {
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
             )
         ));
-    Queue<Action> actions = costa.getActionQueue();
-    assertFalse(actions.isEmpty());
-    Action action = actions.poll();
-    var response = action.getActionDetails();
+
+    ResponseEntity<String> response = costa.peekTopAction();
     var headers = response.getHeaders();
-    assertEquals("choose-noble", headers.get("action-type").get(0));
+    assertEquals(CustomHttpResponses.ActionType.NOBLE.getMessage(),
+        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertFalse(response.getBody().isBlank());
@@ -107,12 +108,11 @@ public class ServerPlayerTest {
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
             )
         ));
-    Queue<Action> actions = costa.getActionQueue();
-    assertFalse(actions.isEmpty());
-    Action action = actions.poll();
-    var response = action.getActionDetails();
+    ResponseEntity<String> response = costa.peekTopAction();
     var headers = response.getHeaders();
-    assertEquals("choose-city", headers.get("action-type").get(0));
+    assertEquals(
+        CustomHttpResponses.ActionType.CITY.getMessage(),
+        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertFalse(response.getBody().isBlank());
@@ -124,14 +124,30 @@ public class ServerPlayerTest {
   @Test
   public void testAddTakeTwoToPerform() throws JsonProcessingException {
     costa.addTakeTwoToPerform();
-    Queue<Action> actions = costa.getActionQueue();
-    assertFalse(actions.isEmpty());
-    Action action = actions.poll();
-    var response = action.getActionDetails();
-    var headers = response.getHeaders();
-    assertEquals("take-level-two", headers.get("action-type").get(0));
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
+    ResponseEntity<String> actions = costa.peekTopAction();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.LEVEL_TWO.getMessage(),
+        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+    assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), actions.getBody());
+  }
+
+  /**
+   * Testing addEndTurnToPerform().
+   */
+  @Test
+  public void testAddEndTurnToPerform() throws JsonProcessingException {
+    ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
+    Game game = Mockito.mock(Game.class);
+    costa.addEndTurnToPerform(serviceUtils, game);
+    ResponseEntity<String> actions = costa.peekTopAction();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.END_TURN.getMessage(),
+        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+    assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), actions.getBody());
   }
 
 }

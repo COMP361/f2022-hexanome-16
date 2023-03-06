@@ -14,7 +14,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Class responsible for sending HTTP requests related to the prompts.
@@ -85,13 +88,15 @@ public class PromptsRequests {
    * @param authToken    username of player trying to buy card.
    * @param proposedDeal deal proposed by the player.
    */
-  public static void buyCard(long sessionId,
-                             String cardMd5,
-                             String authToken,
-                             PurchaseMap proposedDeal) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+  public static Pair<Headers, String> buyCard(long sessionId,
+                                              String cardMd5,
+                                              String authToken,
+                                              PurchaseMap proposedDeal) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
         "/api/games/" + sessionId + "/" + cardMd5, Map.of("access_token", authToken),
         proposedDeal, Void.class));
+
   }
 
   /**

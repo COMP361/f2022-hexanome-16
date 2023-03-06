@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.geometry.Pos;
@@ -131,6 +132,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
+
   // Helpers
   private void initiatePane(Pane myPrompt) {
     myPrompt.setTranslateX(atTopLeftX);
@@ -199,6 +201,11 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
    * (Use PromptComponent.closePrompts() to do so)
    */
   protected abstract void handleConfirmation();
+
+
+  protected boolean setCancelable() {
+    return true;
+  }
 
   /**
    * Modifies choicesLayout to contain the desired choices and their behaviour, is also

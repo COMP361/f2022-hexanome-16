@@ -81,6 +81,7 @@ public class CardComponent extends Component {
 
   @Override
   public void onUpdate(double tpf) {
+    entity.setZIndex(3);
     if (fading) {
       double opacity = entity.getViewComponent().getOpacity();
       if (opacity > 0) {

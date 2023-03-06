@@ -8,11 +8,17 @@ import com.hexanome16.common.dto.cards.CascadeTwoJson;
 import com.hexanome16.common.dto.cards.DoubleJson;
 import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.io.File;
 import java.io.IOException;
@@ -382,7 +388,7 @@ public class Game {
       ServerLevelCard bag = new ServerLevelCard(cascadeTwoJson.getId(), 0,
           "cascade_two" + cascadeTwoJson.getId(),
           cascadeTwoJson.getPrice(),
-          Level.REDTHREE);
+          Level.REDTHREE, LevelCard.BonusType.CASCADING_TWO);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -728,6 +734,8 @@ public class Game {
     gemIntegerMapPlayer.put(desiredGemThree, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
+
+
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 

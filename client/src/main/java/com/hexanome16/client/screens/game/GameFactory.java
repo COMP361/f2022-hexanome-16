@@ -66,7 +66,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelOneCard")
   public Entity newLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 565)
+        .at(matCoordsX + 10, matCoordsY + 565, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.ONE,
@@ -84,7 +84,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelTwoCard")
   public Entity newLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 360)
+        .at(matCoordsX + 10, matCoordsY + 360, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.TWO,
@@ -102,7 +102,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelThreeCard")
   public Entity newLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 155)
+        .at(matCoordsX + 10, matCoordsY + 155, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.THREE,
@@ -120,7 +120,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelThreeCard")
   public Entity newRedLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 155)
+        .at(matCoordsX + 985, matCoordsY + 155, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent((Integer) data.getData().get("id"), Level.REDTHREE,
@@ -138,7 +138,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelTwoCard")
   public Entity newRedLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 360)
+        .at(matCoordsX + 985, matCoordsY + 360, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDTWO,
@@ -156,7 +156,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelOneCard")
   public Entity newRedLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 565)
+        .at(matCoordsX + 985, matCoordsY + 565, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDONE,
@@ -174,7 +174,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("SacrificeCard")
   public Entity newSacrificeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 155)
+        .at(matCoordsX + 710, matCoordsY + 155, 50)
         .view("sacrificecard.png")
         .scale(0.15, 0.15)
         .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS))
@@ -190,7 +190,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("NobleReserveCard")
   public Entity newNobleReserveCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 360)
+        .at(matCoordsX + 710, matCoordsY + 360, 50)
         .view("noblereserve.png")
         .scale(0.15, 0.15)
         .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD))
@@ -206,7 +206,7 @@ public class GameFactory implements EntityFactory {
   @Spawns("BagCard")
   public Entity newBagCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 565)
+        .at(matCoordsX + 710, matCoordsY + 565, 50)
         .view("bagcard.png")
         .scale(0.15, 0.15)
         .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD))
