@@ -215,16 +215,16 @@ public class InventoryController {
    *
    * @param sessionId           game session id.
    * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
   public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
                                             @PathVariable String cardMd5,
-                                            @RequestParam String authenticationToken)
+                                            @RequestParam String accessToken)
       throws JsonProcessingException {
-    return inventoryService.reserveCard(sessionId, cardMd5, authenticationToken);
+    return inventoryService.reserveCard(sessionId, cardMd5, accessToken);
   }
 
   /**
@@ -232,17 +232,17 @@ public class InventoryController {
    *
    * @param sessionId           game session id.
    * @param level               deck level.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
   public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                                     @RequestParam String level,
-                                                    @RequestParam String authenticationToken)
+                                                    @RequestParam String accessToken)
       throws JsonProcessingException {
 
-    return inventoryService.reserveFaceDownCard(sessionId, level, authenticationToken);
+    return inventoryService.reserveFaceDownCard(sessionId, level, accessToken);
   }
 
 }
