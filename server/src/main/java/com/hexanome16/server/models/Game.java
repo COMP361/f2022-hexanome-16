@@ -521,7 +521,7 @@ public class Game {
    */
   public void removeOnBoardCard(ServerLevelCard card) {
     this.onBoardDecks.get(card.getLevel()).removeCard(card);
-    remainingCards.remove(DigestUtils.md5Hex(card.toString()));
+    //remainingCards.remove(DigestUtils.md5Hex(card.toString()));
   }
 
 
