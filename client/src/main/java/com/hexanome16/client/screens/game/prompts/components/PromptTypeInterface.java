@@ -12,6 +12,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbu
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
@@ -204,6 +205,10 @@ public interface PromptTypeInterface {
      * <p><i>Helper</i></p>
      */
     CHOOSE_NOBLE_TO_RESERVE(new ChooseNobleReserve()),
+    /**
+     * Choose level two prompt type.
+     */
+    CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

@@ -1,19 +1,21 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PriceInterface;
-import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
@@ -141,14 +143,27 @@ public class ServerPlayer extends Player {
   // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////
 
   /**
-   * Gets the action queue.
+   * Adds action to action queue.
    *
-   * @return the queue of actions.
+   * @param action action.
    */
-  public Queue<Action> getActionQueue() {
-    return queueOfCascadingActionTypes;
+  public void addActionToQueue(Action action) {
+    queueOfCascadingActionTypes.add(action);
   }
 
+  /**
+   * Gets and remove top most action in the action queue of the player.
+   *
+   * @return Response entity with information on the action that needs to performed by player.
+   * @throws JsonProcessingException exception.
+   */
+  public ResponseEntity<String> peekTopAction() throws JsonProcessingException {
+    return Objects.requireNonNull(queueOfCascadingActionTypes.peek()).getActionDetails();
+  }
+
+
+
+  ///////   ACTION RELATED STUFF // MOVED HERE FOR GOOD CODE :D //////////////////////////////////
   /**
    * Adds Noble Choice as an action that needs to be performed.
    *
@@ -156,7 +171,7 @@ public class ServerPlayer extends Player {
    */
   public void addNobleListToPerform(ArrayList<Noble> nobleList) {
     ObjectMapper objectMapper = new ObjectMapper();
-    queueOfCascadingActionTypes.add(() ->
+    addActionToQueue(() ->
         CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_NOBLE,
             objectMapper.writeValueAsString(nobleList.toArray()), null));
   }
@@ -168,7 +183,7 @@ public class ServerPlayer extends Player {
    */
   public void addCitiesToPerform(ArrayList<City> citiesList) {
     ObjectMapper objectMapper = new ObjectMapper();
-    queueOfCascadingActionTypes.add(
+    addActionToQueue(
         () -> CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_CITY,
             objectMapper.writeValueAsString(citiesList.toArray()), null));
   }
@@ -177,9 +192,25 @@ public class ServerPlayer extends Player {
    * Adds Take Two as an action that needs to be performed.
    */
   public void addTakeTwoToPerform() {
-    queueOfCascadingActionTypes.add(() ->
+    addActionToQueue(() ->
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
   }
 
+  /**
+   * Adds End turn as an action that needs to be performed.
+   *
+   * @param serviceUtils service util.
+   * @param game game.
+   */
+  public void addEndTurnToPerform(ServiceUtils serviceUtils, Game game) {
+    addActionToQueue(() -> {
+      serviceUtils.endCurrentPlayersTurn(game);
+      queueOfCascadingActionTypes.remove();
+      return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    });
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 }
