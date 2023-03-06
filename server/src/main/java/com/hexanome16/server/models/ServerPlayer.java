@@ -56,6 +56,16 @@ public class ServerPlayer extends Player {
     return inventoryAddable.addToInventory(this.inventory);
   }
 
+  /**
+   * Remove this reserved card from the player's inventory.
+   *
+   * @param inventoryAddable the development card to add
+   * @return true on success
+   */
+  public boolean removeReservedCardFromInventory(InventoryAddable inventoryAddable) {
+    return this.inventory.getReservedCards().remove(inventoryAddable);
+  }
+
 
   /**
    * increments Player bank by the amount specified by each parameter for each of their

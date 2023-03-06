@@ -5,6 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -57,10 +58,10 @@ public class PromptsRequests {
    * @return PurchaseMap representation of the player's funds as a String
    * @author Elea
    */
-  public static LevelCard[] getReservedCards(long sessionId, String username, String accessToken) {
+  public static DeckJson getReservedCards(long sessionId, String username, String accessToken) {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/inventory/reservedCards",
-        Map.of("username", username, "accessToken", accessToken), LevelCard[].class));
+        Map.of("username", username, "accessToken", accessToken), DeckJson.class));
   }
 
   /**
