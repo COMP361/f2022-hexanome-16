@@ -90,7 +90,6 @@ public class InventoryService implements InventoryServiceInterface {
     // Fetch the card in question
     ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
-    // TODO test
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
