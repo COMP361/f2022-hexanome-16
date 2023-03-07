@@ -3,6 +3,9 @@ package com.hexanome16.server.models;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
@@ -53,6 +56,16 @@ public class ServerPlayer extends Player {
     return inventoryAddable.addToInventory(this.inventory);
   }
 
+  /**
+   * Remove this reserved card from the player's inventory.
+   *
+   * @param inventoryAddable the development card to add
+   * @return true on success
+   */
+  public boolean removeReservedCardFromInventory(InventoryAddable inventoryAddable) {
+    return this.inventory.getReservedCards().remove(inventoryAddable);
+  }
+
 
   /**
    * increments Player bank by the amount specified by each parameter for each of their
@@ -96,8 +109,24 @@ public class ServerPlayer extends Player {
    */
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
-    return getBank().toPurchaseMap().canBeUsedToBuy(new PurchaseMap(rubyAmount, emeraldAmount,
+    return hasAtLeast(new PurchaseMap(rubyAmount, emeraldAmount,
         sapphireAmount, diamondAmount, onyxAmount, goldAmount));
+  }
+
+  /**
+   * Returns true if player has at least specified amounts of each gem type in their bank, false
+   * otherwise.
+   *
+   * @param purchaseMap specified amount for each gem.
+   * @return True if it has enough, false otherwise.
+   */
+  public boolean hasAtLeast(PurchaseMap purchaseMap) {
+    boolean response = true;
+    for (Gem gem : Gem.values()) {
+      response = response
+          && getBank().toPurchaseMap().getGemCost(gem) >= purchaseMap.getGemCost(gem);
+    }
+    return response;
   }
 
 

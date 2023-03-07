@@ -22,6 +22,13 @@ public interface PriceInterface {
   int getTotalGems();
 
   /**
+   * Gets the total amount of gems, NON JOKERS, in this price.
+   *
+   * @return the total amount of gems, NON JOKERS
+   */
+  int getTotalNonJokers();
+
+  /**
    * Adds gems to this price.
    *
    * @param gem    the gem type

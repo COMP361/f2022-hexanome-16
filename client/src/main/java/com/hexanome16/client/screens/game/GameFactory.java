@@ -32,7 +32,7 @@ public class GameFactory implements EntityFactory {
   /**
    * The constant matCoordsX.
    */
-  public static final int matCoordsX = 400;
+  public static final int matCoordsX = 500;
   /**
    * The constant matCoordsY.
    */
@@ -71,7 +71,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.ONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -89,7 +89,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.TWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -107,7 +107,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.THREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -125,7 +125,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent((Integer) data.getData().get("id"), Level.REDTHREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -143,7 +143,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDTWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -161,7 +161,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -457,6 +457,36 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX, matCoordsY)
         .view("mat.png")
         .scale(0.6, 0.6)
+        .build();
+  }
+
+  /**
+   * Adds the trade routes placeholder to the game board.
+   *
+   * @param data spawn data
+   * @return card entity
+   */
+  @Spawns("TradeRoutesPlaceholder")
+  public Entity buildTradeRoutesPlaceholder(SpawnData data) {
+    return FXGL.entityBuilder()
+        .at(matCoordsX - 173, matCoordsY)
+        .view("TradeRoutesPlaceholder.png")
+        .scale(0.174, 0.174)
+        .build();
+  }
+
+  /**
+   * Adds the trade routes to the game board.
+   *
+   * @param data spawn data
+   * @return card entity
+   */
+  @Spawns("TradeRoutes")
+  public Entity buildTradeRoutes(SpawnData data) {
+    return FXGL.entityBuilder()
+        .at(matCoordsX - 173, matCoordsY)
+        .view("TradeRoutes.png")
+        .scale(0.174, 0.174)
         .build();
   }
 
