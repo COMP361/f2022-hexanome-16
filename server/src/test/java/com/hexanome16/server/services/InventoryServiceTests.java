@@ -446,6 +446,38 @@ class InventoryServiceTests {
     assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
   }
 
+  /**
+   * Test noble player cannot be visited by.
+   */
+  @Test
+  @SneakyThrows
+  public void testNoblePlayerCannotBeVisitedBy() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+
+    //TODO : fix this when merging imad's pr and test this correctly
+    GameDummies gameDummies = new GameDummies();
+    Game gameMock = gameDummies.validGames.get(0);
+    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    /*
+    assertEquals(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT.getBody(), response.getBody());
+    */
+  }
+
+  /**
+   * Test noble invalid hash.
+   */
   @Test
   @SneakyThrows
   public void testNobleInvalidHash() {
