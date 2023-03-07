@@ -118,6 +118,16 @@ public class ServerPlayer extends Player {
     this.inventory = null;
   }
 
+  /**
+   * Verifies that the player meets the requirements to be visited by said visitable.
+   *
+   * @param visitor the visitor whose requirements need to be met
+   * @return true if player meets requirements
+   */
+  public boolean canBeVisitedBy(Visitable visitor) {
+    return visitor.playerMeetsRequirements(inventory);
+  }
+
 
   // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////
 
@@ -160,16 +170,6 @@ public class ServerPlayer extends Player {
   public void addTakeTwoToPerform() {
     queueOfCascadingActionTypes.add(() ->
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
-  }
-
-  /**
-   * Verifies that the player meets the requirements to be visited by said visitable.
-   *
-   * @param visitor the visitor whose requirements need to be met
-   * @return true if player meets requirements
-   */
-  public boolean canBeVisitedBy(Visitable visitor) {
-    return visitor.playerMeetsRequirements(inventory);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
