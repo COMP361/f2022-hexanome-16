@@ -275,6 +275,12 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
 
+    /*
+    if (!player.canBeVisitedBy(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+    */
+
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
 }
