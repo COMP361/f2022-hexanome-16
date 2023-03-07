@@ -91,7 +91,7 @@ public class PromptsRequests {
                              String authToken,
                              PurchaseMap proposedDeal) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5, Map.of("access_token", authToken),
+        "/api/games/" + sessionId + "/cards/" + cardMd5, Map.of("access_token", authToken),
         proposedDeal, Void.class));
   }
 
@@ -106,7 +106,7 @@ public class PromptsRequests {
                                  String cardMd5,
                                  String authToken) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
+        "/api/games/" + sessionId + "/cards/" + cardMd5 + "/reservation",
         Map.of("access_token", authToken), Void.class));
   }
 
@@ -218,4 +218,5 @@ public class PromptsRequests {
         Void.class));
   }
 
+  //TODO: add acquire noble endpoint
 }
