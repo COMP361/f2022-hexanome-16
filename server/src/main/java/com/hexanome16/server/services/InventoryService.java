@@ -282,7 +282,9 @@ public class InventoryService implements InventoryServiceInterface {
     }
     */
 
-    player.addCardToInventory(noble);
+    if (!player.addCardToInventory(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
 
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
