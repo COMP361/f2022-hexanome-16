@@ -104,7 +104,7 @@ public class InventoryController {
    * @return response cards
    * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
-  @GetMapping(value = {"/games/{sessionId}/inventory/cards"})
+  @GetMapping(value = "/games/{sessionId}/inventory/cards")
   public ResponseEntity<String> getCards(@PathVariable long sessionId,
                                          @RequestParam String username)
       throws JsonProcessingException {
@@ -125,7 +125,7 @@ public class InventoryController {
    * @return response entity.
    * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work
    */
-  @GetMapping(value = {"/games/{sessionId}/inventory/nobles"})
+  @GetMapping(value = "/games/{sessionId}/inventory/nobles")
   public ResponseEntity<String> getNobles(@PathVariable long sessionId,
                                           @RequestParam String username)
       throws JsonProcessingException {
@@ -146,7 +146,7 @@ public class InventoryController {
    * @return get reserve nobles.
    * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
-  @GetMapping(value = {"/games/{sessionId}/inventory/reservedCards"})
+  @GetMapping(value = "/games/{sessionId}/inventory/reservedCards")
   public ResponseEntity<String> getReservedCards(@PathVariable long sessionId,
                                                  @RequestParam String username,
                                                  @RequestParam String accessToken)
@@ -167,7 +167,7 @@ public class InventoryController {
    * @return response entity.
    * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
    */
-  @GetMapping(value = {"/games/{sessionId}/inventory/reservedNobles"})
+  @GetMapping(value = "/games/{sessionId}/inventory/reservedNobles")
   public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
@@ -186,7 +186,7 @@ public class InventoryController {
    * @return String representation of the Purchase map
    * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
    */
-  @GetMapping(value = {"/games/{sessionId}/playerBank", "/games/{sessionId}/playerBank/"})
+  @GetMapping(value = "/games/{sessionId}/playerBank")
   public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
@@ -204,7 +204,7 @@ public class InventoryController {
    *      HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
+  @PutMapping(value = "/games/{sessionId}/cards/{cardMd5}")
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
                                         @RequestParam String accessToken,
                                         @RequestBody PurchaseMap purchaseMap)
@@ -215,13 +215,13 @@ public class InventoryController {
   /**
    * Let the player reserve a face up card.
    *
-   * @param sessionId           game session id.
-   * @param cardMd5             card hash.
+   * @param sessionId   game session id.
+   * @param cardMd5     card hash.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
+  @PutMapping(value = "/games/{sessionId}/cards/{cardMd5}/reservation")
   public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
                                             @PathVariable String cardMd5,
                                             @RequestParam String accessToken)
@@ -232,13 +232,13 @@ public class InventoryController {
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId           game session id.
-   * @param level               deck level.
+   * @param sessionId   game session id.
+   * @param level       deck level.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
-  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
+  @PutMapping(value = "/games/{sessionId}/deck/reservation")
   public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                                     @RequestParam String level,
                                                     @RequestParam String accessToken)
@@ -248,7 +248,7 @@ public class InventoryController {
   }
 
   /**
-   * Claim noble response entity.
+   * Let the player claim a noble.
    *
    * @param sessionId    the session id
    * @param nobleMd5     the noble hash
@@ -256,7 +256,7 @@ public class InventoryController {
    * @return HttpStatus.ok if the request completed, an error response otherwise.
    * @throws JsonProcessingException the json processing exception
    */
-  @PutMapping(value = {"/games/{sessionId}/{nobleMd5}"})
+  @PutMapping(value = "/games/{sessionId}/nobles/{nobleMd5}")
   public ResponseEntity<String> claimNoble(@PathVariable long sessionId,
                                            @PathVariable String nobleMd5,
                                            @RequestParam String accessToken)
