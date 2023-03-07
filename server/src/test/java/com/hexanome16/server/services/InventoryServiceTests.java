@@ -19,12 +19,10 @@ import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
-import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
-import java.io.IOException;
 import java.util.LinkedList;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -44,24 +42,22 @@ class InventoryServiceTests {
   private Game validMockGame;
   private InventoryService inventoryService;
   private ServiceUtils serviceUtils;
-  private GameManagerServiceInterface gameManagerMock;
 
   /**
-   * Sets .
-   *
-   * @throws JsonProcessingException the json processing exception
+   * Setup.
    */
   @BeforeEach
-  void setup() throws IOException {
+  void setup() {
 
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
             new WinCondition[] {WinCondition.BASE});
 
-    gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
+    GameManagerServiceInterface gameManagerMock =
+        DummyGameManagerService.getDummyGameManagerService();
     serviceUtils = DummyServiceUtils.getDummyServiceUtils();
 
-    inventoryService = new InventoryService(new DummyAuthService(), gameManagerMock, serviceUtils);
+    inventoryService = new InventoryService(gameManagerMock, serviceUtils);
 
   }
 
@@ -307,11 +303,9 @@ class InventoryServiceTests {
 
   /**
    * Test reserve face down card.
-   *
-   * @throws JsonProcessingException the json processing exception
    */
   @Test
-  public void testReserveFaceDownCard() throws com.fasterxml.jackson.core.JsonProcessingException {
+  public void testReserveFaceDownCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
