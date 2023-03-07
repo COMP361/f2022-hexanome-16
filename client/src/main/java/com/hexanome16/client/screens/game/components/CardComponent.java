@@ -38,6 +38,9 @@ public class CardComponent extends Component {
    * The constant red level_three_grid.
    */
   public static CardComponent[] red_level_three_grid = new CardComponent[2];
+  /**
+   * Level of this card component.
+   */
   public final Level level;
   private final String cardHash;
   private final PriceMap priceMap;

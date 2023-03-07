@@ -28,7 +28,9 @@ import javafx.scene.Node;
  * Also contains some useful methods.
  */
 public interface PromptTypeInterface {
-
+  /**
+   * Cursive font factory.
+   */
   FontFactory GAME_FONT = Config.CURSIVE_FONT_FACTORY;
 
   /**
