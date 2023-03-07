@@ -250,18 +250,18 @@ public class InventoryController {
   /**
    * Let the player claim a noble.
    *
-   * @param sessionId           the session id
-   * @param nobleMd5            the noble hash
-   * @param authenticationToken player's authentication token
+   * @param sessionId    the session id
+   * @param nobleMd5     the noble hash
+   * @param accessToken  player's authentication token
    * @return HttpStatus.ok if the request completed, an error response otherwise.
    * @throws JsonProcessingException the json processing exception
    */
   @PutMapping(value = "/games/{sessionId}/nobles/{nobleMd5}")
   public ResponseEntity<String> claimNoble(@PathVariable long sessionId,
                                            @PathVariable String nobleMd5,
-                                           @RequestParam String authenticationToken)
+                                           @RequestParam String accessToken)
       throws JsonProcessingException {
-    return inventoryService.acquireNoble(sessionId, nobleMd5, authenticationToken);
+    return inventoryService.acquireNoble(sessionId, nobleMd5, accessToken);
   }
 
 }

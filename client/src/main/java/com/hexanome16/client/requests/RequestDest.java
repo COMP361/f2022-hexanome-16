@@ -9,7 +9,13 @@ import lombok.Getter;
  * Enum used to indicate the destination for a request.
  */
 public enum RequestDest {
+  /**
+   * Lobby service request destination.
+   */
   LS("LS"),
+  /**
+   * Server request destination.
+   */
   SERVER("SERVER");
 
   @Getter
