@@ -14,7 +14,6 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
@@ -32,22 +31,18 @@ import org.springframework.stereotype.Service;
 public class InventoryService implements InventoryServiceInterface {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private final AuthServiceInterface authService;
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
 
   /**
    * Instantiates the inventory service.
    *
-   * @param authService        the authentication service used to validate requests
    * @param gameManagerService the game manager service used to find games
    * @param serviceUtils       the utility used by services
    */
-  public InventoryService(@Autowired AuthServiceInterface authService,
-                          @Autowired GameManagerServiceInterface gameManagerService,
+  public InventoryService(@Autowired GameManagerServiceInterface gameManagerService,
                           @Autowired ServiceUtils serviceUtils) {
     this.serviceUtils = serviceUtils;
-    this.authService = authService;
     this.gameManagerService = gameManagerService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
