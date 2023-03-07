@@ -38,6 +38,18 @@ public class PromptsRequests {
   }
 
   /**
+   * Gets the list of all the cards of level two on the board for game with session id.
+   *
+   * @param sessionId sessionId of game.
+   * @return Array of all level 2 cards on board.
+   */
+  public static LevelCard[] getLevelTwoCardsOnBoard(long sessionId) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelTwo", null,
+        LevelCard[].class));
+  }
+
+  /**
    * Get nobles of the player with provided username and session id.
    *
    * @param sessionId Session ID.
@@ -87,6 +99,7 @@ public class PromptsRequests {
    * @param cardMd5      Hash value of the card we're sending.
    * @param authToken    username of player trying to buy card.
    * @param proposedDeal deal proposed by the player.
+   * @return Pair of the response from server, headers and string
    */
   public static Pair<Headers, String> buyCard(long sessionId,
                                               String cardMd5,

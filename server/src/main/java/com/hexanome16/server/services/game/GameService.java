@@ -6,18 +6,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.City;
+import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -73,6 +79,23 @@ public class GameService implements GameServiceInterface {
           CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_SESSION_ID), null);
     }
     return new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK), currentGame);
+  }
+
+  @Override
+  public ResponseEntity<String> getLevelTwoOnBoard(long sessionId) throws JsonProcessingException {
+    Game game = gameManagerService.getGame(sessionId);
+    Deck<ServerLevelCard> levelTwoNormal = game.getOnBoardDecks().get(Level.TWO);
+    Deck<ServerLevelCard> levelTwoRed = game.getOnBoardDecks().get(Level.REDTWO);
+    ArrayList<ServerLevelCard> allLevelTwoCards = new ArrayList<>();
+
+    allLevelTwoCards.addAll(levelTwoNormal.getCardList());
+    allLevelTwoCards.addAll(levelTwoRed.getCardList());
+
+    return CustomResponseFactory
+        .getCustomResponse(CustomHttpResponses.OK,
+            objectMapper.writeValueAsString(allLevelTwoCards.toArray()),
+            null);
+
   }
 
 }

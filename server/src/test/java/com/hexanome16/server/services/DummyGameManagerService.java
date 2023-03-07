@@ -16,7 +16,7 @@ import org.mockito.Mockito;
  * <p>Methods:
  * <pre>
  *   {@link GameManagerService#getGame} returns a game from the list of
- *   {@link GameDummies#validGames} if you pass a {@link DummyAuths#validSessionIds}
+ *   {@link GameDummies} if you pass a {@link DummyAuths#validSessionIds}
  *   and {@link DummyAuths#invalidSessionIds} will return null
  * </pre>
  * <pre>

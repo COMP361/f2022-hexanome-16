@@ -30,7 +30,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The width.
    */
-  protected final double atWidth = getAppWidth() / 2.;
+  protected double atWidth = getAppWidth() / 2.;
   /**
    * The height.
    */
@@ -38,11 +38,11 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The top left x.
    */
-  protected final double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
+  protected double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
   /**
    * The top left y.
    */
-  protected final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
+  protected double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
 
   /**
    * The confirm button.
@@ -202,10 +202,6 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
    */
   protected abstract void handleConfirmation();
 
-
-  protected boolean setCancelable() {
-    return true;
-  }
 
   /**
    * Modifies choicesLayout to contain the desired choices and their behaviour, is also
