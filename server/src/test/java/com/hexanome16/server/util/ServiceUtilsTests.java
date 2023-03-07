@@ -39,7 +39,7 @@ public class ServiceUtilsTests {
   void setup() throws IOException {
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE});
+            new WinCondition[] {WinCondition.BASE}, false, false);
     serviceUtils = new ServiceUtils();
     gameManagerMock = Mockito.mock(GameManagerService.class);
     authServiceMock = new DummyAuthService();
