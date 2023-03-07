@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -13,11 +14,13 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -141,6 +144,13 @@ public class InventoryService implements InventoryServiceInterface {
     // Remove card from the board and add new card
     if (game.removeOnBoardCard(cardToBuy)) {
       game.addOnBoardCard(level);
+    }
+
+    // Receive trade posts
+    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        player.addTradePost(tradePost.getValue());
+      }
     }
 
     // Update long polling
