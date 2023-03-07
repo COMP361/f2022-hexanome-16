@@ -143,7 +143,9 @@ public class PromptComponent extends Component {
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);
     }
-    buildButton();
+    if (atPromptType.isCancelable()) {
+      buildButton();
+    }
   }
 
   // This method is to allow buying card prompt to be functional.

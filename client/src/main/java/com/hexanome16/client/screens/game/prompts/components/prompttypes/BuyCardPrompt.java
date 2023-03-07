@@ -186,6 +186,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     return atHeight;
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
   /**
    * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
    *

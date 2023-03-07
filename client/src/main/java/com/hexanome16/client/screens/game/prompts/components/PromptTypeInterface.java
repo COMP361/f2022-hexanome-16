@@ -48,6 +48,11 @@ public interface PromptTypeInterface {
     }
 
     @Override
+    public boolean isCancelable() {
+      return true;
+    }
+
+    @Override
     public void populatePrompt(Entity entity) {
     }
   };
@@ -109,11 +114,19 @@ public interface PromptTypeInterface {
   double getHeight();
 
   /**
+   * returns true if we want prompt to be cancelable, false otherwise.
+   *
+   * @return true or false.
+   */
+  boolean isCancelable();
+
+  /**
    * Method which populates the prompt with elements specific to the prompt type.
    *
    * @param entity entity associated to the prompt component that called this method.
    */
   void populatePrompt(Entity entity);
+
 
   /**
    * Enum of all the possible types of prompts.
@@ -140,7 +153,7 @@ public interface PromptTypeInterface {
      */
     BUY_CARD(new BuyCardPrompt()),
     /**
-     * Buy cards prompt type.
+     * Reserve Card prompt type.
      * <p><i>Main</i></p>
      */
     RESERVE_CARD(new ReserveCardPrompt()),

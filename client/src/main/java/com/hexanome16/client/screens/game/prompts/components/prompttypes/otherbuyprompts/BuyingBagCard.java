@@ -12,6 +12,10 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCard
  */
 public class BuyingBagCard extends BuyCardPrompt {
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
 
   /**
    * Need to override to have a different image.

@@ -9,6 +9,11 @@ import javafx.scene.layout.HBox;
 public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   @Override
+  public boolean isCancelable() {
+    return false;
+  }
+
+  @Override
   protected boolean setCancelable() {
     return false;
   }
