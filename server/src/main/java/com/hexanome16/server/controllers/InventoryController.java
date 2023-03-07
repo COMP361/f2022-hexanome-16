@@ -39,8 +39,8 @@ public class InventoryController {
    * Controller for the Inventory.
    *
    * @param inventoryServiceInterface controller for the whole game (used for helper)
-   * @param gameManager          the game manager for fetching games
-   * @param serviceUtils         the utility used by services
+   * @param gameManager               the game manager for fetching games
+   * @param serviceUtils              the utility used by services
    */
   public InventoryController(@Autowired InventoryServiceInterface inventoryServiceInterface,
                              @Autowired GameManagerServiceInterface gameManager,
@@ -199,7 +199,7 @@ public class InventoryController {
    * @param accessToken token of the player trying to buy the card.
    * @param purchaseMap PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *     HTTP BAD_REQUEST otherwise.</p>
+   * HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
@@ -243,6 +243,22 @@ public class InventoryController {
       throws JsonProcessingException {
 
     return inventoryService.reserveFaceDownCard(sessionId, level, authenticationToken);
+  }
+
+  /**
+   * Claim noble response entity.
+   *
+   * @param sessionId           the session id
+   * @param nobleMd5            the noble hash
+   * @param authenticationToken player's authentication token
+   * @return HttpStatus.ok if the request completed, an error response otherwise.
+   */
+  @PutMapping(value = {"/games/{sessionId}/{nobleMd5}"})
+  public ResponseEntity<String> claimNoble(@PathVariable long sessionId,
+                                           @PathVariable String nobleMd5,
+                                           @RequestParam String authenticationToken)
+      throws JsonProcessingException {
+    return inventoryService.acquireNoble(sessionId, nobleMd5, authenticationToken);
   }
 
 }
