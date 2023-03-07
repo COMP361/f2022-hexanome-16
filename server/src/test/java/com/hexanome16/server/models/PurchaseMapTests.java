@@ -27,7 +27,7 @@ public class PurchaseMapTests {
    */
   @Test
   public void testAmountOfTokens() {
-    assertEquals(purchaseMap.getTotalGemsNonJokers(), 5);
+    assertEquals(purchaseMap.getTotalNonJokers(), 5);
   }
 
   /**

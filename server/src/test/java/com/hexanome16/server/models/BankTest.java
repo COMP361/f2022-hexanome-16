@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -22,12 +23,22 @@ public class BankTest {
   public PlayerBank playerBank = new PlayerBank();
 
   /**
+   * init.
+   */
+  @BeforeEach
+  public void init() {
+    playerBank = new PlayerBank();
+    gameBank = new GameBank();
+  }
+
+  /**
    * Test game bank default tokens.
    */
   @Test
   public void testGameBankDefaultTokens() {
-    assertTrue(gameBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(7, 7, 7,
-        7, 7, 5)));
+    PurchaseMap pm = new PurchaseMap(8, 8, 8,
+        8, 8, 0);
+    assertTrue(gameBank.toPurchaseMap().canBeUsedToBuy(pm));
   }
 
   /**
@@ -35,7 +46,7 @@ public class BankTest {
    */
   @Test
   public void testPlayerBankDefaultTokens() {
-    assertTrue(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(3, 3, 3,
+    assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(3, 3, 3,
         3, 3, 3)));
   }
 
@@ -55,10 +66,10 @@ public class BankTest {
    */
   @Test
   public void testIncreasePlayerTokens() {
-    playerBank.addGemsToBank(new PurchaseMap(2, 2, 2,
-        2, 2, 2));
-    assertTrue(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(4, 4, 4,
-        4, 4, 4)));
+    playerBank.addGemsToBank(new PurchaseMap(1, 1, 1,
+            1, 1, 0));
+    assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(6, 6, 6,
+        6, 6, 0)));
   }
 
   /**

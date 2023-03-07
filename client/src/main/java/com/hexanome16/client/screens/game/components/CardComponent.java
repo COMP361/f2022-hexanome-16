@@ -50,6 +50,7 @@ public class CardComponent extends Component {
   private boolean fading = false;
   private boolean adding = false;
   private int gridX;
+  private boolean onBoard;
 
   /**
    * Creates a new card fxgl component.
@@ -59,12 +60,15 @@ public class CardComponent extends Component {
    * @param texture  card texture
    * @param priceMap the price of the card
    * @param cardHash MD5 hash of the card
+   * @param onBoard if the card is on board
    */
-  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash) {
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash,
+                       boolean onBoard) {
     this.level = level;
     this.texture = texture;
     this.priceMap = priceMap;
     this.cardHash = cardHash;
+    this.onBoard = onBoard;
   }
 
   /**
@@ -110,7 +114,9 @@ public class CardComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
-    addToMat(getGrid(level));
+    if (onBoard) {
+      addToMat(getGrid(level));
+    }
   }
 
   /**
@@ -193,6 +199,15 @@ public class CardComponent extends Component {
    */
   public String getCardHash() {
     return cardHash;
+  }
+
+  /**
+   * Gets if the card is on board.
+   *
+   * @return the onBoard
+   */
+  public boolean getOnBoard() {
+    return onBoard;
   }
 
 }

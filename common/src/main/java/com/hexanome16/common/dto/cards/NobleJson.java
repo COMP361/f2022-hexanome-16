@@ -1,4 +1,4 @@
-package com.hexanome16.common.dto;
+package com.hexanome16.common.dto.cards;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
@@ -153,8 +155,8 @@ public class InventoryController {
     // get the player (if valid) from the session id and access token
     ServerPlayer player = getValidPlayerByName(sessionId, username);
     // return the reserved level cards in the inventory as a response entity
-    return new ResponseEntity<>(objectMapper.writeValueAsString(
-        player.getInventory().getReservedCards()), HttpStatus.OK);
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
   }
 
   /**
@@ -215,16 +217,16 @@ public class InventoryController {
    *
    * @param sessionId           game session id.
    * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
   public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
                                             @PathVariable String cardMd5,
-                                            @RequestParam String authenticationToken)
+                                            @RequestParam String accessToken)
       throws JsonProcessingException {
-    return inventoryService.reserveCard(sessionId, cardMd5, authenticationToken);
+    return inventoryService.reserveCard(sessionId, cardMd5, accessToken);
   }
 
   /**
@@ -232,17 +234,17 @@ public class InventoryController {
    *
    * @param sessionId           game session id.
    * @param level               deck level.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
   public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                                     @RequestParam String level,
-                                                    @RequestParam String authenticationToken)
+                                                    @RequestParam String accessToken)
       throws JsonProcessingException {
 
-    return inventoryService.reserveFaceDownCard(sessionId, level, authenticationToken);
+    return inventoryService.reserveFaceDownCard(sessionId, level, accessToken);
   }
 
   /**

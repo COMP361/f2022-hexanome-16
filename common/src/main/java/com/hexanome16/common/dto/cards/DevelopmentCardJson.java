@@ -1,4 +1,4 @@
-package com.hexanome16.common.dto;
+package com.hexanome16.common.dto.cards;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
