@@ -29,7 +29,7 @@ public interface InventoryServiceInterface {
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
    * @param authenticationToken username of the player trying to buy the card.
-   * @param proposedDeal         Purchase map denoting player's offer.
+   * @param proposedDeal        Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
@@ -69,4 +69,15 @@ public interface InventoryServiceInterface {
                                              @RequestParam String authenticationToken)
       throws JsonProcessingException;
 
+  /**
+   * Acquire noble response entity.
+   *
+   * @param sessionId           game session id
+   * @param nobleHash           md5 hash of noble
+   * @param authenticationToken player's authentication token
+   * @return HttpStatus.ok if the request is valid, one of our CustomHttp responses otherwise.
+   * @throws JsonProcessingException the json processing exception
+   */
+  ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String authenticationToken)
+      throws JsonProcessingException;
 }
