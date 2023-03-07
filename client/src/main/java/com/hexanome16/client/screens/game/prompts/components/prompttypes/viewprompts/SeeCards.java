@@ -82,6 +82,11 @@ public class SeeCards implements PromptTypeInterface {
   }
 
   @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");

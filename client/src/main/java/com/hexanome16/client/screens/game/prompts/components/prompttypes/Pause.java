@@ -61,6 +61,11 @@ public class Pause implements PromptTypeInterface {
   }
 
   @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     // initiate and set up the buttons' layout
