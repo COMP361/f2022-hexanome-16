@@ -37,7 +37,7 @@ public class TokensController {
    * @return String representation of a list of all the available token types
    * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
-  @GetMapping(value = {"/games/{sessionId}/twoTokens"})
+  @GetMapping(value = "/games/{sessionId}/twoTokens")
   public ResponseEntity<String> availableTwoTokensType(@PathVariable long sessionId)
       throws JsonProcessingException {
     return tokenService.availableTwoTokensType(sessionId);
@@ -51,7 +51,7 @@ public class TokensController {
    * @return String representation of a list of all the available token types
    * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
-  @GetMapping(value = {"/games/{sessionId}/threeTokens"})
+  @GetMapping(value = "/games/{sessionId}/threeTokens")
   public ResponseEntity<String> availableThreeTokensType(@PathVariable long sessionId)
       throws JsonProcessingException {
     return tokenService.availableThreeTokensType(sessionId);
@@ -67,7 +67,7 @@ public class TokensController {
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    */
-  @PutMapping(value = {"/games/{sessionId}/twoTokens"})
+  @PutMapping(value = "/games/{sessionId}/twoTokens")
   public ResponseEntity<String> takeTwoTokens(@PathVariable long sessionId,
                                               @RequestParam String authenticationToken,
                                               @RequestParam String tokenType) {
@@ -90,7 +90,7 @@ public class TokensController {
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    */
-  @PutMapping(value = {"/games/{sessionId}/threeTokens"})
+  @PutMapping(value = "/games/{sessionId}/threeTokens")
   public ResponseEntity<String> takeThreeTokens(@PathVariable long sessionId,
                                                 @RequestParam String authenticationToken,
                                                 @RequestParam String tokenTypeOne,
