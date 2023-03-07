@@ -215,7 +215,11 @@ public class GameScreen {
               }
             }
           }
+          default -> {
+
+          }
         }
+
         break;
       }
     }

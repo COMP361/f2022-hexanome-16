@@ -38,4 +38,13 @@ public interface GameServiceInterface {
    * @return The pair of response and a pair of game and player
    */
   Pair<ResponseEntity<String>, Game> validGame(long sessionId);
+
+  /**
+   * Gets all the cards of level two on the board.
+   *
+   * @param sessionId session Id of the game of interest.
+   * @return Response entity with the list as an array.
+   * @throws JsonProcessingException throws an exception if fail to Json convert.
+   */
+  ResponseEntity<String> getLevelTwoOnBoard(long sessionId) throws JsonProcessingException;
 }

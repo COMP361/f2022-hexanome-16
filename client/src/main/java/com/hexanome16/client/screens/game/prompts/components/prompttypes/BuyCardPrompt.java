@@ -411,7 +411,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
     // TODO : : MAKE NEW PROMPT APPEAR.
     if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
         .equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
-        FXGL.spawn("PromptBox",
+      FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptType.CHOOSE_LEVEL_TWO));
     }
   }

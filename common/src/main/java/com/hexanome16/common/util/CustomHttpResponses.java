@@ -100,7 +100,8 @@ public enum CustomHttpResponses implements BroadcastContent {
   /**
    * Used for indicating that player doesn't have to perform any additional actions.
    */
-  END_OF_TURN("No Further Actions needed", HTTP_OK, Map.of(ActionType.ACTION_TYPE, List.of(ActionType.END_TURN.getMessage())));
+  END_OF_TURN("No Further Actions needed", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.END_TURN.getMessage())));
 
   /**
    * Class for ActionTypes, holds strings used all over the code.

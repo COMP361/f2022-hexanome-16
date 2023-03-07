@@ -139,14 +139,22 @@ public class InventoryService implements InventoryServiceInterface {
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
+    
+    actionUponCardAcquiral(game, player, cardToBuy);
+    
+    return player.peekTopAction();
+  }
+
+  // TODO :: Add this methode everywhere when a card is aquired, (like bought
+  //  or by cascading, not upon reserving a card)
+  private void actionUponCardAcquiral(Game game, ServerPlayer player,
+                                      ServerLevelCard acquiredCard) {
     // ACTION RELATED SHENANIGANS
-    if (cardToBuy.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
       player.addTakeTwoToPerform();
     }
-    // TODO : ADD MORE ACTION
 
     player.addEndTurnToPerform(serviceUtils, game);
-    return player.peekTopAction();
   }
 
   /**
