@@ -53,6 +53,7 @@ public class LevelCard {
   public LevelCard(Level level, int id, int prestigePoint, String texturePath,
                    PriceMap price, BonusType bonusType) {
     this(level, id, prestigePoint, texturePath, price);
+    // TODO: why does this not start face down?
     this.bonusType = bonusType;
   }
 }
