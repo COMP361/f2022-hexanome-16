@@ -21,7 +21,8 @@ import org.junit.jupiter.api.Test;
 public class DtoTest {
 
   private final Game game =
-      Game.create(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE});
+      Game.create(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE},
+          false, false);
 
   private final DeckJson deckJson = new DeckJson(game.getLevelDeck(Level.ONE).getCardList(),
       Level.ONE);

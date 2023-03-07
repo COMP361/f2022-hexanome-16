@@ -5,6 +5,7 @@ import static com.hexanome16.client.screens.game.GameFactory.getLevelCardEntity;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.hexanome16.client.requests.backend.TradePostRequest;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
@@ -20,6 +21,7 @@ import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
@@ -45,6 +47,7 @@ public class GameScreen {
   private static Thread updateCurrentPlayer;
 
   private static String[] usernames;
+  private static String[] usernamesInOrder;
   private static String currentPlayer;
   private static long sessionId = -1;
 
@@ -97,6 +100,7 @@ public class GameScreen {
     };
     updateCurrentPlayerTask.setOnSucceeded(e -> {
       updateCurrentPlayer.interrupt();
+      fetchTradePosts();
       Platform.runLater(() -> {
         currentPlayer = currentPlayerJson.getValue().getUsername();
         System.out.println(currentPlayer);
@@ -116,6 +120,12 @@ public class GameScreen {
     updateCurrentPlayer.start();
   }
 
+  private static void fetchTradePosts() {
+    for (String username : usernamesInOrder) {
+      System.out.println(Arrays.toString(TradePostRequest.getTradePosts(sessionId, username)));
+
+    }
+  }
 
   /**
    * Adds background, mat, cards, nobles, game bank,
@@ -161,6 +171,7 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     }
     usernames = FXGL.getWorldProperties().getValue("players");
+    usernamesInOrder = FXGL.getWorldProperties().getValue("players");
     UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
     PlayerDecks.generateAll(usernames);

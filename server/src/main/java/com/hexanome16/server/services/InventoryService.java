@@ -148,7 +148,9 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Receive trade posts
     for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      System.out.println(tradePost.getKey().name());
       if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        System.out.println("can be taken");
         player.addTradePost(tradePost.getValue());
       }
     }
