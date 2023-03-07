@@ -197,7 +197,7 @@ public class ServerPlayer extends Player {
   /**
    * Adds a trade post to the list.
    *
-   * @param tradePost
+   * @param tradePost the trade post to be added.
    */
   public void addTradePost(TradePost tradePost) {
     tradePosts.put(tradePost.routeType, tradePost);

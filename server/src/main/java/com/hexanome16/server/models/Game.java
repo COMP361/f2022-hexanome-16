@@ -84,8 +84,8 @@ public class Game {
     createOnBoardDecks();
     createOnBoardRedDecks();
     this.tradePosts = new HashMap<>();
-    if(isTradeRoute){
-      for(RouteType route : RouteType.values()){
+    if (isTradeRoute) {
+      for (RouteType route : RouteType.values()) {
         tradePosts.put(route, new TradePost(route));
       }
     }
@@ -133,6 +133,8 @@ public class Game {
    * @param creator       the creator
    * @param savegame      the savegame
    * @param winConditions the win conditions
+   * @param isTradeRoute if trade route expansion
+   * @param isCities if cities expansion
    * @return the game
    */
   @SneakyThrows
