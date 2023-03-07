@@ -280,11 +280,11 @@ public class InventoryService implements InventoryServiceInterface {
     if (!player.canBeVisitedBy(noble)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
     }
-    */
 
     if (!player.addCardToInventory(noble)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
+    */
 
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
