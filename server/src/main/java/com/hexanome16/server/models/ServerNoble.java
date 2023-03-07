@@ -33,7 +33,6 @@ public class ServerNoble extends Noble implements Reservable, Visitable {
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
-    //TODO: add verification once gem bonuses are made
-    throw new NotImplementedException();
+    return inventory.hasAtLeast(cardInfo.price());
   }
 }
