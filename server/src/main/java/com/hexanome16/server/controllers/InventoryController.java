@@ -201,7 +201,7 @@ public class InventoryController {
    * @param accessToken token of the player trying to buy the card.
    * @param purchaseMap PurchaseMap denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   * HTTP BAD_REQUEST otherwise.</p>
+   *      HTTP BAD_REQUEST otherwise.</p>
    * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
@@ -254,6 +254,7 @@ public class InventoryController {
    * @param nobleMd5            the noble hash
    * @param authenticationToken player's authentication token
    * @return HttpStatus.ok if the request completed, an error response otherwise.
+   * @throws JsonProcessingException the json processing exception
    */
   @PutMapping(value = {"/games/{sessionId}/{nobleMd5}"})
   public ResponseEntity<String> claimNoble(@PathVariable long sessionId,
