@@ -1,6 +1,7 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,14 +15,17 @@ import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
+import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
-import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
+import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.io.IOException;
+import java.util.LinkedList;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +58,8 @@ class InventoryServiceTests {
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
             new WinCondition[] {WinCondition.BASE});
 
-    gameManagerMock = Mockito.mock(GameManagerService.class);
-    serviceUtils = new ServiceUtils();
-    when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
-    when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
+    gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
+    serviceUtils = DummyServiceUtils.getDummyServiceUtils();
 
     inventoryService = new InventoryService(new DummyAuthService(), gameManagerMock, serviceUtils);
 
@@ -151,21 +153,24 @@ class InventoryServiceTests {
   public void testBuyCard() throws com.fasterxml.jackson.core.JsonProcessingException {
     // Arrange
     var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createValidCard();
-    Game gameMock = gameManagerMock.getGame(sessionId);
-    serviceUtils.endCurrentPlayersTurn(gameMock);
+    Game gameMock =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
+    String cardHash = "";
 
-    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    gameMock.getRemainingCards().put(
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
-    );
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
+    Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+    when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
+    when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
+    var mapMock = Mockito.mock(BroadcastMap.class);
+    when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
+
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+        inventoryService.buyCard(sessionId, cardHash,
             accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
 
     // Assert
@@ -181,13 +186,10 @@ class InventoryServiceTests {
   public void testBuyInvalidCardInvalidHash() {
     // Arrange
     var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
     // Card is created but not added to deck hash
     ServerLevelCard myCard = createValidCard();
-
-    Game gameMock = gameManagerMock.getGame(sessionId);
-    serviceUtils.endCurrentPlayersTurn(gameMock);
 
     // Act
     ResponseEntity<String> response =
@@ -209,21 +211,18 @@ class InventoryServiceTests {
   public void testBuyInvalidCardInvalidDeal() {
     // Arrange
     var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createValidCard();
-    Game gameMock = gameManagerMock.getGame(sessionId);
-    serviceUtils.endCurrentPlayersTurn(gameMock);
+    Game gameMock =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
+    String cardHash = "";
 
-    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    gameMock.getRemainingCards().put(
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
-    );
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+        inventoryService.buyCard(sessionId, cardHash,
             accessToken, new PurchaseMap(0, 0, 1, 0, 0, 1));
 
     // Assert
@@ -238,21 +237,18 @@ class InventoryServiceTests {
   public void testBuyInvalidCardInsufficientFunds() {
     // Arrange
     var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createTooExpensiveValidCard();
-    Game gameMock = gameManagerMock.getGame(sessionId);
-    serviceUtils.endCurrentPlayersTurn(gameMock);
+    Game gameMock =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
+    String cardHash = "";
 
-    gameMock.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    gameMock.getRemainingCards().put(
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
-    );
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId,
-            DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
+        inventoryService.buyCard(sessionId, cardHash,
             accessToken, new PurchaseMap(20, 1, 1, 0, 0, 1));
 
     // Assert
@@ -268,17 +264,20 @@ class InventoryServiceTests {
   @SneakyThrows
   public void testReserveCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
-    serviceUtils.endCurrentPlayersTurn(validMockGame);
     ServerLevelCard myCard = createValidCard();
-    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    validMockGame.getRemainingCards().put(
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
-    );
+    var requestResponse =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
 
-    ResponseEntity<String> response = inventoryService.reserveCard(sessionId,
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
+    Game gameMock =
+        requestResponse.getRight().getLeft();
+    String cardHash = "";
+
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
+
+    ResponseEntity<String> response =
+        inventoryService.reserveCard(sessionId, cardHash, accessToken);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
@@ -314,14 +313,15 @@ class InventoryServiceTests {
   @Test
   public void testReserveFaceDownCard() throws com.fasterxml.jackson.core.JsonProcessingException {
     final var sessionId = DummyAuths.validSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
-    serviceUtils.endCurrentPlayersTurn(validMockGame);
     ServerLevelCard myCard = createValidCard();
-    validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    validMockGame.getRemainingCards().put(
-        DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
-    );
+    Game gameMock =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
+    Deck<ServerLevelCard> deckMock = Mockito.mock(Deck.class);
+    when(deckMock.nextCard()).thenReturn(myCard);
+    when(gameMock.getOnBoardDeck(any())).thenReturn(deckMock);
+
 
     ResponseEntity<String> response =
         inventoryService.reserveFaceDownCard(sessionId, Level.ONE.name(), accessToken);
@@ -342,12 +342,11 @@ class InventoryServiceTests {
   public void testBuyCardInvalidCard() throws com.fasterxml.jackson.core.JsonProcessingException {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
-    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createValidCard();
 
-    serviceUtils.endCurrentPlayersTurn(validMockGame);
 
     validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
     validMockGame.getRemainingCards().put(
@@ -397,12 +396,11 @@ class InventoryServiceTests {
       throws com.fasterxml.jackson.core.JsonProcessingException {
     final var sessionId = DummyAuths.validSessionIds.get(0);
     final var invalidSessionId = DummyAuths.invalidSessionIds.get(0);
-    final var accessToken = DummyAuths.validTokensInfos.get(1).getAccessToken();
-    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(1).getAccessToken();
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var invalidAccessToken = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createValidCard();
 
-    serviceUtils.endCurrentPlayersTurn(validMockGame);
 
     validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
     validMockGame.getRemainingCards().put(

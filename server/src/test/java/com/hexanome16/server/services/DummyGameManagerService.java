@@ -36,9 +36,9 @@ public class DummyGameManagerService {
 
   private static GameManagerServiceInterface createDummy() {
     GameManagerServiceInterface mock = Mockito.mock(GameManagerService.class);
-    GameDummies gameDummies = new GameDummies();
-    when(mock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(gameDummies.validGames.get(0));
-    when(mock.getGame(DummyAuths.validSessionIds.get(1))).thenReturn(gameDummies.validGames.get(1));
+    var gameDummies = GameDummies.getInstance();
+    when(mock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(gameDummies.get(0));
+    when(mock.getGame(DummyAuths.validSessionIds.get(1))).thenReturn(gameDummies.get(1));
     when(mock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
     when(mock.getGame(DummyAuths.invalidSessionIds.get(1))).thenReturn(null);
 

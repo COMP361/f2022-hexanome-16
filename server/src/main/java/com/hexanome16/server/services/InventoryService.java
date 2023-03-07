@@ -78,8 +78,7 @@ public class InventoryService implements InventoryServiceInterface {
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
                                         PurchaseMap proposedDeal) throws JsonProcessingException {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
-        gameManagerService, authService);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -170,8 +169,7 @@ public class InventoryService implements InventoryServiceInterface {
       throws JsonProcessingException {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
-            authService);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
@@ -226,8 +224,7 @@ public class InventoryService implements InventoryServiceInterface {
                                                     String authenticationToken) {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
-            authService);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -247,6 +244,8 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     ServerLevelCard card = game.getOnBoardDeck(atLevel).nextCard();
+
+    //TODO: check if deck is null
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
