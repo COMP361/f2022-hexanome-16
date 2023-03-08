@@ -597,10 +597,9 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), response.getBody());
   }
 
-  // TODO: TRISTAN PLS FIX THIS SHIT
   /*
    * Test acquire noble not your turn.
-
+   */
   @Test
   @SneakyThrows
   public void testAcquireNobleNotPlayerTurn() {
@@ -616,7 +615,7 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
         response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getBody(), response.getBody());
-  }*/
+  }
 
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
