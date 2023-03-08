@@ -121,13 +121,13 @@ public class GameScreen {
   }
 
   private static void fetchTradePosts() {
-    String[] color = {"Yellow", "Black", "Red", "Blue"};
+    String[] colors = {"Yellow", "Black", "Red", "Blue"};
     // add trade post for each player
     for (Map.Entry<Integer, String> user : usernamesMap.entrySet()) {
       for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId, user.getValue())) {
         switch (tradePost.getRouteType()) {
           case ONYX_ROUTE -> {
-            FXGL.spawn(color[user.getKey()] + "Marker");
+            FXGL.spawn(colors[user.getKey()] + "Marker");
           }
           default -> {
             //todo add other routes
