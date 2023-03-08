@@ -15,7 +15,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Class responsible for sending HTTP requests related to the prompts.
@@ -32,6 +35,18 @@ public class PromptsRequests {
   public static LevelCard[] getCards(long sessionId, String username) {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/inventory/cards", Map.of("username", username),
+        LevelCard[].class));
+  }
+
+  /**
+   * Gets the list of all the cards of level two on the board for game with session id.
+   *
+   * @param sessionId sessionId of game.
+   * @return Array of all level 2 cards on board.
+   */
+  public static LevelCard[] getLevelTwoCardsOnBoard(long sessionId) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelTwo", null,
         LevelCard[].class));
   }
 
@@ -85,14 +100,15 @@ public class PromptsRequests {
    * @param cardMd5      Hash value of the card we're sending.
    * @param authToken    username of player trying to buy card.
    * @param proposedDeal deal proposed by the player.
+   * @return Pair of the response from server, headers and string
    */
-  public static void buyCard(long sessionId,
+  public static Pair<Headers, String> buyCard(long sessionId,
                              String cardMd5,
                              String authToken,
                              PurchaseMap proposedDeal) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/cards/" + cardMd5, Map.of("access_token", authToken),
-        proposedDeal, Void.class));
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5,
+        Map.of("access_token", authToken), proposedDeal, String.class));
   }
 
   /**
@@ -215,6 +231,23 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/threeTokens",
         Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
+        Void.class));
+  }
+
+  /**
+   * Sends a request to take a level two card for free.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param accessToken access token to allow action.
+   * @param chosenCardHash desired card's Hash.
+   * @return server response.
+   */
+  public static Pair<Headers, String> takeLevelTwo(long sessionId, String accessToken,
+                                                   String chosenCardHash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelTwo",
+        Map.of("authenticationToken", accessToken, "chosenCard", chosenCardHash),
         Void.class));
   }
 

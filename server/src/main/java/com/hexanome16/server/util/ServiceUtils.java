@@ -13,15 +13,31 @@ import java.util.Arrays;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Utility class for service.
  */
-@Component
+@Service
 public class ServiceUtils {
+  private final GameManagerServiceInterface gameManagerService;
+  private final AuthServiceInterface authService;
+
+  /**
+   * Instantiates a new Service utils.
+   *
+   * @param gameManagerServiceInterface the game manager service interface
+   * @param authServiceInterface        the auth service interface
+   */
+  public ServiceUtils(@Autowired GameManagerServiceInterface gameManagerServiceInterface,
+                      @Autowired AuthServiceInterface authServiceInterface) {
+    this.gameManagerService = gameManagerServiceInterface;
+    this.authService = authServiceInterface;
+  }
+
   /**
    * Returns HTTPS_OK if game with sessionId exists, if the authToken can be verified,
    * if such an id gives is owned by a real player and if it is that player's turn.
@@ -37,17 +53,13 @@ public class ServiceUtils {
    *
    * @param sessionId          game's identification number.
    * @param authToken          access token.
-   * @param gameManagerService the game manager service used to find games
-   * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
   public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
       long sessionId,
-      String authToken,
-      GameManagerServiceInterface gameManagerService,
-      AuthServiceInterface authService) {
+      String authToken) {
 
-    var response = validRequest(sessionId, authToken, gameManagerService, authService);
+    var response = validRequest(sessionId, authToken);
     if (!response.getLeft().getStatusCode().is2xxSuccessful()) {
       return response;
     }
@@ -79,15 +91,11 @@ public class ServiceUtils {
    *
    * @param sessionId          game's identification number.
    * @param authToken          access token.
-   * @param gameManagerService the game manager service used to find games
-   * @param authService        the authentication service used to validate requests
    * @return The pair of response and a pair of game and player
    */
   public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(
       long sessionId,
-      String authToken,
-      GameManagerServiceInterface gameManagerService,
-      AuthServiceInterface authService) {
+      String authToken) {
     final Game currentGame = gameManagerService.getGame(sessionId);
 
     if (currentGame == null) {
@@ -97,7 +105,7 @@ public class ServiceUtils {
     }
 
     boolean isValidPlayer = authService.verifyPlayer(authToken, currentGame);
-    ServerPlayer requestingPlayer = findPlayerByToken(currentGame, authToken, authService);
+    ServerPlayer requestingPlayer = findPlayerByToken(currentGame, authToken);
 
     if (!isValidPlayer || requestingPlayer == null) {
       return new ImmutablePair<>(
@@ -114,11 +122,9 @@ public class ServiceUtils {
    *
    * @param game        game to search.
    * @param accessToken token associated to player
-   * @param authService the authentication service used to validate requests
    * @return player with that token, null if no such player
    */
-  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken,
-                                        AuthServiceInterface authService) {
+  public ServerPlayer findPlayerByToken(@NonNull Game game, String accessToken) {
     ResponseEntity<String> usernameEntity = authService.getPlayer(accessToken);
 
     String username = usernameEntity.getBody();

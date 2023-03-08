@@ -49,4 +49,8 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
     return PromptsRequests.getAvailableTwoBonuses(promptSessionId);
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
 }

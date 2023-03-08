@@ -224,6 +224,7 @@ public class GameScreen {
           }
           default -> throw new IllegalStateException("Unexpected value: " + level);
         }
+
         break;
       }
     }
@@ -274,5 +275,24 @@ public class GameScreen {
    */
   public static long getSessionId() {
     return sessionId;
+  }
+
+  /**
+   * Returns Hash of a given LevelCard. (ON BOARD)
+   *
+   * @param levelCard card whose hash we want.
+   * @return Hash of card, null of no such card.
+   */
+  public static String getCardHash(LevelCard levelCard) {
+    LevelCard card;
+    for (Level level : Level.values()) {
+      for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
+        card = entry.getValue();
+        if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
+          return entry.getKey();
+        }
+      }
+    }
+    return null;
   }
 }

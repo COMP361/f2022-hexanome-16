@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
@@ -13,12 +14,14 @@ import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.UpdateGameInfo;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -37,6 +40,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * A class responsible for populating Buy card prompt.
@@ -179,6 +184,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
   @Override
   public double getHeight() {
     return atHeight;
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 
   /**
@@ -391,10 +401,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     // sends a request to server telling it purchase information
-    PromptsRequests.buyCard(promptSessionId,
+    Pair<Headers, String> serverResponse = PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         authToken,
         atProposedOffer);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
 

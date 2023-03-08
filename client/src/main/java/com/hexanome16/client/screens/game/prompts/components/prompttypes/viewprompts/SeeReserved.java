@@ -7,7 +7,7 @@ import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.LevelCard;
@@ -47,6 +47,11 @@ public class SeeReserved extends SeeReservedAbstract {
     myCards = AuthUtils.getPlayer().getName().equals(player);
     // add the paths to our list
     cardHashList = response.getCards();
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 
   @Override
@@ -95,7 +100,7 @@ public class SeeReserved extends SeeReservedAbstract {
   private Texture getCardTexture(Map.Entry<String, LevelCard> card) {
     Texture cardTexture = FXGL.texture(card.getValue().getCardInfo().texturePath() + ".png");
     if (myCards) {
-      cardTexture.setOnMouseClicked(e -> OpenPrompt.openPrompt(getCardEntity(card)));
+      cardTexture.setOnMouseClicked(e -> PromptUtils.openPrompt(getCardEntity(card)));
     } else if (card.getValue().isFaceDown()) {
       cardTexture =
           FXGL.texture("level_" + card.getValue().getLevel().name().toLowerCase() + ".png");
@@ -134,7 +139,7 @@ public class SeeReserved extends SeeReservedAbstract {
 
   @Override
   protected void appendBehaviour(Texture t) {
-    t.setOnMouseClicked(e -> OpenPrompt.openPrompt(PromptType.BUYING_RESERVED));
+    t.setOnMouseClicked(e -> PromptUtils.openPrompt(PromptType.BUYING_RESERVED));
   }
 
 }
