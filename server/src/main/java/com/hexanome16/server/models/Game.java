@@ -2,23 +2,14 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.common.dto.cards.BagJson;
 import com.hexanome16.common.dto.cards.CardJson;
-import com.hexanome16.common.dto.cards.CascadeTwoJson;
-import com.hexanome16.common.dto.cards.DoubleJson;
-import com.hexanome16.common.dto.cards.NobleJson;
+import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
-import com.hexanome16.common.models.Noble;
-import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.winconditions.WinCondition;
-import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.io.File;
 import java.io.IOException;
@@ -188,69 +179,33 @@ public class Game {
 
   private void createDecks() throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
-    CardJson[] cardJsonList;
-    try {
-      cardJsonList = objectMapper.readValue(new File("/app/cards.json"), CardJson[].class);
-    } catch (Exception e) {
-      cardJsonList =
-          objectMapper.readValue(new File("./src/main/resources/cards.json"), CardJson[].class);
-    }
-    createBaseLevelDecks(cardJsonList);
-
-    NobleJson[] nobleJsonList;
-    try {
-      nobleJsonList = objectMapper.readValue(new File("/app/nobles.json"), NobleJson[].class);
-    } catch (Exception e) {
-      nobleJsonList =
-          objectMapper.readValue(new File("./src/main/resources/nobles.json"), NobleJson[].class);
-    }
-    createNobleDeck(nobleJsonList);
-
-    BagJson[] bagJsonList;
-    try {
-      bagJsonList = objectMapper.readValue(new File("/app/bag.json"), BagJson[].class);
-    } catch (Exception e) {
-      bagJsonList =
-          objectMapper.readValue(new File("./src/main/resources/bag.json"), BagJson[].class);
-    }
-    createBagDeck(bagJsonList);
-
+    createBaseLevelDecks();
+    createNobleDeck();
+    createBagDeck();
     createGoldDeck();
-
-    DoubleJson[] doubleJsonList;
-    try {
-      doubleJsonList = objectMapper.readValue(new File("/app/double.json"), DoubleJson[].class);
-    } catch (Exception e) {
-      doubleJsonList =
-          objectMapper.readValue(new File("./src/main/resources/double.json"), DoubleJson[].class);
-    }
-    createDoubleDeck(doubleJsonList);
-
+    createDoubleDeck();
     createNobleReserveDeck();
-
     createBagCascadeDeck();
-
     createSacrificeDeck();
-
-    CascadeTwoJson[] cascadeTwoJsonList;
-    try {
-      cascadeTwoJsonList =
-          objectMapper.readValue(new File("/app/cascade_two.json"), CascadeTwoJson[].class);
-    } catch (Exception e) {
-      cascadeTwoJsonList =
-          objectMapper.readValue(new File("./src/main/resources/cascade_two.json"),
-              CascadeTwoJson[].class);
-    }
-    createCascadeTwoDeck(cascadeTwoJsonList);
+    createCascadeTwoDeck();
   }
 
   @SneakyThrows
-  private void createBaseLevelDecks(CardJson[] cardJsonList) {
+  private void createBaseLevelDecks() {
+    DevelopmentCardJson[] cardJsonList;
+    try {
+      cardJsonList = objectMapper.readValue(new File("/app/cards.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      cardJsonList =
+          objectMapper.readValue(new File("./src/main/resources/cards.json"),
+              DevelopmentCardJson[].class);
+    }
     levelDecks.put(Level.ONE, new Deck<>());
     levelDecks.put(Level.TWO, new Deck<>());
     levelDecks.put(Level.THREE, new Deck<>());
     for (int i = 0; i < levelCardsTotal; i++) {
-      CardJson cardJson = cardJsonList[i];
+      DevelopmentCardJson cardJson = cardJsonList[i];
       String textureLevel = i < 40 ? "level_one" : i < 70 ? "level_two" : "level_three";
       Level level = i < 40 ? Level.ONE : i < 70 ? Level.TWO : Level.THREE;
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
@@ -262,11 +217,18 @@ public class Game {
   }
 
   @SneakyThrows
-  private void createNobleDeck(NobleJson[] nobleJsonList) {
+  private void createNobleDeck() {
+    CardJson[] nobleJsonList;
+    try {
+      nobleJsonList = objectMapper.readValue(new File("/app/nobles.json"), CardJson[].class);
+    } catch (Exception e) {
+      nobleJsonList =
+          objectMapper.readValue(new File("./src/main/resources/nobles.json"), CardJson[].class);
+    }
     Deck<ServerNoble> deck = new Deck<>();
-    for (int i = 0; i < 10; i++) {
-      NobleJson nobleJson = nobleJsonList[i];
-      ServerNoble noble = new ServerNoble(i, 3, "noble" + i, nobleJson.getPrice());
+    for (CardJson nobleJson : nobleJsonList) {
+      ServerNoble noble = new ServerNoble(nobleJson.getId(), nobleJson.getPrestigePoint(),
+          "noble" + nobleJson.getId(), nobleJson.getPrice());
       deck.addCard(noble);
       remainingNobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }
@@ -275,14 +237,20 @@ public class Game {
   }
 
   @SneakyThrows
-  private void createBagDeck(BagJson[] bagJsonList) {
+  private void createBagDeck() {
+    DevelopmentCardJson[] bagJsonList;
+    try {
+      bagJsonList = objectMapper.readValue(new File("/app/bag.json"), DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      bagJsonList = objectMapper.readValue(new File("./src/main/resources/bag.json"),
+              DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = new Deck<>();
-    for (int i = 0; i < 4; i++) {
-      BagJson bagJson = bagJsonList[i];
+    for (DevelopmentCardJson bagJson : bagJsonList) {
       ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
-          Level.REDONE);
+          Level.ONE);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -293,15 +261,19 @@ public class Game {
   @SneakyThrows
   @SuppressWarnings("checkstyle:Indentation")
   private void createGoldDeck() {
+    DevelopmentCardJson[] goldJsonList;
+    try {
+      goldJsonList = objectMapper.readValue(new File("/app/gold.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      goldJsonList = objectMapper.readValue(new File("./src/main/resources/gold.json"),
+          DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDONE);
-    int[][] prices =
-        {{3, 0, 0, 0, 0}, {0, 3, 0, 0, 0}, {0, 0, 3, 0, 0}, {0, 0, 0, 3, 0}, {0, 0, 0, 0, 3}};
-    for (int i = 0; i < 4; i++) {
-      PriceMap priceMap =
-          new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      ServerLevelCard gold = new ServerLevelCard(i, 0,
-          "gold" + i,
-          priceMap,
+    for (DevelopmentCardJson goldJson : goldJsonList) {
+      ServerLevelCard gold = new ServerLevelCard(goldJson.getId(), goldJson.getPrestigePoint(),
+          "gold" + goldJson.getId(),
+          goldJson.getPrice(),
           Level.REDONE);
       deck.addCard(gold);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
@@ -311,14 +283,22 @@ public class Game {
   }
 
   @SneakyThrows
-  private void createDoubleDeck(DoubleJson[] doubleJsonList) {
+  private void createDoubleDeck() {
+    DevelopmentCardJson[] doubleJsonList;
+    try {
+      doubleJsonList = objectMapper.readValue(new File("/app/double.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      doubleJsonList =
+          objectMapper.readValue(new File("./src/main/resources/double.json"),
+              DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = new Deck<>();
-    for (int i = 0; i < 4; i++) {
-      DoubleJson doubleJson = doubleJsonList[i];
+    for (DevelopmentCardJson doubleJson : doubleJsonList) {
       ServerLevelCard bag = new ServerLevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
           doubleJson.getPrice(),
-          Level.REDTWO);
+          Level.REDONE);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -328,17 +308,22 @@ public class Game {
 
   @SneakyThrows
   private void createNobleReserveDeck() {
+    DevelopmentCardJson[] nobleReserveList;
+    try {
+      nobleReserveList = objectMapper.readValue(new File("/app/noble_reserve.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      nobleReserveList = objectMapper.readValue(new File("./src/main/resources/noble_reserve.json"),
+          DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
-    int[][] prices = {{2, 2, 2, 0, 2}, {2, 0, 2, 2, 2}, {0, 2, 2, 2, 2}};
-    for (int i = 0; i < 2; i++) {
-      PriceMap priceMap =
-          new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      ServerLevelCard bag = new ServerLevelCard(i, 1,
-          "noble_reserve" + i,
-          priceMap,
-          Level.REDTWO);
-      deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+    for (DevelopmentCardJson nobleReserveJson : nobleReserveList) {
+      ServerLevelCard nobleReserve = new ServerLevelCard(nobleReserveJson.getId(),
+          nobleReserveJson.getPrestigePoint(), "noble_reserve" + nobleReserveJson.getId(),
+          nobleReserveJson.getPrice(), Level.REDTWO);
+      deck.addCard(nobleReserve);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
+          nobleReserve);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
@@ -346,17 +331,22 @@ public class Game {
 
   @SneakyThrows
   private void createBagCascadeDeck() {
+    DevelopmentCardJson[] bagCascadeList;
+    try {
+      bagCascadeList = objectMapper.readValue(new File("/app/bag_cascade.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      bagCascadeList = objectMapper.readValue(new File("./src/main/resources/bag_cascade.json"),
+          DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
-    int[][] prices = {{3, 4, 0, 0, 1}, {0, 0, 3, 4, 1}};
-    for (int i = 0; i < 1; i++) {
-      PriceMap priceMap =
-          new PriceMap(prices[i][0], prices[i][1], prices[i][2], prices[i][3], prices[i][4]);
-      ServerLevelCard bag = new ServerLevelCard(i, 0,
-          "bag_cascade" + i,
-          priceMap,
-          Level.REDTWO);
-      deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+    for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
+      ServerLevelCard bagCascade = new ServerLevelCard(bagCascadeJson.getId(),
+          bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
+          bagCascadeJson.getPrice(), Level.REDTWO);
+      deck.addCard(bagCascade);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
+          bagCascade);
     }
     deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
@@ -364,33 +354,46 @@ public class Game {
 
   @SneakyThrows
   private void createSacrificeDeck() {
+    DevelopmentCardJson[] sacrificeList;
+    try {
+      sacrificeList = objectMapper.readValue(new File("/app/sacrifice.json"),
+          DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      sacrificeList = objectMapper.readValue(new File("./src/main/resources/sacrifice.json"),
+          DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = new Deck<>();
-    Gem[] gems = {Gem.SAPPHIRE, Gem.RUBY, Gem.EMERALD, Gem.ONYX, Gem.DIAMOND};
-    for (int i = 0; i < 4; i++) {
-      PriceMap priceMap = new PriceMap(0, 0, 0, 0, 0);
-      priceMap.addGems(gems[i], 1);
-      ServerLevelCard bag = new ServerLevelCard(i, 3,
-          "sacrifice" + i,
-          priceMap,
-          Level.REDTHREE);
-      deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+    for (DevelopmentCardJson sacrificeJson : sacrificeList) {
+      ServerLevelCard sacrifice = new ServerLevelCard(sacrificeJson.getId(),
+          sacrificeJson.getPrestigePoint(), "sacrifice" + sacrificeJson.getId(),
+          sacrificeJson.getPrice(), Level.REDTHREE);
+      deck.addCard(sacrifice);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(sacrifice)),
+          sacrifice);
     }
     deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
   }
 
   @SneakyThrows
-  private void createCascadeTwoDeck(CascadeTwoJson[] cascadeTwoJsonList) {
+  private void createCascadeTwoDeck() {
+    DevelopmentCardJson[] cascadeTwoJsonList;
+    try {
+      cascadeTwoJsonList =
+          objectMapper.readValue(new File("/app/cascade_two.json"), DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      cascadeTwoJsonList =
+          objectMapper.readValue(new File("./src/main/resources/cascade_two.json"),
+              DevelopmentCardJson[].class);
+    }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTHREE);
-    for (int i = 0; i < 4; i++) {
-      CascadeTwoJson cascadeTwoJson = cascadeTwoJsonList[i];
-      ServerLevelCard bag = new ServerLevelCard(cascadeTwoJson.getId(), 0,
-          "cascade_two" + cascadeTwoJson.getId(),
-          cascadeTwoJson.getPrice(),
-          Level.REDTHREE, LevelCard.BonusType.CASCADING_TWO);
-      deck.addCard(bag);
-      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+    for (DevelopmentCardJson cascadeTwoJson : cascadeTwoJsonList) {
+      ServerLevelCard cascadeTwo = new ServerLevelCard(cascadeTwoJson.getId(),
+          cascadeTwoJson.getPrestigePoint(), "cascade_two" + cascadeTwoJson.getId(),
+          cascadeTwoJson.getPrice(), Level.REDTHREE);
+      deck.addCard(cascadeTwo);
+      remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
+          cascadeTwo);
     }
     //deck.shuffle();
     redDecks.put(Level.REDTHREE, deck);
@@ -722,7 +725,6 @@ public class Game {
     gemIntegerMapPlayer.put(desiredGemThree, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
-
 
 
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////

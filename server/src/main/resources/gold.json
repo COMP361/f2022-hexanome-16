@@ -1,0 +1,67 @@
+[
+  {
+    "id": 0,
+    "level": "REDONE",
+    "bonus": "GOLD",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 1,
+    "level": "REDONE",
+    "bonus": "GOLD",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 2,
+    "level": "REDONE",
+    "bonus": "GOLD",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 3,
+    "level": "REDONE",
+    "bonus": "GOLD",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 3
+    }
+  },
+  {
+    "id": 4,
+    "level": "REDONE",
+    "bonus": "GOLD",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  }
+]
