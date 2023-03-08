@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BagJson extends DevelopmentCardJson implements BroadcastContent {
+public class BagJson extends CardJson implements BroadcastContent {
   private int id;
 
   @JsonIgnore
