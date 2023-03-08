@@ -102,14 +102,13 @@ public class PromptsRequests {
    * @param proposedDeal deal proposed by the player.
    * @return Pair of the response from server, headers and string
    */
-  public static void buyCard(long sessionId,
+  public static Pair<Headers, String> buyCard(long sessionId,
                              String cardMd5,
                              String authToken,
                              PurchaseMap proposedDeal) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/cards/" + cardMd5, Map.of("access_token", authToken),
-        proposedDeal, Void.class));
-
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5,
+        Map.of("access_token", authToken), proposedDeal, String.class));
   }
 
   /**
