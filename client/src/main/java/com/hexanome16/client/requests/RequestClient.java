@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.util.Pair;
 import kong.unirest.core.GetRequest;
+import kong.unirest.core.Header;
+import kong.unirest.core.Headers;
 import kong.unirest.core.HttpRequestWithBody;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
@@ -159,8 +161,9 @@ public class RequestClient {
    * @param request The request to send.
    * @return The response body as String.
    */
-  public static String sendRequestString(Request<?> request) {
+  public static Pair<Headers, String> sendRequestHeadersString(Request<?> request) {
     AtomicReference<String> res = new AtomicReference<>(null);
+    AtomicReference<Headers> headers = new AtomicReference<>(null);
     HttpRequestWithBody req = Unirest.request(request.getMethod().name(),
         request.getDest().getUrl() + request.getPath());
     if (request.getQueryParams() != null) {
@@ -180,6 +183,7 @@ public class RequestClient {
       future.get(TIMEOUT, TimeUnit.SECONDS)
           .ifSuccess(response -> {
             res.set(response.getBody());
+            headers.set(response.getHeaders());
             request.setStatus(response.getStatus());
           })
           .ifFailure(e -> {
@@ -199,9 +203,22 @@ public class RequestClient {
                   : e.getParsingError().get().toString());
             }
           });
-      return res.get();
+      return new Pair<>(headers.get(), res.get());
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       return null;
     }
   }
+
+  /**
+   * Sends a request and returns the response as a string.
+   *
+   * @param request The request to send.
+   * @return The response body as String.
+   */
+  public static String sendRequestString(Request<?> request) {
+    Pair<Headers, String> myPair = sendRequestHeadersString(request);
+    assert myPair != null;
+    return myPair.getValue();
+  }
+
 }

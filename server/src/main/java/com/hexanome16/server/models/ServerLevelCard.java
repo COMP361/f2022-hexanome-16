@@ -25,6 +25,21 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
     super(level, id, prestigePoint, texturePath, price);
   }
 
+  /**
+   * Instantiates a new Level card.
+   *
+   * @param id            the id
+   * @param prestigePoint number of prestige points
+   * @param texturePath   the texture path
+   * @param price         the price
+   * @param level         the level
+   * @param bonusType     the bonus type.
+   */
+  public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceMap price,
+                         Level level, BonusType bonusType) {
+    super(level, id, prestigePoint, texturePath, price, bonusType);
+  }
+
   @Override
   public boolean addToInventory(Inventory inventory) {
     return inventory.acquireCard(this);

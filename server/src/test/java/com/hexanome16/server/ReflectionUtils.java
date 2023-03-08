@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
  * Collection of static reflection utility methods.
  */
 public class ReflectionUtils {
-  //TODO: use where possible
+  // TODO: use where possible
 
   /**
    * Get field of class and make it public.

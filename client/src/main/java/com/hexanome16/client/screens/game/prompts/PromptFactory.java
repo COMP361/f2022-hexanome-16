@@ -57,6 +57,7 @@ public class PromptFactory implements EntityFactory {
 
       return entityBuilder(data)
           .with(new PromptComponent(myPromptType))
+          .at(0, 0, 100)
           .build();
     }
   }

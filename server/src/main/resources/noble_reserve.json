@@ -1,0 +1,41 @@
+[
+  {
+    "id": 0,
+    "level": "REDTWO",
+    "bonus": "DIAMOND",
+    "prestigePoint": 1,
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 2,
+      "EMERALD": 2,
+      "RUBY": 2,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 1,
+    "level": "REDTWO",
+    "bonus": "EMERALD",
+    "prestigePoint": 1,
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 2
+    }
+  },
+  {
+    "id": 2,
+    "level": "REDTWO",
+    "bonus": "RUBY",
+    "prestigePoint": 1,
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 2,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
+  }
+]

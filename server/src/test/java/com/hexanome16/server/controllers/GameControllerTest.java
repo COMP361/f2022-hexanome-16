@@ -8,12 +8,14 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingService;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -157,5 +159,25 @@ class GameControllerTest {
       fail("Mock threw a JsonProcessingException");
     }
   }
+
+  /**
+   * testing get level 2 cards.
+   */
+  @Test
+  @DisplayName("get Level 2 cards on board")
+  void testGetLevelTwoOnBoard() {
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    gameController = new GameController(gameServiceMock,
+        createGameManagerServiceMock(), createLongPollingServiceMock());
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    try {
+      when(gameServiceMock.getLevelTwoOnBoard(DummyAuths.validSessionIds.get(0)))
+          .thenReturn(res);
+      assertEquals(res, gameController.getLevelTwoOnBoard(DummyAuths.validSessionIds.get(0)));
+    } catch (Exception e) {
+      fail("Mockito threw an exception.");
+    }
+  }
 }
+
 
