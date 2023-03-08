@@ -3,7 +3,6 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewpr
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
@@ -95,36 +94,27 @@ public class SeeReserved extends SeeReservedAbstract {
    */
   private Texture getCardTexture(Map.Entry<String, LevelCard> card) {
     Texture cardTexture = FXGL.texture(card.getValue().getCardInfo().texturePath() + ".png");
-    cardTexture.setFitWidth(atCardWidth);
-    cardTexture.setFitHeight(atCardHeight);
     if (myCards) {
       cardTexture.setOnMouseClicked(e -> OpenPrompt.openPrompt(getCardEntity(card)));
+    } else if (card.getValue().isFaceDown()) {
+      cardTexture =
+          FXGL.texture("level_" + card.getValue().getLevel().name().toLowerCase() + ".png");
     }
+    cardTexture.setFitWidth(atCardWidth);
+    cardTexture.setFitHeight(atCardHeight);
     return cardTexture;
   }
 
   @SneakyThrows
   private Entity getCardEntity(Map.Entry<String, LevelCard> card) {
-    if (myCards) {
-      return FXGL.entityBuilder()
-          .view(card.getValue().getCardInfo().texturePath() + ".png")
-          .scale(0.15, 0.15)
-          .with(new CardComponent(card.getValue().getCardInfo().id(), card.getValue().getLevel(),
-              card.getValue().getCardInfo().texturePath() + ".png",
-              card.getValue().getCardInfo().price(),
-              card.getKey(), false))
-          .build();
-    } else if (card.getValue().isFaceDown()) {
-      return FXGL.entityBuilder()
-          .view(card.getValue().getLevel().name().toLowerCase() + ".png")
-          .scale(0.15, 0.15)
-          .build();
-    } else {
-      return FXGL.entityBuilder()
-          .view(card.getValue().getCardInfo().texturePath() + ".png")
-          .scale(0.15, 0.15)
-          .build();
-    }
+    return FXGL.entityBuilder()
+        .view(card.getValue().getCardInfo().texturePath() + ".png")
+        .scale(0.15, 0.15)
+        .with(new CardComponent(card.getValue().getCardInfo().id(), card.getValue().getLevel(),
+            card.getValue().getCardInfo().texturePath() + ".png",
+            card.getValue().getCardInfo().price(),
+            card.getKey(), false))
+        .build();
   }
 
   // *************************************************************

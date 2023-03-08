@@ -1,10 +1,12 @@
 package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Player inventory class.
@@ -75,5 +77,16 @@ public class Inventory {
    */
   public boolean reserveNoble(Noble noble) {
     return reservedNobles.add(noble);
+  }
+
+  /**
+   * Verifies that inventory contains an amount of bonuses.
+   *
+   * @param price minimum amount needed in inventory
+   * @return true if the inventory has at least enough for the price
+   */
+  public boolean hasAtLeast(PriceInterface price) {
+    //TODO: do this
+    throw new NotImplementedException();
   }
 }
