@@ -17,6 +17,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardJson implements BroadcastContent {
+  private int id;
+  private int prestigePoint;
   @JsonProperty("price")
   private PriceMap price;
 
