@@ -11,6 +11,11 @@ import java.util.ArrayList;
 public class ChooseNobleReserve extends NobleChoiceAbstract {
 
   @Override
+  public boolean isCancelable() {
+    return false;
+  }
+
+  @Override
   protected String promptText() {
     return "Reserve a noble";
   }

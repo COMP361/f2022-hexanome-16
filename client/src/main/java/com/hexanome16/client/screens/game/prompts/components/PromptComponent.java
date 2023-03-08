@@ -113,6 +113,11 @@ public class PromptComponent extends Component {
     atButtonAddedHeight = atButtonFontSize / 2.;
   }
 
+  @Override
+  public void onUpdate(double tpf) {
+    entity.setZIndex(100);
+  }
+
   /**
    * Closes all open prompts and fires an Event CustomEvent.CLOSING.
    */
@@ -122,6 +127,7 @@ public class PromptComponent extends Component {
         .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(PromptComponent.class));
     FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.CLOSING));
   }
+
 
   /**
    * Builds prompt and its different parts.
@@ -137,7 +143,9 @@ public class PromptComponent extends Component {
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);
     }
-    buildButton();
+    if (atPromptType.isCancelable()) {
+      buildButton();
+    }
   }
 
   // This method is to allow buying card prompt to be functional.
@@ -216,5 +224,6 @@ public class PromptComponent extends Component {
     entity.getViewComponent().addChild(button);
     ////////////////////////////////////////////////////////////////////////////////////////////////
   }
+
 
 }

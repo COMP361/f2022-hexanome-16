@@ -57,6 +57,10 @@ public class TokenAcquiring implements PromptTypeInterface {
     return atHeight;
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
 
   @Override
   public void populatePrompt(Entity entity) {
@@ -100,6 +104,7 @@ public class TokenAcquiring implements PromptTypeInterface {
     myPrompt.setCenter(myChoices);
     entity.getViewComponent().addChild(myPrompt);
   }
+
 
   // for the second parameter, the longer the text the smaller that fraction needs to be
   private StackPane makeButton(String buttonText,

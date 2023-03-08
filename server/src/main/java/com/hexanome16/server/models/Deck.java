@@ -45,9 +45,10 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * Remove card.
    *
    * @param card the card to be removed.
+   * @return if the card was in the deck.
    */
-  public void removeCard(T card) {
-    cardList.remove(card);
+  public boolean removeCard(T card) {
+    return cardList.remove(card);
   }
 
   /**

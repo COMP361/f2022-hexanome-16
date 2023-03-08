@@ -6,18 +6,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.server.models.Action;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.util.Objects;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,22 +34,18 @@ import org.springframework.stereotype.Service;
 public class InventoryService implements InventoryServiceInterface {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private final AuthServiceInterface authService;
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
 
   /**
    * Instantiates the inventory service.
    *
-   * @param authService        the authentication service used to validate requests
    * @param gameManagerService the game manager service used to find games
    * @param serviceUtils       the utility used by services
    */
-  public InventoryService(@Autowired AuthServiceInterface authService,
-                          @Autowired GameManagerServiceInterface gameManagerService,
+  public InventoryService(@Autowired GameManagerServiceInterface gameManagerService,
                           @Autowired ServiceUtils serviceUtils) {
     this.serviceUtils = serviceUtils;
-    this.authService = authService;
     this.gameManagerService = gameManagerService;
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
@@ -75,10 +74,9 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        PurchaseMap proposedDeal) {
+                                        PurchaseMap proposedDeal) throws JsonProcessingException {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken,
-        gameManagerService, authService);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -90,7 +88,6 @@ public class InventoryService implements InventoryServiceInterface {
     // Fetch the card in question
     ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
-    // TODO test
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
@@ -102,8 +99,6 @@ public class InventoryService implements InventoryServiceInterface {
     if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
     }
-    System.out.println("PLAYER FOUND");
-    System.out.println(player.getName());
 
 
     // Last layer of sanity check, making sure player has enough funds to do the purchase.
@@ -133,12 +128,15 @@ public class InventoryService implements InventoryServiceInterface {
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
 
-    // Remove card from the board
-    game.removeOnBoardCard(cardToBuy);
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
 
     Level level = (cardToBuy).getLevel();
-    // Add new card to the deck
-    game.addOnBoardCard(level);
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
 
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -146,10 +144,22 @@ public class InventoryService implements InventoryServiceInterface {
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
-    // Ends players turn, which is current player
-    serviceUtils.endCurrentPlayersTurn(game);
+    
+    actionUponCardAcquiral(game, player, cardToBuy);
+    
+    return player.peekTopAction();
+  }
 
-    return new ResponseEntity<>(HttpStatus.OK);
+  // TODO :: Add this methode everywhere when a card is aquired, (like bought
+  //  or by cascading, not upon reserving a card)
+  private void actionUponCardAcquiral(Game game, ServerPlayer player,
+                                      ServerLevelCard acquiredCard) {
+    // ACTION RELATED SHENANIGANS
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
+      player.addTakeTwoToPerform();
+    }
+
+    player.addEndTurnToPerform(serviceUtils, game);
   }
 
   /**
@@ -167,8 +177,7 @@ public class InventoryService implements InventoryServiceInterface {
       throws JsonProcessingException {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
-            authService);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
@@ -192,12 +201,11 @@ public class InventoryService implements InventoryServiceInterface {
     // give player a gold token
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
-    //TODO: probably need a check to only remove level cards from board
-
-    // replace this card with a new one on board
-    game.removeOnBoardCard(card);
-    Level level = (card).getLevel();
-    game.addOnBoardCard(level);
+    Level level = card.getLevel();
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(card)) {
+      game.addOnBoardCard(level);
+    }
 
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -223,8 +231,7 @@ public class InventoryService implements InventoryServiceInterface {
                                                     String authenticationToken) {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
-            authService);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -243,7 +250,9 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    ServerLevelCard card = game.getOnBoardDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getLevelDeck(atLevel).removeNextCard();
+
+    //TODO: check if deck is null
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -256,4 +265,80 @@ public class InventoryService implements InventoryServiceInterface {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @SneakyThrows
+  @Override
+  public ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
+                                                 String chosenCard) {
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> left = request.getLeft();
+    if (!left.getStatusCode().is2xxSuccessful()) {
+      return left;
+    }
+
+
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerLevelCard card = game.getCardByHash(chosenCard);
+    if (card == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    ResponseEntity<String> action = player.peekTopAction();
+    String actionType = Objects.requireNonNull(
+        action.getHeaders().get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0);
+    //Makes sure it's the right action.
+    if (!actionType.equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    // remove from board, add to inventory and remove action from queue.
+    game.removeOnBoardCard(card);
+    player.addCardToInventory(card);
+    player.removeTopAction();
+
+    Level level = (card).getLevel();
+    // Add new card to the deck
+    game.addOnBoardCard(level);
+
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
+    );
+
+    actionUponCardAcquiral(game, player, card);
+
+    return player.peekTopAction();
+  }
+
+  @Override
+  public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
+                                             String authenticationToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+    var noble = game.getNobleByHash(nobleHash);
+
+    if (noble == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    //TODO: fix once imad's pr is done
+    /*
+    if (!player.canBeVisitedBy(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+
+    if (!player.addCardToInventory(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    */
+
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+  }
 }

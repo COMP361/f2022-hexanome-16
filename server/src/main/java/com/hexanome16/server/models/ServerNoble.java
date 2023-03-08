@@ -2,6 +2,7 @@ package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceMap;
+import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Noble class.
@@ -22,11 +23,22 @@ public class ServerNoble extends Noble implements Reservable, Visitable {
 
   @Override
   public boolean addToInventory(Inventory inventory) {
+    //TODO: implement
+    /*
+    if (!inventory.hasAtLeast(cardInfo.price())) {
+      return false;
+    }
+    */
     return inventory.acquireNoble(this);
   }
 
   @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveNoble(this);
+  }
+
+  @Override
+  public boolean playerMeetsRequirements(Inventory inventory) {
+    return inventory.hasAtLeast(cardInfo.price());
   }
 }
