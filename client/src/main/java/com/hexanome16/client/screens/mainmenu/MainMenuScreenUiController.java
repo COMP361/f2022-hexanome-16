@@ -131,6 +131,26 @@ public class MainMenuScreenUiController implements UIController {
   }
 
   /**
+   * Mouse hover logout button.
+   *
+   * @param event the event
+   */
+  @FXML
+  void hoverLogoutButton(MouseEvent event) {
+    resize(logoutButton, EXPAND_SIZE);
+  }
+
+  /**
+   * Mouse exit logout button.
+   *
+   * @param event the event
+   */
+  @FXML
+  void exitLogoutButton(MouseEvent event) {
+    resize(logoutButton, NORMAL_SIZE);
+  }
+
+  /**
    * Click logout button.
    *
    * @param event the event
