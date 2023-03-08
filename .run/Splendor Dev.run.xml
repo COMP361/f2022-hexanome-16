@@ -53,6 +53,8 @@
         <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
       </ENTRIES>
     </extension>
-    <method v="2" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Common" run_configuration_type="MavenRunConfiguration" />
+    </method>
   </configuration>
 </component>

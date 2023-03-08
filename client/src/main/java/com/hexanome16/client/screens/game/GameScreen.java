@@ -77,9 +77,11 @@ public class GameScreen {
       }
     };
     updateDeckTask.setOnSucceeded(e -> {
-      updateNobles.interrupt();
-      Platform.runLater(GameScreen::updateNobles);
-      fetchNoblesThread();
+      if (updateNobles != null) {
+        updateNobles.interrupt();
+        Platform.runLater(GameScreen::updateNobles);
+        fetchNoblesThread();
+      }
     });
     updateNobles = new Thread(updateDeckTask);
     updateNobles.setDaemon(true);
@@ -107,9 +109,11 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     });
     updateCurrentPlayerTask.setOnFailed(e -> {
-      updateCurrentPlayer.interrupt();
-      System.out.println(e);
-      fetchCurrentPlayerThread();
+      if (updateCurrentPlayer != null) {
+        updateCurrentPlayer.interrupt();
+        System.out.println(e);
+        fetchCurrentPlayerThread();
+      }
     });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
     updateCurrentPlayer.setDaemon(true);
@@ -124,6 +128,12 @@ public class GameScreen {
    * @param id game id
    */
   public static void initGame(long id) {
+    // This is a hack to make sure that the game on server is initialized before we try to fetch
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     initializeBankGameVars(id);
 
     sessionId = id;
