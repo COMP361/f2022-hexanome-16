@@ -3,7 +3,6 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,34 +11,29 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.Level;
-import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
-import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.ServerNoble;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -474,7 +468,6 @@ public class InventoryServiceTests {
         .takeLevelTwoCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
-
 
 
     MultiValueMap<String, String> badHeaders = new HttpHeaders();
