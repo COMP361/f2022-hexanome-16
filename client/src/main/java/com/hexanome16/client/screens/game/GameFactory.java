@@ -9,6 +9,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
@@ -37,8 +38,7 @@ public class GameFactory implements EntityFactory {
    * The constant matCoordsY.
    */
   public static final int matCoordsY = 150;
-  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-      .loadFont("BrushScriptMT.ttf");
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   /**
    * Returns the entity name for a given level.
@@ -227,7 +227,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level3deck = FXGL.texture("level_three.png");
     myStackPane.getChildren().addAll(level3deck, myNumber);
-
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 155)
         .view(myStackPane)
@@ -250,7 +258,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level2deck = FXGL.texture("level_two.png");
     myStackPane.getChildren().addAll(level2deck, myNumber);
-
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 360)
         .view(myStackPane)
@@ -273,6 +289,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(myStackPane)
@@ -295,6 +320,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("red_level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 565)
         .view(myStackPane)
@@ -316,6 +350,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("red_level_two.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 360)
         .view(myStackPane)
@@ -337,6 +380,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("red_level_three.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 155)
         .view(myStackPane)
@@ -403,6 +455,7 @@ public class GameFactory implements EntityFactory {
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#000000"));
     number.setStyle("-fx-background-color: ffffff00; ");
+
     // pane
     StackPane myToken = new StackPane();
     StackPane.setAlignment(token, Pos.CENTER);
@@ -422,6 +475,9 @@ public class GameFactory implements EntityFactory {
     StackPane stackPane = new StackPane();
     Texture texture = FXGL.texture("setting.png");
     stackPane.getChildren().add(texture);
+    // animation
+    stackPane.setOnMouseEntered(e -> stackPane.setOpacity(0.8));
+    stackPane.setOnMouseExited(e -> stackPane.setOpacity(1.0));
     return FXGL.entityBuilder()
         .view(stackPane)
         .at(10, 10)
