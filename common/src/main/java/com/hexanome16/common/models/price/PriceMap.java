@@ -133,4 +133,16 @@ public class PriceMap implements PriceInterface {
       this.removeGems(entry.getKey(), entry.getValue());
     }
   }
+
+  @Override
+  public boolean hasAtLeastAmountOfGems(PriceInterface priceInterface) {
+    for (var entry : priceMap.entrySet()) {
+      Gem gem = entry.getKey();
+      int value = entry.getValue();
+      if (priceInterface.getGemCost(gem) > value) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

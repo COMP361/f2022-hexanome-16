@@ -34,7 +34,7 @@ public class ServerNobleTest {
   void playerMeetsRequirementsReturnsTrueIfHasAtLeast() {
     // Arrange
     var inventory = Mockito.mock(Inventory.class);
-    when(inventory.hasAtLeast(any())).thenReturn(true);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(true);
 
     // Act
     boolean response = noble.playerMeetsRequirements(inventory);
@@ -47,7 +47,7 @@ public class ServerNobleTest {
   void playerMeetsRequirementsReturnsFalseIfHasNotAtLeast() {
     // Arrange
     var inventory = Mockito.mock(Inventory.class);
-    when(inventory.hasAtLeast(any())).thenReturn(false);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(false);
 
     // Act
     boolean response = noble.playerMeetsRequirements(inventory);

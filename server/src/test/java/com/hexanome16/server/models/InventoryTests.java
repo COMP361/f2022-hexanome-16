@@ -2,14 +2,18 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -110,5 +114,41 @@ public class InventoryTests {
     noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.reserveNoble(noble);
     assertTrue(inventory.getReservedNobles().contains(noble));
+  }
+
+  /**
+   * Test has at least true.
+   */
+  @Test
+  void testHasAtLeastTrue() {
+    // Arrange
+    PriceInterface mockPrice = Mockito.mock(PriceInterface.class);
+
+    //Gem bonuses starts at 0
+    when(mockPrice.getGemCost(any())).thenReturn(0);
+
+    // Act
+    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+
+    // Assert
+    assertTrue(response);
+  }
+
+  /**
+   * Test has at least false.
+   */
+  @Test
+  void testHasAtLeastFalse() {
+    // Arrange
+    PriceInterface mockPrice = Mockito.mock(PriceInterface.class);
+
+    //Gem bonuses starts at 0
+    when(mockPrice.getGemCost(any())).thenReturn(1);
+
+    // Act
+    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+
+    // Assert
+    assertFalse(response);
   }
 }

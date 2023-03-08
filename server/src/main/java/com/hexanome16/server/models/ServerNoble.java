@@ -39,6 +39,6 @@ public class ServerNoble extends Noble implements Reservable, Visitable {
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
-    return inventory.hasAtLeast(cardInfo.price());
+    return inventory.hasAtLeastGivenBonuses(cardInfo.price());
   }
 }
