@@ -1,28 +1,28 @@
 package com.hexanome16.common.dto.cards;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hexanome16.common.models.price.PriceMap;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * For converting json file to level card objects.
- * Only used for creating cards at the start of the game.
+ * For converting json file to noble objects.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardJson extends BonusJson {
-  private String level;
-  private int prestigePoint;
+public class CardJson implements BroadcastContent {
+  @JsonProperty("price")
+  private PriceMap price;
 
   @JsonIgnore
   @Override
   public boolean isEmpty() {
-    return super.isEmpty() && (level == null || level.isBlank());
+    return price == null;
   }
 }

@@ -15,6 +15,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class NobleJson extends DevelopmentCardJson implements BroadcastContent {
+public class NobleJson extends CardJson implements BroadcastContent {
   private int prestigePoint;
 }
