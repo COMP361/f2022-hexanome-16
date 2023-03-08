@@ -31,6 +31,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -308,9 +309,9 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
   }
 
-  // TODO: TRISTAN PLS FIX THIS SHIT
   /*
    * Test reserve face down card.
+   */
   @Test
   public void testReserveFaceDownCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
@@ -320,8 +321,8 @@ public class InventoryServiceTests {
     Game gameMock =
         serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
     Deck<ServerLevelCard> deckMock = Mockito.mock(Deck.class);
-    when(deckMock.nextCard()).thenReturn(myCard);
-    when(gameMock.getOnBoardDeck(any())).thenReturn(deckMock);
+    when(deckMock.removeNextCard()).thenReturn(myCard);
+    when(gameMock.getLevelDeck(any())).thenReturn(deckMock);
 
 
     ResponseEntity<String> response =
@@ -332,7 +333,7 @@ public class InventoryServiceTests {
     response = inventoryService.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-  }*/
+  }
 
   /**
    * Test buy card invalid.
@@ -493,9 +494,14 @@ public class InventoryServiceTests {
     final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
     final var nobleHash = "valid hash";
     final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
-    List<Game> gameDummies = GameDummies.getInstance();
-    Game gameMock = gameDummies.get(0);
-    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    when(playerMock.addCardToInventory(mockNoble)).thenReturn(true);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
     when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
 
     // Act
@@ -518,21 +524,51 @@ public class InventoryServiceTests {
     final var nobleHash = "valid hash";
     final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
 
-    //TODO : fix this when merging imad's pr and test this correctly
-    List<Game> gameDummies = GameDummies.getInstance();
-    Game gameMock = gameDummies.get(0);
-    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(false);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
     when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
-    /*
     assertEquals(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT.getStatus(),
         response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT.getBody(), response.getBody());
-    */
+  }
+
+  /**
+   * Test noble player cannot be added to inventory.
+   */
+  @Test
+  @SneakyThrows
+  public void testNoblePlayerCannotBeAddedToInventory() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    when(playerMock.addCardToInventory(mockNoble)).thenReturn(false);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getStatus(),
+        response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getBody(), response.getBody());
   }
 
   /**
@@ -597,10 +633,9 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(), response.getBody());
   }
 
-  // TODO: TRISTAN PLS FIX THIS SHIT
   /*
    * Test acquire noble not your turn.
-
+   */
   @Test
   @SneakyThrows
   public void testAcquireNobleNotPlayerTurn() {
@@ -616,7 +651,7 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
         response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getBody(), response.getBody());
-  }*/
+  }
 
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
