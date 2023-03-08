@@ -308,9 +308,9 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.BAD_CARD_HASH.getBody(), response.getBody());
   }
 
-  // TODO: TRISTAN PLS FIX THIS SHIT
   /*
    * Test reserve face down card.
+   */
   @Test
   public void testReserveFaceDownCard() {
     final var sessionId = DummyAuths.validSessionIds.get(0);
@@ -320,8 +320,8 @@ public class InventoryServiceTests {
     Game gameMock =
         serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
     Deck<ServerLevelCard> deckMock = Mockito.mock(Deck.class);
-    when(deckMock.nextCard()).thenReturn(myCard);
-    when(gameMock.getOnBoardDeck(any())).thenReturn(deckMock);
+    when(deckMock.removeNextCard()).thenReturn(myCard);
+    when(gameMock.getLevelDeck(any())).thenReturn(deckMock);
 
 
     ResponseEntity<String> response =
@@ -332,7 +332,7 @@ public class InventoryServiceTests {
     response = inventoryService.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-  }*/
+  }
 
   /**
    * Test buy card invalid.
