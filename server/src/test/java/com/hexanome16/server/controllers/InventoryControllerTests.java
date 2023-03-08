@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerService;
@@ -176,4 +177,24 @@ class InventoryControllerTests {
     }
   }
 
+  /**
+   * testing take two card.
+   */
+  @Test
+  @DisplayName("testing take two Card.")
+  void testTakeLevelTwo() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
 }

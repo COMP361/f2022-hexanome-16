@@ -235,4 +235,20 @@ public class PromptsRequests {
         Void.class));
   }
 
+  /**
+   * Sends a request to take a level two card for free.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param accessToken access token to allow action.
+   * @param chosenCardHash desired card's Hash.
+   * @return server response.
+   */
+  public static Pair<Headers, String> takeLevelTwo(long sessionId, String accessToken,
+                                                   String chosenCardHash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelTwo",
+        Map.of("authenticationToken", accessToken, "chosenCard", chosenCardHash),
+        Void.class));
+  }
 }

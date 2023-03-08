@@ -11,6 +11,7 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.server.models.Action;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
@@ -18,6 +19,7 @@ import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -260,5 +262,50 @@ public class InventoryService implements InventoryServiceInterface {
     serviceUtils.endCurrentPlayersTurn(game);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
+                                                 String chosenCard) throws JsonProcessingException {
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> left = request.getLeft();
+    if (!left.getStatusCode().is2xxSuccessful()) {
+      return left;
+    }
+
+
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerLevelCard card = game.getCardByHash(chosenCard);
+    if (card == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    ResponseEntity<String> action = player.peekTopAction();
+    String actionType = Objects.requireNonNull(
+        action.getHeaders().get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0);
+    //Makes sure it's the right action.
+    if (!actionType.equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    // remove from board, add to inventory and remove action from queue.
+    game.removeOnBoardCard(card);
+    player.addCardToInventory(card);
+    player.removeTopAction();
+
+    Level level = (card).getLevel();
+    // Add new card to the deck
+    game.addOnBoardCard(level);
+
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
+    );
+
+    actionUponCardAcquiral(game, player, card);
+
+    return player.peekTopAction();
+  }
+
 
 }

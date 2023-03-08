@@ -1,7 +1,9 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -19,19 +22,27 @@ import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 /**
  * The type Game service tests.
@@ -411,6 +422,71 @@ class InventoryServiceTests {
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
   }
+
+  /**
+   * testing takeLevelTwoCard().
+   *
+   * @throws JsonProcessingException if Json parsing fails.
+   */
+  @Test
+  void testTakeLevelTwoCard() throws JsonProcessingException {
+
+    ServerLevelCard card = createValidCard();
+    MultiValueMap<String, String> goodHeaders = new HttpHeaders();
+    goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
+        List.of(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage()));
+    ResponseEntity<String> goodResponse = new ResponseEntity<>(
+        goodHeaders, HttpStatus.OK);
+    ServerPlayer validplayer = Mockito.mock(ServerPlayer.class);
+    Game game = Mockito.mock(Game.class);
+    String cardHash = DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
+
+    when(serviceUtils.validRequestAndCurrentTurn(123, "testingToken"))
+        .thenReturn(
+            new ImmutablePair<>(goodResponse,
+                new ImmutablePair<>(game, validplayer)));
+    when(validplayer.peekTopAction())
+        .thenReturn(goodResponse);
+    when(game.getCardByHash(cardHash)).thenReturn(card);
+    when(game.getOnBoardDeck(card.getLevel())).thenReturn(new Deck<>());
+    var mapMock = Mockito.mock(BroadcastMap.class);
+    when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
+
+    ResponseEntity<String> response = inventoryService
+        .takeLevelTwoCard(123, "testingToken",
+            cardHash);
+    assertEquals(goodResponse, response);
+
+    ResponseEntity<String> badRequest = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    when(serviceUtils.validRequestAndCurrentTurn(1234, "bad"))
+        .thenReturn(new ImmutablePair<>(
+            badRequest,
+            new ImmutablePair<>(null, null)));
+
+    response = inventoryService.takeLevelTwoCard(1234,
+        "bad", cardHash);
+    assertEquals(badRequest, response);
+
+    when(game.getCardByHash(cardHash)).thenReturn(null);
+    response = inventoryService
+        .takeLevelTwoCard(123, "testingToken",
+            cardHash);
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+
+
+    MultiValueMap<String, String> badHeaders = new HttpHeaders();
+    badHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
+        List.of(CustomHttpResponses.ActionType.END_TURN.getMessage()));
+    when(validplayer.peekTopAction())
+        .thenReturn(new ResponseEntity<>(badHeaders, HttpStatus.BAD_REQUEST));
+    when(game.getCardByHash(cardHash)).thenReturn(card);
+    response = inventoryService
+        .takeLevelTwoCard(123, "testingToken",
+            cardHash);
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+  }
+
 
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);

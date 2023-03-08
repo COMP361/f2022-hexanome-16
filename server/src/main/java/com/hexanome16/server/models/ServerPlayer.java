@@ -152,9 +152,10 @@ public class ServerPlayer extends Player {
   }
 
   /**
-   * Gets and remove top most action in the action queue of the player.
+   * Gets but doesn't remove top most action in the action queue of the player.
    *
    * @return Response entity with information on the action that needs to performed by player.
+   * @throws NullPointerException if queue is empty.
    * @throws JsonProcessingException exception.
    */
   public ResponseEntity<String> peekTopAction() throws JsonProcessingException {
@@ -208,6 +209,13 @@ public class ServerPlayer extends Player {
       queueOfCascadingActionTypes.remove();
       return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
     });
+  }
+
+  /**
+   * Removes the top action from the queue.
+   */
+  public void removeTopAction() {
+    queueOfCascadingActionTypes.poll();
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////

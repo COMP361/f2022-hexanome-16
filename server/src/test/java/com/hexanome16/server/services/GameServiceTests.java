@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -95,6 +96,21 @@ class GameServiceTests {
 
     assertTrue(response.getStatusCode().is4xxClientError());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(), response.getBody());
+  }
+
+  /**
+   * testing get level two on board.
+   *
+   * @throws JsonProcessingException if json fails.
+   */
+  @Test
+  public void testGetLevelTwoOnBoard() throws JsonProcessingException {
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+    ResponseEntity<String> response =
+        gameService.getLevelTwoOnBoard(validSessionId);
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    LevelCard[] body = objectMapper.readValue(response.getBody(), LevelCard[].class);
+    assertEquals(6, body.length);
   }
 
 }

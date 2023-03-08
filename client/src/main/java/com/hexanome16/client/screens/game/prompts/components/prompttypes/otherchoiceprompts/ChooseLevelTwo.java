@@ -8,8 +8,12 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePromptAbstract;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +24,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * Prompt for Choosing level two card.
@@ -79,7 +85,14 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   @Override
   protected void handleConfirmation() {
-    // TODO : SENT CARD CHOICE TO SERVER
+    LevelCard chosenCard = levelTwoCards.get(chosenNobleIndex);
+    String hash = GameScreen.getCardHash(chosenCard);
+    PromptComponent.closePrompts();
+    long sessionId = GameScreen.getSessionId();
+    String accessToken = AuthUtils.getAuth().getAccessToken();
+    Pair<Headers, String> serverResponse = PromptsRequests
+        .takeLevelTwo(sessionId, accessToken, hash);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   @Override

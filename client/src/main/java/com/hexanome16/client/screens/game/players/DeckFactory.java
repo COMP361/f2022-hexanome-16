@@ -10,7 +10,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
@@ -120,7 +120,7 @@ public class DeckFactory implements EntityFactory {
         .scale(0.25, 0.25)
         .onClick(e -> {
           SeeCards.fetchCards(player);
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -148,7 +148,7 @@ public class DeckFactory implements EntityFactory {
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.2, 0.2)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS))
         .build();
   }
 
@@ -280,7 +280,7 @@ public class DeckFactory implements EntityFactory {
         .scale(0.07, 0.07)
         .onClick(e -> {
           SeeReserved.fetchReservedCards(player);
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_RESERVED);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_RESERVED);
         })
         .build();
   }
