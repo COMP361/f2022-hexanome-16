@@ -70,6 +70,17 @@ public interface InventoryServiceInterface {
       throws JsonProcessingException;
 
   /**
+   * Takes a card of level two if allowed to.
+   *
+   * @param sessionId Id of game.
+   * @param authenticationToken token of requesting player.
+   * @param chosenCard chosen card's hash
+   * @return Response Entity with the next action that needs to be done.
+   */
+  ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
+                                          String chosenCard);
+
+  /**
    * Acquire noble response entity.
    *
    * @param sessionId           game session id

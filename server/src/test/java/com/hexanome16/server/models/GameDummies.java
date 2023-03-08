@@ -15,16 +15,17 @@ public class GameDummies {
   /**
    * List of valid games.
    */
-  public final List<Game> validGames;
-  /**
-   * List of invalid games.
-   */
-  public final List<Game> invalidGames;
+  private static List<Game> validGames;
 
   /**
    * Initialize Game mocks.
+   *
+   * @return a list of valid games
    */
-  public GameDummies() {
+  public static List<Game> getInstance() {
+    if (validGames != null) {
+      return validGames;
+    }
     Game validGame1 = Mockito.mock(Game.class);
     when(validGame1.getPlayers()).thenReturn(PlayerDummies.validDummies);
     when(validGame1.getCurrentPlayer()).thenReturn(PlayerDummies.validDummies[0]);
@@ -35,18 +36,7 @@ public class GameDummies {
     when(validGame2.getCurrentPlayer()).thenReturn(PlayerDummies.validDummies[0]);
     when(validGame2.getCurrentPlayerIndex()).thenReturn(0);
     doReturn(false).when(validGame2).isNotPlayersTurn(eq(PlayerDummies.validDummies[0]));
-    Game invalidGame1 = Mockito.mock(Game.class);
-    when(invalidGame1.getPlayers()).thenReturn(PlayerDummies.validDummies);
-    when(invalidGame1.getCurrentPlayer()).thenReturn(PlayerDummies.validDummies[0]);
-    when(invalidGame1.getCurrentPlayerIndex()).thenReturn(0);
-    doReturn(false).when(invalidGame1).isNotPlayersTurn(eq(PlayerDummies.validDummies[0]));
-    Game invalidGame2 = Mockito.mock(Game.class);
-    when(invalidGame2.getPlayers()).thenReturn(PlayerDummies.validDummies);
-    when(invalidGame2.getCurrentPlayer()).thenReturn(PlayerDummies.validDummies[0]);
-    when(invalidGame2.getCurrentPlayerIndex()).thenReturn(0);
-    doReturn(false).when(invalidGame2).isNotPlayersTurn(eq(PlayerDummies.validDummies[0]));
-
     validGames = List.of(validGame1, validGame2);
-    invalidGames = List.of(invalidGame1, invalidGame2);
+    return validGames;
   }
 }

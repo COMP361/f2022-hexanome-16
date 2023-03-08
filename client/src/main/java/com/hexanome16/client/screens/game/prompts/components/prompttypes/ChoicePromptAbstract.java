@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.geometry.Pos;
@@ -29,7 +30,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The width.
    */
-  protected final double atWidth = getAppWidth() / 2.;
+  protected double atWidth = getAppWidth() / 2.;
   /**
    * The height.
    */
@@ -37,11 +38,11 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The top left x.
    */
-  protected final double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
+  protected double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
   /**
    * The top left y.
    */
-  protected final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
+  protected double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
 
   /**
    * The confirm button.
@@ -131,6 +132,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
+
   // Helpers
   private void initiatePane(Pane myPrompt) {
     myPrompt.setTranslateX(atTopLeftX);
@@ -199,6 +201,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
    * (Use PromptComponent.closePrompts() to do so)
    */
   protected abstract void handleConfirmation();
+
 
   /**
    * Modifies choicesLayout to contain the desired choices and their behaviour, is also

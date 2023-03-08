@@ -80,9 +80,11 @@ public class GameScreen {
       }
     };
     updateDeckTask.setOnSucceeded(e -> {
-      updateNobles.interrupt();
-      Platform.runLater(GameScreen::updateNobles);
-      fetchNoblesThread();
+      if (updateNobles != null) {
+        updateNobles.interrupt();
+        Platform.runLater(GameScreen::updateNobles);
+        fetchNoblesThread();
+      }
     });
     updateNobles = new Thread(updateDeckTask);
     updateNobles.setDaemon(true);
@@ -111,9 +113,11 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     });
     updateCurrentPlayerTask.setOnFailed(e -> {
-      updateCurrentPlayer.interrupt();
-      System.out.println(e);
-      fetchCurrentPlayerThread();
+      if (updateCurrentPlayer != null) {
+        updateCurrentPlayer.interrupt();
+        System.out.println(e);
+        fetchCurrentPlayerThread();
+      }
     });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
     updateCurrentPlayer.setDaemon(true);
@@ -144,6 +148,12 @@ public class GameScreen {
    * @param id game id
    */
   public static void initGame(long id) {
+    // This is a hack to make sure that the game on server is initialized before we try to fetch
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     initializeBankGameVars(id);
 
     sessionId = id;
@@ -194,7 +204,15 @@ public class GameScreen {
 
   // puts values necessary for game bank in the world properties
   private static void initializeBankGameVars(long id) {
-    PurchaseMap gameBank = PromptsRequests.getGameBankInfo(id);
+    PurchaseMap gameBank = null;
+    while (gameBank == null) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      gameBank = PromptsRequests.getGameBankInfo(id);
+    }
     for (Map.Entry<Gem, Integer> gemEntry : gameBank.getPriceMap().entrySet()) {
       FXGL.getWorldProperties().setValue(id + gemEntry.getKey().name(), gemEntry.getValue());
     }
@@ -250,6 +268,7 @@ public class GameScreen {
           }
           default -> throw new IllegalStateException("Unexpected value: " + level);
         }
+
         break;
       }
     }
@@ -300,5 +319,24 @@ public class GameScreen {
    */
   public static long getSessionId() {
     return sessionId;
+  }
+
+  /**
+   * Returns Hash of a given LevelCard. (ON BOARD)
+   *
+   * @param levelCard card whose hash we want.
+   * @return Hash of card, null of no such card.
+   */
+  public static String getCardHash(LevelCard levelCard) {
+    LevelCard card;
+    for (Level level : Level.values()) {
+      for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
+        card = entry.getValue();
+        if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
+          return entry.getKey();
+        }
+      }
+    }
+    return null;
   }
 }

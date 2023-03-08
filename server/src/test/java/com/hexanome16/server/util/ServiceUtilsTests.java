@@ -4,17 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
-import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.DummyGameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,25 +24,20 @@ public class ServiceUtilsTests {
   // fields
   private Game validMockGame;
   private ServiceUtils serviceUtils;
-  private GameManagerServiceInterface gameManagerMock;
-  private AuthServiceInterface authServiceMock;
+
+  private GameManagerServiceInterface gameManagerServiceInterface;
 
   /**
    * Sets .
-   *
-   * @throws JsonProcessingException the json processing exception
    */
   @BeforeEach
-  void setup() throws IOException {
+  void setup() {
+    gameManagerServiceInterface = DummyGameManagerService.getDummyGameManagerService();
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, false, false);
-    serviceUtils = new ServiceUtils();
-    gameManagerMock = Mockito.mock(GameManagerService.class);
-    authServiceMock = new DummyAuthService();
-    when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
-    when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
-
+            new WinCondition[] {WinCondition.BASE}, true, false);
+    serviceUtils = new ServiceUtils(gameManagerServiceInterface,
+        new DummyAuthService());
   }
 
   /**
@@ -77,7 +69,7 @@ public class ServiceUtilsTests {
   @Test
   void testFindPlayerByToken() {
     var player = this.serviceUtils.findPlayerByToken(validMockGame,
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), authServiceMock);
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(DummyAuths.validPlayerList.get(0).getName(), player.getName());
     assertEquals(DummyAuths.validPlayerList.get(0).getPreferredColour(),
         player.getPreferredColour());
@@ -90,7 +82,7 @@ public class ServiceUtilsTests {
   void testFindPlayerByTokenInvalid() {
     //Test invalid player
     var player = this.serviceUtils.findPlayerByToken(validMockGame,
-        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), authServiceMock);
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertNull(player);
   }
 
@@ -100,42 +92,45 @@ public class ServiceUtilsTests {
   @Test
   public void testValidRequestAndCurrentTurn() {
     // Arrange
-    Game gameMock = Mockito.mock(Game.class);
+    Game gameMock = gameManagerServiceInterface.getGame(DummyAuths.validSessionIds.get(0));
     when(gameMock.isNotPlayersTurn(PlayerDummies.validDummies[0])).thenReturn(false);
     when(gameMock.isNotPlayersTurn(PlayerDummies.validDummies[1])).thenReturn(true);
 
     // bad sessionId
     var response = this.serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode().value());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(),
+        response.getLeft().getBody());
 
     // good sessionId but bad player
     response = this.serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getLeft().getStatusCode().value());
+    assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getBody(),
+        response.getLeft().getBody());
 
     // good sessionId and valid token but isn't their turn
     response = this.serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(1).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.validTokensInfos.get(1).getAccessToken());
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
         response.getLeft().getStatusCode().value());
+    assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getBody(),
+        response.getLeft().getBody());
 
     // bad sessionId and token
     response = this.serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(1).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.invalidTokensInfos.get(1).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode().value());
+    assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getBody(),
+        response.getLeft().getBody());
 
     // good sessionId and valid token + is their turn
     response = this.serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
   }
 
@@ -151,29 +146,25 @@ public class ServiceUtilsTests {
 
     // bad sessionId
     var response = this.serviceUtils.validRequest(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode().value());
 
     // good sessionId but bad player
     response = this.serviceUtils.validRequest(DummyAuths.validSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getLeft().getStatusCode().value());
 
     // bad sessionId and token
     response = this.serviceUtils.validRequest(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(1).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.invalidTokensInfos.get(1).getAccessToken());
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getLeft().getStatusCode().value());
 
     // good sessionId and valid token
     response = this.serviceUtils.validRequest(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), this.gameManagerMock,
-        this.authServiceMock);
+        DummyAuths.validTokensInfos.get(0).getAccessToken());
     assertEquals(HttpStatus.OK, response.getLeft().getStatusCode());
   }
 }
