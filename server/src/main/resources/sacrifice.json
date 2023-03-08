@@ -1,0 +1,67 @@
+[
+  {
+    "id": 0,
+    "level": "REDTHREE",
+    "bonus": "EMERALD",
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 1,
+    "level": "REDTHREE",
+    "bonus": "ONYX",
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 2,
+    "level": "REDTHREE",
+    "bonus": "RUBY",
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 3,
+    "level": "REDTHREE",
+    "bonus": "DIAMOND",
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 4,
+    "level": "REDTHREE",
+    "bonus": "SAPPHIRE",
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  }
+]

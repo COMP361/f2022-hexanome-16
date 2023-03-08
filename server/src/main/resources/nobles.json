@@ -1,5 +1,6 @@
 [
   {
+    "id": 0,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
@@ -10,6 +11,7 @@
     }
   },
   {
+    "id": 1,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
@@ -20,6 +22,7 @@
     }
   },
   {
+    "id": 2,
     "prestigePoint": 3,
     "price": {
       "ONYX": 4,
@@ -30,6 +33,7 @@
     }
   },
   {
+    "id": 3,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
@@ -40,6 +44,7 @@
     }
   },
   {
+    "id": 4,
     "prestigePoint": 3,
     "price": {
       "ONYX": 3,
@@ -50,6 +55,7 @@
     }
   },
   {
+    "id": 5,
     "prestigePoint": 3,
     "price": {
       "ONYX": 3,
@@ -60,6 +66,7 @@
     }
   },
   {
+    "id": 6,
     "prestigePoint": 3,
     "price": {
       "ONYX": 3,
@@ -70,6 +77,7 @@
     }
   },
   {
+    "id": 7,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
@@ -80,6 +88,7 @@
     }
   },
   {
+    "id": 8,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
@@ -90,6 +99,7 @@
     }
   },
   {
+    "id": 9,
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,

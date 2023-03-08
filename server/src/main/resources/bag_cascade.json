@@ -1,0 +1,28 @@
+[
+  {
+    "id": 0,
+    "level": "REDTWO",
+    "bonus": "RUBY",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 1,
+    "level": "REDTWO",
+    "bonus": "RUBY",
+    "prestigePoint": 0,
+    "price": {
+      "ONYX": 1,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
+  }
+]
