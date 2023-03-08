@@ -251,5 +251,5 @@ public class PromptsRequests {
         Void.class));
   }
 
-  //TODO: add acquire noble endpoint
+  // TODO: add acquire noble endpoint
 }
