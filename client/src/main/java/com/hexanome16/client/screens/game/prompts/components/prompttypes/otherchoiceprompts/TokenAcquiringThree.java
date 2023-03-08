@@ -100,4 +100,9 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
     return wholeButton;
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
 }

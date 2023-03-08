@@ -41,7 +41,6 @@ public class TokenServiceTests {
   private DummyAuthService dummyAuthService;
   private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
-  @Mock
   private final ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
 
   /**
@@ -99,17 +98,17 @@ public class TokenServiceTests {
    */
   @Test
   public void testTakeTwo() {
-    Game validGame = new GameDummies().validGames.get(0);
+    Game validGame = GameDummies.getInstance().get(0);
     ServerPlayer validPlayer = PlayerDummies.validDummies[0];
     // INVALID REQUEST MOCK
     when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
         .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
             new ImmutablePair<>(null, null)));
 
     // VALID REQUEST BUT CANT TAKE TWO OF TOKEN MOCK
     when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        DummyAuths.validTokensInfos.get(0).getAccessToken()))
         .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
             new ImmutablePair<>(validGame, validPlayer)));
     when(validGame.allowedTakeTwoOf(Gem.RUBY)).thenReturn(false);
@@ -144,21 +143,21 @@ public class TokenServiceTests {
       System.out.println("null1");
     }
     if (serviceUtils.validRequest(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService)
+        DummyAuths.validTokensInfos.get(0).getAccessToken())
         == null) {
       System.out.println("null2");
     }
-    Game validGame = new GameDummies().validGames.get(0);
+    Game validGame = GameDummies.getInstance().get(0);
     ServerPlayer validPlayer = PlayerDummies.validDummies[0];
     // INVALID REQUEST MOCK
     when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
-        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
         .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
             new ImmutablePair<>(null, null)));
 
     // VALID REQUEST BUT CANT TAKE THREE OF TOKEN MOCK
     when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
-        DummyAuths.validTokensInfos.get(0).getAccessToken(), gameManagerMock, dummyAuthService))
+        DummyAuths.validTokensInfos.get(0).getAccessToken()))
         .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
             new ImmutablePair<>(validGame, validPlayer)));
     when(validGame.allowedTakeThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.ONYX)).thenReturn(false);
