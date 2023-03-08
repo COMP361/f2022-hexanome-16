@@ -3,7 +3,7 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherb
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 
@@ -40,7 +40,7 @@ public class BuyingBagCard extends BuyCardPrompt {
     if (atCardEntity != null) {
       FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, atCardEntity));
     }
-    OpenPrompt.openPrompt(PromptType.ASSOCIATE_BAG_CARD);
+    PromptUtils.openPrompt(PromptType.ASSOCIATE_BAG_CARD);
   }
 
 }

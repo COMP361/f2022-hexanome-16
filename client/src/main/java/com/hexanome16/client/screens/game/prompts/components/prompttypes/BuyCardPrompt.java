@@ -14,7 +14,7 @@ import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.UpdateGameInfo;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
@@ -406,14 +406,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         authToken,
         atProposedOffer);
-    Headers headers = serverResponse.getKey();
-
-    // TODO : : MAKE NEW PROMPT APPEAR.
-    if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
-        .equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
-      FXGL.spawn("PromptBox",
-            new SpawnData().put("promptType", PromptType.CHOOSE_LEVEL_TWO));
-    }
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
 

@@ -2,7 +2,7 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherb
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.screens.game.components.CardComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 
@@ -39,7 +39,7 @@ public class BuyReserveNobleCard extends BuyCardPrompt {
     if (atCardEntity != null) {
       FXGL.getEventBus().fireEvent(new SplendorEvents(SplendorEvents.BOUGHT, atCardEntity));
     }
-    OpenPrompt.openPrompt(PromptType.CHOOSE_NOBLE_TO_RESERVE);
+    PromptUtils.openPrompt(PromptType.CHOOSE_NOBLE_TO_RESERVE);
   }
 
 }

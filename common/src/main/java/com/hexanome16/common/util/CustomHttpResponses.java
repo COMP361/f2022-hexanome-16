@@ -74,6 +74,11 @@ public enum CustomHttpResponses implements BroadcastContent {
       HTTP_INTERNAL_ERROR),
 
   /**
+   * Used when an action is requested but not at the top of the action queue.
+   */
+  ILLEGAL_ACTION("Not allowed to perform action", HTTP_BAD_REQUEST),
+
+  /**
    * Used for indicating that player must choose a noble.
    * <p>
    * Only use with CustomResponse to pass in list of nobles in body.

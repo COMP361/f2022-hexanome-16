@@ -245,4 +245,21 @@ public class InventoryController {
     return inventoryService.reserveFaceDownCard(sessionId, level, authenticationToken);
   }
 
+  /**
+   * Takes a level two card.
+   *
+   * @param sessionId session Id.
+   * @param authenticationToken auth token.
+   * @param chosenCard chosen card's md5.
+   * @return information on next action or invalid request message.
+   * @throws JsonProcessingException exception if json processing fails.
+   */
+  @PutMapping(value = {"/games/{sessionId}/board/cards/levelTwo"})
+  public ResponseEntity<String> takeLevelTwoCard(@PathVariable long sessionId,
+                                                 @RequestParam String authenticationToken,
+                                                 @RequestParam String chosenCard)
+      throws JsonProcessingException {
+    return inventoryService.takeLevelTwoCard(sessionId, authenticationToken, chosenCard);
+  }
+
 }

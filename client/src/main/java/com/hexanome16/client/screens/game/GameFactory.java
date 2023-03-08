@@ -11,7 +11,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PriceMap;
@@ -177,7 +177,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 710, matCoordsY + 155, 50)
         .view("sacrificecard.png")
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS))
         .build();
   }
 
@@ -193,7 +193,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 710, matCoordsY + 360, 50)
         .view("noblereserve.png")
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD))
         .build();
   }
 
@@ -209,7 +209,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 710, matCoordsY + 565, 50)
         .view("bagcard.png")
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD))
         .build();
   }
 
@@ -232,7 +232,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 155)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(Level.THREE))
+        .onClick(e -> PromptUtils.openPrompt(Level.THREE))
         .build();
   }
 
@@ -255,7 +255,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 360)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(Level.TWO))
+        .onClick(e -> PromptUtils.openPrompt(Level.TWO))
         .build();
   }
 
@@ -277,7 +277,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> OpenPrompt.openPrompt(Level.ONE))
+        .onClick(e -> PromptUtils.openPrompt(Level.ONE))
         .build();
   }
 
@@ -380,7 +380,7 @@ public class GameFactory implements EntityFactory {
     return FXGL.entityBuilder()
         .at(getAppWidth() - 280, 10)
         .view(mytokens)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING))
         .build();
   }
 
@@ -426,7 +426,7 @@ public class GameFactory implements EntityFactory {
         .view(stackPane)
         .at(10, 10)
         .scale(0.1, 0.1)
-        .onClick(e -> OpenPrompt.openPrompt(PromptTypeInterface.PromptType.PAUSE))
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.PAUSE))
         .build();
   }
 

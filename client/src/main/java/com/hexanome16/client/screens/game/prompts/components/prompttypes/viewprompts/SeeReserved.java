@@ -6,7 +6,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
@@ -122,7 +122,7 @@ public class SeeReserved extends SeeReservedAbstract {
 
   @Override
   protected void appendBehaviour(Texture t) {
-    t.setOnMouseClicked(e -> OpenPrompt.openPrompt(PromptType.BUYING_RESERVED));
+    t.setOnMouseClicked(e -> PromptUtils.openPrompt(PromptType.BUYING_RESERVED));
   }
 
 }
