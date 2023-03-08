@@ -5,6 +5,7 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -72,10 +73,10 @@ public class PromptsRequests {
    * @return PurchaseMap representation of the player's funds as a String
    * @author Elea
    */
-  public static LevelCard[] getReservedCards(long sessionId, String username, String accessToken) {
+  public static DeckJson getReservedCards(long sessionId, String username, String accessToken) {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/inventory/reservedCards",
-        Map.of("username", username, "accessToken", accessToken), LevelCard[].class));
+        Map.of("username", username, "accessToken", accessToken), DeckJson.class));
   }
 
   /**
@@ -101,13 +102,12 @@ public class PromptsRequests {
    * @param proposedDeal deal proposed by the player.
    * @return Pair of the response from server, headers and string
    */
-  public static Pair<Headers, String> buyCard(long sessionId,
-                                              String cardMd5,
-                                              String authToken,
-                                              PurchaseMap proposedDeal) {
-    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
-        RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5, Map.of("access_token", authToken),
+  public static void buyCard(long sessionId,
+                             String cardMd5,
+                             String authToken,
+                             PurchaseMap proposedDeal) {
+    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cards/" + cardMd5, Map.of("access_token", authToken),
         proposedDeal, Void.class));
 
   }
@@ -123,7 +123,7 @@ public class PromptsRequests {
                                  String cardMd5,
                                  String authToken) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
+        "/api/games/" + sessionId + "/cards/" + cardMd5 + "/reservation",
         Map.of("access_token", authToken), Void.class));
   }
 
@@ -210,7 +210,7 @@ public class PromptsRequests {
     RequestClient.sendRequestString(
         new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
-        Map.of("authenticationToken", authToken, "tokenType", bonusType.name()), Void.class));
+        Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
   }
 
   /**
@@ -230,7 +230,7 @@ public class PromptsRequests {
                                BonusType bonusTypeThree) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
-        Map.of("authenticationToken", authToken, "tokenTypeOne", bonusTypeOne.name(),
+        Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
         Void.class));
   }
@@ -251,4 +251,6 @@ public class PromptsRequests {
         Map.of("authenticationToken", accessToken, "chosenCard", chosenCardHash),
         Void.class));
   }
+
+  //TODO: add acquire noble endpoint
 }

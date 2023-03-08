@@ -62,6 +62,12 @@ public enum CustomHttpResponses implements BroadcastContent {
       HTTP_BAD_REQUEST),
 
   /**
+   * Used for when player does not have enough bonuses to be visited by the noble.
+   */
+  INSUFFICIENT_BONUSES_FOR_VISIT("You do not have sufficient bonuses to be visited by this noble",
+      HTTP_BAD_REQUEST),
+
+  /**
    * OK.
    */
   OK("Ok", HTTP_OK),

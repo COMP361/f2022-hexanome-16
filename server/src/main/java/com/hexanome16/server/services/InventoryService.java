@@ -20,6 +20,7 @@ import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.Objects;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,7 +88,6 @@ public class InventoryService implements InventoryServiceInterface {
     // Fetch the card in question
     ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
-    // TODO test
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
@@ -128,12 +128,15 @@ public class InventoryService implements InventoryServiceInterface {
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
 
-    // Remove card from the board
-    game.removeOnBoardCard(cardToBuy);
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
 
     Level level = (cardToBuy).getLevel();
-    // Add new card to the deck
-    game.addOnBoardCard(level);
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
 
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -198,12 +201,11 @@ public class InventoryService implements InventoryServiceInterface {
     // give player a gold token
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
-    //TODO: probably need a check to only remove level cards from board
-
-    // replace this card with a new one on board
-    game.removeOnBoardCard(card);
-    Level level = (card).getLevel();
-    game.addOnBoardCard(level);
+    Level level = card.getLevel();
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(card)) {
+      game.addOnBoardCard(level);
+    }
 
     // Notify long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -248,7 +250,7 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
 
-    ServerLevelCard card = game.getOnBoardDeck(atLevel).nextCard();
+    ServerLevelCard card = game.getLevelDeck(atLevel).removeNextCard();
 
     //TODO: check if deck is null
 
@@ -263,9 +265,10 @@ public class InventoryService implements InventoryServiceInterface {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @SneakyThrows
   @Override
   public ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
-                                                 String chosenCard) throws JsonProcessingException {
+                                                 String chosenCard) {
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
@@ -307,5 +310,35 @@ public class InventoryService implements InventoryServiceInterface {
     return player.peekTopAction();
   }
 
+  @Override
+  public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
+                                             String authenticationToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
 
+    var noble = game.getNobleByHash(nobleHash);
+
+    if (noble == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    //TODO: fix once imad's pr is done
+    /*
+    if (!player.canBeVisitedBy(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+
+    if (!player.addCardToInventory(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    */
+
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+  }
 }

@@ -1,39 +1,57 @@
 # COMP 361 Project
 
- > See also [my video instructions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
-
-## Notes for TAs/Teacher (as of January 3 2023)
- * We have multiple test suites for intellij.
-   * Server Unit Tests (TODO: clear these of IT tests)
-   * Integration Tests (these require the `LS Only` docker to be running inside of Intellij)
+## Notes for TAs/Teacher (as of Milestone 7)
+ * We have multiple test suites for intelliJ.
+   * Server Unit Tests
+   * Integration Tests (these require a local Lobby Service to be running, either manually or via ```LS Only``` run config in IntelliJ)
    * All tests (runs both the Unit and Integration tests)
- * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in all our run configs in IntelliJ, so please use "All tests" to verify code coverage (should be 85%).
- * Some server tests require a local Lobby Service to be running.
+ * Code coverage tool runner in IntelliJ has a bug that includes Lombok-generated methods into testing, resulting in poorer coverage than it's supposed to report (https://youtrack.jetbrains.com/issue/IDEA-273961/IntelliJ-does-not-honor-lombok.addLombokGeneratedAnnotationtrue-and-reports-missing-coverage). This is workaroundable using a different code coverage runner (JaCoCo), which is set in all our run configs in IntelliJ, so please use "All tests" to verify code coverage.
  * If you want to try playing the game, use the Splendor Prod IntelliJ run config (equivalent to ```PROFILE_ID=prod mvn clean package javafx:run```), since that one is connected to the remote server.
 
-## Setup CheckStyle in IntelliJ
- * Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
- * Go to `Settings > Tools > CheckStyle`, select latest CheckStyle version, set Scope to `Only Java sources (including tests)` and click `Apply`.
- * In the same window, add our custom configuration (google_checks.xml) by clicking the `+` button and selecting the file.
- * Click Ok to save settings.
- * In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
- * Fix all the errors and warnings that appear :)
-
 ## How to run the project (development)
+### Prerequisites
+  * JDK 17+
+  * Maven 3.6+ (for native builds on Mac M1-based machines)
+  * JavaFX 17+
+  * Docker (20.10+ for Linux, 4.0+ for Desktop on Windows/Mac)
+  * IntelliJ IDEA (preferably latest to automatically detect run configs)
+
+### Option 1: LS in Docker, Server on host
+  * Start the instance of Lobby Service in docker by running "LS Only" run config in IntelliJ.
+    * Equivalent manual command: ```docker-compose up -d --build --force-recreate --remove-orphans```.
+  * Compile and install the common library JAR by running "Common" run config in IntelliJ.
+    * Equivalent manual command: ```cd common; mvn clean install```.
+  * Start the server with Server Dev run config in IntelliJ.
+    * Equivalent manual command: ```cd server; PROFILE_ID=dev mvn clean package spring-boot:run```.
+  * Start the client with Splendor Dev run config in IntelliJ.
+    * Equivalent manual command: ```cd client; PROFILE_ID=dev mvn clean package javafx:run```.
+
+### Option 2: Both LS and Server in Docker
   * Start the server and Lobby Service by running "Server + LS" run config in IntelliJ.
     * If you'd like to run this manually, do ```docker-compose --profile with-server up -d --build --force-recreate --remove-orphans```.
+  * Compile and install the common library JAR by running "Common" run config in IntelliJ.
+      * Equivalent manual command: ```cd common; mvn clean install```.
   * Start the client with Splendor Dev run config in IntelliJ.
+    * Equivalent manual command: ```cd client; PROFILE_ID=dev mvn clean package javafx:run```.
 
 ## How to deploy and run the project (production)
   * Prerequisites: you need a GitHub PAT (Personal Access Token) with the `write:packages` scope and an Ubuntu/Debian server.
     * If you don't want to hassle with PAT, you can use the one Costa created (already included in script), but deployment will be credited to him.
-    * The Ubuntu/Debian server should not have a private IP to prevent wrong Docker network configuration.
+    * The Ubuntu/Debian server should not have a private IP to prevent inaccessible network configuration.
     * Commands below assume you are in the root of the project, and you're executing them in Bash (Git Bash for Windows).
   * Make sure the project is stable and ready to be deployed.
   * First, publish the images to GitHub Packages:  ```./publish-images.sh```.
-  * Next, SSH into the server and run the setup script: ```ssh root@ip 'bash -s' < ./server-setup-script.sh``` (current ip is listed in ```server-prod.properties```).
+  * Next, SSH into the server and run the setup script: ```ssh root@ip 'bash -s' < ./server-setup-script.sh``` (current IP is listed in ```server-prod.properties```).
   * Wait for the server to execute all commands.
   * Start the client with Splendor Prod run config in IntelliJ.
+
+## Setup CheckStyle in IntelliJ
+* Install [Intellij CheckStyle plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
+* Go to `Settings > Tools > CheckStyle`, select latest CheckStyle version, set Scope to `Only Java sources (including tests)` and click `Apply`.
+* In the same window, add our custom configuration (checkstyle.xml) by clicking the `+` button and selecting the file.
+* Click Ok to save settings.
+* In the bottom toolbar, click on CheckStyle and in the left panel click on double-folder button to scan the project.
+* Fix all the errors and warnings that appear :)
 
 ## The Rules
 

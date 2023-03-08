@@ -37,10 +37,10 @@ public class GameScreen {
   private static final Map<Level, Pair<String, DeckJson>> levelDecks = new HashMap<>();
   private static final Map<Level, Thread> levelThreads = new HashMap<>();
 
-  private static Pair<String, NobleDeckJson> nobleJson = new Pair<>("", new NobleDeckJson());
+  private static Pair<String, NobleDeckJson> nobleJson;
   private static Thread updateNobles;
 
-  private static Pair<String, PlayerJson> currentPlayerJson = new Pair<>("", new PlayerJson(""));
+  private static Pair<String, PlayerJson> currentPlayerJson;
 
   private static Thread updateCurrentPlayer;
 
@@ -106,6 +106,11 @@ public class GameScreen {
       });
       fetchCurrentPlayerThread();
     });
+    updateCurrentPlayerTask.setOnFailed(e -> {
+      updateCurrentPlayer.interrupt();
+      System.out.println(e);
+      fetchCurrentPlayerThread();
+    });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
     updateCurrentPlayer.setDaemon(true);
     updateCurrentPlayer.start();
@@ -147,10 +152,12 @@ public class GameScreen {
     }
 
     if (updateNobles == null) {
+      nobleJson = new Pair<>("", new NobleDeckJson());
       fetchNoblesThread();
     }
     UpdateGameInfo.initPlayerTurn();
     if (updateCurrentPlayer == null) {
+      currentPlayerJson = new Pair<>("", new PlayerJson(""));
       fetchCurrentPlayerThread();
     }
     usernames = FXGL.getWorldProperties().getValue("players");
@@ -215,9 +222,7 @@ public class GameScreen {
               }
             }
           }
-          default -> {
-
-          }
+          default -> throw new IllegalStateException("Unexpected value: " + level);
         }
 
         break;

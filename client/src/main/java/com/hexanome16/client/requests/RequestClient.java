@@ -34,10 +34,19 @@ import org.apache.commons.codec.digest.DigestUtils;
  * This class provides an HTTP client to send requests to the backend/Lobby Service.
  */
 public class RequestClient {
+  /**
+   * ObjectMapper instance with custom settings for serialization.
+   */
   public static final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
           JsonInclude.Include.NON_NULL)
       .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+  /**
+   * Response timeout for regular requests.
+   */
   public static final int TIMEOUT = 5;
+  /**
+   * Response timeout for long polling requests.
+   */
   public static final int LONG_POLL_TIMEOUT = 60;
 
   private RequestClient() {
