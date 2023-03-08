@@ -5,7 +5,7 @@ import static com.hexanome16.client.screens.game.GameFactory.matCoordsX;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PriceMap;
 import javafx.scene.input.MouseEvent;
@@ -88,6 +88,7 @@ public class CardComponent extends Component {
 
   @Override
   public void onUpdate(double tpf) {
+    entity.setZIndex(3);
     if (fading) {
       double opacity = entity.getViewComponent().getOpacity();
       if (opacity > 0) {
@@ -114,7 +115,7 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
+    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> PromptUtils.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     if (onBoard) {
