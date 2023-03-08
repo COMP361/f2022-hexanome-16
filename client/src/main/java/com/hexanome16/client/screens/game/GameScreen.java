@@ -178,7 +178,15 @@ public class GameScreen {
 
   // puts values necessary for game bank in the world properties
   private static void initializeBankGameVars(long id) {
-    PurchaseMap gameBank = PromptsRequests.getGameBankInfo(id);
+    PurchaseMap gameBank = null;
+    while (gameBank == null) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      gameBank = PromptsRequests.getGameBankInfo(id);
+    }
     for (Map.Entry<Gem, Integer> gemEntry : gameBank.getPriceMap().entrySet()) {
       FXGL.getWorldProperties().setValue(id + gemEntry.getKey().name(), gemEntry.getValue());
     }
