@@ -23,12 +23,9 @@ public class ServerNoble extends Noble implements Reservable, Visitable {
 
   @Override
   public boolean addToInventory(Inventory inventory) {
-    // TODO: implement
-    /*
-    if (!inventory.hasAtLeast(cardInfo.price())) {
+    if (!inventory.hasAtLeastGivenBonuses(cardInfo.price())) {
       return false;
     }
-    */
     return inventory.acquireNoble(this);
   }
 
