@@ -93,7 +93,6 @@ public class InventoryService implements InventoryServiceInterface {
     // Fetch the card in question
     ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
 
-    // TODO test
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
@@ -270,4 +269,36 @@ public class InventoryService implements InventoryServiceInterface {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  @Override
+  public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
+                                             String authenticationToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken, gameManagerService,
+            authService);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+    var noble = game.getNobleByHash(nobleHash);
+
+    if (noble == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    //TODO: fix once imad's pr is done
+    /*
+    if (!player.canBeVisitedBy(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+
+    if (!player.addCardToInventory(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    */
+
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+  }
 }

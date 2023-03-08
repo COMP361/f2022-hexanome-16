@@ -91,7 +91,7 @@ public class PromptsRequests {
                              String authToken,
                              PurchaseMap proposedDeal) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5, Map.of("access_token", authToken),
+        "/api/games/" + sessionId + "/cards/" + cardMd5, Map.of("access_token", authToken),
         proposedDeal, Void.class));
   }
 
@@ -106,7 +106,7 @@ public class PromptsRequests {
                                  String cardMd5,
                                  String authToken) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/" + cardMd5 + "/reservation",
+        "/api/games/" + sessionId + "/cards/" + cardMd5 + "/reservation",
         Map.of("access_token", authToken), Void.class));
   }
 
@@ -193,7 +193,7 @@ public class PromptsRequests {
     RequestClient.sendRequestString(
         new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
-        Map.of("authenticationToken", authToken, "tokenType", bonusType.name()), Void.class));
+        Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
   }
 
   /**
@@ -213,9 +213,10 @@ public class PromptsRequests {
                                BonusType bonusTypeThree) {
     RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
-        Map.of("authenticationToken", authToken, "tokenTypeOne", bonusTypeOne.name(),
+        Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
         Void.class));
   }
 
+  //TODO: add acquire noble endpoint
 }

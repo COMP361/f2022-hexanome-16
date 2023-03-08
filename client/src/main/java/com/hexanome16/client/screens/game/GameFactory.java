@@ -309,7 +309,7 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_two.png");
+    Texture level1deck = FXGL.texture("red_level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 565)
