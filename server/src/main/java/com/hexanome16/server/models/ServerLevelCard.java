@@ -3,6 +3,7 @@ package com.hexanome16.server.models;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import lombok.Getter;
 
 /**
@@ -19,10 +20,11 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
    * @param texturePath   the texture path
    * @param price         the price
    * @param level         the level
+   * @param gemBonus      gem bonus given when card is bought
    */
   public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceMap price,
-                         Level level) {
-    super(level, id, prestigePoint, texturePath, price);
+                         Level level, PurchaseMap gemBonus) {
+    super(level, id, prestigePoint, texturePath, price, gemBonus);
   }
 
   /**
@@ -34,10 +36,11 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
    * @param price         the price
    * @param level         the level
    * @param bonusType     the bonus type.
+   * @param gemBonus      gem bonus given when card is bought
    */
   public ServerLevelCard(int id, int prestigePoint, String texturePath, PriceMap price,
-                         Level level, BonusType bonusType) {
-    super(level, id, prestigePoint, texturePath, price, bonusType);
+                         Level level, BonusType bonusType, PurchaseMap gemBonus) {
+    super(level, id, prestigePoint, texturePath, price, bonusType, gemBonus);
   }
 
   @Override

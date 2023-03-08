@@ -42,7 +42,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
    *                    Integer.
    */
   public PurchaseMap(Map<Gem, Integer> purchaseMap) {
-    this.priceMap = new Hashtable<>();
+    super();
     if (purchaseMap == null) {
       throw new IllegalArgumentException("Price map cannot be null");
     }

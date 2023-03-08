@@ -1,6 +1,7 @@
 [
   {
     "id": 0,
+    "bonus": "RUBY",
     "price": {
       "ONYX": 0,
       "SAPPHIRE": 2,
@@ -11,6 +12,7 @@
   },
   {
     "id": 1,
+    "bonus": "RUBY",
     "price": {
       "ONYX": 0,
       "SAPPHIRE": 0,
@@ -21,6 +23,7 @@
   },
   {
     "id": 2,
+    "bonus": "RUBY",
     "price": {
       "ONYX": 0,
       "SAPPHIRE": 3,
@@ -31,6 +34,7 @@
   },
   {
     "id": 3,
+    "bonus": "RUBY",
     "price": {
       "ONYX": 2,
       "SAPPHIRE": 0,
@@ -41,6 +45,7 @@
   },
   {
     "id": 4,
+    "bonus": "RUBY",
     "price": {
       "ONYX": 3,
       "SAPPHIRE": 0,

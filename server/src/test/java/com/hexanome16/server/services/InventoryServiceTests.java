@@ -28,6 +28,7 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -654,14 +655,17 @@ public class InventoryServiceTests {
   }
 
   private ServerLevelCard createValidCard() {
-    return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE);
+    return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE, new PurchaseMap(
+        Map.of(Gem.RUBY, 1)));
   }
 
   private ServerLevelCard createTooExpensiveValidCard() {
-    return new ServerLevelCard(20, 0, "", new PriceMap(20, 1, 1, 1, 0), Level.ONE);
+    return new ServerLevelCard(20, 0, "", new PriceMap(20, 1, 1, 1, 0), Level.ONE,
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));
   }
 
   private ServerLevelCard createInvalidCard() {
-    return new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE);
+    return new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE,
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));
   }
 }

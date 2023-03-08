@@ -23,7 +23,7 @@ public class PriceMap implements PriceInterface {
    * @param priceMap gem map
    */
   public PriceMap(Map<Gem, Integer> priceMap) {
-    this.priceMap = new Hashtable<>();
+    this();
     if (priceMap == null) {
       throw new IllegalArgumentException("Price map cannot be null");
     }
@@ -44,7 +44,9 @@ public class PriceMap implements PriceInterface {
   public PriceMap() {
     this.priceMap = new Hashtable<>();
     for (Gem gem : Gem.values()) {
-      priceMap.put(gem, 0);
+      if (gem != Gem.GOLD) {
+        priceMap.put(gem, 0);
+      }
     }
   }
 
