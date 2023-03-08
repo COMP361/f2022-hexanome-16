@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -12,6 +13,7 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -88,7 +90,7 @@ public class ServerPlayerTest {
     ResponseEntity<String> response = costa.peekTopAction();
     var headers = response.getHeaders();
     assertEquals(CustomHttpResponses.ActionType.NOBLE.getMessage(),
-        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertFalse(response.getBody().isBlank());
@@ -112,7 +114,7 @@ public class ServerPlayerTest {
     var headers = response.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.CITY.getMessage(),
-        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertFalse(response.getBody().isBlank());
@@ -128,7 +130,7 @@ public class ServerPlayerTest {
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.LEVEL_TWO.getMessage(),
-        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), actions.getBody());
   }
@@ -145,9 +147,42 @@ public class ServerPlayerTest {
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.END_TURN.getMessage(),
-        headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0));
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
     assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), actions.getBody());
   }
 
+  /**
+   * Test can be visited by.
+   */
+  @Test
+  public void testCanBeVisitedBy() {
+    // Arrange
+    Visitable visitable = Mockito.mock(Visitable.class);
+    Inventory inventory = costa.getInventory();
+    when(visitable.playerMeetsRequirements(inventory)).thenReturn(true);
+
+    // Act
+    var response = costa.canBeVisitedBy(visitable);
+
+    // Assert
+    assertTrue(response);
+  }
+
+  /**
+   * Test can not be visited by.
+   */
+  @Test
+  public void testCanBeVisitedByFail() {
+    // Arrange
+    Visitable visitable = Mockito.mock(Visitable.class);
+    Inventory inventory = costa.getInventory();
+    when(visitable.playerMeetsRequirements(inventory)).thenReturn(false);
+
+    // Act
+    var response = costa.canBeVisitedBy(visitable);
+
+    // Assert
+    assertFalse(response);
+  }
 }

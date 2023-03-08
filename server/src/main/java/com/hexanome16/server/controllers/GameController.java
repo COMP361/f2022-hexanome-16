@@ -1,9 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
@@ -50,7 +48,7 @@ public class GameController {
    * @param payload   the payload
    * @return error if present
    */
-  @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
+  @PutMapping(value = "/games/{sessionId}")
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
     System.out.println(payload);
     return gameManager.createGame(sessionId, payload);
@@ -61,7 +59,7 @@ public class GameController {
    *
    * @param sessionId the id of the game to delete
    */
-  @DeleteMapping(value = {"/games/{sessionId}"})
+  @DeleteMapping(value = "/games/{sessionId}")
   public void deleteGame(@PathVariable long sessionId) {
     gameManager.deleteGame(sessionId);
   }
@@ -148,7 +146,7 @@ public class GameController {
    * @return String representation of the Purchase map
    * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
    */
-  @GetMapping(value = {"/games/{sessionId}/gameBank", "/games/{sessionId}/gameBank/"})
+  @GetMapping(value = "/games/{sessionId}/gameBank")
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
     return gameService.getGameBankInfo(sessionId);

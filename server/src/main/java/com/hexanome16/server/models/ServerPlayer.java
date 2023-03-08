@@ -58,6 +58,16 @@ public class ServerPlayer extends Player {
     return inventoryAddable.addToInventory(this.inventory);
   }
 
+  /**
+   * Remove this reserved card from the player's inventory.
+   *
+   * @param inventoryAddable the development card to add
+   * @return true on success
+   */
+  public boolean removeReservedCardFromInventory(InventoryAddable inventoryAddable) {
+    return this.inventory.getReservedCards().remove(inventoryAddable);
+  }
+
 
   /**
    * increments Player bank by the amount specified by each parameter for each of their
@@ -137,6 +147,16 @@ public class ServerPlayer extends Player {
    */
   public void deleteInventory() {
     this.inventory = null;
+  }
+
+  /**
+   * Verifies that the player meets the requirements to be visited by said visitable.
+   *
+   * @param visitor the visitor whose requirements need to be met
+   * @return true if player meets requirements
+   */
+  public boolean canBeVisitedBy(Visitable visitor) {
+    return visitor.playerMeetsRequirements(inventory);
   }
 
 

@@ -51,7 +51,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   /**
    * The Card is reserved.
    */
-  protected boolean cardIsReserved;
+  protected boolean cardIsReserved = false;
   /**
    * The Card image.
    */
@@ -200,6 +200,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   public void populatePrompt(Entity entity, Entity cardEntity) {
     atCardEntity = cardEntity;
     atCardPriceMap = cardEntity.getComponent(CardComponent.class).getPriceMap();
+    cardIsReserved = !cardEntity.getComponent(CardComponent.class).getOnBoard();
     populatePrompt(entity);
   }
 
@@ -248,8 +249,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
       gameBank.getChildren().add(n);
     }
 
-    // initiate ReserveBuy
-    setCardIsReserved();
     reserveBuy.getChildren().addAll(createReserveBuy(atButtonWidth, atButtonHeight));
 
     // adding to view
@@ -423,16 +422,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
 
     cardImage = FXGL.texture("card1.png");
-  }
-
-
-  // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Need to override to not have a ReserveButton, set cardIsReserved to true to do so.
-   */
-  protected void setCardIsReserved() {
-    cardIsReserved = false;
   }
 
   /**

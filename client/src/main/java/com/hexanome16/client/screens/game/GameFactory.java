@@ -71,7 +71,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.ONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -89,7 +89,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.TWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -107,7 +107,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.THREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -125,7 +125,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent((Integer) data.getData().get("id"), Level.REDTHREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -143,7 +143,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDTWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -161,7 +161,7 @@ public class GameFactory implements EntityFactory {
         .scale(0.15, 0.15)
         .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -293,7 +293,7 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_two.png");
+    Texture level1deck = FXGL.texture("red_level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 565)
