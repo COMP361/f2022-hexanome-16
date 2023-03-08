@@ -89,8 +89,7 @@ public class Inventory {
    * @param price minimum amount needed in inventory
    * @return true if the inventory has at least enough for the price
    */
-  public boolean hasAtLeast(PriceInterface price) {
-    //TODO: do this
-    throw new NotImplementedException();
+  public boolean hasAtLeastGivenBonuses(PriceInterface price) {
+    return gemBonuses.hasAtLeastAmountOfGems(price);
   }
 }
