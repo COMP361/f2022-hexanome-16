@@ -38,7 +38,7 @@ public class City implements Visitable {
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
-    //TODO: add once gem bonuses are ready
+    // TODO: add once gem bonuses are ready
     throw new NotImplementedException();
   }
 }

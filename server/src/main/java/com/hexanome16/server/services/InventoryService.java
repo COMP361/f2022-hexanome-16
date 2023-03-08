@@ -252,7 +252,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     ServerLevelCard card = game.getLevelDeck(atLevel).removeNextCard();
 
-    //TODO: check if deck is null
+    // TODO: check if deck is null
 
     if (!player.reserveCard(card)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

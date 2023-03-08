@@ -99,7 +99,7 @@ public class DummyAuthService implements AuthServiceInterface {
     }
   }
 
-  //TODO from here
+  // TODO from here
 
   /**
    * This request logs out the user in LS associated with the access token.

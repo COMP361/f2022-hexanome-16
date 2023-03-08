@@ -14,7 +14,7 @@ public interface InventoryAddable {
    */
   boolean addToInventory(Inventory inventory);
 
-  //TODO add remove from inventory
+  // TODO add remove from inventory
 
   /**
    * Get Card info.

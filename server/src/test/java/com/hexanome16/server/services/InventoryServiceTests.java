@@ -524,7 +524,6 @@ public class InventoryServiceTests {
     final var nobleHash = "valid hash";
     final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
 
-    //TODO : fix this when merging imad's pr and test this correctly
     var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
     Game gameMock = request.getValue().getLeft();
     ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
@@ -554,7 +553,6 @@ public class InventoryServiceTests {
     final var nobleHash = "valid hash";
     final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
 
-    //TODO : fix this when merging imad's pr and test this correctly
     var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
     Game gameMock = request.getValue().getLeft();
     ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
