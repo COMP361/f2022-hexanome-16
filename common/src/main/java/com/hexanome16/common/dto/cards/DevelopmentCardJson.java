@@ -17,9 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DevelopmentCardJson extends CardJson {
-  private int id;
   private String level;
-  private int prestigePoint;
   private String bonus;
 
   @JsonIgnore

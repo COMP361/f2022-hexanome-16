@@ -6,7 +6,6 @@ import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
-import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
