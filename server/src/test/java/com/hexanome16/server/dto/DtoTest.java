@@ -3,10 +3,9 @@ package com.hexanome16.server.dto;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.hexanome16.common.dto.PlayerJson;
-import com.hexanome16.common.dto.cards.CardJson;
 import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
-import com.hexanome16.common.dto.cards.NobleJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link CardJson}, {@link DeckJson}, {@link NobleJson}
+ * Tests for {@link DevelopmentCardJson}, {@link DeckJson}, {@link NobleJson}
  * , {@link NobleDeckJson} and {@link PlayerJson}.
  */
 public class DtoTest {
