@@ -86,7 +86,7 @@ public class Inventory {
    * @return true if the inventory has at least enough for the price
    */
   public boolean hasAtLeast(PriceInterface price) {
-    //TODO: do this
+    // TODO: do this
     throw new NotImplementedException();
   }
 }

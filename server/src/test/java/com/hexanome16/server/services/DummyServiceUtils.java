@@ -24,8 +24,6 @@ import org.springframework.http.ResponseEntity;
 public class DummyServiceUtils {
   private static final ServiceUtils mock = Mockito.mock(ServiceUtils.class);
 
-  private static final GameDummies gameDummies = new GameDummies();
-
   /**
    * Creates a game service dummy that has pre-mocked auth methods.
    *
@@ -69,6 +67,12 @@ public class DummyServiceUtils {
       token = DummyAuths.validTokensInfos.get(1).getAccessToken();
       right = new ImmutablePair<>(newGame, newGame.getPlayers()[1]);
       when(mock.validRequest(eq(sessionId), eq(token))).thenReturn(Pair.of(left, right));
+
+      // Not player's turn
+      left = CustomResponseFactory.getResponse(CustomHttpResponses.NOT_PLAYERS_TURN);
+      right = new ImmutablePair<>(null, null);
+      when(mock.validRequestAndCurrentTurn(eq(sessionId), eq(token))).thenReturn(
+          Pair.of(left, right));
     }
 
     for (var id : DummyAuths.invalidSessionIds) {
