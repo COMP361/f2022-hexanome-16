@@ -13,6 +13,7 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
@@ -21,7 +22,6 @@ import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Platform;
@@ -47,7 +47,7 @@ public class GameScreen {
   private static Thread updateCurrentPlayer;
 
   private static String[] usernames;
-  private static String[] usernamesInOrder;
+  private static Map<Integer, String> usernamesMap = new HashMap<>();
   private static String currentPlayer;
   private static long sessionId = -1;
 
@@ -121,9 +121,19 @@ public class GameScreen {
   }
 
   private static void fetchTradePosts() {
-    for (String username : usernamesInOrder) {
-      System.out.println(Arrays.toString(TradePostRequest.getTradePosts(sessionId, username)));
-
+    String[] color = {"Yellow", "Black", "Red", "Blue"};
+    // add trade post for each player
+    for (Map.Entry<Integer, String> user : usernamesMap.entrySet()) {
+      for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId, user.getValue())) {
+        switch (tradePost.getRouteType()) {
+          case ONYX_ROUTE -> {
+            FXGL.spawn(color[user.getKey()] + "Marker");
+          }
+          default -> {
+            //todo add other routes
+          }
+        }
+      }
     }
   }
 
@@ -171,7 +181,12 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     }
     usernames = FXGL.getWorldProperties().getValue("players");
-    usernamesInOrder = FXGL.getWorldProperties().getValue("players");
+
+    // build user map
+    for (int i = 0; i < usernames.length; i++) {
+      usernamesMap.put(i, usernames[i]);
+    }
+
     UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
     PlayerDecks.generateAll(usernames);
