@@ -41,6 +41,7 @@ public class MainApp extends GameApplication {
     gameSettings.setGameMenuEnabled(false);
     gameSettings.setDeveloperMenuEnabled(false);
     gameSettings.setManualResizeEnabled(true);
+    gameSettings.setPreserveResizeRatio(true);
   }
 
   @Override
