@@ -1,6 +1,7 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.util.CustomHttpResponses;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -14,5 +15,12 @@ public interface Action {
    * @return Information needed for action to perform.
    * @throws JsonProcessingException if the action cannot be parsed.
    */
-  ResponseEntity<String> getActionDetails() throws JsonProcessingException;
+  ResponseEntity<String> getActionDetails();
+
+  /**
+   * Gets action type.
+   *
+   * @return the action type
+   */
+  CustomHttpResponses.ActionType getActionType();
 }

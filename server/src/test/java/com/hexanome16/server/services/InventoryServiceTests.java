@@ -3,6 +3,8 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,15 +17,16 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.server.models.Action;
 import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerNoble;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
@@ -161,8 +164,19 @@ public class InventoryServiceTests {
     final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
 
     ServerLevelCard myCard = createValidCard();
-    Game gameMock =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken).getRight().getLeft();
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Action mockAction = mock(Action.class);
+    when(playerMock.peekTopAction()).thenReturn(mockAction);
+    when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
+        anyInt())).thenReturn(true);
+    when(mockAction.getActionDetails()).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.OK));
+    when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
+        Pair.of(CustomResponseFactory.getResponse(CustomHttpResponses.OK),
+            Pair.of(gameMock, playerMock)));
+
     String cardHash = "";
 
     when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
@@ -179,6 +193,7 @@ public class InventoryServiceTests {
             accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
 
     // Assert
+    assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 
@@ -435,16 +450,19 @@ public class InventoryServiceTests {
         List.of(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage()));
     ResponseEntity<String> goodResponse = new ResponseEntity<>(
         goodHeaders, HttpStatus.OK);
-    ServerPlayer validplayer = Mockito.mock(ServerPlayer.class);
+    ServerPlayer validPlayer = Mockito.mock(ServerPlayer.class);
     Game game = Mockito.mock(Game.class);
     String cardHash = DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
 
     when(serviceUtils.validRequestAndCurrentTurn(123, "testingToken"))
         .thenReturn(
             new ImmutablePair<>(goodResponse,
-                new ImmutablePair<>(game, validplayer)));
-    when(validplayer.peekTopAction())
-        .thenReturn(goodResponse);
+                new ImmutablePair<>(game, validPlayer)));
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionDetails()).thenReturn(goodResponse);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.LEVEL_TWO);
+    when(validPlayer.peekTopAction())
+        .thenReturn(mockAction);
     when(game.getCardByHash(cardHash)).thenReturn(card);
     when(game.getOnBoardDeck(card.getLevel())).thenReturn(new Deck<>());
     var mapMock = Mockito.mock(BroadcastMap.class);
@@ -475,8 +493,11 @@ public class InventoryServiceTests {
     MultiValueMap<String, String> badHeaders = new HttpHeaders();
     badHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.END_TURN.getMessage()));
-    when(validplayer.peekTopAction())
-        .thenReturn(new ResponseEntity<>(badHeaders, HttpStatus.BAD_REQUEST));
+    mockAction = mock(Action.class);
+    when(mockAction.getActionDetails()).thenReturn(
+        new ResponseEntity<>(badHeaders, HttpStatus.BAD_REQUEST));
+    when(validPlayer.peekTopAction())
+        .thenReturn(mockAction);
     when(game.getCardByHash(cardHash)).thenReturn(card);
     response = inventoryService
         .takeLevelTwoCard(123, "testingToken",
@@ -504,13 +525,113 @@ public class InventoryServiceTests {
     when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
         Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
     when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
+    when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
-    assertEquals(CustomHttpResponses.OK.getStatus(), response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.OK.getStatus(), response.getStatusCodeValue());
+  }
+
+  /**
+   * Test noble next action returns.
+   */
+  @Test
+  @SneakyThrows
+  public void testNobleNextActionReturns() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    when(playerMock.addCardToInventory(mockNoble)).thenReturn(true);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
+    Action mockActionNext = mock(Action.class);
+    when(mockActionNext.getActionDetails()).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
+    when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(mockActionNext);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.CHOOSE_CITY.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.CHOOSE_CITY.getStatus(), response.getStatusCodeValue());
+  }
+
+  /**
+   * Test noble current action null.
+   */
+  @Test
+  @SneakyThrows
+  public void testNobleCurrentActionNull() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    when(playerMock.addCardToInventory(mockNoble)).thenReturn(true);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    when(playerMock.peekTopAction()).thenReturn(null);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getStatus(), response.getStatusCodeValue());
+  }
+
+  /**
+   * Test noble illegal action.
+   */
+  @Test
+  @SneakyThrows
+  public void testNobleIllegalAction() {
+    // Arrange
+    final var validSessionId = DummyAuths.validSessionIds.get(0);
+    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final var nobleHash = "valid hash";
+    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    when(playerMock.addCardToInventory(mockNoble)).thenReturn(true);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
+    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.CITY);
+    when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
+
+    // Act
+    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+
+    // Assert
+    assertEquals(CustomHttpResponses.ILLEGAL_ACTION.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.ILLEGAL_ACTION.getStatus(), response.getStatusCodeValue());
   }
 
   /**
@@ -532,6 +653,9 @@ public class InventoryServiceTests {
     when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
         Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
     when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
+    when(playerMock.peekTopAction()).thenReturn(mockAction);
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
@@ -562,6 +686,9 @@ public class InventoryServiceTests {
     when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
         Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
     when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
+    when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
@@ -582,10 +709,16 @@ public class InventoryServiceTests {
     final var validSessionId = DummyAuths.validSessionIds.get(0);
     final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
     final var nobleHash = "invalid hash";
-    List<Game> gameDummies = GameDummies.getInstance();
-    Game gameMock = gameDummies.get(0);
-    when(gameManagerMock.getGame(validSessionId)).thenReturn(gameMock);
-    when(gameMock.getNobleByHash(nobleHash)).thenReturn(null);
+
+    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
+    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
+        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
+    when(gameMock.getCardByHash(nobleHash)).thenReturn(null);
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
+    when(playerMock.peekTopAction()).thenReturn(mockAction);
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);

@@ -21,7 +21,6 @@ import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.Map;
-import java.util.Objects;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,7 +75,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
-                                        PurchaseMap proposedDeal) throws JsonProcessingException {
+                                        PurchaseMap proposedDeal) {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
     ResponseEntity<String> response = request.getLeft();
@@ -158,7 +157,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, cardToBuy);
 
-    return player.peekTopAction();
+    return player.peekTopAction().getActionDetails();
   }
 
   // TODO :: Add this methode everywhere when a card is aquired, (like bought
@@ -169,8 +168,6 @@ public class InventoryService implements InventoryServiceInterface {
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
       player.addTakeTwoToPerform();
     }
-
-    player.addEndTurnToPerform(serviceUtils, game);
   }
 
   /**
@@ -293,11 +290,8 @@ public class InventoryService implements InventoryServiceInterface {
     if (card == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
-    ResponseEntity<String> action = player.peekTopAction();
-    String actionType = Objects.requireNonNull(
-        action.getHeaders().get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0);
-    //Makes sure it's the right action.
-    if (!actionType.equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
+    var action = player.peekTopAction();
+    if (action.getActionType() != CustomHttpResponses.ActionType.LEVEL_TWO) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
     }
 
@@ -318,7 +312,11 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, card);
 
-    return player.peekTopAction();
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
 
   @Override
@@ -333,6 +331,14 @@ public class InventoryService implements InventoryServiceInterface {
     final Game game = request.getRight().getLeft();
     final ServerPlayer player = request.getRight().getRight();
 
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.NOBLE) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
     var noble = game.getNobleByHash(nobleHash);
 
     if (noble == null) {
@@ -345,6 +351,12 @@ public class InventoryService implements InventoryServiceInterface {
 
     if (!player.addCardToInventory(noble)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    player.removeTopAction();
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
     }
 
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
