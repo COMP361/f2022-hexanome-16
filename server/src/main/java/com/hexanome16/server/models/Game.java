@@ -330,7 +330,7 @@ public class Game {
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
-    //deck.shuffle();
+    deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
@@ -355,7 +355,7 @@ public class Game {
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
           nobleReserve);
     }
-    //deck.shuffle();
+    deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 

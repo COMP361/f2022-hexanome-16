@@ -13,22 +13,13 @@ public enum WinCondition {
   /**
    * Base win condition (15 prestige points).
    */
-  BASE(player ->
-      player.getInventory().getOwnedCards().stream()
-          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
-          + player.getInventory().getOwnedNobles().stream()
-          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15,
+  BASE(player -> player.getInventory().getPrestigePoints() >= 15,
       new GameServiceJson("Splendor", "Orient")),
   /**
    * Win condition for Trade Routes (15 prestige points + 3 trade routes).
    */
 
-  //todo consider trade routes
-  TRADEROUTES(player ->
-      player.getInventory().getOwnedCards().stream()
-          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
-          + player.getInventory().getOwnedNobles().stream()
-          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15,
+  TRADEROUTES(player -> player.getInventory().getPrestigePoints() >= 15,
       new GameServiceJson("SplendorTradeRoutes", "Orient + Trade Routes")),
   /**
    * Win condition for Cities (15 prestige points + 4 cities).
