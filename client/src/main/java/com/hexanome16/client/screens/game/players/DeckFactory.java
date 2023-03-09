@@ -10,7 +10,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
@@ -64,6 +64,7 @@ public class DeckFactory implements EntityFactory {
   public Entity player(SpawnData data) {
     // current player's name
     String name = (String) data.getData().getOrDefault("name", "Player");
+    int prestigePointsVal = (int) data.getData().getOrDefault("prestigePoints", 0);
     Text playerName = new Text(name);
     playerName.setFont(CURSIVE_FONT_FACTORY.newFont(200));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
@@ -71,14 +72,14 @@ public class DeckFactory implements EntityFactory {
     playerName.setStroke(Paint.valueOf("#000000"));
     playerName.setStyle("-fx-background-color: ffffff00; ");
     // current player's prestige points TODO make this a variable
-    Text prestigePoints = new Text("10");
+    Text prestigePoints = new Text(String.valueOf(prestigePointsVal));
     prestigePoints.setFont(CURSIVE_FONT_FACTORY.newFont(150));
     prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
     prestigePoints.setStrokeWidth(2.);
     prestigePoints.setStroke(Paint.valueOf("#000000"));
     prestigePoints.setStyle("-fx-background-color: ffffff00; ");
     // player icon
-    final Texture icon = FXGL.texture("playericon.png");
+    final Texture icon = FXGL.texture(data.get("color") + "_marker.png");
     // pane
     BorderPane pane = new BorderPane();
     BorderPane.setAlignment(prestigePoints, Pos.TOP_RIGHT);
@@ -88,6 +89,7 @@ public class DeckFactory implements EntityFactory {
     pane.setCenter(icon);
     // build the entity
     return FXGL.entityBuilder(data)
+        .type(EntityType.PLAYER)
         .view(pane)
         .scale(0.2, 0.2)
         .build();
@@ -120,7 +122,7 @@ public class DeckFactory implements EntityFactory {
         .scale(0.25, 0.25)
         .onClick(e -> {
           SeeCards.fetchCards(player);
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
         })
         .build();
   }
@@ -148,9 +150,7 @@ public class DeckFactory implements EntityFactory {
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.2, 0.2)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
-        })
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS))
         .build();
   }
 
@@ -187,12 +187,8 @@ public class DeckFactory implements EntityFactory {
 
     mytokens.getChildren().addAll(myRectangle, tokens);
 
-    mytokens.setOnMouseEntered(e -> {
-      myRectangle.setOpacity(0.7);
-    });
-    mytokens.setOnMouseExited(e -> {
-      myRectangle.setOpacity(0.5);
-    });
+    mytokens.setOnMouseEntered(e -> myRectangle.setOpacity(0.7));
+    mytokens.setOnMouseExited(e -> myRectangle.setOpacity(0.5));
     //.at(getAppWidth()- 210, 10 )
     return FXGL.entityBuilder(data)
         .view(mytokens)
@@ -286,7 +282,7 @@ public class DeckFactory implements EntityFactory {
         .scale(0.07, 0.07)
         .onClick(e -> {
           SeeReserved.fetchReservedCards(player);
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.SEE_RESERVED);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_RESERVED);
         })
         .build();
   }
@@ -324,6 +320,7 @@ public class DeckFactory implements EntityFactory {
     pane.getChildren().addAll(currentPlayerText, currentPlayerName);
     // build the entity
     return FXGL.entityBuilder(data)
+        .type(EntityType.PLAYER_TURN)
         .view(pane)
         .scale(0.5, 0.5)
         .build();

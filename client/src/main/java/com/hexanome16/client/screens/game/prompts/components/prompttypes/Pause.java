@@ -2,7 +2,6 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -14,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -47,6 +45,7 @@ public class Pause implements PromptTypeInterface {
    * The button height.
    */
   double atButtonHeight = atButtonWidth * 0.25;
+
   /**
    * Game Font.
    */
@@ -59,6 +58,11 @@ public class Pause implements PromptTypeInterface {
   @Override
   public double getHeight() {
     return atHeight;
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 
   @Override
@@ -110,9 +114,7 @@ public class Pause implements PromptTypeInterface {
     PromptTypeInterface.setOnHoverEffectOpacity(button, buttonBody, 0.7, 1.0);
 
     // add on click effect to button
-    button.setOnMouseClicked(e -> {
-      buttonType.handleClick();
-    });
+    button.setOnMouseClicked(e -> buttonType.handleClick());
 
 
     return button;

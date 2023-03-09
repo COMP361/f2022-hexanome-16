@@ -9,6 +9,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
+import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;
@@ -18,21 +21,31 @@ import com.hexanome16.client.requests.lobbyservice.sessions.ListSessionsRequest;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
-import com.hexanome16.client.types.sessions.Session;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.GameServiceJson;
+import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
@@ -40,12 +53,20 @@ import javafx.util.Pair;
  * This class is used to create the entities of the lobby screen.
  */
 public class LobbyFactory implements EntityFactory {
-  private static Session[] sessions = new Session[] {};
-  private static TableView<Session> activeSessionList;
-  private static TableView<Session> otherSessionList;
-  private static String hashCode = "";
-  private static Thread fetchSessionsThread;
-  private static boolean shouldFetch = true;
+  private static final AtomicBoolean shouldFetch = new AtomicBoolean(true);
+  private static final AtomicReference<Map<String, Session>> sessions =
+      new AtomicReference<>(new HashMap<>());
+  private static final AtomicReference<String> hashCode = new AtomicReference<>("");
+  private static final AtomicReference<Thread> fetchSessionsThread =
+      new AtomicReference<>(null);
+  private static TableView<Map.Entry<String, Session>> activeSessionList;
+  private static TableView<Map.Entry<String, Session>> otherSessionList;
+  private static final AtomicReference<GameServiceJson[]> gameServices =
+      new AtomicReference<>(new GameServiceJson[0]);
+  private static final AtomicReference<Thread> fetchGameServicesThread
+      = new AtomicReference<>(null);
+  private static final AtomicReference<String> selectedGameService = new AtomicReference<>("");
+  private static ComboBox<GameServiceJson> gameServiceDropdown;
 
   /**
    * This method updates the list of sessions shown in the lobby screen.
@@ -58,13 +79,61 @@ public class LobbyFactory implements EntityFactory {
     otherSessionList.getItems().clear();
 
     if (AuthUtils.getPlayer() != null) {
-      for (Session session : sessions) {
-        if (Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())) {
-          activeSessionList.getItems().add(session);
+      for (Map.Entry<String, Session> entry : sessions.get().entrySet()) {
+        if (Arrays.asList(entry.getValue().getPlayers())
+            .contains(AuthUtils.getPlayer().getName())) {
+          activeSessionList.getItems().add(entry);
         } else {
-          otherSessionList.getItems().add(session);
+          otherSessionList.getItems().add(entry);
         }
       }
+    }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of game services from Lobby Service.
+   */
+  public static void updateGameServicesList() {
+    if (gameServices.get() != null && gameServices.get().length > 0) {
+      ObservableList<GameServiceJson> newItems = Arrays.stream(gameServices.get()).collect(
+          javafx.collections.FXCollections::observableArrayList,
+          javafx.collections.ObservableList::add,
+          javafx.collections.ObservableList::addAll);
+      gameServiceDropdown.setItems(newItems);
+    }
+  }
+
+  /**
+   * This method starts a separate thread that fetches the list of game services from the Lobby
+   * Service.
+   */
+  private static void createFetchGameServicesThread() {
+    if (shouldFetch.get()) {
+      Task<Void> fetchGameServicesTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          gameServices.set(ListGameServicesRequest.execute());
+          Thread.sleep(5000);
+          return null;
+        }
+      };
+      fetchGameServicesTask.setOnSucceeded(e -> {
+        fetchGameServicesThread.get().interrupt();
+        Platform.runLater(LobbyFactory::updateGameServicesList);
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      fetchGameServicesTask.setOnFailed(e -> {
+        fetchGameServicesThread.get().interrupt();
+        if (shouldFetch.get()) {
+          createFetchGameServicesThread();
+        }
+      });
+      Thread thread = new Thread(fetchGameServicesTask);
+      thread.setDaemon(true);
+      thread.start();
+      fetchGameServicesThread.set(thread);
     }
   }
 
@@ -72,37 +141,38 @@ public class LobbyFactory implements EntityFactory {
    * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
    */
   private static void createFetchSessionThread() {
-    if (shouldFetch) {
+    if (shouldFetch.get()) {
       Task<Void> fetchSessionsTask = new Task<>() {
         @Override
-        protected Void call() throws Exception {
-          Pair<String, Session[]> sessionList = ListSessionsRequest.execute(hashCode);
-          hashCode = sessionList.getKey();
-          sessions = sessionList.getValue();
-          if (sessions == null) {
-            hashCode = "";
-            sessions = new Session[] {};
+        protected Void call() {
+          Pair<String, Map<String, Session>> sessionList
+              = ListSessionsRequest.execute(hashCode.get());
+          hashCode.set(sessionList.getKey());
+          sessions.set(sessionList.getValue());
+          if (sessions.get() == null) {
+            hashCode.set("");
+            sessions.set(new HashMap<>());
           }
           return null;
         }
       };
       fetchSessionsTask.setOnSucceeded(e -> {
-        fetchSessionsThread = null;
-        if (shouldFetch) {
-          Platform.runLater(LobbyFactory::updateSessionList);
+        fetchSessionsThread.get().interrupt();
+        Platform.runLater(LobbyFactory::updateSessionList);
+        if (shouldFetch.get()) {
           createFetchSessionThread();
         }
       });
       fetchSessionsTask.setOnFailed(e -> {
-        fetchSessionsThread = null;
+        fetchSessionsThread.get().interrupt();
+        shouldFetch.set(false);
         throw new RuntimeException(fetchSessionsTask.getException());
       });
-      fetchSessionsTask.setOnCancelled(e -> {
-        fetchSessionsThread = null;
-      });
-      fetchSessionsThread = new Thread(fetchSessionsTask);
-      fetchSessionsThread.setDaemon(true);
-      fetchSessionsThread.start();
+      fetchSessionsTask.setOnCancelled(e -> fetchSessionsThread.get().interrupt());
+      Thread thread = new Thread(fetchSessionsTask);
+      thread.setDaemon(true);
+      thread.start();
+      fetchSessionsThread.set(thread);
     }
   }
 
@@ -129,55 +199,64 @@ public class LobbyFactory implements EntityFactory {
   }
 
   private Entity sessionList(SpawnData data, boolean isActive) {
-    if (sessions == null) {
-      sessions = new Session[] {};
+    if (sessions.get() == null) {
+      sessions.set(new HashMap<>());
     }
-    Session[] sessionArr;
-    TableView<Session> sessionTableView = new TableView<>();
+    Map<String, Session> sessionArr;
+    TableView<Map.Entry<String, Session>> sessionTableView = new TableView<>();
     if (isActive) {
       activeSessionList = sessionTableView;
-      sessionArr = Arrays.stream(sessions).filter(
-          session -> Arrays.asList(session.getPlayers()).contains(AuthUtils.getPlayer().getName())
-      ).toArray(Session[]::new);
+      sessionArr = sessions.get().entrySet().stream().filter(
+          session -> Arrays.asList(session.getValue().getPlayers())
+              .contains(AuthUtils.getPlayer().getName())
+      ).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     } else {
       otherSessionList = sessionTableView;
-      sessionArr = Arrays.stream(sessions).filter(
-          session -> !(Arrays.asList(session.getPlayers())
-              .contains(AuthUtils.getPlayer().getName()))
-      ).toArray(Session[]::new);
+      sessionArr = sessions.get().entrySet().stream().filter(
+          session -> !Arrays.asList(session.getValue().getPlayers())
+              .contains(AuthUtils.getPlayer().getName())
+      ).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
-    sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff;");
+    sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7;");
 
     String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
-        + "-fx-text-fill: #ffffff; -fx-font-size: 16px;";
+        + "-fx-text-fill: #CFFBE7; -fx-font-size: 16px;";
 
-    TableColumn<Session, String> creatorColumn = new TableColumn<>("Creator");
+    TableColumn<Map.Entry<String, Session>, String> creatorColumn = new TableColumn<>("Creator");
     creatorColumn.setCellValueFactory(
-        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getCreator()));
+        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getValue().getCreator()));
     creatorColumn.setStyle(columnStyle);
 
-    TableColumn<Session, String> launchedColumn = new TableColumn<>("Launched");
+    TableColumn<Map.Entry<String, Session>, String> launchedColumn = new TableColumn<>("Launched");
     launchedColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-        cellData.getValue().getLaunched() ? "Yes" : "No"
+        cellData.getValue().getValue().isLaunched() ? "Yes" : "No"
     ));
     launchedColumn.setStyle(columnStyle);
 
-    TableColumn<Session, String> playersColumn = new TableColumn<>("Players");
+    TableColumn<Map.Entry<String, Session>, String> playersColumn = new TableColumn<>("Players");
     playersColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-        cellData.getValue().getPlayers().length
+        cellData.getValue().getValue().getPlayers().length
             + " / "
-            + cellData.getValue().getGameParameters().getMaxSessionPlayers()
+            + cellData.getValue().getValue().getGameParameters().getMaxSessionPlayers()
     ));
     playersColumn.setStyle(columnStyle);
 
-    TableColumn<Session, String> actionsColumn = new TableColumn<>("Actions");
+    TableColumn<Map.Entry<String, Session>, String> serverColumn = new TableColumn<>("Extensions");
+    serverColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
+        cellData.getValue().getValue().getGameParameters().getDisplayName()
+    ));
+    serverColumn.setStyle(columnStyle);
+
+    TableColumn<Map.Entry<String, Session>, String> actionsColumn = new TableColumn<>("Actions");
     actionsColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper("actions"));
     actionsColumn.setStyle(columnStyle);
 
-    Callback<TableColumn<Session, String>, TableCell<Session, String>> actionsCellFactory =
+    Callback<TableColumn<Map.Entry<String, Session>, String>,
+        TableCell<Map.Entry<String, Session>, String>> actionsCellFactory =
         new Callback<>() {
           @Override
-          public TableCell<Session, String> call(final TableColumn<Session, String> param) {
+          public TableCell<Map.Entry<String, Session>, String> call(
+              final TableColumn<Map.Entry<String, Session>, String> param) {
             return new TableCell<>() {
               final Button join = new Button("Join");
               final Button leave = new Button("Leave");
@@ -190,19 +269,20 @@ public class LobbyFactory implements EntityFactory {
                 if (empty) {
                   setGraphic(null);
                 } else {
-                  final Session session = getTableView().getItems().get(getIndex());
+                  final Map.Entry<String, Session> sessionEntry
+                      = getTableView().getItems().get(getIndex());
+                  final Session session = sessionEntry.getValue();
                   boolean isOwn = session.getCreator().equals(AuthUtils.getPlayer().getName());
                   join.setOnAction(event -> {
-                    if (session.getLaunched()) {
-                      shouldFetch = false;
-                      fetchSessionsThread.interrupt();
-                      fetchSessionsThread = null;
+                    if (session.isLaunched()) {
+                      shouldFetch.set(false);
+                      fetchSessionsThread.get().interrupt();
                       LobbyScreen.exitLobby();
                       FXGL.getWorldProperties().setValue("players", session.getPlayers());
-                      GameScreen.initGame(session.getId());
+                      GameScreen.initGame(Long.parseLong(sessionEntry.getKey()));
                     } else {
-                      JoinSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
-                          AuthUtils.getAuth().getAccessToken());
+                      JoinSessionRequest.execute(Long.parseLong(sessionEntry.getKey()),
+                          AuthUtils.getPlayer().getName(), AuthUtils.getAuth().getAccessToken());
                     }
                   });
                   String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
@@ -210,36 +290,33 @@ public class LobbyFactory implements EntityFactory {
                   join.setStyle(
                       "-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle
                   );
-                  leave.setOnAction(event -> {
-                    LeaveSessionRequest.execute(session.getId(), AuthUtils.getPlayer().getName(),
-                        AuthUtils.getAuth().getAccessToken());
-                  });
+                  leave.setOnAction(event -> LeaveSessionRequest.execute(
+                      Long.parseLong(sessionEntry.getKey()),
+                      AuthUtils.getPlayer().getName(), AuthUtils.getAuth().getAccessToken()));
                   leave.setStyle(
                       "-fx-text-fill: darkcyan; -fx-border-color: darkcyan;" + commonButtonStyle
                   );
                   launch.setOnAction(event -> {
-                    LaunchSessionRequest.execute(session.getId(),
+                    LaunchSessionRequest.execute(Long.parseLong(sessionEntry.getKey()),
                         AuthUtils.getAuth().getAccessToken());
-                    shouldFetch = false;
-                    fetchSessionsThread.interrupt();
-                    fetchSessionsThread = null;
+                    shouldFetch.set(false);
+                    fetchSessionsThread.get().interrupt();
                     LobbyScreen.exitLobby();
                     FXGL.getWorldProperties().setValue("players", session.getPlayers());
-                    GameScreen.initGame(session.getId());
+                    GameScreen.initGame(Long.parseLong(sessionEntry.getKey()));
                   });
                   launch.setStyle(
                       "-fx-text-fill: green; -fx-border-color: green;" + commonButtonStyle
                   );
-                  delete.setOnAction(event -> {
-                    DeleteSessionRequest.execute(session.getId(),
-                        AuthUtils.getAuth().getAccessToken());
-                  });
+                  delete.setOnAction(event -> DeleteSessionRequest.execute(
+                      Long.parseLong(sessionEntry.getKey()),
+                      AuthUtils.getAuth().getAccessToken()));
                   delete.setStyle(
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
                   );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
-                    if (!session.getLaunched()) {
+                    if (!session.isLaunched()) {
                       if (isOwn && session.getPlayers().length
                           >= session.getGameParameters().getMinSessionPlayers()) {
                         buttons.add(launch);
@@ -248,7 +325,7 @@ public class LobbyFactory implements EntityFactory {
                     } else {
                       buttons.add(join);
                     }
-                  } else if (!session.getLaunched() && session.getPlayers().length
+                  } else if (!session.isLaunched() && session.getPlayers().length
                       < session.getGameParameters().getMaxSessionPlayers()) {
                     buttons.add(join);
                   }
@@ -264,31 +341,37 @@ public class LobbyFactory implements EntityFactory {
     actionsColumn.setCellFactory(actionsCellFactory);
 
     Label placeholder = new Label("No sessions found");
-    placeholder.setStyle("-fx-text-fill: #ffffff; -fx-alignment: CENTER; -fx-font-size: 24px;");
+    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
     sessionTableView.setPlaceholder(placeholder);
 
     sessionTableView.getColumns().add(creatorColumn);
+    sessionTableView.getColumns().add(serverColumn);
     sessionTableView.getColumns().add(launchedColumn);
     sessionTableView.getColumns().add(playersColumn);
     sessionTableView.getColumns().add(actionsColumn);
 
-    sessionTableView.resizeColumn(creatorColumn, 320);
-    sessionTableView.resizeColumn(launchedColumn, 318);
-    sessionTableView.resizeColumn(playersColumn, 320);
-    sessionTableView.resizeColumn(actionsColumn, 320);
+    sessionTableView.resizeColumn(creatorColumn, 240);
+    sessionTableView.resizeColumn(serverColumn, 240);
+    sessionTableView.resizeColumn(launchedColumn, 238);
+    sessionTableView.resizeColumn(playersColumn, 240);
+    sessionTableView.resizeColumn(actionsColumn, 240);
     sessionTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
     sessionTableView.setFixedCellSize(50);
 
-    sessionTableView.getItems().addAll(sessionArr);
+    sessionTableView.getItems().addAll(sessionArr.entrySet());
     sessionTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
 
-    if (fetchSessionsThread == null) {
-      shouldFetch = true;
+    if (fetchSessionsThread.get() == null || !fetchSessionsThread.get().isAlive()) {
+      shouldFetch.set(true);
       createFetchSessionThread();
     }
 
+    if (fetchGameServicesThread.get() == null) {
+      createFetchGameServicesThread();
+    }
+
     return entityBuilder(data)
-        .type(isActive ? Type.OWN_SESSION_LIST : Type.OTHER_SESSION_LIST)
+        .type(isActive ? EntityType.OWN_SESSION_LIST : EntityType.OTHER_SESSION_LIST)
         .viewWithBBox(sessionTableView)
         .at(160, isActive ? 350 : 450 + getAppHeight() / 4.0)
         .build();
@@ -303,24 +386,66 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("createSessionButton")
   public Entity createSessionButton(SpawnData data) {
     Button button = new Button("Create Session");
-    button.setStyle(
-        "-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; "
-            + "-fx-padding: 10px;"
-    );
+    button.setFont(CURSIVE_FONT_FACTORY.newFont(45));
+    button.setTextFill(Config.SECONDARY_COLOR);
+    button.setStyle("-fx-background-color: #6495ed;" + "-fx-padding: 10px");
+    button.setOnMouseEntered(e -> button.setOpacity(0.7));
+    button.setOnMouseExited(e -> button.setOpacity(1.0));
     button.setOnAction(event -> {
-      String sessionId = CreateSessionRequest.execute(
+      Long sessionId = CreateSessionRequest.execute(
           AuthUtils.getAuth().getAccessToken(),
           AuthUtils.getPlayer().getName(),
-          "Splendor",
-          null
+          selectedGameService.get(),
+          ""
       );
       System.out.println("Created session with id: " + sessionId);
-      //ownSessionList.setPrefHeight(ownSessionList.getHeight() + 41);
     });
     return entityBuilder(data)
-        .type(Type.CREATE_SESSION_BUTTON)
+        .type(EntityType.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
-        .at(870, 200)
+        .at(750 - 15, 200 - 12)
+        .build();
+  }
+
+  /**
+   * Adds a dropdown menu that allows to select a game service for game creation.
+   *
+   * @param data The data of the entity.
+   * @return Game Service dropdown menu.
+   */
+  @Spawns("gameServiceList")
+  public Entity gameServiceList(SpawnData data) {
+    gameServiceDropdown = new ComboBox<>();
+    gameServiceDropdown.setPrefSize(250, 60);
+    gameServiceDropdown.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7; "
+        + "-fx-border-color: #CFFBE7; -fx-font-size: 24px;");
+    Callback<ListView<GameServiceJson>, ListCell<GameServiceJson>> cellFactory = new Callback<>() {
+      @Override
+      public ListCell<GameServiceJson> call(ListView<GameServiceJson> gameServiceJsonListView) {
+        return new ListCell<>() {
+          @Override
+          protected void updateItem(GameServiceJson gameServiceJson, boolean b) {
+            super.updateItem(gameServiceJson, b);
+            if (gameServiceJson != null) {
+              setText(gameServiceJson.getDisplayName());
+            }
+          }
+        };
+      }
+    };
+    gameServiceDropdown.setButtonCell(cellFactory.call(null));
+    gameServiceDropdown.setCellFactory(cellFactory);
+    gameServiceDropdown.getItems().addAll(Arrays.stream(gameServices.get()).toList());
+    gameServiceDropdown.setOnAction(event -> {
+      GameServiceJson selected = gameServiceDropdown.getSelectionModel().getSelectedItem();
+      if (selected != null) {
+        selectedGameService.set(selected.getName());
+      }
+    });
+    return entityBuilder(data)
+        .type(EntityType.GAME_SERVICE_LIST)
+        .viewWithBBox(gameServiceDropdown)
+        .at(950, 200)
         .build();
   }
 
@@ -332,14 +457,21 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("ownHeader")
   public Entity ownHeader(SpawnData data) {
-    Label label = new Label("Active Sessions");
-    label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
+    Text activeSessions = new Text("Active Sessions");
+    activeSessions.setFont(CURSIVE_FONT_FACTORY.newFont(300));
+    activeSessions.setFill(Paint.valueOf("#FCD828"));
+    activeSessions.setStrokeWidth(2.);
+    activeSessions.setStroke(Paint.valueOf("#936D35"));
+    activeSessions.setStyle("-fx-text-fill: #CFFBE7; -fx-font-size: 50px; -fx-font-weight: bold;");
+
     return entityBuilder(data)
-        .type(Type.OWN_HEADER)
-        .viewWithBBox(label)
-        .at(870, 300)
+        .type(EntityType.OWN_HEADER)
+        .viewWithBBox(activeSessions)
+        .at(850, 320)
         .build();
   }
+
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   /**
    * Adds a header above the table of other players' sessions.
@@ -349,12 +481,17 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("otherHeader")
   public Entity otherHeader(SpawnData data) {
-    Label label = new Label("Other Sessions");
-    label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
+    Text otherSessions = new Text("Other Sessions");
+    otherSessions.setFont(CURSIVE_FONT_FACTORY.newFont(300));
+    otherSessions.setFill(Paint.valueOf("#FCD828"));
+    otherSessions.setStrokeWidth(2.);
+    otherSessions.setStroke(Paint.valueOf("#936D35"));
+    otherSessions.setStyle("-fx-text-fill: #CFFBE7; -fx-font-size: 50px; -fx-font-weight: bold;");
+
     return entityBuilder(data)
-        .type(Type.OTHER_HEADER)
-        .viewWithBBox(label)
-        .at(880, 400 + getAppHeight() / 4.0)
+        .type(EntityType.OTHER_HEADER)
+        .viewWithBBox(otherSessions)
+        .at(880 - 20, 400 + getAppHeight() / 4.0 + 20)
         .build();
   }
 
@@ -368,8 +505,8 @@ public class LobbyFactory implements EntityFactory {
   public Entity closeButton(SpawnData data) {
     Button button = new Button("X");
     button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #ffffff;"
-            + "-fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px;"
+        "-fx-background-color: transparent; -fx-text-fill: #CFFBE7;"
+            + "-fx-border-color: #CFFBE7; -fx-font-size: 24px; -fx-border-width: 1px;"
             + "-fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px;"
             + "-fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
     button.setOnAction(event -> {
@@ -377,7 +514,7 @@ public class LobbyFactory implements EntityFactory {
       MainMenuScreen.initUi();
     });
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(1700, 100)
         .build();
@@ -392,7 +529,7 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("logo")
   public Entity logo(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.LOGO)
+        .type(EntityType.LOGO)
         .viewWithBBox("splendor.png")
         .at(450, 25)
         .scaleOrigin(450, 25)
@@ -409,14 +546,21 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("preferencesButton")
   public Entity preferencesButton(SpawnData data) {
     Button button = new Button("Preferences");
-    button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
-            + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
-    button.setOnAction(event -> {
-      SettingsScreen.initUi(false);
+    button.setFont(CURSIVE_FONT_FACTORY.newFont(50));
+    button.setTextFill(Config.SECONDARY_COLOR);
+    button.setStyle("-fx-background-color: transparent;");
+    // animation
+    button.setOnMouseEntered(e -> {
+      button.setScaleX(1.25);
+      button.setScaleY(1.25);
     });
+    button.setOnMouseExited(e -> {
+      button.setScaleX(1);
+      button.setScaleY(1);
+    });
+    button.setOnAction(event -> SettingsScreen.initUi(false));
     return entityBuilder(data)
-        .type(Type.CLOSE_BUTTON)
+        .type(EntityType.CLOSE_BUTTON)
         .viewWithBBox(button)
         .at(150, 90)
         .build();
@@ -431,51 +575,9 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("background")
   public Entity background(SpawnData data) {
     return entityBuilder(data)
-        .type(Type.BACKGROUND)
-        .viewWithBBox(new Rectangle(1920, 1080, Paint.valueOf("#282C34")))
+        .type(EntityType.BACKGROUND)
+        .viewWithBBox(new Rectangle(1920, 1080, Config.PRIMARY_COLOR))
         .at(0, 0)
         .build();
-  }
-
-  /**
-   * Enum of possible entities in the lobby screen.
-   */
-  public enum Type {
-    /**
-     * Own session list.
-     */
-    OWN_SESSION_LIST,
-    /**
-     * Other session list.
-     */
-    OTHER_SESSION_LIST,
-    /**
-     * Create session button.
-     */
-    CREATE_SESSION_BUTTON,
-    /**
-     * Close button.
-     */
-    CLOSE_BUTTON,
-    /**
-     * Preferences button.
-     */
-    PREFERENCES_BUTTON,
-    /**
-     * Logo.
-     */
-    LOGO,
-    /**
-     * Own header.
-     */
-    OWN_HEADER,
-    /**
-     * Other header.
-     */
-    OTHER_HEADER,
-    /**
-     * Background.
-     */
-    BACKGROUND
   }
 }

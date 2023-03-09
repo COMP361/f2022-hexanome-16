@@ -12,6 +12,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbu
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
@@ -28,7 +29,9 @@ import javafx.scene.Node;
  * Also contains some useful methods.
  */
 public interface PromptTypeInterface {
-
+  /**
+   * Cursive font factory.
+   */
   FontFactory GAME_FONT = Config.CURSIVE_FONT_FACTORY;
 
   /**
@@ -47,6 +50,11 @@ public interface PromptTypeInterface {
     }
 
     @Override
+    public boolean isCancelable() {
+      return true;
+    }
+
+    @Override
     public void populatePrompt(Entity entity) {
     }
   };
@@ -62,12 +70,8 @@ public interface PromptTypeInterface {
    */
   static void setOnHoverEffectOpacity(Node hoveredOver, Node affectedNode,
                                       double lowerOpacity, double upperOpacity) {
-    hoveredOver.setOnMouseEntered(e -> {
-      affectedNode.setOpacity(upperOpacity);
-    });
-    hoveredOver.setOnMouseExited(e -> {
-      affectedNode.setOpacity(lowerOpacity);
-    });
+    hoveredOver.setOnMouseEntered(e -> affectedNode.setOpacity(upperOpacity));
+    hoveredOver.setOnMouseExited(e -> affectedNode.setOpacity(lowerOpacity));
   }
 
   /**
@@ -112,11 +116,19 @@ public interface PromptTypeInterface {
   double getHeight();
 
   /**
+   * returns true if we want prompt to be cancelable, false otherwise.
+   *
+   * @return true or false.
+   */
+  boolean isCancelable();
+
+  /**
    * Method which populates the prompt with elements specific to the prompt type.
    *
    * @param entity entity associated to the prompt component that called this method.
    */
   void populatePrompt(Entity entity);
+
 
   /**
    * Enum of all the possible types of prompts.
@@ -143,7 +155,7 @@ public interface PromptTypeInterface {
      */
     BUY_CARD(new BuyCardPrompt()),
     /**
-     * Buy cards prompt type.
+     * Reserve Card prompt type.
      * <p><i>Main</i></p>
      */
     RESERVE_CARD(new ReserveCardPrompt()),
@@ -208,6 +220,10 @@ public interface PromptTypeInterface {
      * <p><i>Helper</i></p>
      */
     CHOOSE_NOBLE_TO_RESERVE(new ChooseNobleReserve()),
+    /**
+     * Choose level two prompt type.
+     */
+    CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

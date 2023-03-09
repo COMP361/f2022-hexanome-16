@@ -26,7 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -105,11 +104,14 @@ public class BuyCardWithCards implements PromptTypeInterface {
   }
 
   @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
-    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
-      cardsChosen = 0;
-    });
+    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> cardsChosen = 0);
 
     //initializing Hbox
     HBox myPrompt = new HBox();

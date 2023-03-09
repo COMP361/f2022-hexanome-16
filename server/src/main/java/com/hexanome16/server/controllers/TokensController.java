@@ -1,7 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.services.TokenServiceInterface;
+import com.hexanome16.server.services.token.TokenServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +35,9 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
-  @GetMapping(value = {"/games/{sessionId}/twoTokens"})
+  @GetMapping(value = "/games/{sessionId}/twoTokens")
   public ResponseEntity<String> availableTwoTokensType(@PathVariable long sessionId)
       throws JsonProcessingException {
     return tokenService.availableTwoTokensType(sessionId);
@@ -49,9 +49,9 @@ public class TokensController {
    *
    * @param sessionId the session's Identification number.
    * @return String representation of a list of all the available token types
-   * @throws JsonProcessingException if the list of available tokens cannot be converted
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if tokens cannot be converted
    */
-  @GetMapping(value = {"/games/{sessionId}/threeTokens"})
+  @GetMapping(value = "/games/{sessionId}/threeTokens")
   public ResponseEntity<String> availableThreeTokensType(@PathVariable long sessionId)
       throws JsonProcessingException {
     return tokenService.availableThreeTokensType(sessionId);
@@ -60,19 +60,18 @@ public class TokensController {
   /**
    * Allows to take 2 tokens of a given type, This function checks if the action is valid.
    *
-   * @param sessionId the session's Identification number.
-   * @param authenticationToken authentication token of the player who wants to take the tokens.
-   * @param tokenType String representing the token type selected by the player, the acceptable
-   *                  strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @param sessionId     the session's Identification number.
+   * @param accessToken   authentication token of the player who wants to take the tokens.
+   * @param tokenType     String representing the token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
-   *         </p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    */
-  @PutMapping(value = {"/games/{sessionId}/twoTokens"})
+  @PutMapping(value = "/games/{sessionId}/twoTokens")
   public ResponseEntity<String> takeTwoTokens(@PathVariable long sessionId,
-                                              @RequestParam String authenticationToken,
+                                              @RequestParam String accessToken,
                                               @RequestParam String tokenType) {
-    return tokenService.takeTwoTokens(sessionId, authenticationToken, tokenType);
+    return tokenService.takeTwoTokens(sessionId, accessToken, tokenType);
   }
 
   /**
@@ -80,25 +79,24 @@ public class TokensController {
    * This function checks if the action is valid.
    * The Three token types need to be distinct.
    *
-   * @param sessionId the session's Identification number.
-   * @param authenticationToken authentication token of the player who wants to take the tokens.
-   * @param tokenTypeOne String representing the first token type selected by the player,
-   *                     the acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
-   * @param tokenTypeTwo String representing the second token type selected by the player,
-   *                     the acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
-   * @param tokenTypeThree String representing the Third token type selected by the player,
-   *                       the acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @param sessionId           the session's Identification number.
+   * @param accessToken         authentication token of the player who wants to take the tokens.
+   * @param tokenTypeOne        String representing the 1st token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @param tokenTypeTwo        String representing the 2nd token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @param tokenTypeThree      String representing the 3rd token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *         HTTP BAD_REQUEST otherwise.
-   *         </p>
+   *     HTTP BAD_REQUEST otherwise.</p>
    */
-  @PutMapping(value = {"/games/{sessionId}/threeTokens"})
+  @PutMapping(value = "/games/{sessionId}/threeTokens")
   public ResponseEntity<String> takeThreeTokens(@PathVariable long sessionId,
-                                                @RequestParam String authenticationToken,
+                                                @RequestParam String accessToken,
                                                 @RequestParam String tokenTypeOne,
                                                 @RequestParam String tokenTypeTwo,
                                                 @RequestParam String tokenTypeThree) {
-    return tokenService.takeThreeTokens(sessionId, authenticationToken,
+    return tokenService.takeThreeTokens(sessionId, accessToken,
         tokenTypeOne, tokenTypeTwo, tokenTypeThree);
   }
 }

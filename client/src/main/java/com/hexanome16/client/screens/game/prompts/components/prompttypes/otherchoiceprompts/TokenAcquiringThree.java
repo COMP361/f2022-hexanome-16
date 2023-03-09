@@ -64,7 +64,7 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
     long promptSessionId = GameScreen.getSessionId();
     String auth = AuthUtils.getAuth().getAccessToken();
     PromptsRequests.takeThree(promptSessionId, auth, selectedTokenTypes.get(0),
-            selectedTokenTypes.get(1), selectedTokenTypes.get(2));
+        selectedTokenTypes.get(1), selectedTokenTypes.get(2));
     PromptComponent.closePrompts();
   }
 
@@ -98,6 +98,11 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
 
     // return the node with the added behaviour
     return wholeButton;
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 
 }

@@ -1,13 +1,13 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.dto.SessionJson;
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.services.GameServiceInterface;
-import java.util.Map;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameServiceInterface;
+import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,24 +22,23 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameController {
 
-  private final GameServiceInterface gameServiceInterface;
+  private final GameServiceInterface gameService;
+  private final GameManagerServiceInterface gameManager;
+  private final LongPollingServiceInterface longPollingService;
 
   /**
    * Instantiates a new Game controller.
    *
-   * @param gameServiceInterface game service to use for backend manipulations
+   * @param gameService        game service to use for backend manipulations of individual games
+   * @param gameManagerService game manager to manage different game instances
+   * @param longPollingService long polling service to use for long polling
    */
-  public GameController(@Autowired GameServiceInterface gameServiceInterface) {
-    this.gameServiceInterface = gameServiceInterface;
-  }
-
-  /**
-   * Gets game map.
-   *
-   * @return the game map
-   */
-  public Map<Long, Game> getGameMap() {
-    return gameServiceInterface.getGameMap();
+  public GameController(@Autowired GameServiceInterface gameService,
+                        @Autowired GameManagerServiceInterface gameManagerService,
+                        @Autowired LongPollingServiceInterface longPollingService) {
+    this.gameService = gameService;
+    this.gameManager = gameManagerService;
+    this.longPollingService = longPollingService;
   }
 
   /**
@@ -49,9 +48,20 @@ public class GameController {
    * @param payload   the payload
    * @return error if present
    */
-  @PutMapping(value = {"/games/{sessionId}", "/games/{sessionId}/"})
+  @PutMapping(value = "/games/{sessionId}")
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
-    return gameServiceInterface.createGame(sessionId, payload);
+    System.out.println(payload);
+    return gameManager.createGame(sessionId, payload);
+  }
+
+  /**
+   * Deletes a game from the game server. (callback from LS)
+   *
+   * @param sessionId the id of the game to delete
+   */
+  @DeleteMapping(value = "/games/{sessionId}")
+  public void deleteGame(@PathVariable long sessionId) {
+    gameManager.deleteGame(sessionId);
   }
 
   /**
@@ -68,7 +78,20 @@ public class GameController {
                                                         @RequestParam String level,
                                                         @RequestParam String accessToken,
                                                         @RequestParam String hash) {
-    return gameServiceInterface.getDeck(sessionId, level, accessToken, hash);
+    return longPollingService.getDeck(sessionId, level, accessToken, hash);
+  }
+
+  /**
+  * Returns the level two cards on board.
+  *
+  * @param sessionId Identification number of the session.
+  * @return level two cards on board.
+  * @throws JsonProcessingException throws an exception if fails to convert to json.
+   */
+  @GetMapping(value = {"games/{sessionId}/board/cards/levelTwo"})
+  public ResponseEntity<String> getLevelTwoOnBoard(@PathVariable long sessionId)
+      throws JsonProcessingException {
+    return gameService.getLevelTwoOnBoard(sessionId);
   }
 
   /**
@@ -83,7 +106,7 @@ public class GameController {
   public DeferredResult<ResponseEntity<String>> getNobles(@PathVariable long sessionId,
                                                           @RequestParam String accessToken,
                                                           @RequestParam String hash) {
-    return gameServiceInterface.getNobles(sessionId, accessToken, hash);
+    return longPollingService.getNobles(sessionId, accessToken, hash);
   }
 
   /**
@@ -94,11 +117,11 @@ public class GameController {
    * @param hash        hash for long polling
    * @return current player username
    */
-  @GetMapping(value = "/games/{sessionId}/player", produces = "application/json; charset=utf-8")
-  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
+  @GetMapping(value = "/games/{sessionId}/players", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getPlayers(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
-    return gameServiceInterface.getCurrentPlayer(sessionId, accessToken, hash);
+    return longPollingService.getPlayers(sessionId, accessToken, hash);
   }
 
   /**
@@ -111,26 +134,9 @@ public class GameController {
    */
   @GetMapping(value = "/games/{sessionId}/winners", produces = "application/json; charset=utf-8")
   public DeferredResult<ResponseEntity<String>> getWinners(@PathVariable long sessionId,
-                                                                 @RequestParam String accessToken,
-                                                                 @RequestParam String hash) {
-    return gameServiceInterface.getWinners(sessionId, accessToken, hash);
-  }
-
-  // Buy Prompt Controllers ////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Allows client to see how many of each gem a player has.
-   *
-   * @param sessionId sessionId.
-   * @param username  username of the player.
-   * @return String representation of the Purchase map
-   * @throws JsonProcessingException if Json processing fails
-   */
-  @GetMapping(value = {"/games/{sessionId}/playerBank", "/games/{sessionId}/playerBank/"})
-  public ResponseEntity<String> getPlayerBankInfo(@PathVariable long sessionId,
-                                                  @RequestParam String username)
-      throws JsonProcessingException {
-    return gameServiceInterface.getPlayerBankInfo(sessionId, username);
+                                                           @RequestParam String accessToken,
+                                                           @RequestParam String hash) {
+    return longPollingService.getWinners(sessionId, accessToken, hash);
   }
 
   /**
@@ -138,80 +144,14 @@ public class GameController {
    *
    * @param sessionId sessionId.
    * @return String representation of the Purchase map
-   * @throws JsonProcessingException if Json processing fails
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if Json processing fails
    */
-  @GetMapping(value = {"/games/{sessionId}/gameBank", "/games/{sessionId}/gameBank/"})
+  @GetMapping(value = "/games/{sessionId}/gameBank")
   public ResponseEntity<String> getGameBankInfo(@PathVariable long sessionId)
       throws JsonProcessingException {
-    return gameServiceInterface.getGameBankInfo(sessionId);
+    return gameService.getGameBankInfo(sessionId);
   }
 
-  /**
-   * Allows client to buy card, given that they send a valid way to buy that card.
-   *
-   * @param sessionId           sessionID.
-   * @param cardMd5             Card we want to purchase's md5.
-   * @param authenticationToken username of the player trying to buy the card.
-   * @param rubyAmount          amount of ruby gems proposed.
-   * @param emeraldAmount       amount of emerald gems proposed.
-   * @param sapphireAmount      amount of sapphire gems proposed.
-   * @param diamondAmount       amount of diamond gems proposed.
-   * @param onyxAmount          amount of onyx gems proposed.
-   * @param goldAmount          amount of gold gems proposed.
-   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
-   *          HTTP BAD_REQUEST otherwise.
-   *         </p>
-   * @throws JsonProcessingException the json processing exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}", "/games/{sessionId}/{cardMd5}/"})
-  public ResponseEntity<String> buyCard(@PathVariable long sessionId,
-                                        @PathVariable String cardMd5,
-                                        @RequestParam String authenticationToken,
-                                        @RequestParam int rubyAmount,
-                                        @RequestParam int emeraldAmount,
-                                        @RequestParam int sapphireAmount,
-                                        @RequestParam int diamondAmount,
-                                        @RequestParam int onyxAmount,
-                                        @RequestParam int goldAmount)
-      throws JsonProcessingException {
-    return gameServiceInterface.buyCard(sessionId, cardMd5, authenticationToken, rubyAmount,
-        emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
-  }
 
-  /**
-   * Let the player reserve a face up card.
-   *
-   * @param sessionId game session id.
-   * @param cardMd5 card hash.
-   * @param authenticationToken player's authentication token.
-   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws JsonProcessingException exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/{cardMd5}/reservation"})
-  public ResponseEntity<String> reserveCard(@PathVariable long sessionId,
-                                        @PathVariable String cardMd5,
-                                        @RequestParam String authenticationToken)
-      throws JsonProcessingException {
-    return gameServiceInterface.reserveCard(sessionId, cardMd5, authenticationToken);
-  }
-
-  /**
-   * Let the player reserve a face down card.
-   *
-   * @param sessionId game session id.
-   * @param level deck level.
-   * @param authenticationToken player's authentication token.
-   * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
-   * @throws JsonProcessingException exception
-   */
-  @PutMapping(value = {"/games/{sessionId}/deck/reservation"})
-  public ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
-                                            @RequestParam String level,
-                                            @RequestParam String authenticationToken)
-      throws JsonProcessingException {
-
-    return gameServiceInterface.reserveFaceDownCard(sessionId, level, authenticationToken);
-  }
   //////////////////////////////////////////////////////////////////////////////////////////////////
 }
