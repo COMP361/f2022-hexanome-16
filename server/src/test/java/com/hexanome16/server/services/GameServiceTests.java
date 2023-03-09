@@ -117,7 +117,7 @@ class GameServiceTests {
 
     Game validGame = Game.create(123L,
         PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(),
-        "", new WinCondition[]{WinCondition.BASE});
+        "", new WinCondition[]{WinCondition.BASE}, false, false);
     when(gameManagerMock.getGame(validSessionId)).thenReturn(validGame);
 
     // Act
