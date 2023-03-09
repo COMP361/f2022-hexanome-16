@@ -1,13 +1,20 @@
 package com.hexanome16.client.screens.game.prompts;
 
+import static com.hexanome16.client.requests.RequestClient.objectMapper;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
+import java.util.Arrays;
+import java.util.List;
 import javafx.util.Pair;
 import kong.unirest.core.Headers;
+import lombok.SneakyThrows;
 
 /**
  * Class containing 2 methods to open prompts.
@@ -44,15 +51,18 @@ public class PromptUtils {
 
 
   // TODO : ADD ALL OTHER ACTION TYPES AND THEIR ACCORDING PROMPTS.
+
   /**
    * Takes in a response from the server and spawns appropriate prompts.
    *
    * @param serverResponse response from server.
    */
+  @SneakyThrows
   public static void actionResponseSpawner(Pair<Headers, String> serverResponse) {
     Headers headers = serverResponse.getKey();
 
     System.out.println("Response headers: " + headers);
+    System.out.println("Body: " + serverResponse.getValue());
     // TODO :: FIND A FIX FOR THIS, once card is replaced, the card that comes
     // after doesnt seem to have a card bonus type. (check for null shouldnt be
     // necessary)
@@ -61,10 +71,19 @@ public class PromptUtils {
       return;
     }
 
-    if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
-        .equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
-      FXGL.spawn("PromptBox",
-          new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_TWO));
+    List<String> actionList = headers.get(CustomHttpResponses.ActionType.ACTION_TYPE);
+    if (actionList.size() >= 1) {
+      if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage())) {
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_TWO));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.NOBLE.getMessage())) {
+        Noble[] nobles = objectMapper.readValue(serverResponse.getValue(), Noble[].class);
+        ChooseNoble.setNobleList(nobles);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_NOBLES));
+      }
     }
   }
 }

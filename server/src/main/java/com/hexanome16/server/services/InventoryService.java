@@ -302,6 +302,12 @@ public class InventoryService implements InventoryServiceInterface {
     // give player a gold token
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
+    // Notify long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(atLevel),
+        new DeckJson(game.getOnBoardDeck(atLevel).getCardList(), atLevel)
+    );
+
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
@@ -352,6 +358,7 @@ public class InventoryService implements InventoryServiceInterface {
     if (nextAction != null) {
       return nextAction.getActionDetails();
     }
+    serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
