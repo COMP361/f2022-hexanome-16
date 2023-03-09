@@ -1,6 +1,7 @@
 package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.RouteType;
+import com.hexanome16.common.models.price.Gem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,8 +24,7 @@ public class TradePost {
       case ONYX_ROUTE -> {
         int numOfOnyx = 0;
         for (ServerLevelCard card : inventory.getOwnedCards()) {
-          //todo change to bonus later!!!!!!!!
-          if (true) {
+          if (card.getGemBonus().getPriceMap().get(Gem.ONYX) > 0) {
             numOfOnyx++;
           }
         }
