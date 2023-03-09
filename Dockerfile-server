@@ -39,11 +39,7 @@ RUN chmod +x /wait
 COPY --from=build /app/server/target/server-0.0.1-SNAPSHOT.jar /app/splendor.jar
 
 #Copy the json file
-COPY server/src/main/resources/cards.json /app
-COPY server/src/main/resources/nobles.json /app
-COPY server/src/main/resources/bag.json /app
-COPY server/src/main/resources/cascade_two.json /app
-COPY server/src/main/resources/double.json /app
+COPY server/src/main/resources/*.json /app/
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed curl
