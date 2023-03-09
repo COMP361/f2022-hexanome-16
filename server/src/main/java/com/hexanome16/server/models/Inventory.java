@@ -2,11 +2,11 @@ package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Player inventory class.
@@ -19,6 +19,7 @@ public class Inventory {
   private final List<Noble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
+  private final PriceInterface gemBonuses;
 
   /* Constructor *********************************************************************************/
 
@@ -31,17 +32,19 @@ public class Inventory {
     reservedNobles = new ArrayList<>();
     ownedCards = new ArrayList<>();
     reservedCards = new ArrayList<>();
+    gemBonuses = new PriceMap();
   }
 
   /* add methods ******************************************************************************/
 
   /**
-   * Acquire card.
+   * Acquire card and add bonuses to inventory.
    *
    * @param card the card to add
    * @return true if the card was added to inventory
    */
   public boolean acquireCard(ServerLevelCard card) {
+    gemBonuses.addGems(card.getGemBonus().getPriceMap());
     return ownedCards.add(card);
   }
 
@@ -85,8 +88,7 @@ public class Inventory {
    * @param price minimum amount needed in inventory
    * @return true if the inventory has at least enough for the price
    */
-  public boolean hasAtLeast(PriceInterface price) {
-    // TODO: do this
-    throw new NotImplementedException();
+  public boolean hasAtLeastGivenBonuses(PriceInterface price) {
+    return gemBonuses.hasAtLeastAmountOfGems(price);
   }
 }

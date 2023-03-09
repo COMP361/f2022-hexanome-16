@@ -1,15 +1,23 @@
 package com.hexanome16.server.models;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -35,16 +43,30 @@ public class InventoryTests {
   }
 
   /**
+   * Gem bonuses should be zero when instantiated.
+   */
+  @Test
+  void testGemBonusesInstantiation() {
+    // Arrange
+
+    // Act
+    var response = inventory.getGemBonuses();
+
+    // Assert
+    assertEquals(new PriceMap(), response);
+  }
+
+  /**
    * Test to see if a pre-existing card can be successfully added to a player's
    * inventory. The test here is the acquireCard method of the Inventory class.
    */
   @Test
   @DisplayName("Acquire a Level Card successfully")
   void testAcquireCard() {
-    PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
-    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = createValidCard();
     inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
+    assertEquals(levelCard.getGemBonus(), PurchaseMap.toPurchaseMap(inventory.getGemBonuses()));
   }
 
   /**
@@ -54,9 +76,8 @@ public class InventoryTests {
   @Test
   @DisplayName("Reserve a face up Level Card successfully")
   void testReserveFaceUp() {
-    PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = createValidCard();
     // add the card to the inventory
     inventory.reserveCard(levelCard);
     // assert it was reserved successfully
@@ -73,9 +94,8 @@ public class InventoryTests {
   @Test
   @DisplayName("Reserve a face down Level Card successfully")
   void testReserveFaceDown() {
-    PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     // by default the card should be face down
-    levelCard = new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE);
+    levelCard = createValidCard();
     levelCard.setFaceDown(false);
     // add the card to the inventory
     inventory.reserveCard(levelCard);
@@ -110,5 +130,47 @@ public class InventoryTests {
     noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.reserveNoble(noble);
     assertTrue(inventory.getReservedNobles().contains(noble));
+  }
+
+  /**
+   * Test has at least true.
+   */
+  @Test
+  void testHasAtLeastTrue() {
+    // Arrange
+    PriceInterface mockPrice = Mockito.mock(PriceInterface.class);
+
+    //Gem bonuses starts at 0
+    when(mockPrice.getGemCost(any())).thenReturn(0);
+
+    // Act
+    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+
+    // Assert
+    assertTrue(response);
+  }
+
+  /**
+   * Test has at least false.
+   */
+  @Test
+  void testHasAtLeastFalse() {
+    // Arrange
+    PriceInterface mockPrice = Mockito.mock(PriceInterface.class);
+
+    //Gem bonuses starts at 0
+    when(mockPrice.getGemCost(any())).thenReturn(1);
+
+    // Act
+    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+
+    // Assert
+    assertFalse(response);
+  }
+
+  private ServerLevelCard createValidCard() {
+    PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
+    return new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE, new PurchaseMap(Map.of(
+        Gem.RUBY, 1)));
   }
 }

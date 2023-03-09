@@ -2,6 +2,7 @@ package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,18 +10,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
+import com.hexanome16.server.models.Deck;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
+import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.util.ServiceUtils;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -105,9 +112,21 @@ class GameServiceTests {
    */
   @Test
   public void testGetLevelTwoOnBoard() throws JsonProcessingException {
+    // Arrange
     long validSessionId = DummyAuths.validSessionIds.get(0);
+
+    Game validGame = Game.create(123L,
+        PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(),
+        "", new WinCondition[]{WinCondition.BASE}, false, false);
+    when(gameManagerMock.getGame(validSessionId)).thenReturn(validGame);
+
+    // Act
     ResponseEntity<String> response =
         gameService.getLevelTwoOnBoard(validSessionId);
+
+    // Assert
+
+
     assertTrue(response.getStatusCode().is2xxSuccessful());
     LevelCard[] body = objectMapper.readValue(response.getBody(), LevelCard[].class);
     assertEquals(6, body.length);

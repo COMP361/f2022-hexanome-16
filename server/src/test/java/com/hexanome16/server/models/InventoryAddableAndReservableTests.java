@@ -1,10 +1,15 @@
 package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link InventoryAddable} and {@link Reservable}.
@@ -14,11 +19,11 @@ public class InventoryAddableAndReservableTests {
 
 
   private final ServerLevelCard levelCard = new ServerLevelCard(0, 1, "texture.png", priceMap,
-      Level.ONE);
+      Level.ONE, new PurchaseMap(Map.of(Gem.RUBY, 1)));
 
   private final ServerNoble noble = new ServerNoble(0, 3, "texture.png", priceMap);
 
-  private final Inventory inventory = new Inventory();
+  private Inventory inventory = new Inventory();
 
   /**
    * Test add level card to inventory.
@@ -34,8 +39,11 @@ public class InventoryAddableAndReservableTests {
    */
   @Test
   public void testAddNobleToInventory() {
-    noble.addToInventory(inventory);
-    assertTrue(inventory.getOwnedNobles().contains(noble));
+    inventory = Mockito.mock(Inventory.class);
+    var price = noble.getCardInfo().price();
+    when(inventory.hasAtLeastGivenBonuses(price)).thenReturn(true);
+    when(inventory.acquireNoble(noble)).thenReturn(true);
+    assertTrue(noble.addToInventory(inventory));
   }
 
   /**

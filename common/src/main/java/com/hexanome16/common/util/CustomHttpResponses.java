@@ -66,6 +66,12 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   INSUFFICIENT_BONUSES_FOR_VISIT("You do not have sufficient bonuses to be visited by this noble",
       HTTP_BAD_REQUEST),
+  /**
+   * Used for when the player makes an inappropriate call to the server,
+   * wanting to complete an invalid action or actions in the wrong order.
+   */
+  INVALID_ACTION_FOR_PLAYER("You have another action to complete before this one",
+      HTTP_BAD_REQUEST),
 
   /**
    * OK.
@@ -114,33 +120,6 @@ public enum CustomHttpResponses implements BroadcastContent {
   END_OF_TURN("No Further Actions needed", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.END_TURN.getMessage())));
 
-  /**
-   * Class for ActionTypes, holds strings used all over the code.
-   */
-  public enum ActionType {
-    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"), END_TURN("done");
-
-    private final String message;
-
-    /**
-     * Action Type string.
-     */
-    public static final String ACTION_TYPE = "action-type";
-
-    ActionType(String message) {
-      this.message = message;
-    }
-
-    /**
-     * Gets the message.
-     *
-     * @return message.
-     */
-    public String getMessage() {
-      return message;
-    }
-  }
-
   private final String body;
   private final Map<String, List<String>> headers;
   private final int status;
@@ -160,5 +139,31 @@ public enum CustomHttpResponses implements BroadcastContent {
   @Override
   public boolean isEmpty() {
     return (body == null || body.isBlank()) && status == 0;
+  }
+
+  /**
+   * Class for ActionTypes, holds strings used all over the code.
+   */
+  public enum ActionType {
+    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"), END_TURN("done");
+
+    /**
+     * Action Type string.
+     */
+    public static final String ACTION_TYPE = "action-type";
+    private final String message;
+
+    ActionType(String message) {
+      this.message = message;
+    }
+
+    /**
+     * Gets the message.
+     *
+     * @return message.
+     */
+    public String getMessage() {
+      return message;
+    }
   }
 }

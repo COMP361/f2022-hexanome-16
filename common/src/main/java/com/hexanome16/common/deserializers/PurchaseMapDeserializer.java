@@ -44,7 +44,7 @@ public class PurchaseMapDeserializer extends StdDeserializer<PurchaseMap> {
     if (node.get("priceMap") != null) {
       node = node.get("priceMap");
     }
-    int goldAmount = node.get("GOLD").asInt();
+    int goldAmount = node.get("GOLD") != null ? node.get("GOLD").asInt() : 0;
     return new PurchaseMap(priceMap, goldAmount);
   }
 }

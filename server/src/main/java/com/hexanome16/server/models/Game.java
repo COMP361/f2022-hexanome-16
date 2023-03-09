@@ -30,25 +30,22 @@ import org.apache.commons.codec.digest.DigestUtils;
 @ToString
 public class Game {
   private static final ObjectMapper objectMapper = new ObjectMapper();
-  private BroadcastMap broadcastContentManagerMap;
   private final Map<Level, Deck<ServerLevelCard>> levelDecks;
-
   private final Map<Level, Deck<ServerLevelCard>> redDecks;
   private final Map<Level, Deck<ServerLevelCard>> onBoardDecks;
   private final int levelCardsTotal = 90;
-
   private final long sessionId;
-
   private final ServerPlayer[] players;
   private final String creator;
   private final String savegame;
   private final GameBank gameBank;
   private final WinCondition[] winConditions;
+  private final Map<String, ServerLevelCard> remainingCards;
+  private final Map<String, ServerNoble> remainingNobles;
+  private BroadcastMap broadcastContentManagerMap;
   private int currentPlayerIndex = 0;
   private Deck<ServerNoble> nobleDeck;
   private Deck<ServerNoble> onBoardNobles;
-  private final Map<String, ServerLevelCard> remainingCards;
-  private final Map<String, ServerNoble> remainingNobles;
   private final Map<RouteType, TradePost> tradePosts;
 
   /**
@@ -101,11 +98,6 @@ public class Game {
         payload.getGame().contains("TradeRoutes"), payload.getGame().contains("Cities"));
   }
 
-  @SneakyThrows
-  private void init() {
-    this.broadcastContentManagerMap = new BroadcastMap(this);
-  }
-
   /**
    * Creates a new game instance from a session payload.
    *
@@ -140,6 +132,11 @@ public class Game {
         new Game(sessionId, players, creator, savegame, winConditions, isTradeRoute, isCities);
     game.init();
     return game;
+  }
+
+  @SneakyThrows
+  private void init() {
+    this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
   private Map<Level, Deck<ServerLevelCard>> createLevelMap() {
@@ -220,8 +217,10 @@ public class Game {
       DevelopmentCardJson cardJson = cardJsonList[i];
       String textureLevel = i < 40 ? "level_one" : i < 70 ? "level_two" : "level_three";
       Level level = i < 40 ? Level.ONE : i < 70 ? Level.TWO : Level.THREE;
+      Gem gem = Gem.valueOf(cardJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
-          textureLevel + cardJson.getId(), cardJson.getPrice(), level);
+          textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
       levelDecks.get(level).addCard(card);
       levelDecks.get(level).shuffle();
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
@@ -255,14 +254,16 @@ public class Game {
       bagJsonList = objectMapper.readValue(new File("/app/bag.json"), DevelopmentCardJson[].class);
     } catch (Exception e) {
       bagJsonList = objectMapper.readValue(new File("./src/main/resources/bag.json"),
-              DevelopmentCardJson[].class);
+          DevelopmentCardJson[].class);
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson bagJson : bagJsonList) {
+      Gem gem = Gem.valueOf(bagJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
-          Level.ONE);
+          Level.ONE, gemBonus);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -283,10 +284,12 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDONE);
     for (DevelopmentCardJson goldJson : goldJsonList) {
+      Gem gem = Gem.valueOf(goldJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 2));
       ServerLevelCard gold = new ServerLevelCard(goldJson.getId(), goldJson.getPrestigePoint(),
           "gold" + goldJson.getId(),
           goldJson.getPrice(),
-          Level.REDONE);
+          Level.REDONE, gemBonus);
       deck.addCard(gold);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
     }
@@ -307,10 +310,12 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson doubleJson : doubleJsonList) {
+      Gem gem = Gem.valueOf(doubleJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 2));
       ServerLevelCard bag = new ServerLevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
           doubleJson.getPrice(),
-          Level.REDONE);
+          Level.REDONE, gemBonus);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -330,9 +335,11 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     for (DevelopmentCardJson nobleReserveJson : nobleReserveList) {
+      Gem gem = Gem.valueOf(nobleReserveJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard nobleReserve = new ServerLevelCard(nobleReserveJson.getId(),
           nobleReserveJson.getPrestigePoint(), "noble_reserve" + nobleReserveJson.getId(),
-          nobleReserveJson.getPrice(), Level.REDTWO);
+          nobleReserveJson.getPrice(), Level.REDTWO, gemBonus);
       deck.addCard(nobleReserve);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
           nobleReserve);
@@ -353,9 +360,11 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTWO);
     for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
+      Gem gem = Gem.valueOf(bagCascadeJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard bagCascade = new ServerLevelCard(bagCascadeJson.getId(),
           bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
-          bagCascadeJson.getPrice(), Level.REDTWO);
+          bagCascadeJson.getPrice(), Level.REDTWO, gemBonus);
       deck.addCard(bagCascade);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
@@ -376,9 +385,11 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson sacrificeJson : sacrificeList) {
+      Gem gem = Gem.valueOf(sacrificeJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard sacrifice = new ServerLevelCard(sacrificeJson.getId(),
           sacrificeJson.getPrestigePoint(), "sacrifice" + sacrificeJson.getId(),
-          sacrificeJson.getPrice(), Level.REDTHREE);
+          sacrificeJson.getPrice(), Level.REDTHREE, gemBonus);
       deck.addCard(sacrifice);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(sacrifice)),
           sacrifice);
@@ -400,9 +411,11 @@ public class Game {
     }
     Deck<ServerLevelCard> deck = redDecks.get(Level.REDTHREE);
     for (DevelopmentCardJson cascadeTwoJson : cascadeTwoJsonList) {
+      Gem gem = Gem.valueOf(cascadeTwoJson.getBonus());
+      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard cascadeTwo = new ServerLevelCard(cascadeTwoJson.getId(),
           cascadeTwoJson.getPrestigePoint(), "cascade_two" + cascadeTwoJson.getId(),
-          cascadeTwoJson.getPrice(), Level.REDTHREE);
+          cascadeTwoJson.getPrice(), Level.REDTHREE, gemBonus);
       deck.addCard(cascadeTwo);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
           cascadeTwo);
