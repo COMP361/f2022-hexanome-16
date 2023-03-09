@@ -1,6 +1,6 @@
 package com.hexanome16.server.util.broadcastmap;
 
-import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
@@ -16,7 +16,7 @@ public enum BroadcastMapKey {
   /**
    * Current player.
    */
-  PLAYERS(PlayerJson.class),
+  PLAYERS(PlayerListJson.class),
   /**
    * Game winners.
    */

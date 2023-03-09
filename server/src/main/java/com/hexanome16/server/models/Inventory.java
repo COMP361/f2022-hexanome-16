@@ -1,11 +1,14 @@
 package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 
 /**
@@ -20,6 +23,8 @@ public class Inventory {
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
   private final PriceInterface gemBonuses;
+  private final Map<RouteType, TradePost> tradePosts;
+  private int prestigePoints;
 
   /* Constructor *********************************************************************************/
 
@@ -33,6 +38,8 @@ public class Inventory {
     ownedCards = new ArrayList<>();
     reservedCards = new ArrayList<>();
     gemBonuses = new PurchaseMap(0, 0, 0, 0, 0, 0);
+    tradePosts = new HashMap<>();
+    prestigePoints = 0;
   }
 
   /* add methods ******************************************************************************/
@@ -45,6 +52,7 @@ public class Inventory {
    */
   public boolean acquireCard(ServerLevelCard card) {
     gemBonuses.addGems(card.getGemBonus().getPriceMap());
+    prestigePoints += card.getCardInfo().prestigePoint();
     return ownedCards.add(card);
   }
 
@@ -69,6 +77,7 @@ public class Inventory {
    * @return the boolean
    */
   public boolean acquireNoble(Noble noble) {
+    prestigePoints += noble.getCardInfo().prestigePoint();
     return ownedNobles.add(noble);
   }
 
@@ -90,5 +99,24 @@ public class Inventory {
    */
   public boolean hasAtLeastGivenBonuses(PriceInterface price) {
     return gemBonuses.hasAtLeastAmountOfGems(price);
+  }
+
+  /**
+   * Adds a trade post to the list.
+   *
+   * @param tradePost the trade post to be added.
+   */
+  public void addTradePost(TradePost tradePost) {
+    prestigePoints += tradePost.getBonusPrestigePoints();
+    tradePosts.put(tradePost.routeType, tradePost);
+  }
+
+  /**
+   * Gets prestige points.
+   *
+   * @return the prestige points
+   */
+  public int getPrestigePoints() {
+    return prestigePoints;
   }
 }

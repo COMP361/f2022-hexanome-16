@@ -7,19 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * a player class for long polling.
+ * A player list class for long polling.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerJson implements BroadcastContent {
-  private String username;
-  private boolean isCurrent;
-  private int prestigePoints;
+public class PlayerListJson implements BroadcastContent {
+  private PlayerJson[] players;
 
   @JsonIgnore
   @Override
   public boolean isEmpty() {
-    return username.isEmpty();
+    return players == null || players.length == 0;
   }
 }

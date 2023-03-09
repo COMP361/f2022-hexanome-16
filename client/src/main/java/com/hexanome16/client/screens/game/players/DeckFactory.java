@@ -64,6 +64,7 @@ public class DeckFactory implements EntityFactory {
   public Entity player(SpawnData data) {
     // current player's name
     String name = (String) data.getData().getOrDefault("name", "Player");
+    int prestigePointsVal = (int) data.getData().getOrDefault("prestigePoints", 0);
     Text playerName = new Text(name);
     playerName.setFont(CURSIVE_FONT_FACTORY.newFont(200));
     playerName.setFill(Paint.valueOf("#FFFFFF"));
@@ -71,7 +72,7 @@ public class DeckFactory implements EntityFactory {
     playerName.setStroke(Paint.valueOf("#000000"));
     playerName.setStyle("-fx-background-color: ffffff00; ");
     // current player's prestige points TODO make this a variable
-    Text prestigePoints = new Text("10");
+    Text prestigePoints = new Text(String.valueOf(prestigePointsVal));
     prestigePoints.setFont(CURSIVE_FONT_FACTORY.newFont(150));
     prestigePoints.setFill(Paint.valueOf("#FFFFFF"));
     prestigePoints.setStrokeWidth(2.);
@@ -88,6 +89,7 @@ public class DeckFactory implements EntityFactory {
     pane.setCenter(icon);
     // build the entity
     return FXGL.entityBuilder(data)
+        .type(EntityType.PLAYER)
         .view(pane)
         .scale(0.2, 0.2)
         .build();
@@ -318,6 +320,7 @@ public class DeckFactory implements EntityFactory {
     pane.getChildren().addAll(currentPlayerText, currentPlayerName);
     // build the entity
     return FXGL.entityBuilder(data)
+        .type(EntityType.PLAYER_TURN)
         .view(pane)
         .scale(0.5, 0.5)
         .build();

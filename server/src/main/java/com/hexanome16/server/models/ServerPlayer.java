@@ -20,7 +20,6 @@ import lombok.Getter;
 @Getter
 public class ServerPlayer extends Player {
   private final Queue<Action> queueOfCascadingActionTypes;
-  private final Map<RouteType, TradePost> tradePosts;
   private Inventory inventory; // the player has an inventory, not a bank
 
   /**
@@ -33,7 +32,6 @@ public class ServerPlayer extends Player {
     super(name, preferredColour);
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
-    this.tradePosts = new HashMap<>();
   }
 
 
@@ -156,16 +154,6 @@ public class ServerPlayer extends Player {
    */
   public boolean canBeVisitedBy(Visitable visitor) {
     return visitor.playerMeetsRequirements(inventory);
-  }
-
-
-  /**
-   * Adds a trade post to the list.
-   *
-   * @param tradePost the trade post to be added.
-   */
-  public void addTradePost(TradePost tradePost) {
-    tradePosts.put(tradePost.routeType, tradePost);
   }
 
   // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////

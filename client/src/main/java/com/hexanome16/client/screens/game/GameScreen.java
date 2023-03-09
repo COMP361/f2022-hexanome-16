@@ -11,8 +11,10 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
+import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
@@ -22,8 +24,12 @@ import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
@@ -42,12 +48,12 @@ public class GameScreen {
   private static Pair<String, NobleDeckJson> nobleJson;
   private static Thread updateNobles;
 
-  private static Pair<String, PlayerJson> currentPlayerJson;
+  private static Pair<String, PlayerListJson> playersJson;
 
   private static Thread updateCurrentPlayer;
 
   private static String[] usernames;
-  private static Map<Integer, String> usernamesMap = new HashMap<>();
+  private static final Map<Integer, PlayerJson> usernamesMap = new HashMap<>();
   private static String currentPlayer;
   private static long sessionId = -1;
 
@@ -92,11 +98,11 @@ public class GameScreen {
   }
 
 
-  private static void fetchCurrentPlayerThread() {
+  private static void fetchPlayersThread() {
     Task<Void> updateCurrentPlayerTask = new Task<>() {
       @Override
       protected Void call() {
-        currentPlayerJson = GameRequest.updateCurrentPlayer(sessionId, currentPlayerJson.getKey());
+        playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey());
         return null;
       }
     };
@@ -104,19 +110,38 @@ public class GameScreen {
       updateCurrentPlayer.interrupt();
       fetchTradePosts();
       Platform.runLater(() -> {
-        currentPlayer = currentPlayerJson.getValue().getUsername();
-        System.out.println(currentPlayer);
-        UpdateGameInfo.fetchGameBank(getSessionId());
-        UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
-        UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+        System.out.println(playersJson);
+        PlayerListJson playerListJson = playersJson.getValue();
+        if (playerListJson == null) {
+          return;
+        }
+        PlayerJson[] players = playersJson.getValue().getPlayers();
+        usernamesMap.forEach((k, v) -> {
+          for (int i = 0; i < players.length; i++) {
+            if (players[i].getUsername().equals(v.getUsername())) {
+              usernamesMap.replace(i, players[i]);
+            }
+          }
+        });
+        Optional<PlayerJson> current = Arrays.stream(players)
+            .filter(PlayerJson::isCurrent).findFirst();
+        if (current.isPresent()) {
+          currentPlayer = current.get().getUsername();
+          System.out.println(currentPlayer);
+          UpdateGameInfo.fetchGameBank(getSessionId());
+          UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
+          UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+          PlayerDecks.generateAll(usernamesMap.entrySet().stream().sorted(Comparator.comparingInt(
+              Map.Entry::getKey)).map(Map.Entry::getValue).toArray(PlayerJson[]::new));
+        }
       });
-      fetchCurrentPlayerThread();
+      fetchPlayersThread();
     });
     updateCurrentPlayerTask.setOnFailed(e -> {
       if (updateCurrentPlayer != null) {
         updateCurrentPlayer.interrupt();
         System.out.println(e);
-        fetchCurrentPlayerThread();
+        fetchPlayersThread();
       }
     });
     updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
@@ -127,8 +152,9 @@ public class GameScreen {
   private static void fetchTradePosts() {
     String[] colors = {"Yellow", "Black", "Red", "Blue"};
     // add trade post for each player
-    for (Map.Entry<Integer, String> user : usernamesMap.entrySet()) {
-      for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId, user.getValue())) {
+    for (Map.Entry<Integer, PlayerJson> user : usernamesMap.entrySet()) {
+      for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId,
+          user.getValue().getUsername())) {
         switch (tradePost.getRouteType()) {
           case ONYX_ROUTE -> {
             FXGL.spawn(colors[user.getKey()] + "Marker");
@@ -186,20 +212,24 @@ public class GameScreen {
       fetchNoblesThread();
     }
     UpdateGameInfo.initPlayerTurn();
-    if (updateCurrentPlayer == null) {
-      currentPlayerJson = new Pair<>("", new PlayerJson(""));
-      fetchCurrentPlayerThread();
-    }
     usernames = FXGL.getWorldProperties().getValue("players");
+    currentPlayer = usernames[0];
+    PlayerJson[] players = Arrays.stream(usernames).map(
+        username -> new PlayerJson(username, Objects.equals(currentPlayer, username), 0)
+    ).toArray(PlayerJson[]::new);
+    if (updateCurrentPlayer == null) {
+      playersJson = new Pair<>("", new PlayerListJson(players));
+      fetchPlayersThread();
+    }
 
     // build user map
     for (int i = 0; i < usernames.length; i++) {
-      usernamesMap.put(i, usernames[i]);
+      usernamesMap.put(i, players[i]);
     }
 
-    UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
+    UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
-    PlayerDecks.generateAll(usernames);
+    PlayerDecks.generateAll(playersJson.getValue().getPlayers());
   }
 
   // puts values necessary for game bank in the world properties
@@ -299,7 +329,7 @@ public class GameScreen {
     levelDecks.clear();
     levelThreads.clear();
     nobleJson = null;
-    currentPlayerJson = null;
+    playersJson = null;
     currentPlayer = null;
     updateNobles = null;
     updateCurrentPlayer = null;

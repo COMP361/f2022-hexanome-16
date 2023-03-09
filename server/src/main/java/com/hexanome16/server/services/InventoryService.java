@@ -144,7 +144,7 @@ public class InventoryService implements InventoryServiceInterface {
       System.out.println(tradePost.getKey().name());
       if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
         System.out.println("can be taken");
-        player.addTradePost(tradePost.getValue());
+        player.getInventory().addTradePost(tradePost.getValue());
       }
     }
 

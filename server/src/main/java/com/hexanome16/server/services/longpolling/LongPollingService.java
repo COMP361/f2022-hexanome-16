@@ -51,7 +51,7 @@ public class LongPollingService implements LongPollingServiceInterface {
   }
 
   @Override
-  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId, String accessToken,
+  public DeferredResult<ResponseEntity<String>> getPlayers(long sessionId, String accessToken,
                                                                  String hash) {
     return validRequestLongPolling(sessionId, accessToken, BroadcastMapKey.PLAYERS, hash);
   }

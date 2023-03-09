@@ -3,6 +3,7 @@ package com.hexanome16.client.screens.game;
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
@@ -129,9 +130,9 @@ public class UpdateGameInfo {
    * @param sessionId unique session identifier.
    * @param usernames all players in the game.
    */
-  public static void fetchAllPlayer(long sessionId, String[] usernames) {
-    for (String username : usernames) {
-      fetchPlayerBank(sessionId, username);
+  public static void fetchAllPlayer(long sessionId, PlayerJson[] usernames) {
+    for (PlayerJson player : usernames) {
+      fetchPlayerBank(sessionId, player.getUsername());
     }
   }
 
