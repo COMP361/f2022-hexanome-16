@@ -1,24 +1,18 @@
 package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import lombok.Getter;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Player class.
@@ -26,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 @Getter
 public class ServerPlayer extends Player {
   private final Queue<Action> queueOfCascadingActionTypes;
-  private Inventory inventory; // the player has an inventory, not a bank
   private final Map<RouteType, TradePost> tradePosts;
+  private Inventory inventory; // the player has an inventory, not a bank
 
   /**
    * Player Constructor.
@@ -165,6 +159,15 @@ public class ServerPlayer extends Player {
   }
 
 
+  /**
+   * Adds a trade post to the list.
+   *
+   * @param tradePost the trade post to be added.
+   */
+  public void addTradePost(TradePost tradePost) {
+    tradePosts.put(tradePost.routeType, tradePost);
+  }
+
   // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////
 
   /**
@@ -179,70 +182,11 @@ public class ServerPlayer extends Player {
   /**
    * Gets but doesn't remove top most action in the action queue of the player.
    *
-   * @return Response entity with information on the action that needs to performed by player.
+   * @return action that needs to performed by player or null if empty.
    * @throws NullPointerException if queue is empty.
-   * @throws JsonProcessingException exception.
    */
-  public ResponseEntity<String> peekTopAction() throws JsonProcessingException {
-    return Objects.requireNonNull(queueOfCascadingActionTypes.peek()).getActionDetails();
-  }
-
-
-
-  ///////   ACTION RELATED STUFF // MOVED HERE FOR GOOD CODE :D //////////////////////////////////
-  /**
-   * Adds Noble Choice as an action that needs to be performed.
-   *
-   * @param nobleList list of nobles to choose from. Not empty please.
-   */
-  public void addNobleListToPerform(ArrayList<Noble> nobleList) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    addActionToQueue(() ->
-        CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_NOBLE,
-            objectMapper.writeValueAsString(nobleList.toArray()), null));
-  }
-
-  /**
-   * Adds Cities Choice as an action that needs to be performed.
-   *
-   * @param citiesList list of cities to choose from. Not empty please.
-   */
-  public void addCitiesToPerform(ArrayList<City> citiesList) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    addActionToQueue(
-        () -> CustomResponseFactory.getCustomResponse(CustomHttpResponses.CHOOSE_CITY,
-            objectMapper.writeValueAsString(citiesList.toArray()), null));
-  }
-
-  /**
-   * Adds Take Two as an action that needs to be performed.
-   */
-  public void addTakeTwoToPerform() {
-    addActionToQueue(() ->
-        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
-  }
-
-  /**
-   * Adds a trade post to the list.
-   *
-   * @param tradePost the trade post to be added.
-   */
-  public void addTradePost(TradePost tradePost) {
-    tradePosts.put(tradePost.routeType, tradePost);
-  }
-
-  /**
-   * Adds End turn as an action that needs to be performed.
-   *
-   * @param serviceUtils service util.
-   * @param game game.
-   */
-  public void addEndTurnToPerform(ServiceUtils serviceUtils, Game game) {
-    addActionToQueue(() -> {
-      serviceUtils.endCurrentPlayersTurn(game);
-      queueOfCascadingActionTypes.remove();
-      return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
-    });
+  public Action peekTopAction() {
+    return queueOfCascadingActionTypes.peek();
   }
 
   /**
@@ -251,6 +195,36 @@ public class ServerPlayer extends Player {
   public void removeTopAction() {
     queueOfCascadingActionTypes.poll();
   }
+
+  ///////   ACTION RELATED STUFF // MOVED HERE FOR GOOD CODE :D //////////////////////////////////
+
+  /**
+   * Adds Noble Choice as an action that needs to be performed.
+   *
+   * @param nobleList list of nobles to choose from. Not empty please.
+   * @throws JsonProcessingException thrown if nobles cannot be parsed
+   */
+  public void addNobleListToPerform(ArrayList<Noble> nobleList) throws JsonProcessingException {
+    addActionToQueue(new ChooseNobleAction(nobleList.toArray(new Noble[0])));
+  }
+
+  /**
+   * Adds Cities Choice as an action that needs to be performed.
+   *
+   * @param citiesList list of cities to choose from. Not empty please.
+   * @throws JsonProcessingException thrown if cities cannot be parsed
+   */
+  public void addCitiesToPerform(ArrayList<City> citiesList) throws JsonProcessingException {
+    addActionToQueue(new ChooseCityAction(citiesList.toArray(new City[0])));
+  }
+
+  /**
+   * Adds Take Two as an action that needs to be performed.
+   */
+  public void addTakeTwoToPerform() {
+    addActionToQueue(new TakeTwoAction());
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
 

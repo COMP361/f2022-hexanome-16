@@ -14,7 +14,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link DevelopmentCardJson}, {@link DeckJson}, {@link NobleJson}
+ * Tests for {@link DevelopmentCardJson}, {@link DeckJson}
  * , {@link NobleDeckJson} and {@link PlayerJson}.
  */
 public class DtoTest {
