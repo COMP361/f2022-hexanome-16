@@ -5,6 +5,7 @@ import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.dto.cards.CardJson;
 import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -426,7 +427,7 @@ public class Game {
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard cascadeTwo = new ServerLevelCard(cascadeTwoJson.getId(),
           cascadeTwoJson.getPrestigePoint(), "cascade_two" + cascadeTwoJson.getId(),
-          cascadeTwoJson.getPrice(), Level.REDTHREE, gemBonus);
+          cascadeTwoJson.getPrice(), Level.REDTHREE, LevelCard.BonusType.CASCADING_TWO, gemBonus);
       deck.addCard(cascadeTwo);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
           cascadeTwo);

@@ -174,6 +174,7 @@ public class ServerPlayer extends Player {
    * @throws NullPointerException if queue is empty.
    */
   public Action peekTopAction() {
+    System.out.println(queueOfCascadingActionTypes);
     return queueOfCascadingActionTypes.peek();
   }
 
