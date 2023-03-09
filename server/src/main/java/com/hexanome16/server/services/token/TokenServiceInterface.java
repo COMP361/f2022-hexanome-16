@@ -35,14 +35,14 @@ public interface TokenServiceInterface {
    * This function checks if the action is valid
    *
    * @param sessionId           the session's Identification number.
-   * @param authenticationToken authentication token of the player who wants to take the tokens.
+   * @param accessToken authentication token of the player who wants to take the tokens.
    * @param tokenType           String representing the token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> takeTwoTokens(long sessionId,
-                                       String authenticationToken,
+                                       String accessToken,
                                        String tokenType);
 
   /**
@@ -50,7 +50,7 @@ public interface TokenServiceInterface {
    * The three token types need to be distinct.
    *
    * @param sessionId           the session's Identification number.
-   * @param authenticationToken authentication token of the player who wants to take the tokens.
+   * @param accessToken authentication token of the player who wants to take the tokens.
    * @param tokenTypeOne        String representing the 1st token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @param tokenTypeTwo        String representing the 2nd token type selected by the player, the
@@ -61,7 +61,7 @@ public interface TokenServiceInterface {
    *     HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> takeThreeTokens(long sessionId,
-                                         String authenticationToken,
+                                         String accessToken,
                                          String tokenTypeOne,
                                          String tokenTypeTwo,
                                          String tokenTypeThree);
@@ -70,13 +70,13 @@ public interface TokenServiceInterface {
    * Allows to give back one token of a given token type.
    *
    * @param sessionId           the session's Identification number.
-   * @param authenticationToken authentication token of the player who wants to take the tokens.
+   * @param accessToken authentication token of the player who wants to take the tokens.
    * @param tokenType           String representing the token type selected by the player, the
    *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    */
   ResponseEntity<String> giveBackToken(long sessionId,
-                                       String authenticationToken,
+                                       String accessToken,
                                        String tokenType);
 }

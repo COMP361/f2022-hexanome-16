@@ -74,10 +74,10 @@ public class TokenService implements TokenServiceInterface {
   }
 
   @Override
-  public ResponseEntity<String> takeTwoTokens(long sessionId, String authenticationToken,
+  public ResponseEntity<String> takeTwoTokens(long sessionId, String accessToken,
                                               String tokenType) {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -98,11 +98,11 @@ public class TokenService implements TokenServiceInterface {
   }
 
   @Override
-  public ResponseEntity<String> takeThreeTokens(long sessionId, String authenticationToken,
+  public ResponseEntity<String> takeThreeTokens(long sessionId, String accessToken,
                                                 String tokenTypeOne, String tokenTypeTwo,
                                                 String tokenTypeThree) {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> validity = request.getLeft();
     if (!validity.getStatusCode().is2xxSuccessful()) {
       return validity;
@@ -126,7 +126,7 @@ public class TokenService implements TokenServiceInterface {
 
   // TODO : Not Implemented
   @Override
-  public ResponseEntity<String> giveBackToken(long sessionId, String authenticationToken,
+  public ResponseEntity<String> giveBackToken(long sessionId, String accessToken,
                                               String tokenType) {
     return null;
   }

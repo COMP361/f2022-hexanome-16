@@ -76,7 +76,7 @@ public class PromptsRequests {
   public static DeckJson getReservedCards(long sessionId, String username, String accessToken) {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/inventory/reservedCards",
-        Map.of("username", username, "accessToken", accessToken), DeckJson.class));
+        Map.of("username", username, "access_token", accessToken), DeckJson.class));
   }
 
   /**
@@ -247,7 +247,7 @@ public class PromptsRequests {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
         RequestDest.SERVER,
         "/api/games/" + sessionId + "/board/cards/levelTwo",
-        Map.of("authenticationToken", accessToken, "chosenCard", chosenCardHash),
+        Map.of("access_token", accessToken, "chosenCard", chosenCardHash),
         Void.class));
   }
 

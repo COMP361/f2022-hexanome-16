@@ -107,8 +107,10 @@ public class Inventory {
    * @param tradePost the trade post to be added.
    */
   public void addTradePost(TradePost tradePost) {
-    prestigePoints += tradePost.getBonusPrestigePoints();
-    tradePosts.put(tradePost.routeType, tradePost);
+    if (!tradePosts.containsKey(tradePost.routeType)) {
+      prestigePoints += tradePost.getBonusPrestigePoints();
+      tradePosts.put(tradePost.routeType, tradePost);
+    }
   }
 
   /**

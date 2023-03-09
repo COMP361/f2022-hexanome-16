@@ -28,7 +28,7 @@ public interface InventoryServiceInterface {
    *
    * @param sessionId           sessionID.
    * @param cardMd5             Card we want to purchase's md5.
-   * @param authenticationToken username of the player trying to buy the card.
+   * @param accessToken username of the player trying to buy the card.
    * @param proposedDeal        Purchase map denoting player's offer.
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
@@ -36,7 +36,7 @@ public interface InventoryServiceInterface {
    */
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
-                                 String authenticationToken,
+                                 String accessToken,
                                  PurchaseMap proposedDeal)
       throws JsonProcessingException;
 
@@ -45,13 +45,13 @@ public interface InventoryServiceInterface {
    *
    * @param sessionId           game session id.
    * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   ResponseEntity<String> reserveCard(@PathVariable long sessionId,
                                      @PathVariable String cardMd5,
-                                     @RequestParam String authenticationToken)
+                                     @RequestParam String accessToken)
       throws JsonProcessingException;
 
 
@@ -60,24 +60,24 @@ public interface InventoryServiceInterface {
    *
    * @param sessionId           game session id.
    * @param level               deck level.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   ResponseEntity<String> reserveFaceDownCard(@PathVariable long sessionId,
                                              @RequestParam String level,
-                                             @RequestParam String authenticationToken)
+                                             @RequestParam String accessToken)
       throws JsonProcessingException;
 
   /**
    * Takes a card of level two if allowed to.
    *
    * @param sessionId Id of game.
-   * @param authenticationToken token of requesting player.
+   * @param accessToken token of requesting player.
    * @param chosenCard chosen card's hash
    * @return Response Entity with the next action that needs to be done.
    */
-  ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
+  ResponseEntity<String> takeLevelTwoCard(long sessionId, String accessToken,
                                           String chosenCard);
 
   /**
@@ -85,10 +85,10 @@ public interface InventoryServiceInterface {
    *
    * @param sessionId           game session id
    * @param nobleHash           md5 hash of noble
-   * @param authenticationToken player's authentication token
+   * @param accessToken player's authentication token
    * @return HttpStatus.ok if the request is valid, one of our CustomHttp responses otherwise.
    * @throws JsonProcessingException the json processing exception
    */
-  ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String authenticationToken)
+  ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String accessToken)
       throws JsonProcessingException;
 }
