@@ -172,7 +172,7 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
