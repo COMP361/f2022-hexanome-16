@@ -201,9 +201,9 @@ public class Game {
     createNobleDeck();
     createBagDeck();
     createGoldDeck();
+    createBagCascadeDeck();
     createDoubleDeck();
     createNobleReserveDeck();
-    createBagCascadeDeck();
     createSacrificeDeck();
     createCascadeTwoDeck();
   }
@@ -231,7 +231,9 @@ public class Game {
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
       levelDecks.get(level).addCard(card);
-      levelDecks.get(level).shuffle();
+      if (level != Level.ONE) {
+        levelDecks.get(level).shuffle();
+      }
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
   }
@@ -328,7 +330,7 @@ public class Game {
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
@@ -353,7 +355,7 @@ public class Game {
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
           nobleReserve);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
@@ -378,7 +380,7 @@ public class Game {
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
