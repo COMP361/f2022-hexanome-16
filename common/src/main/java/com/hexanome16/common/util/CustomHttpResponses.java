@@ -67,13 +67,6 @@ public enum CustomHttpResponses implements BroadcastContent {
   INSUFFICIENT_BONUSES_FOR_VISIT("You do not have sufficient bonuses to be visited by this noble",
       HTTP_BAD_REQUEST),
   /**
-   * Used for when the player makes an inappropriate call to the server,
-   * wanting to complete an invalid action or actions in the wrong order.
-   */
-  INVALID_ACTION_FOR_PLAYER("You have another action to complete before this one",
-      HTTP_BAD_REQUEST),
-
-  /**
    * OK.
    */
   OK("Ok", HTTP_OK),

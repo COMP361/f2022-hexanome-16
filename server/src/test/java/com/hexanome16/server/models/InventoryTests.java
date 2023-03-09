@@ -53,7 +53,7 @@ public class InventoryTests {
     var response = inventory.getGemBonuses();
 
     // Assert
-    assertEquals(new PriceMap(), response);
+    assertEquals(new PurchaseMap(0, 0, 0, 0, 0, 0), response);
   }
 
   /**
