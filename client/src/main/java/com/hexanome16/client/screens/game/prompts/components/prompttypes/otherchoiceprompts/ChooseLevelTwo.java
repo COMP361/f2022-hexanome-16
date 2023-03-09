@@ -3,7 +3,6 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherc
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
@@ -11,15 +10,12 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePromptAbstract;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -33,7 +29,7 @@ import kong.unirest.core.Headers;
 public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   private ArrayList<LevelCard> levelTwoCards;
-  private int chosenNobleIndex;
+  private int chosenLevelIndex;
   private double cardWidth;
   private double cardHeight;
   private double cardSpacing;
@@ -55,7 +51,7 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   @Override
   protected void promptOpens() {
-    chosenNobleIndex = -1;
+    chosenLevelIndex = -1;
     cardSelectionBox = new ArrayList<>();
     levelTwoCards = new ArrayList<>(
         Arrays.stream(
@@ -85,7 +81,7 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   @Override
   protected void handleConfirmation() {
-    LevelCard chosenCard = levelTwoCards.get(chosenNobleIndex);
+    LevelCard chosenCard = levelTwoCards.get(chosenLevelIndex);
     String hash = GameScreen.getCardHash(chosenCard);
     PromptComponent.closePrompts();
     long sessionId = GameScreen.getSessionId();
@@ -131,7 +127,7 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
         n.setOpacity(0.5);
       }
       selectionRectangle.setOpacity(1);
-      chosenNobleIndex = cardSelectionBox.indexOf(selectionRectangle);
+      chosenLevelIndex = cardSelectionBox.indexOf(selectionRectangle);
       atConfirmCircle.setOpacity(1);
     });
     return myCard;
