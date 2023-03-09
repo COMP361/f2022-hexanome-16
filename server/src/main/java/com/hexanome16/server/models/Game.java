@@ -201,9 +201,9 @@ public class Game {
     createNobleDeck();
     createBagDeck();
     createGoldDeck();
-    createBagCascadeDeck();
     createDoubleDeck();
     createNobleReserveDeck();
+    createBagCascadeDeck();
     createSacrificeDeck();
     createCascadeTwoDeck();
   }
