@@ -57,4 +57,12 @@ public interface PriceInterface {
    * @param gems the gems to remove
    */
   void removeGems(Map<Gem, Integer> gems);
+
+  /**
+   * Compares the prices.
+   *
+   * @param priceInterface the price interface
+   * @return true if the given priceInterface has at least the same amount
+   */
+  boolean hasAtLeastAmountOfGems(PriceInterface priceInterface);
 }

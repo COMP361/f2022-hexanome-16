@@ -5,13 +5,11 @@ import com.hexanome16.common.deserializers.PriceMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Holds the token price for a development card.
  */
 @Data
-@NoArgsConstructor
 @JsonDeserialize(using = PriceMapDeserializer.class)
 public class PriceMap implements PriceInterface {
   /**
@@ -25,7 +23,7 @@ public class PriceMap implements PriceInterface {
    * @param priceMap gem map
    */
   public PriceMap(Map<Gem, Integer> priceMap) {
-    this.priceMap = new Hashtable<>();
+    this();
     if (priceMap == null) {
       throw new IllegalArgumentException("Price map cannot be null");
     }
@@ -37,6 +35,18 @@ public class PriceMap implements PriceInterface {
         throw new IllegalArgumentException("Price map cannot contain gold");
       }
       this.addGems(entry.getKey(), entry.getValue());
+    }
+  }
+
+  /**
+   * Empty constructor, sets all gems to 0.
+   */
+  public PriceMap() {
+    this.priceMap = new Hashtable<>();
+    for (Gem gem : Gem.values()) {
+      if (gem != Gem.GOLD) {
+        priceMap.put(gem, 0);
+      }
     }
   }
 
@@ -124,5 +134,17 @@ public class PriceMap implements PriceInterface {
       }
       this.removeGems(entry.getKey(), entry.getValue());
     }
+  }
+
+  @Override
+  public boolean hasAtLeastAmountOfGems(PriceInterface priceInterface) {
+    for (var entry : priceMap.entrySet()) {
+      Gem gem = entry.getKey();
+      int value = entry.getValue();
+      if (priceInterface.getGemCost(gem) > value) {
+        return false;
+      }
+    }
+    return true;
   }
 }

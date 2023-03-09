@@ -22,19 +22,68 @@ public class ServerNobleTest {
     noble = new ServerNoble(123, 2, "boo", price);
   }
 
+  /**
+   * Add to inventory success.
+   */
   @Test
-  void addToInventory() {
+  void addToInventorySuccess() {
+    // Arrange
+    var inventory = Mockito.mock(Inventory.class);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(true);
+    when(inventory.acquireNoble(noble)).thenReturn(true);
+
+    // Act
+    boolean response = noble.addToInventory(inventory);
+
+    // Assert
+    assertTrue(response);
+  }
+
+  /**
+   * Add to inventory fails sanity check.
+   */
+  @Test
+  void addToInventoryFailsSanityCheck() {
+    // Arrange
+    var inventory = Mockito.mock(Inventory.class);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(false);
+
+    // Act
+    boolean response = noble.addToInventory(inventory);
+
+    // Assert
+    assertFalse(response);
+  }
+
+  /**
+   * Add to inventory fails when inventory tries to acquire.
+   */
+  @Test
+  void addToInventoryFailsWhenInventoryTriesToAcquire() {
+    // Arrange
+    var inventory = Mockito.mock(Inventory.class);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(true);
+    when(inventory.acquireNoble(noble)).thenReturn(false);
+
+    // Act
+    boolean response = noble.addToInventory(inventory);
+
+    // Assert
+    assertFalse(response);
   }
 
   @Test
   void reserveCard() {
   }
 
+  /**
+   * Player meets requirements returns true if inventory has at least enough gem bonuses.
+   */
   @Test
   void playerMeetsRequirementsReturnsTrueIfHasAtLeast() {
     // Arrange
     var inventory = Mockito.mock(Inventory.class);
-    when(inventory.hasAtLeast(any())).thenReturn(true);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(true);
 
     // Act
     boolean response = noble.playerMeetsRequirements(inventory);
@@ -43,11 +92,14 @@ public class ServerNobleTest {
     assertTrue(response);
   }
 
+  /**
+   * Player meets requirements returns false if inventory has not at least enough gem bonuses.
+   */
   @Test
   void playerMeetsRequirementsReturnsFalseIfHasNotAtLeast() {
     // Arrange
     var inventory = Mockito.mock(Inventory.class);
-    when(inventory.hasAtLeast(any())).thenReturn(false);
+    when(inventory.hasAtLeastGivenBonuses(any())).thenReturn(false);
 
     // Act
     boolean response = noble.playerMeetsRequirements(inventory);
