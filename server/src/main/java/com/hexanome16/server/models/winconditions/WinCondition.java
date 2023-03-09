@@ -22,6 +22,8 @@ public enum WinCondition {
   /**
    * Win condition for Trade Routes (15 prestige points + 3 trade routes).
    */
+
+  //todo consider trade routes
   TRADEROUTES(player ->
       player.getInventory().getOwnedCards().stream()
           .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()

@@ -60,7 +60,7 @@ public class InventoryServiceTests {
 
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE});
+            new WinCondition[] {WinCondition.BASE}, false, false);
 
     gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
     serviceUtils = DummyServiceUtils.getDummyServiceUtils();
