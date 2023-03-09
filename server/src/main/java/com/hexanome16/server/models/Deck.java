@@ -93,6 +93,13 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
     return cardList.size();
   }
 
+  /**
+   * Reverse the deck.
+   */
+  public void reverse() {
+    Collections.reverse(cardList);
+  }
+
   @Override
   public boolean isEmpty() {
     return cardList.isEmpty();

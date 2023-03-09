@@ -1,5 +1,6 @@
 package com.hexanome16.client.screens.game;
 
+import static com.hexanome16.client.requests.RequestClient.objectMapper;
 import static com.hexanome16.client.screens.game.GameFactory.getLevelCardEntity;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -13,16 +14,20 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -33,6 +38,7 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.util.Pair;
+import org.checkerframework.checker.units.qual.N;
 
 /**
  * GameScreen class spawns all the entities for game board.
@@ -365,6 +371,24 @@ public class GameScreen {
         if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
           return entry.getKey();
         }
+      }
+    }
+    return null;
+  }
+
+
+  /**
+   * Returns Hash of a given Noble. (ON BOARD)
+   *
+   * @param noble noble whose hash we want.
+   * @return Hash of noble, null of no such noble.
+   */
+  public static String getNobleHash(Noble noble) {
+    Noble n;
+    for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
+      n = entry.getValue();
+      if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
+        return entry.getKey();
       }
     }
     return null;

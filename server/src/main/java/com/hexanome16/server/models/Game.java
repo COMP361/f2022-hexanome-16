@@ -237,6 +237,7 @@ public class Game {
       }
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
+    levelDecks.get(Level.ONE).reverse();
   }
 
   @SneakyThrows
@@ -275,7 +276,7 @@ public class Game {
       ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
-          Level.ONE, gemBonus);
+          Level.REDONE, gemBonus);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -327,7 +328,7 @@ public class Game {
       ServerLevelCard bag = new ServerLevelCard(doubleJson.getId(), 0,
           "double" + doubleJson.getId(),
           doubleJson.getPrice(),
-          Level.REDONE, gemBonus);
+          Level.REDTWO, gemBonus);
       deck.addCard(bag);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
