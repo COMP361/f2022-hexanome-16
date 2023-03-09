@@ -2,7 +2,7 @@ package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceInterface;
-import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class Inventory {
     reservedNobles = new ArrayList<>();
     ownedCards = new ArrayList<>();
     reservedCards = new ArrayList<>();
-    gemBonuses = new PriceMap();
+    gemBonuses = new PurchaseMap(0, 0, 0, 0, 0, 0);
   }
 
   /* add methods ******************************************************************************/
