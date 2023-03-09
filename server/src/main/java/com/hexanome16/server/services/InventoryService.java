@@ -166,6 +166,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, cardToBuy);
 
+
     var nextAction = player.peekTopAction();
     if (nextAction != null) {
       return nextAction.getActionDetails();

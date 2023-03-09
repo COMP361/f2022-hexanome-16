@@ -5,6 +5,7 @@ import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.dto.cards.CardJson;
 import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -231,7 +232,9 @@ public class Game {
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
       levelDecks.get(level).addCard(card);
-      levelDecks.get(level).shuffle();
+      if (level != Level.ONE) {
+        levelDecks.get(level).shuffle();
+      }
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
   }
@@ -378,7 +381,7 @@ public class Game {
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
     }
-    deck.shuffle();
+    //deck.shuffle();
     redDecks.put(Level.REDTWO, deck);
   }
 
@@ -424,7 +427,7 @@ public class Game {
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard cascadeTwo = new ServerLevelCard(cascadeTwoJson.getId(),
           cascadeTwoJson.getPrestigePoint(), "cascade_two" + cascadeTwoJson.getId(),
-          cascadeTwoJson.getPrice(), Level.REDTHREE, gemBonus);
+          cascadeTwoJson.getPrice(), Level.REDTHREE, LevelCard.BonusType.CASCADING_TWO, gemBonus);
       deck.addCard(cascadeTwo);
       remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
           cascadeTwo);
