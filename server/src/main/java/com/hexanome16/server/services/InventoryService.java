@@ -11,7 +11,6 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Action;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
 import com.hexanome16.server.models.ServerPlayer;
@@ -144,9 +143,9 @@ public class InventoryService implements InventoryServiceInterface {
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
-    
+
     actionUponCardAcquiral(game, player, cardToBuy);
-    
+
     return player.peekTopAction();
   }
 
