@@ -243,7 +243,7 @@ public class LongPollingServiceTests {
   public void testCurrentPlayerSuccess() throws com.fasterxml.jackson.core.JsonProcessingException {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
     ResponseEntity<String> response =
-        (ResponseEntity<String>) longPollingService.getCurrentPlayer(
+        (ResponseEntity<String>) longPollingService.getPlayers(
             DummyAuths.validSessionIds.get(0),
             DummyAuths.validTokensInfos.get(0).getAccessToken(), hash).getResult();
     assertNotNull(response);
@@ -259,7 +259,7 @@ public class LongPollingServiceTests {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
 
     // Act
-    var response = longPollingService.getCurrentPlayer(DummyAuths.validSessionIds.get(0),
+    var response = longPollingService.getPlayers(DummyAuths.validSessionIds.get(0),
         DummyAuths.invalidTokensInfos.get(0).getAccessToken(), hash);
     var result = (ResponseEntity<String>) response.getResult();
 
@@ -280,7 +280,7 @@ public class LongPollingServiceTests {
     String hash = DigestUtils.md5Hex(objectMapper.writeValueAsString(""));
 
     // Act
-    var response = longPollingService.getCurrentPlayer(DummyAuths.invalidSessionIds.get(0),
+    var response = longPollingService.getPlayers(DummyAuths.invalidSessionIds.get(0),
         DummyAuths.validTokensInfos.get(0).getAccessToken(), hash);
     var result = (ResponseEntity<String>) response.getResult();
 

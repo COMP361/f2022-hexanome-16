@@ -6,6 +6,7 @@ import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
@@ -52,10 +53,10 @@ public class GameRequest {
    * @param hash      long polling hash
    * @return current player username
    */
-  public static Pair<String, PlayerJson> updateCurrentPlayer(long sessionId, String hash) {
+  public static Pair<String, PlayerListJson> updatePlayers(long sessionId, String hash) {
     return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
-        "/api/games/" + sessionId + "/player", Map.of(
+        "/api/games/" + sessionId + "/players", Map.of(
         "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash),
-        PlayerJson.class));
+        PlayerListJson.class));
   }
 }

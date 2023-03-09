@@ -1,6 +1,7 @@
 package com.hexanome16.server.util.broadcastmap;
 
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
@@ -8,6 +9,7 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.Game;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +35,10 @@ public class BroadcastMap {
         map.put(BroadcastMapKey.fromLevel(level), broadcastContentManager);
       }
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
-          new BroadcastContentManager<>(
-              new PlayerJson(game.getCurrentPlayer().getName()));
+          new BroadcastContentManager<>(new PlayerListJson(Arrays.stream(game.getPlayers()).map(
+              player -> new PlayerJson(player.getName(), !game.isNotPlayersTurn(player),
+                  player.getInventory().getPrestigePoints())
+          ).toArray(PlayerJson[]::new)));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =

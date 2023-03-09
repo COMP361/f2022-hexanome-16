@@ -1,6 +1,7 @@
 package com.hexanome16.server.util;
 
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
@@ -157,7 +158,9 @@ public class ServiceUtils {
     }
     game.getBroadcastContentManagerMap().updateValue(
         BroadcastMapKey.PLAYERS,
-        new PlayerJson(game.getCurrentPlayer().getName())
+        new PlayerListJson(Arrays.stream(game.getPlayers()).map(player -> new PlayerJson(
+            player.getName(), !game.isNotPlayersTurn(player), player.getInventory()
+            .getPrestigePoints())).toArray(PlayerJson[]::new))
     );
   }
 
