@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -87,7 +86,7 @@ public class ServerPlayerTest {
             )
         ));
 
-    ResponseEntity<String> response = costa.peekTopAction();
+    ResponseEntity<String> response = costa.peekTopAction().getActionDetails();
     var headers = response.getHeaders();
     assertEquals(CustomHttpResponses.ActionType.NOBLE.getMessage(),
         Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
@@ -110,7 +109,7 @@ public class ServerPlayerTest {
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
             )
         ));
-    ResponseEntity<String> response = costa.peekTopAction();
+    ResponseEntity<String> response = costa.peekTopAction().getActionDetails();
     var headers = response.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.CITY.getMessage(),
@@ -124,32 +123,15 @@ public class ServerPlayerTest {
    * Testing addTakeTwoToPerform().
    */
   @Test
-  public void testAddTakeTwoToPerform() throws JsonProcessingException {
+  public void testAddTakeTwoToPerform() {
     costa.addTakeTwoToPerform();
-    ResponseEntity<String> actions = costa.peekTopAction();
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.LEVEL_TWO.getMessage(),
         Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), actions.getBody());
-  }
-
-  /**
-   * Testing addEndTurnToPerform().
-   */
-  @Test
-  public void testAddEndTurnToPerform() throws JsonProcessingException {
-    ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
-    Game game = Mockito.mock(Game.class);
-    costa.addEndTurnToPerform(serviceUtils, game);
-    ResponseEntity<String> actions = costa.peekTopAction();
-    var headers = actions.getHeaders();
-    assertEquals(
-        CustomHttpResponses.ActionType.END_TURN.getMessage(),
-        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
-    assertEquals(HttpStatus.OK, actions.getStatusCode());
-    assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), actions.getBody());
   }
 
   /**
