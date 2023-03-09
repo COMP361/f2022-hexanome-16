@@ -117,11 +117,11 @@ public class GameController {
    * @param hash        hash for long polling
    * @return current player username
    */
-  @GetMapping(value = "/games/{sessionId}/player", produces = "application/json; charset=utf-8")
-  public DeferredResult<ResponseEntity<String>> getCurrentPlayer(@PathVariable long sessionId,
+  @GetMapping(value = "/games/{sessionId}/players", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getPlayers(@PathVariable long sessionId,
                                                                  @RequestParam String accessToken,
                                                                  @RequestParam String hash) {
-    return longPollingService.getCurrentPlayer(sessionId, accessToken, hash);
+    return longPollingService.getPlayers(sessionId, accessToken, hash);
   }
 
   /**

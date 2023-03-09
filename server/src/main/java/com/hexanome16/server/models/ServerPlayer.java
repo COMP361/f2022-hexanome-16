@@ -27,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 public class ServerPlayer extends Player {
   private final Queue<Action> queueOfCascadingActionTypes;
   private Inventory inventory; // the player has an inventory, not a bank
-  private final Map<RouteType, TradePost> tradePosts;
 
   /**
    * Player Constructor.
@@ -39,7 +38,6 @@ public class ServerPlayer extends Player {
     super(name, preferredColour);
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
-    this.tradePosts = new HashMap<>();
   }
 
 
@@ -220,15 +218,6 @@ public class ServerPlayer extends Player {
   public void addTakeTwoToPerform() {
     addActionToQueue(() ->
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
-  }
-
-  /**
-   * Adds a trade post to the list.
-   *
-   * @param tradePost the trade post to be added.
-   */
-  public void addTradePost(TradePost tradePost) {
-    tradePosts.put(tradePost.routeType, tradePost);
   }
 
   /**

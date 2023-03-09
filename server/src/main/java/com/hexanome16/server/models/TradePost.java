@@ -36,4 +36,20 @@ public class TradePost {
       }
     }
   }
+
+  /**
+   * Get the bonus prestige points for the trade post.
+   *
+   * @return the bonus prestige points.
+   */
+  public int getBonusPrestigePoints() {
+    switch (routeType) {
+      case ONYX_ROUTE -> {
+        return 1;
+      }
+      default -> {
+        return 0;
+      }
+    }
+  }
 }
