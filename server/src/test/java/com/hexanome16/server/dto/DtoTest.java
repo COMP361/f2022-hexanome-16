@@ -28,7 +28,7 @@ public class DtoTest {
 
   private final NobleDeckJson nobleDeckJson = new NobleDeckJson(game.getNobleDeck().getCardList());
 
-  private final PlayerJson playerJson = new PlayerJson("player");
+  private final PlayerJson playerJson = new PlayerJson("player", true, 10);
 
   /**
    * Instantiates a new Dto test.

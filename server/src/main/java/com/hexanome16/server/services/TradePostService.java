@@ -61,7 +61,7 @@ public class TradePostService {
       return CustomResponseFactory.getResponse(CustomHttpResponses.PLAYER_NOT_IN_GAME);
     }
 
-    Map<RouteType, TradePost> tradePosts = player.getTradePosts();
+    Map<RouteType, TradePost> tradePosts = player.getInventory().getTradePosts();
     TradePostJson[] tradePostJsons = new TradePostJson[tradePosts.size()];
 
     int i = 0;

@@ -41,7 +41,7 @@ public interface LongPollingServiceInterface {
    * @param hash        hash for long polling
    * @return current player username
    */
-  DeferredResult<ResponseEntity<String>> getCurrentPlayer(long sessionId,
+  DeferredResult<ResponseEntity<String>> getPlayers(long sessionId,
                                                           String accessToken,
                                                           String hash);
 

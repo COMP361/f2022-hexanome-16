@@ -114,12 +114,12 @@ class GameControllerTest {
 
     GameServiceInterface gameServiceMock = createGameServiceMock();
     LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(longPollingServiceMock.getCurrentPlayer(123L, "123", "123B"))
+    when(longPollingServiceMock.getPlayers(123L, "123", "123B"))
         .thenReturn(currentPlayerStub);
     this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
 
-    assertEquals(currentPlayerStub, gameController.getCurrentPlayer(123L, "123", "123B"));
-    assertNotEquals(currentPlayer2Stub, gameController.getCurrentPlayer(123L, "123", "123B"));
+    assertEquals(currentPlayerStub, gameController.getPlayers(123L, "123", "123B"));
+    assertNotEquals(currentPlayer2Stub, gameController.getPlayers(123L, "123", "123B"));
   }
 
   /**
