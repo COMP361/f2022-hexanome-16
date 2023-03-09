@@ -129,7 +129,7 @@ public class RequestClient {
                   }
                   gotResponse.set(true);
                 }
-                case HTTP_CLIENT_TIMEOUT -> {
+                case HTTP_CLIENT_TIMEOUT, 542 -> {
                   // Do nothing, just try again.
                 }
                 default -> {
