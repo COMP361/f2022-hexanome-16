@@ -251,7 +251,14 @@ public class PromptsRequests {
         Void.class));
   }
 
-  // TODO: add acquire noble endpoint
+  /**
+   * Sends a request to claim a noble.
+   *
+   * @param sessionId session id
+   * @param accessToken access token
+   * @param nobleId noble id
+   * @return server response.
+   */
   public static Pair<Headers, String> claimNoble(long sessionId, String accessToken,
                                                    String nobleId) {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
