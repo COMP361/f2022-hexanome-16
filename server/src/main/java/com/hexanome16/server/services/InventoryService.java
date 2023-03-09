@@ -290,8 +290,11 @@ public class InventoryService implements InventoryServiceInterface {
     if (card == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
-    var action = player.peekTopAction();
-    if (action.getActionType() != CustomHttpResponses.ActionType.LEVEL_TWO) {
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.LEVEL_TWO) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
     }
 
