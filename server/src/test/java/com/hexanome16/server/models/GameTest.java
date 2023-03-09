@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
@@ -43,7 +42,8 @@ public class GameTest {
   @BeforeEach
   public void init() throws IOException {
     game = Game.create(12345,
-        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[] {WinCondition.BASE});
+        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[] {WinCondition.BASE},
+        false, false);
   }
 
   /**
@@ -129,7 +129,7 @@ public class GameTest {
   public void testPlayerArrayGetsCloned() throws IOException {
     ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
     game = Game.create(12345,
-        players, "imad", "", new WinCondition[] {WinCondition.BASE});
+        players, "imad", "", new WinCondition[] {WinCondition.BASE}, false, false);
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
     players[0] = null;

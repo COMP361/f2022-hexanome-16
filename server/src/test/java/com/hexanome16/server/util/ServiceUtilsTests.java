@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.Game;
@@ -30,15 +29,13 @@ public class ServiceUtilsTests {
 
   /**
    * Sets .
-   *
-   * @throws JsonProcessingException the json processing exception
    */
   @BeforeEach
   void setup() {
     gameManagerServiceInterface = DummyGameManagerService.getDummyGameManagerService();
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE});
+            new WinCondition[] {WinCondition.BASE}, true, false);
     serviceUtils = new ServiceUtils(gameManagerServiceInterface,
         new DummyAuthService());
   }
