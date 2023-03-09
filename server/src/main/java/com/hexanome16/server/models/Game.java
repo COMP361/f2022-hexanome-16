@@ -5,7 +5,7 @@ import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.dto.cards.CardJson;
 import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.models.Level;
-import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
@@ -49,6 +49,7 @@ public class Game {
   private Deck<ServerNoble> onBoardNobles;
   private final Map<String, ServerLevelCard> remainingCards;
   private final Map<String, ServerNoble> remainingNobles;
+  private final Map<RouteType, TradePost> tradePosts;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -60,8 +61,8 @@ public class Game {
    * @param winConditions the win conditions
    */
   @SneakyThrows
-  private Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
-               WinCondition[] winConditions) {
+  Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
+       WinCondition[] winConditions, boolean isTradeRoute, boolean isCities) {
     this.sessionId = sessionId;
     this.players = players.clone();
     this.creator = creator;
@@ -78,6 +79,12 @@ public class Game {
     createDecks();
     createOnBoardDecks();
     createOnBoardRedDecks();
+    this.tradePosts = new HashMap<>();
+    if (isTradeRoute) {
+      for (RouteType route : RouteType.values()) {
+        tradePosts.put(route, new TradePost(route));
+      }
+    }
   }
 
   /**
@@ -86,11 +93,12 @@ public class Game {
    * @param sessionId session id
    * @param payload   the payload
    */
-  private Game(long sessionId, SessionJson payload) {
+  Game(long sessionId, SessionJson payload) {
     this(sessionId, Arrays.stream(payload.getPlayers()).map(player -> new ServerPlayer(
             player.getName(), player.getPreferredColour())).toArray(ServerPlayer[]::new),
         payload.getCreator(), payload.getSavegame(),
-        new WinCondition[] {WinCondition.fromServerName(payload.getGame())});
+        new WinCondition[] {WinCondition.fromServerName(payload.getGame())},
+        payload.getGame().contains("TradeRoutes"), payload.getGame().contains("Cities"));
   }
 
   @SneakyThrows
@@ -107,6 +115,7 @@ public class Game {
    */
   @SneakyThrows
   public static Game create(long sessionId, SessionJson payload) {
+    System.out.println(payload);
     Game game = new Game(sessionId, payload);
     game.init();
     return game;
@@ -120,12 +129,15 @@ public class Game {
    * @param creator       the creator
    * @param savegame      the savegame
    * @param winConditions the win conditions
+   * @param isTradeRoute if trade route expansion
+   * @param isCities if cities expansion
    * @return the game
    */
   @SneakyThrows
   public static Game create(long sessionId, ServerPlayer[] players, String creator, String savegame,
-                            WinCondition[] winConditions) {
-    Game game = new Game(sessionId, players, creator, savegame, winConditions);
+                            WinCondition[] winConditions, boolean isTradeRoute, boolean isCities) {
+    Game game =
+        new Game(sessionId, players, creator, savegame, winConditions, isTradeRoute, isCities);
     game.init();
     return game;
   }

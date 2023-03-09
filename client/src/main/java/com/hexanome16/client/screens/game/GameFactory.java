@@ -166,50 +166,66 @@ public class GameFactory implements EntityFactory {
   }
 
   /**
-   * Adds a sacrifice card to the game board.
+   * Adds a yellow marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return yellow marker entity
    */
-  @Spawns("SacrificeCard")
-  public Entity newSacrificeCard(SpawnData data) {
+  @Spawns("YellowMarker")
+  public Entity newYellowMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 155, 50)
-        .view("sacrificecard.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS))
+        .view("yellow_marker.png")
+        .at(matCoordsX - 162, matCoordsY + 116)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 
   /**
-   * Adds a noble-reserve card to the game board.
+   * Adds a black marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return black marker entity
    */
-  @Spawns("NobleReserveCard")
-  public Entity newNobleReserveCard(SpawnData data) {
+  @Spawns("BlackMarker")
+  public Entity newBlackMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 360, 50)
-        .view("noblereserve.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD))
+        .view("black_marker.png")
+        .at(matCoordsX - 162, matCoordsY + 64)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 
   /**
-   * Adds a bag card to the game board.
+   * Adds a red marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return red marker entity
    */
-  @Spawns("BagCard")
-  public Entity newBagCard(SpawnData data) {
+  @Spawns("RedMarker")
+  public Entity newRedMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 565, 50)
-        .view("bagcard.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD))
+        .view("red_marker.png")
+        .at(matCoordsX - 102, matCoordsY + 116)
+        .scale(0.18, 0.18)
+        .rotate(270)
+        .build();
+  }
+
+  /**
+   * Adds a blue marker to the game board.
+   *
+   * @param data spawn data
+   * @return blue marker entity
+   */
+  @Spawns("BlueMarker")
+  public Entity newBlueMarker(SpawnData data) {
+    return FXGL.entityBuilder()
+        .view("blue_marker.png")
+        .at(matCoordsX - 102, matCoordsY + 64)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 

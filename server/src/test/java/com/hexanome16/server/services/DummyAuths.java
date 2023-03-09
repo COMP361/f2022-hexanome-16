@@ -120,7 +120,7 @@ public class DummyAuths {
   public static final Map<Long, Game> validGames = Map.of(
       validSessionIds.get(0), Game.create(validSessionIds.get(0),
           validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
-          "", new WinCondition[] {WinCondition.BASE})
+          "", new WinCondition[] {WinCondition.BASE}, false, false)
   );
 
   /**

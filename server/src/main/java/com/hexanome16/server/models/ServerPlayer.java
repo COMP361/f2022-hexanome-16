@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -11,7 +12,9 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import lombok.Getter;
@@ -24,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 public class ServerPlayer extends Player {
   private final Queue<Action> queueOfCascadingActionTypes;
   private Inventory inventory; // the player has an inventory, not a bank
+  private final Map<RouteType, TradePost> tradePosts;
 
   /**
    * Player Constructor.
@@ -35,6 +39,7 @@ public class ServerPlayer extends Player {
     super(name, preferredColour);
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
+    this.tradePosts = new HashMap<>();
   }
 
 
@@ -218,6 +223,15 @@ public class ServerPlayer extends Player {
   }
 
   /**
+   * Adds a trade post to the list.
+   *
+   * @param tradePost the trade post to be added.
+   */
+  public void addTradePost(TradePost tradePost) {
+    tradePosts.put(tradePost.routeType, tradePost);
+  }
+
+  /**
    * Adds End turn as an action that needs to be performed.
    *
    * @param serviceUtils service util.
@@ -237,7 +251,6 @@ public class ServerPlayer extends Player {
   public void removeTopAction() {
     queueOfCascadingActionTypes.poll();
   }
-
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
