@@ -252,4 +252,12 @@ public class PromptsRequests {
   }
 
   // TODO: add acquire noble endpoint
+  public static Pair<Headers, String> claimNoble(long sessionId, String accessToken,
+                                                   String nobleId) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/nobles/" + nobleId,
+        Map.of("access_token", accessToken),
+        String.class));
+  }
 }
