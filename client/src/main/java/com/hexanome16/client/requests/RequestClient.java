@@ -123,16 +123,20 @@ public class RequestClient {
                     TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
                     req.getQueryParams().put("access_token", AuthUtils.getAuth().getAccessToken());
                     res.set(longPollString(req));
+                  } else {
+                    res.set(e.getParsingError().isEmpty() ? e.getBody()
+                        : e.getParsingError().get().toString());
                   }
-                  res.set(e.getParsingError().isEmpty() ? e.getBody()
-                      : e.getParsingError().get().toString());
                   gotResponse.set(true);
                 }
                 case HTTP_CLIENT_TIMEOUT -> {
                   // Do nothing, just try again.
                 }
-                default -> res.set(e.getParsingError().isEmpty() ? e.getBody()
-                    : e.getParsingError().get().toString());
+                default -> {
+                  res.set(e.getParsingError().isEmpty() ? e.getBody()
+                      : e.getParsingError().get().toString());
+                  gotResponse.set(true);
+                }
               }
             });
       } catch (TimeoutException | InterruptedException | ExecutionException e) {
