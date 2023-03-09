@@ -24,6 +24,8 @@ public class ChooseNoble extends NobleChoiceAbstract {
 
   /**
    * Sets the list of nobles.
+   *
+   * @param nobleList list of nobles
    */
   public static void setNobleList(Noble[] nobleList) {
     ChooseNoble.nobleList = nobleList;
