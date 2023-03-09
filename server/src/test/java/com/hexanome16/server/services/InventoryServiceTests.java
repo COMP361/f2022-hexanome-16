@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -196,6 +198,105 @@ public class InventoryServiceTests {
     // Assert
     assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
     assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  /**
+   * Test buy card adds take level two action.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testBuyCardAddsTakeLevelTwoAction()
+      throws com.fasterxml.jackson.core.JsonProcessingException {
+    // Arrange
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+
+    ServerLevelCard myCard = createValidTakeTwoCard();
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Action mockAction = mock(Action.class);
+    when(playerMock.peekTopAction()).thenReturn(mockAction);
+    when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
+        anyInt())).thenReturn(true);
+    when(mockAction.getActionDetails()).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
+    when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
+        Pair.of(CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO),
+            Pair.of(gameMock, playerMock)));
+
+    String cardHash = "";
+
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
+    Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+    when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
+    when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
+    var mapMock = Mockito.mock(BroadcastMap.class);
+    when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
+
+
+    // Act
+    ResponseEntity<String> response =
+        inventoryService.buyCard(sessionId, cardHash,
+            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+
+    // Assert
+    assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    verify(playerMock, times(1)).addTakeTwoToPerform();
+    verify(playerMock, times(0)).addNobleListToPerform(any());
+  }
+
+  /**
+   * Test buy card adds correct action in right order.
+   *
+   * @throws JsonProcessingException the json processing exception
+   */
+  @Test
+  public void testBuyCardAddsCorrectActionsInRightOrder()
+      throws com.fasterxml.jackson.core.JsonProcessingException {
+    // Arrange
+    var sessionId = DummyAuths.validSessionIds.get(0);
+    final var accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+
+    ServerLevelCard myCard = createValidTakeTwoCard();
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    Game gameMock = request.getValue().getLeft();
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Action mockAction = mock(Action.class);
+    when(playerMock.peekTopAction()).thenReturn(mockAction);
+    when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
+        anyInt())).thenReturn(true);
+    when(mockAction.getActionDetails()).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
+    when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
+        Pair.of(CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO),
+            Pair.of(gameMock, playerMock)));
+
+    String cardHash = "";
+
+    when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
+    Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+    when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
+    when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
+    ServerNoble mockNoble = mock(ServerNoble.class);
+    when(gameMock.getRemainingNobles()).thenReturn(Map.of("noble1", mockNoble));
+    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
+    var mapMock = Mockito.mock(BroadcastMap.class);
+    when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
+
+
+    // Act
+    ResponseEntity<String> response =
+        inventoryService.buyCard(sessionId, cardHash,
+            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+
+    // Assert
+    assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    verify(playerMock, times(1)).addTakeTwoToPerform();
+    verify(playerMock, times(1)).addNobleListToPerform(any());
   }
 
   /**
@@ -790,6 +891,12 @@ public class InventoryServiceTests {
 
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE, new PurchaseMap(
+        Map.of(Gem.RUBY, 1)));
+  }
+
+  private ServerLevelCard createValidTakeTwoCard() {
+    return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE,
+        LevelCard.BonusType.CASCADING_TWO, new PurchaseMap(
         Map.of(Gem.RUBY, 1)));
   }
 
