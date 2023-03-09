@@ -7,7 +7,6 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Player inventory class.
@@ -39,13 +38,13 @@ public class Inventory {
   /* add methods ******************************************************************************/
 
   /**
-   * Acquire card.
+   * Acquire card and add bonuses to inventory.
    *
    * @param card the card to add
    * @return true if the card was added to inventory
    */
   public boolean acquireCard(ServerLevelCard card) {
-    var info = card.getCardInfo();
+    gemBonuses.addGems(card.getGemBonus().getPriceMap());
     return ownedCards.add(card);
   }
 

@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,6 +43,20 @@ public class InventoryTests {
   }
 
   /**
+   * Gem bonuses should be zero when instantiated.
+   */
+  @Test
+  void testGemBonusesInstantiation() {
+    // Arrange
+
+    // Act
+    var response = inventory.getGemBonuses();
+
+    // Assert
+    assertEquals(new PriceMap(), response);
+  }
+
+  /**
    * Test to see if a pre-existing card can be successfully added to a player's
    * inventory. The test here is the acquireCard method of the Inventory class.
    */
@@ -51,6 +66,7 @@ public class InventoryTests {
     levelCard = createValidCard();
     inventory.acquireCard(levelCard);
     assertTrue(inventory.getOwnedCards().contains(levelCard));
+    assertEquals(levelCard.getGemBonus(), PurchaseMap.toPurchaseMap(inventory.getGemBonuses()));
   }
 
   /**
