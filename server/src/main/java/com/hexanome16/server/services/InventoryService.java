@@ -77,10 +77,10 @@ public class InventoryService implements InventoryServiceInterface {
   }
 
   @Override
-  public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String authenticationToken,
+  public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
                                         PurchaseMap proposedDeal) {
 
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -207,17 +207,17 @@ public class InventoryService implements InventoryServiceInterface {
    *
    * @param sessionId           game session id.
    * @param cardMd5             card hash.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws JsonProcessingException exception
    */
   public ResponseEntity<String> reserveCard(long sessionId,
                                             String cardMd5,
-                                            String authenticationToken)
+                                            String accessToken)
       throws JsonProcessingException {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
@@ -263,15 +263,15 @@ public class InventoryService implements InventoryServiceInterface {
    *
    * @param sessionId           game session id.
    * @param level               deck level.
-   * @param authenticationToken player's authentication token.
+   * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    */
   public ResponseEntity<String> reserveFaceDownCard(long sessionId,
                                                     String level,
-                                                    String authenticationToken) {
+                                                    String accessToken) {
 
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
@@ -307,9 +307,9 @@ public class InventoryService implements InventoryServiceInterface {
 
   @SneakyThrows
   @Override
-  public ResponseEntity<String> takeLevelTwoCard(long sessionId, String authenticationToken,
+  public ResponseEntity<String> takeLevelTwoCard(long sessionId, String accessToken,
                                                  String chosenCard) {
-    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> left = request.getLeft();
     if (!left.getStatusCode().is2xxSuccessful()) {
       return left;
@@ -356,9 +356,9 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
-                                             String authenticationToken) {
+                                             String accessToken) {
     var request =
-        serviceUtils.validRequestAndCurrentTurn(sessionId, authenticationToken);
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
     if (!response.getStatusCode().is2xxSuccessful()) {
       return response;
