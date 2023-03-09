@@ -359,6 +359,7 @@ public class InventoryService implements InventoryServiceInterface {
       return nextAction.getActionDetails();
     }
 
+    serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
 }
