@@ -9,6 +9,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
@@ -43,6 +45,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
@@ -214,10 +217,10 @@ public class LobbyFactory implements EntityFactory {
               .contains(AuthUtils.getPlayer().getName())
       ).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
-    sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff;");
+    sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7;");
 
     String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
-        + "-fx-text-fill: #ffffff; -fx-font-size: 16px;";
+        + "-fx-text-fill: #CFFBE7; -fx-font-size: 16px;";
 
     TableColumn<Map.Entry<String, Session>, String> creatorColumn = new TableColumn<>("Creator");
     creatorColumn.setCellValueFactory(
@@ -338,7 +341,7 @@ public class LobbyFactory implements EntityFactory {
     actionsColumn.setCellFactory(actionsCellFactory);
 
     Label placeholder = new Label("No sessions found");
-    placeholder.setStyle("-fx-text-fill: #ffffff; -fx-alignment: CENTER; -fx-font-size: 24px;");
+    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
     sessionTableView.setPlaceholder(placeholder);
 
     sessionTableView.getColumns().add(creatorColumn);
@@ -383,10 +386,11 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("createSessionButton")
   public Entity createSessionButton(SpawnData data) {
     Button button = new Button("Create Session");
-    button.setStyle(
-        "-fx-background-color: #6495ed; -fx-text-fill: #ffffff; -fx-font-size: 24px; "
-            + "-fx-padding: 10px;"
-    );
+    button.setFont(CURSIVE_FONT_FACTORY.newFont(45));
+    button.setTextFill(Config.SECONDARY_COLOR);
+    button.setStyle("-fx-background-color: #6495ed;" + "-fx-padding: 10px");
+    button.setOnMouseEntered(e -> button.setOpacity(0.7));
+    button.setOnMouseExited(e -> button.setOpacity(1.0));
     button.setOnAction(event -> {
       Long sessionId = CreateSessionRequest.execute(
           AuthUtils.getAuth().getAccessToken(),
@@ -399,7 +403,7 @@ public class LobbyFactory implements EntityFactory {
     return entityBuilder(data)
         .type(EntityType.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
-        .at(750, 200)
+        .at(750 - 15, 200 - 12)
         .build();
   }
 
@@ -413,8 +417,8 @@ public class LobbyFactory implements EntityFactory {
   public Entity gameServiceList(SpawnData data) {
     gameServiceDropdown = new ComboBox<>();
     gameServiceDropdown.setPrefSize(250, 60);
-    gameServiceDropdown.setStyle("-fx-background-color: #000000; -fx-text-fill: #ffffff; "
-        + "-fx-border-color: #ffffff; -fx-font-size: 24px;");
+    gameServiceDropdown.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7; "
+        + "-fx-border-color: #CFFBE7; -fx-font-size: 24px;");
     Callback<ListView<GameServiceJson>, ListCell<GameServiceJson>> cellFactory = new Callback<>() {
       @Override
       public ListCell<GameServiceJson> call(ListView<GameServiceJson> gameServiceJsonListView) {
@@ -453,14 +457,21 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("ownHeader")
   public Entity ownHeader(SpawnData data) {
-    Label label = new Label("Active Sessions");
-    label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
+    Text activeSessions = new Text("Active Sessions");
+    activeSessions.setFont(CURSIVE_FONT_FACTORY.newFont(300));
+    activeSessions.setFill(Paint.valueOf("#FCD828"));
+    activeSessions.setStrokeWidth(2.);
+    activeSessions.setStroke(Paint.valueOf("#936D35"));
+    activeSessions.setStyle("-fx-text-fill: #CFFBE7; -fx-font-size: 50px; -fx-font-weight: bold;");
+
     return entityBuilder(data)
         .type(EntityType.OWN_HEADER)
-        .viewWithBBox(label)
-        .at(870, 300)
+        .viewWithBBox(activeSessions)
+        .at(850, 320)
         .build();
   }
+
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   /**
    * Adds a header above the table of other players' sessions.
@@ -470,12 +481,17 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("otherHeader")
   public Entity otherHeader(SpawnData data) {
-    Label label = new Label("Other Sessions");
-    label.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-font-weight: bold;");
+    Text otherSessions = new Text("Other Sessions");
+    otherSessions.setFont(CURSIVE_FONT_FACTORY.newFont(300));
+    otherSessions.setFill(Paint.valueOf("#FCD828"));
+    otherSessions.setStrokeWidth(2.);
+    otherSessions.setStroke(Paint.valueOf("#936D35"));
+    otherSessions.setStyle("-fx-text-fill: #CFFBE7; -fx-font-size: 50px; -fx-font-weight: bold;");
+
     return entityBuilder(data)
         .type(EntityType.OTHER_HEADER)
-        .viewWithBBox(label)
-        .at(880, 400 + getAppHeight() / 4.0)
+        .viewWithBBox(otherSessions)
+        .at(880 - 20, 400 + getAppHeight() / 4.0 + 20)
         .build();
   }
 
@@ -489,8 +505,8 @@ public class LobbyFactory implements EntityFactory {
   public Entity closeButton(SpawnData data) {
     Button button = new Button("X");
     button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #ffffff;"
-            + "-fx-border-color: #ffffff; -fx-font-size: 24px; -fx-border-width: 1px;"
+        "-fx-background-color: transparent; -fx-text-fill: #CFFBE7;"
+            + "-fx-border-color: #CFFBE7; -fx-font-size: 24px; -fx-border-width: 1px;"
             + "-fx-border-radius: 100%; -fx-background-radius: 100%; -fx-padding: 4px;"
             + "-fx-font-weight: bold; -fx-min-width: 48px; -fx-min-height: 48px;");
     button.setOnAction(event -> {
@@ -530,9 +546,18 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("preferencesButton")
   public Entity preferencesButton(SpawnData data) {
     Button button = new Button("Preferences");
-    button.setStyle(
-        "-fx-background-color: transparent; -fx-text-fill: #61dafb;"
-            + "-fx-underline: true; -fx-font-size: 24px; -fx-font-weight: bold;");
+    button.setFont(CURSIVE_FONT_FACTORY.newFont(50));
+    button.setTextFill(Config.SECONDARY_COLOR);
+    button.setStyle("-fx-background-color: transparent;");
+    // animation
+    button.setOnMouseEntered(e -> {
+      button.setScaleX(1.25);
+      button.setScaleY(1.25);
+    });
+    button.setOnMouseExited(e -> {
+      button.setScaleX(1);
+      button.setScaleY(1);
+    });
     button.setOnAction(event -> SettingsScreen.initUi(false));
     return entityBuilder(data)
         .type(EntityType.CLOSE_BUTTON)
@@ -551,7 +576,7 @@ public class LobbyFactory implements EntityFactory {
   public Entity background(SpawnData data) {
     return entityBuilder(data)
         .type(EntityType.BACKGROUND)
-        .viewWithBBox(new Rectangle(1920, 1080, Paint.valueOf("#282C34")))
+        .viewWithBBox(new Rectangle(1920, 1080, Config.PRIMARY_COLOR))
         .at(0, 0)
         .build();
   }

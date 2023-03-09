@@ -5,6 +5,7 @@ import static com.hexanome16.client.screens.game.GameFactory.getLevelCardEntity;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.hexanome16.client.requests.backend.TradePostRequest;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
@@ -12,6 +13,7 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
@@ -45,6 +47,7 @@ public class GameScreen {
   private static Thread updateCurrentPlayer;
 
   private static String[] usernames;
+  private static Map<Integer, String> usernamesMap = new HashMap<>();
   private static String currentPlayer;
   private static long sessionId = -1;
 
@@ -99,6 +102,7 @@ public class GameScreen {
     };
     updateCurrentPlayerTask.setOnSucceeded(e -> {
       updateCurrentPlayer.interrupt();
+      fetchTradePosts();
       Platform.runLater(() -> {
         currentPlayer = currentPlayerJson.getValue().getUsername();
         System.out.println(currentPlayer);
@@ -120,6 +124,22 @@ public class GameScreen {
     updateCurrentPlayer.start();
   }
 
+  private static void fetchTradePosts() {
+    String[] colors = {"Yellow", "Black", "Red", "Blue"};
+    // add trade post for each player
+    for (Map.Entry<Integer, String> user : usernamesMap.entrySet()) {
+      for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId, user.getValue())) {
+        switch (tradePost.getRouteType()) {
+          case ONYX_ROUTE -> {
+            FXGL.spawn(colors[user.getKey()] + "Marker");
+          }
+          default -> {
+            //todo add other routes
+          }
+        }
+      }
+    }
+  }
 
   /**
    * Adds background, mat, cards, nobles, game bank,
@@ -171,6 +191,12 @@ public class GameScreen {
       fetchCurrentPlayerThread();
     }
     usernames = FXGL.getWorldProperties().getValue("players");
+
+    // build user map
+    for (int i = 0; i < usernames.length; i++) {
+      usernamesMap.put(i, usernames[i]);
+    }
+
     UpdateGameInfo.fetchAllPlayer(getSessionId(), usernames);
     // spawn the player's hands
     PlayerDecks.generateAll(usernames);

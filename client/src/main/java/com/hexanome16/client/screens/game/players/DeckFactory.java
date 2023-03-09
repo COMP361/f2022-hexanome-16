@@ -78,7 +78,7 @@ public class DeckFactory implements EntityFactory {
     prestigePoints.setStroke(Paint.valueOf("#000000"));
     prestigePoints.setStyle("-fx-background-color: ffffff00; ");
     // player icon
-    final Texture icon = FXGL.texture("playericon.png");
+    final Texture icon = FXGL.texture(data.get("color") + "_marker.png");
     // pane
     BorderPane pane = new BorderPane();
     BorderPane.setAlignment(prestigePoints, Pos.TOP_RIGHT);
