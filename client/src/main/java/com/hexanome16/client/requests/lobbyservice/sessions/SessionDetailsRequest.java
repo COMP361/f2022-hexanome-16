@@ -1,10 +1,12 @@
 package com.hexanome16.client.requests.lobbyservice.sessions;
 
-import com.google.gson.Gson;
+import com.hexanome16.client.requests.Request;
 import com.hexanome16.client.requests.RequestClient;
-import com.hexanome16.client.types.sessions.Session;
-import com.hexanome16.client.utils.UrlUtils;
-import java.net.http.HttpRequest;
+import com.hexanome16.client.requests.RequestDest;
+import com.hexanome16.client.requests.RequestMethod;
+import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.common.models.sessions.Session;
+import java.util.Map;
 import javafx.util.Pair;
 
 /**
@@ -23,14 +25,7 @@ public class SessionDetailsRequest {
    * @return The session details.
    */
   public static Pair<String, Session> execute(long sessionId, String hash) {
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(UrlUtils.createLobbyServiceUri(
-            "/api/sessions" + sessionId,
-            hash == null || hash.isBlank() ? null : "hash=" + hash
-        )).header("Content-Type", "application/json")
-        .GET()
-        .build();
-    Pair<String, String> response = RequestClient.longPollWithHash(request);
-    return new Pair<>(response.getKey(), new Gson().fromJson(response.getValue(), Session.class));
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.LS,
+        "/api/sessions/" + sessionId, Map.of("hash", hash), Session.class));
   }
 }

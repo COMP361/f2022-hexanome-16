@@ -1,50 +1,83 @@
 package com.hexanome16.server.models.winconditions;
 
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.Player;
-import com.hexanome16.server.services.GameServiceInterface;
+import com.hexanome16.common.dto.GameServiceJson;
+import com.hexanome16.server.models.ServerPlayer;
 import java.util.Arrays;
 import java.util.function.Predicate;
 import lombok.Getter;
-import lombok.ToString;
 
 /**
- * This class is used to define a win condition for a game.
+ * This enum represents the different win conditions for the game.
  */
-@ToString
-public abstract class WinCondition {
+public enum WinCondition {
+  /**
+   * Base win condition (15 prestige points).
+   */
+  BASE(player ->
+      player.getInventory().getOwnedCards().stream()
+          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
+          + player.getInventory().getOwnedNobles().stream()
+          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15,
+      new GameServiceJson("Splendor", "Orient")),
+  /**
+   * Win condition for Trade Routes (15 prestige points + 3 trade routes).
+   */
+
+  //todo consider trade routes
+  TRADEROUTES(player ->
+      player.getInventory().getOwnedCards().stream()
+          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum()
+          + player.getInventory().getOwnedNobles().stream()
+          .mapToInt(card -> card.getCardInfo().prestigePoint()).sum() >= 15,
+      new GameServiceJson("SplendorTradeRoutes", "Orient + Trade Routes")),
+  /**
+   * Win condition for Cities (15 prestige points + 4 cities).
+   */
+  CITIES(null, new GameServiceJson("SplendorCities", "Orient + Cities"));
+
+  private final Predicate<ServerPlayer> winCondition;
   @Getter
-  private final Predicate<Player> condition;
+  private final GameServiceJson gameServiceJson;
+
+  WinCondition(Predicate<ServerPlayer> winCondition, GameServiceJson gameServiceJson) {
+    this.winCondition = winCondition;
+    this.gameServiceJson = gameServiceJson;
+  }
 
   /**
-   * Constructor.
+   * Get the win condition associated with a server name (based on extension).
    *
-   * @param condition The condition to check if a player has won.
+   * @param serverName The server name.
+   * @return The win condition associated with the server name, or null if invalid server name.
    */
-  public WinCondition(Predicate<Player> condition) {
-    this.condition = condition;
+  public static WinCondition fromServerName(String serverName) {
+    return Arrays.stream(WinCondition.values())
+        .filter(winCondition -> winCondition.gameServiceJson.getName().equals(serverName)
+            || winCondition.gameServiceJson.getDisplayName().equals(serverName))
+        .findFirst().orElse(null);
   }
 
   /**
    * Check if a game is won.
    *
-   * @param game The game to check.
+   * @param players The players to check.
    * @return The player(s) who won the game, or null if no player has won.
    */
-  public Player[] isGameWon(Game game) {
-    Player[] matchingPlayers =
-        Arrays.stream(game.getPlayers()).filter(condition).toArray(Player[]::new);
-    return matchingPlayers.length > 0 ? matchingPlayers : new Player[0];
+  public ServerPlayer[] isMet(ServerPlayer[] players) {
+    ServerPlayer[] matchingPlayers =
+        Arrays.stream(players).filter(winCondition).toArray(ServerPlayer[]::new);
+    return matchingPlayers.length > 0 ? matchingPlayers : new ServerPlayer[0];
   }
 
   /**
    * Check if a game is won.
    *
-   * @param gameService The game service.
-   * @param sessionId The session id of the game to check.
-   * @return The player(s) who won the game, or null if no player has won.
+   * @param winConditions The win conditions to check.
+   * @param players       The players to check.
+   * @return The player(s) who won the game, or empty array if no player has won.
    */
-  public Player[] isGameWon(GameServiceInterface gameService, Long sessionId) {
-    return this.isGameWon(gameService.getGameMap().get(sessionId));
+  public static ServerPlayer[] getWinners(WinCondition[] winConditions, ServerPlayer[] players) {
+    return Arrays.stream(winConditions).map(winCondition -> winCondition.isMet(players))
+        .filter(players1 -> players1.length > 0).findFirst().orElse(new ServerPlayer[0]);
   }
 }

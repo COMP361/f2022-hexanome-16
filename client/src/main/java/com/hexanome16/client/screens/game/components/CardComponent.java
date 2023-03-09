@@ -5,9 +5,9 @@ import static com.hexanome16.client.screens.game.GameFactory.matCoordsX;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
-import com.hexanome16.client.screens.game.Level;
-import com.hexanome16.client.screens.game.PriceMap;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.PriceMap;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -38,8 +38,10 @@ public class CardComponent extends Component {
    * The constant red level_three_grid.
    */
   public static CardComponent[] red_level_three_grid = new CardComponent[2];
+  /**
+   * Level of this card component.
+   */
   public final Level level;
-  private final boolean purchased = false;
   private final String cardHash;
   private final PriceMap priceMap;
   /**
@@ -51,6 +53,7 @@ public class CardComponent extends Component {
   private boolean fading = false;
   private boolean adding = false;
   private int gridX;
+  private boolean onBoard;
 
   /**
    * Creates a new card fxgl component.
@@ -60,12 +63,15 @@ public class CardComponent extends Component {
    * @param texture  card texture
    * @param priceMap the price of the card
    * @param cardHash MD5 hash of the card
+   * @param onBoard if the card is on board
    */
-  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash) {
+  public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash,
+                       boolean onBoard) {
     this.level = level;
     this.texture = texture;
     this.priceMap = priceMap;
     this.cardHash = cardHash;
+    this.onBoard = onBoard;
   }
 
   /**
@@ -82,6 +88,7 @@ public class CardComponent extends Component {
 
   @Override
   public void onUpdate(double tpf) {
+    entity.setZIndex(3);
     if (fading) {
       double opacity = entity.getViewComponent().getOpacity();
       if (opacity > 0) {
@@ -108,20 +115,30 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> OpenPrompt.openPrompt(entity));
+    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> PromptUtils.openPrompt(entity));
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
-    switch (level) {
-      case ONE -> addToMat(level_one_grid);
-      case TWO -> addToMat(level_two_grid);
-      case THREE -> addToMat(level_three_grid);
-      case REDONE -> addToMat(red_level_one_grid);
-      case REDTWO -> addToMat(red_level_two_grid);
-      case REDTHREE -> addToMat(red_level_three_grid);
-      default -> throw new IllegalArgumentException("Problem adding cards to the mat.");
+    if (onBoard) {
+      addToMat(getGrid(level));
     }
   }
 
+  /**
+   * Returns the card grid for the given level.
+   *
+   * @param level level
+   * @return card grid
+   */
+  public static CardComponent[] getGrid(Level level) {
+    return switch (level) {
+      case ONE -> level_one_grid;
+      case TWO -> level_two_grid;
+      case THREE -> level_three_grid;
+      case REDONE -> red_level_one_grid;
+      case REDTWO -> red_level_two_grid;
+      case REDTHREE -> red_level_three_grid;
+    };
+  }
 
   private void pop() {
     position.setScaleX(0.18);
@@ -186,6 +203,15 @@ public class CardComponent extends Component {
    */
   public String getCardHash() {
     return cardHash;
+  }
+
+  /**
+   * Gets if the card is on board.
+   *
+   * @return the onBoard
+   */
+  public boolean getOnBoard() {
+    return onBoard;
   }
 
 }

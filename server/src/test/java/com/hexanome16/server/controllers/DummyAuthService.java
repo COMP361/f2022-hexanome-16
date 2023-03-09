@@ -1,12 +1,12 @@
 package com.hexanome16.server.controllers;
 
+import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.auth.TokensInfo;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -99,7 +99,7 @@ public class DummyAuthService implements AuthServiceInterface {
     }
   }
 
-  //TODO from here
+  // TODO from here
 
   /**
    * This request logs out the user in LS associated with the access token.
@@ -131,16 +131,14 @@ public class DummyAuthService implements AuthServiceInterface {
    * Valid accessTokens: {@link DummyAuths#validTokensInfos}
    * </pre>
    *
-   * @param sessionId   ID of session associated with request
    * @param accessToken access token of request
-   * @param gameMap     mapping from ID's to their respective game
+   * @param game        game to verify against
    * @return true if access token and id are valid, see {@link DummyAuthService}
    */
   @Override
-  public boolean verifyPlayer(long sessionId, String accessToken, Map<Long, Game> gameMap) {
+  public boolean verifyPlayer(String accessToken, @NonNull Game game) {
     var validAccessTokens = List.of(DummyAuths.validTokensInfos.get(0).getAccessToken(),
         DummyAuths.validTokensInfos.get(1).getAccessToken());
-    return DummyAuths.validSessionIds.contains(sessionId)
-        && validAccessTokens.contains(accessToken);
+    return validAccessTokens.contains(accessToken);
   }
 }

@@ -1,42 +1,57 @@
 [
- {
-   "id": 0,
-   "onyxAmount": 0,
-   "sapphireAmount": 2,
-   "emeraldAmount": 0,
-   "rubyAmount": 3,
-   "diamondAmount": 0
- },
-{
-   "id": 1,
-   "onyxAmount": 0,
-   "sapphireAmount": 0,
-   "emeraldAmount": 0,
-   "rubyAmount": 2,
-   "diamondAmount": 3
- },
-{
-   "id": 2,
-   "onyxAmount": 0,
-   "sapphireAmount": 3,
-   "emeraldAmount": 2,
-   "rubyAmount": 0,
-   "diamondAmount": 0
- },
-{
-   "id": 3,
-   "onyxAmount": 2,
-   "sapphireAmount": 0,
-   "emeraldAmount": 3,
-   "rubyAmount": 0,
-   "diamondAmount": 0
- },
-{
-   "id": 4,
-   "onyxAmount": 3,
-   "sapphireAmount": 0,
-   "emeraldAmount": 3,
-   "rubyAmount": 0,
-   "diamondAmount": 2
- }
+  {
+    "id": 0,
+    "bonus": "RUBY",
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 2,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 1,
+    "bonus": "RUBY",
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 2,
+      "DIAMOND": 3
+    }
+  },
+  {
+    "id": 2,
+    "bonus": "RUBY",
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 2,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 3,
+    "bonus": "RUBY",
+    "price": {
+      "ONYX": 2,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 4,
+    "bonus": "RUBY",
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 0,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 2
+    }
+  }
 ]

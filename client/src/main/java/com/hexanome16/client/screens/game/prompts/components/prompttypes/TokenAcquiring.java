@@ -6,16 +6,15 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -49,7 +48,6 @@ public class TokenAcquiring implements PromptTypeInterface {
   double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
 
 
-
   @Override
   public double getWidth() {
     return atWidth;
@@ -60,6 +58,10 @@ public class TokenAcquiring implements PromptTypeInterface {
     return atHeight;
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
 
   @Override
   public void populatePrompt(Entity entity) {
@@ -73,29 +75,30 @@ public class TokenAcquiring implements PromptTypeInterface {
     Text myPromptMessage = new Text("Taking Tokens");
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
-    myPromptMessage.setFont(GAME_FONT.newFont(atHeight / 10.));
+    myPromptMessage.setFont(GAME_FONT.newFont(atHeight / 6.));
     myPromptMessage.setFill(Config.SECONDARY_COLOR);
 
-    // set up choose 2 choice
-    StackPane chooseTwo = makeButton("TAKE 2 TOKENS SAME COLOR", 0.25,
-        PromptType.TOKEN_ACQUIRING_TWO);
 
     // set up OR text
     Text orText = new Text("OR");
     orText.setTextAlignment(TextAlignment.CENTER);
-    orText.setFont(GAME_FONT.newFont(atButtonHeight));
+    orText.setFont(GAME_FONT.newFont(atButtonHeight / 1.5));
     orText.setFill(Config.SECONDARY_COLOR);
 
     // set up choose 3 choice
-    StackPane chooseThree = makeButton("TAKE 3 TOKENS DIFFERENT COLOR", 0.20,
+    StackPane chooseThree = makeButton("TAKE 3 TOKENS DIFFERENT COLOR", 0.5,
         PromptType.TOKEN_ACQUIRING_THREE);
 
+    // set up choose 2 choice
+    StackPane chooseTwo = makeButton("TAKE 2 TOKENS SAME COLOR", 0.5,
+        PromptType.TOKEN_ACQUIRING_TWO);
+
     // set up choices' layout (Choose 2) (OR) (Choose 3)
-    HBox myChoices = new HBox();
+    VBox myChoices = new VBox();
     myChoices.getChildren().addAll(chooseTwo, orText, chooseThree);
     myChoices.setAlignment(Pos.CENTER);
     myChoices.setPrefSize(atWidth, atHeight * 0.9);
-    myChoices.setSpacing(atButtonWidth / 6.);
+    myChoices.setSpacing(atButtonWidth / 10.);
 
     // add built elements to prompt layout and add to entity
     myPrompt.setTop(myPromptMessage);
@@ -103,17 +106,18 @@ public class TokenAcquiring implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
+
   // for the second parameter, the longer the text the smaller that fraction needs to be
   private StackPane makeButton(String buttonText,
                                double fontHeightFraction, PromptType promptToOpen) {
     // initiate and set up layout of button
     StackPane stackPane = new StackPane();
-    stackPane.setPrefSize(atButtonWidth, atButtonHeight);
-    stackPane.setMaxSize(atButtonWidth, atButtonHeight);
+    stackPane.setPrefSize(atButtonWidth * 2, atButtonHeight * 1.1);
+    stackPane.setMaxSize(atButtonWidth * 2.1, atButtonHeight * 1.1);
 
     // set up button rectangle
     Rectangle buttonRectangle =
-        new Rectangle(atButtonWidth, atButtonHeight, Config.SECONDARY_COLOR);
+        new Rectangle(atButtonWidth * 2, atButtonHeight * 1.1, Config.SECONDARY_COLOR);
     buttonRectangle.setStrokeWidth(atHeight / 100);
     buttonRectangle.setStroke(Color.BLACK);
     buttonRectangle.setOpacity(0.5);
@@ -123,14 +127,14 @@ public class TokenAcquiring implements PromptTypeInterface {
     buttonMessage.setFont(GAME_FONT.newFont(atButtonHeight * fontHeightFraction));
     buttonMessage.setFill(Config.PRIMARY_COLOR);
     buttonMessage.setTextAlignment(TextAlignment.CENTER);
+    buttonMessage.setWrappingWidth(buttonRectangle.getWidth());
 
     // adds onHoverEffect
     PromptTypeInterface.setOnHoverEffectOpacity(stackPane, buttonRectangle, 0.5, 1.0);
 
     // add onClick (Spawns Prompt of type promptToOpen)
-    stackPane.setOnMouseClicked(e -> {
-      FXGL.spawn("PromptBox", new SpawnData().put("promptType", promptToOpen));
-    });
+    stackPane.setOnMouseClicked(
+        e -> FXGL.spawn("PromptBox", new SpawnData().put("promptType", promptToOpen)));
 
     //
     stackPane.getChildren().addAll(buttonRectangle, buttonMessage);

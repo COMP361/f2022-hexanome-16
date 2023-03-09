@@ -1,33 +1,88 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts;
 
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
-import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.models.LevelCard;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import lombok.SneakyThrows;
 
 /**
  * A class responsible for populating See Own reserved Cards prompt.
  */
-public class SeeReserved extends SeeReservedAbstract {
+public class SeeReserved implements PromptTypeInterface {
+  static Map<String, LevelCard> cardHashList = new HashMap<String, LevelCard>();
 
-  private static List<String> cardTexturePaths = new ArrayList<>();
+  private static boolean myCards = false;
+
+
+  /**
+   * The View able cards.
+   */
+  protected ArrayList<Texture> viewAbleCards;
+  /**
+   * The Hidden cards.
+   */
+  protected int hiddenCards;
+  /**
+   * The width.
+   */
+  double atWidth = getAppWidth() / 2.;
+  /**
+   * The height.
+   */
+  double atHeight = getAppHeight() * 0.8;
+  /**
+   * The card width.
+   */
+  double atCardWidth = atWidth / 4;
+  /**
+   * The card height.
+   */
+  double atCardHeight = atCardWidth * 1.39;
+  /**
+   * The top left x.
+   */
+  double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2);
+  /**
+   * The top left y.
+   */
+  double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
+
+  @Override
+  public double getWidth() {
+    return atWidth;
+  }
+
+  @Override
+  public double getHeight() {
+    return atHeight;
+  }
 
   /**
    * Fetches cards in the provided player's inventory.
@@ -35,38 +90,33 @@ public class SeeReserved extends SeeReservedAbstract {
    * @param player player
    */
   public static void fetchReservedCards(String player) {
+    cardHashList.clear();
     // make a call to the server
-    String response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
+    DeckJson response = PromptsRequests.getReservedCards(GameScreen.getSessionId(),
         player, AuthUtils.getAuth().getAccessToken());
     // are these my cards?
-    boolean myCards = AuthUtils.getPlayer().getName().equals(player);
-    // convert it to a list of maps
-    Gson myGson = new Gson();
-    List<Map<String, Object>> cards = myGson.fromJson(response, List.class);
+    myCards = AuthUtils.getPlayer().getName().equals(player);
     // add the paths to our list
-    cardTexturePaths = new ArrayList<>();
-    for (Map<String, Object> card : cards) {
-      // my cards are always face up
-      if (myCards || !(boolean) card.get("faceDown")) {
-        cardTexturePaths.add(card.get("texturePath") + ".png");
-      } else {
-        cardTexturePaths.add("level_" + ((String) card.get("level")).toLowerCase() + ".png");
-      }
-    }
+    cardHashList = response.getCards();
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 
   @Override
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");
-    myPromptMessage.setFont(GAME_FONT.newFont(15));
+    myPromptMessage.setFont(GAME_FONT.newFont(50));
     myPromptMessage.setFill(Config.SECONDARY_COLOR);
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
 
     ScrollPane myScrollPane = new ScrollPane();
     myScrollPane.setPrefViewportWidth(atWidth);
-    myScrollPane.setPrefViewportHeight(atHeight - 20); // 20 is height of X button
+    myScrollPane.setPrefViewportHeight(atHeight - 60); // 20 is height of X button
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     myScrollPane.setPannable(true);
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -83,8 +133,8 @@ public class SeeReserved extends SeeReservedAbstract {
     myScrollPane.setContent(myCards);
 
     // add cards to player's hand
-    for (String card : cardTexturePaths) {
-      myCards.getChildren().add(getCardTexture(card));
+    for (Map.Entry<String, LevelCard> entry : cardHashList.entrySet()) {
+      myCards.getChildren().add(getCardTexture(entry));
     }
 
     myCards.setPrefWidth(atWidth);
@@ -95,19 +145,54 @@ public class SeeReserved extends SeeReservedAbstract {
   /**
    * Get the card as a texture from its name.
    *
-   * @param cardName cardName
+   * @param card card
    * @return card as a texture
    */
-  private Texture getCardTexture(String cardName) {
-    Texture card = FXGL.texture(cardName);
-    card.setFitWidth(atCardWidth);
-    card.setFitHeight(atCardHeight);
-    return card;
+  private Texture getCardTexture(Map.Entry<String, LevelCard> card) {
+    Texture cardTexture = FXGL.texture(card.getValue().getCardInfo().texturePath() + ".png");
+    if (myCards) {
+      cardTexture.setOnMouseClicked(e -> PromptUtils.openPrompt(getCardEntity(card)));
+    } else if (card.getValue().isFaceDown()) {
+      cardTexture =
+          FXGL.texture("level_" + card.getValue().getLevel().name().toLowerCase() + ".png");
+    }
+    cardTexture.setFitWidth(atCardWidth);
+    cardTexture.setFitHeight(atCardHeight);
+    return cardTexture;
   }
-  
-  // ************************************************************* 
-  
-  @Override
+
+  @SneakyThrows
+  private Entity getCardEntity(Map.Entry<String, LevelCard> card) {
+    return FXGL.entityBuilder()
+        .view(card.getValue().getCardInfo().texturePath() + ".png")
+        .scale(0.15, 0.15)
+        .with(new CardComponent(card.getValue().getCardInfo().id(), card.getValue().getLevel(),
+            card.getValue().getCardInfo().texturePath() + ".png",
+            card.getValue().getCardInfo().price(),
+            card.getKey(), false))
+        .build();
+  }
+
+  // *************************************************************
+  // for making hidden cards
+  private Node makeAnonymousCard() {
+    Text myInterrogation = new Text("?");
+    myInterrogation.setFont(GAME_FONT.newFont(atCardHeight * 0.9));
+    myInterrogation.setFill(Color.WHITE);
+    myInterrogation.setTextAlignment(TextAlignment.CENTER);
+
+    Rectangle myOtherCard = new Rectangle(atCardWidth, atCardHeight, Color.BLACK);
+    StackPane myAnonymousCard = new StackPane();
+    myAnonymousCard.getChildren().addAll(myOtherCard, myInterrogation);
+    return myAnonymousCard;
+  }
+
+  /**
+   * If others reserved card then hiddenCards = 0 and need to append behaviour
+   * else hiddenCards >= 0  and no need to add behaviour.
+   * Note that this will throw an exception if the number of cards total,
+   * hiddenCards + (number of textures in viewAbleCards) is greater than 3.
+   */
   protected void promptOpened() {
     assert (hiddenCards + viewAbleCards.size()) < 3;
     hiddenCards = 0;
@@ -115,16 +200,23 @@ public class SeeReserved extends SeeReservedAbstract {
         List.of(FXGL.texture("card1.png"), FXGL.texture("card1.png")));
   }
 
-  @Override
+  /**
+   * Prompt text string.
+   *
+   * @return the string
+   */
   protected String promptText() {
     return "Own reserved cards";
   }
 
-  @Override
+  /**
+   * Adds behaviour to object t, specifically made for see Own reserved.
+   * This should allow opening a buy prompt.
+   *
+   * @param t the texture to which the behaviour will be added.
+   */
   protected void appendBehaviour(Texture t) {
-    t.setOnMouseClicked(e -> {
-      OpenPrompt.openPrompt(PromptType.BUYING_RESERVED);
-    });
+    t.setOnMouseClicked(e -> PromptUtils.openPrompt(PromptType.BUYING_RESERVED));
   }
-  
+
 }

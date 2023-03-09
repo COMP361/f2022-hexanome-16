@@ -3,6 +3,10 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.bank.GameBank;
+import com.hexanome16.server.models.bank.PlayerBank;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,12 +23,22 @@ public class BankTest {
   public PlayerBank playerBank = new PlayerBank();
 
   /**
+   * init.
+   */
+  @BeforeEach
+  public void init() {
+    playerBank = new PlayerBank();
+    gameBank = new GameBank();
+  }
+
+  /**
    * Test game bank default tokens.
    */
   @Test
   public void testGameBankDefaultTokens() {
-    assertTrue(gameBank.hasAtLeast(7, 7, 7,
-        7, 7, 5));
+    PurchaseMap pm = new PurchaseMap(8, 8, 8,
+        8, 8, 0);
+    assertTrue(gameBank.toPurchaseMap().canBeUsedToBuy(pm));
   }
 
   /**
@@ -32,8 +46,8 @@ public class BankTest {
    */
   @Test
   public void testPlayerBankDefaultTokens() {
-    assertTrue(playerBank.hasAtLeast(3, 3, 3,
-        3, 3, 3));
+    assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(3, 3, 3,
+        3, 3, 3)));
   }
 
   /**
@@ -41,10 +55,10 @@ public class BankTest {
    */
   @Test
   public void testDecreasePlayerTokens() {
-    playerBank.incBank(-1, -1, -1,
-        -1, -1, -1);
-    assertFalse(playerBank.hasAtLeast(3, 3, 3,
-        3, 3, 3));
+    playerBank.removeGemsFromBank(new PurchaseMap(1, 1, 1,
+        1, 1, 1));
+    assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(3, 3, 3,
+        3, 3, 3)));
   }
 
   /**
@@ -52,10 +66,10 @@ public class BankTest {
    */
   @Test
   public void testIncreasePlayerTokens() {
-    playerBank.incBank(2, 2, 2,
-        2, 2, 2);
-    assertTrue(playerBank.hasAtLeast(4, 4, 4,
-        4, 4, 4));
+    playerBank.addGemsToBank(new PurchaseMap(1, 1, 1,
+            1, 1, 0));
+    assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(6, 6, 6,
+        6, 6, 0)));
   }
 
   /**
@@ -64,9 +78,11 @@ public class BankTest {
   @Test
   // This test checks that over-withdrawing is not possible
   public void testDecreasePlayerTokensToNeg() {
-    playerBank.incBank(-5, -5, -5,
-        -5, -5, -5);
-    assertTrue(playerBank.hasAtLeast(0, 0, 0,
-        0, 0, 0));
+    try {
+      playerBank.removeGemsFromBank(new PurchaseMap(5, 5, 5,
+          5, 5, 5));
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
   }
 }

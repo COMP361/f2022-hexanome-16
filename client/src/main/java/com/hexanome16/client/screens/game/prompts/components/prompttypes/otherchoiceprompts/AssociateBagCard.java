@@ -12,6 +12,11 @@ import java.util.List;
 public class AssociateBagCard extends BonusChoiceAbstract {
 
   @Override
+  public boolean isCancelable() {
+    return false;
+  }
+
+  @Override
   protected String promptText() {
     return "Choose bag content";
   }
@@ -20,7 +25,6 @@ public class AssociateBagCard extends BonusChoiceAbstract {
   protected double promptTextSize() {
     return getHeight() / 6.;
   }
-
 
   @Override
   protected boolean canConfirm() {

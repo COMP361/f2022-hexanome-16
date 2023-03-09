@@ -6,7 +6,6 @@ import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.utils.AuthUtils;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class responsible for populating Acquiring 2 tokens prompt.
@@ -50,4 +49,8 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
     return PromptsRequests.getAvailableTwoBonuses(promptSessionId);
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
 }

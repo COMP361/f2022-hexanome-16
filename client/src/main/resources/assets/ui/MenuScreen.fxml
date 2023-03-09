@@ -10,7 +10,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity"
             minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0"
-            style="-fx-background-color: #343331;" xmlns="http://javafx.com/javafx/17">
+            style="-fx-background-color: #300418;" xmlns="http://javafx.com/javafx/17">
     <HBox alignment="CENTER" layoutX="440.0" layoutY="249.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <VBox fx:id="rulebookSection" alignment="CENTER" onMouseClicked="#clickRulebook"
@@ -20,9 +20,9 @@
                        preserveRatio="true">
                 <Image url="/assets/images/noble5.png"/>
             </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Rulebook">
+            <Text fill="#CFFBE7" strokeType="OUTSIDE" strokeWidth="0.0" text="Rulebook">
                 <font>
-                    <Font name="Segoe UI Historic" size="52.0"/>
+                    <Font name="Enchanted Land" size="52.0"/>
                 </font>
             </Text>
         </VBox>
@@ -33,9 +33,9 @@
                        preserveRatio="true">
                 <Image url="/assets/images/noble9.png"/>
             </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby">
+            <Text fill="#CFFBE7" strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby">
                 <font>
-                    <Font name="Segoe UI Historic" size="52.0"/>
+                    <Font name="Enchanted Land" size="52.0"/>
                 </font>
             </Text>
         </VBox>
@@ -46,18 +46,19 @@
                        preserveRatio="true">
                 <Image url="/assets/images/noble6.png"/>
             </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings">
+            <Text fill="#CFFBE7" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings">
                 <font>
-                    <Font name="Segoe UI Historic" size="52.0"/>
+                    <Font name="Enchanted Land" size="52.0"/>
                 </font>
             </Text>
         </VBox>
     </HBox>
     <VBox fx:id="logoutButton" onMouseClicked="#clickLogoutButton" alignment="CENTER"
+          onMouseEntered="#hoverLogoutButton" onMouseExited="#exitLogoutButton"
           layoutX="1700.0" layoutY="50.0" prefHeight="100.0" prefWidth="100.0">
-        <Text fill="cornflowerblue" strokeType="OUTSIDE" underline="true" text="Logout">
+            <Text fill="#CFFBE7" strokeType="OUTSIDE" underline="false" text="Logout">
             <font>
-                <Font size="32.0"/>
+                <Font name="Enchanted Land" size="50"/>
             </font>
         </Text>
     </VBox>

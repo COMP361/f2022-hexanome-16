@@ -2,8 +2,10 @@ package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hexanome16.common.models.price.Gem;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,7 +37,7 @@ public class GemTest {
     assertEquals(Gem.getGem("BLUE"), Gem.SAPPHIRE);
     assertEquals(Gem.getGem("WHITE"), Gem.DIAMOND);
     assertEquals(Gem.getGem("BLACK"), Gem.ONYX);
-    assertEquals(Gem.getGem("WOW"), null);
+    assertNull(Gem.getGem("WOW"));
   }
 
   /**

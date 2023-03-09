@@ -1,24 +1,35 @@
 package com.hexanome16.server.models;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.List;
-import lombok.Data;
+import java.util.Stack;
+import lombok.ToString;
 
 /**
  * Development deck class.
+ *
+ * @param <T> Inventory Addable to be contained in the deck
  */
-@Data
-public class Deck implements BroadcastContent {
-  private final List<DevelopmentCard> cardList = new ArrayList<>();
-  private int index;
+@ToString
+public class Deck<T extends InventoryAddable> implements BroadcastContent {
+  private final Stack<T> cardList;
 
   /**
    * Instantiates a new Deck.
    */
   public Deck() {
-    this.index = 0;
+    cardList = new Stack<>();
+  }
+
+  /**
+   * Get copy of deck.
+   *
+   * @return immutable copy of internal card list
+   */
+  public List<T> getCardList() {
+    return Collections.unmodifiableList(cardList);
   }
 
   /**
@@ -26,17 +37,18 @@ public class Deck implements BroadcastContent {
    *
    * @param card the card to be added.
    */
-  public void addCard(DevelopmentCard card) {
-    cardList.add(card);
+  public void addCard(T card) {
+    cardList.push(card);
   }
 
   /**
    * Remove card.
    *
    * @param card the card to be removed.
+   * @return if the card was in the deck.
    */
-  public void removeCard(DevelopmentCard card) {
-    cardList.remove(card);
+  public boolean removeCard(T card) {
+    return cardList.remove(card);
   }
 
   /**
@@ -51,11 +63,25 @@ public class Deck implements BroadcastContent {
    *
    * @return card, null if deck is empty
    */
-  public DevelopmentCard nextCard() {
-    if (remainingAmount() <= 0) {
+  public T nextCard() {
+    try {
+      return cardList.peek();
+    } catch (EmptyStackException e) {
       return null;
     }
-    return cardList.get(index++);
+  }
+
+  /**
+   * Remove and return next card from the deck.
+   *
+   * @return card, null if deck is empty
+   */
+  public T removeNextCard() {
+    try {
+      return cardList.pop();
+    } catch (EmptyStackException e) {
+      return null;
+    }
   }
 
   /**
@@ -64,7 +90,7 @@ public class Deck implements BroadcastContent {
    * @return amount of remaining cards
    */
   public int remainingAmount() {
-    return cardList.size() - index;
+    return cardList.size();
   }
 
   @Override
@@ -74,22 +100,38 @@ public class Deck implements BroadcastContent {
 
   /**
    * Compares two deck to see if they have the same sequence of cards.
-   *
-   * @param otherDeck second deck used for comparison.
-   * @return true if same, else false.
    */
-  public boolean isSameDeck(Deck otherDeck) {
-    if (otherDeck == null) {
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof final Deck<?> otherDeck)) {
+      return false;
+    }
+    if (!otherDeck.canEqual(this)) {
       return false;
     }
     if (this.getCardList().size() != otherDeck.getCardList().size()) {
       return false;
     }
     for (int i = 0; i < this.getCardList().size() && !this.getCardList().isEmpty(); i++) {
-      if (this.getCardList().get(i).getId() != otherDeck.getCardList().get(i).getId()) {
+      if (this.getCardList().get(i).getCardInfo().id()
+          != otherDeck.getCardList().get(i).getCardInfo().id()) {
         return false;
       }
     }
     return true;
   }
+
+  /**
+   * <p>canEqual.</p>
+   *
+   * @param other a {@link java.lang.Object} object
+   * @return a boolean
+   */
+  protected boolean canEqual(final Object other) {
+    return other instanceof Deck;
+  }
+
 }

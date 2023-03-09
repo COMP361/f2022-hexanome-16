@@ -6,6 +6,7 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import javafx.geometry.Pos;
@@ -16,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -30,7 +30,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The width.
    */
-  protected final double atWidth = getAppWidth() / 2.;
+  protected double atWidth = getAppWidth() / 2.;
   /**
    * The height.
    */
@@ -38,11 +38,11 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   /**
    * The top left x.
    */
-  protected final double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
+  protected double atTopLeftX = (getAppWidth() / 2.) - (atWidth / 2.);
   /**
    * The top left y.
    */
-  protected final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
+  protected double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2.);
 
   /**
    * The confirm button.
@@ -70,9 +70,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     promptOpens();
     // This is just to reinitialize myChoices when the prompt is closed
     // (These objects are unique, and so they don't get destroyed when the prompt closes)
-    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> {
-      handlePromptForceQuit();
-    });
+    FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> handlePromptForceQuit());
 
     //initiate BorderPane Top will be Text, Center will be Token types and right will be the button
     BorderPane myPrompt = new BorderPane();
@@ -134,6 +132,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
+
   // Helpers
   private void initiatePane(Pane myPrompt) {
     myPrompt.setTranslateX(atTopLeftX);
@@ -163,7 +162,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
   }
 
   // ^^^^^^^^^^^^^    BASIC SETUP   ^^^^^^^^^^^^^^^
-  // VVVVVVVVVVVVV ABSTRACT METHODS VVVVVVVVVVVVVVV
+  // ------------- ABSTRACT METHODS ---------------
 
   /**
    * To override if there is a need to do something when prompt opens.
@@ -202,6 +201,7 @@ public abstract class ChoicePromptAbstract implements PromptTypeInterface {
    * (Use PromptComponent.closePrompts() to do so)
    */
   protected abstract void handleConfirmation();
+
 
   /**
    * Modifies choicesLayout to contain the desired choices and their behaviour, is also

@@ -37,6 +37,11 @@ public class MainApp extends GameApplication {
     gameSettings.setHeight(APP_HEIGHT);
     gameSettings.setTitle(APP_TITLE);
     gameSettings.setVersion(APP_VERSION);
+    gameSettings.setMainMenuEnabled(false);
+    gameSettings.setGameMenuEnabled(false);
+    gameSettings.setDeveloperMenuEnabled(false);
+    gameSettings.setManualResizeEnabled(true);
+    gameSettings.setPreserveResizeRatio(true);
   }
 
   @Override

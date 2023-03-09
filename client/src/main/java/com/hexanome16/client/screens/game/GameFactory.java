@@ -9,10 +9,13 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
-import com.hexanome16.client.screens.game.prompts.OpenPrompt;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.PriceMap;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -30,16 +33,29 @@ public class GameFactory implements EntityFactory {
   /**
    * The constant matCoordsX.
    */
-  public static final int matCoordsX = 400;
+  public static final int matCoordsX = 500;
   /**
    * The constant matCoordsY.
    */
   public static final int matCoordsY = 150;
-  private static final FontFactory CURSIVE_FONT_FACTORY = FXGL.getAssetLoader()
-      .loadFont("BrushScriptMT.ttf");
-  private final String levelOne = "level_one";
-  private final String levelTwo = "level_two";
-  private final String levelThree = "level_three";
+  private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
+
+  /**
+   * Returns the entity name for a given level.
+   *
+   * @param level level
+   * @return entity name
+   */
+  public static String getLevelCardEntity(Level level) {
+    return switch (level) {
+      case ONE -> "LevelOneCard";
+      case REDONE -> "RedLevelOneCard";
+      case TWO -> "LevelTwoCard";
+      case REDTWO -> "RedLevelTwoCard";
+      case THREE -> "LevelThreeCard";
+      case REDTHREE -> "RedLevelThreeCard";
+    };
+  }
 
   /**
    * Adds a level-one card from the level-one deck to the game board.
@@ -50,12 +66,12 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelOneCard")
   public Entity newLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 565)
+        .at(matCoordsX + 10, matCoordsY + 565, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.ONE,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.ONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -68,12 +84,12 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelTwoCard")
   public Entity newLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 360)
+        .at(matCoordsX + 10, matCoordsY + 360, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.TWO,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.TWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -86,12 +102,12 @@ public class GameFactory implements EntityFactory {
   @Spawns("LevelThreeCard")
   public Entity newLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 10, matCoordsY + 155)
+        .at(matCoordsX + 10, matCoordsY + 155, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.THREE,
+        .with(new CardComponent(((Integer) data.getData().get("id")).longValue(), Level.THREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -104,12 +120,12 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelThreeCard")
   public Entity newRedLevelThreeCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 155)
+        .at(matCoordsX + 985, matCoordsY + 155, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTHREE,
+        .with(new CardComponent((Integer) data.getData().get("id"), Level.REDTHREE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -122,12 +138,12 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelTwoCard")
   public Entity newRedLevelTwoCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 360)
+        .at(matCoordsX + 985, matCoordsY + 360, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDTWO,
+        .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDTWO,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
@@ -140,66 +156,76 @@ public class GameFactory implements EntityFactory {
   @Spawns("RedLevelOneCard")
   public Entity newRedLevelOneCard(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 985, matCoordsY + 565)
+        .at(matCoordsX + 985, matCoordsY + 565, 50)
         .view(data.getData().get("texture") + ".png")
         .scale(0.15, 0.15)
-        .with(new CardComponent(((Double) data.getData().get("id")).longValue(), Level.REDONE,
+        .with(new CardComponent(((Integer) data.getData().get("id")), Level.REDONE,
             data.getData().get("texture") + ".png", (PriceMap) data.getData().get("price"),
-            (String) data.getData().get("MD5")))
+            (String) data.getData().get("MD5"), true))
         .build();
   }
 
   /**
-   * Adds a sacrifice card to the game board.
+   * Adds a yellow marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return yellow marker entity
    */
-  @Spawns("SacrificeCard")
-  public Entity newSacrificeCard(SpawnData data) {
+  @Spawns("YellowMarker")
+  public Entity newYellowMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 155)
-        .view("sacrificecard.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS);
-        })
+        .view("yellow_marker.png")
+        .at(matCoordsX - 162, matCoordsY + 116)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 
   /**
-   * Adds a noble-reserve card to the game board.
+   * Adds a black marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return black marker entity
    */
-  @Spawns("NobleReserveCard")
-  public Entity newNobleReserveCard(SpawnData data) {
+  @Spawns("BlackMarker")
+  public Entity newBlackMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 360)
-        .view("noblereserve.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_RESERVE_NOBLE_CARD);
-        })
+        .view("black_marker.png")
+        .at(matCoordsX - 162, matCoordsY + 64)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 
   /**
-   * Adds a bag card to the game board.
+   * Adds a red marker to the game board.
    *
    * @param data spawn data
-   * @return card entity
+   * @return red marker entity
    */
-  @Spawns("BagCard")
-  public Entity newBagCard(SpawnData data) {
+  @Spawns("RedMarker")
+  public Entity newRedMarker(SpawnData data) {
     return FXGL.entityBuilder()
-        .at(matCoordsX + 710, matCoordsY + 565)
-        .view("bagcard.png")
-        .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.BUY_BAG_CARD);
-        })
+        .view("red_marker.png")
+        .at(matCoordsX - 102, matCoordsY + 116)
+        .scale(0.18, 0.18)
+        .rotate(270)
+        .build();
+  }
+
+  /**
+   * Adds a blue marker to the game board.
+   *
+   * @param data spawn data
+   * @return blue marker entity
+   */
+  @Spawns("BlueMarker")
+  public Entity newBlueMarker(SpawnData data) {
+    return FXGL.entityBuilder()
+        .view("blue_marker.png")
+        .at(matCoordsX - 102, matCoordsY + 64)
+        .scale(0.18, 0.18)
+        .rotate(270)
         .build();
   }
 
@@ -217,14 +243,20 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level3deck = FXGL.texture("level_three.png");
     myStackPane.getChildren().addAll(level3deck, myNumber);
-
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 155)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(Level.THREE);
-        })
+        .onClick(e -> PromptUtils.openPrompt(Level.THREE))
         .build();
   }
 
@@ -242,14 +274,20 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level2deck = FXGL.texture("level_two.png");
     myStackPane.getChildren().addAll(level2deck, myNumber);
-
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 360)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(Level.TWO);
-        })
+        .onClick(e -> PromptUtils.openPrompt(Level.TWO))
         .build();
   }
 
@@ -267,13 +305,20 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 10, matCoordsY + 565)
         .view(myStackPane)
         .scale(0.15, 0.15)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(Level.ONE);
-        })
+        .onClick(e -> PromptUtils.openPrompt(Level.ONE))
         .build();
   }
 
@@ -289,8 +334,17 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_two.png");
+    Texture level1deck = FXGL.texture("red_level_one.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 565)
         .view(myStackPane)
@@ -312,6 +366,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("red_level_two.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 360)
         .view(myStackPane)
@@ -333,6 +396,15 @@ public class GameFactory implements EntityFactory {
     StackPane myStackPane = new StackPane();
     Texture level1deck = FXGL.texture("red_level_three.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
+    // animation
+    myStackPane.setOnMouseEntered(e -> {
+      myStackPane.setScaleX(1.25);
+      myStackPane.setScaleY(1.25);
+    });
+    myStackPane.setOnMouseExited(e -> {
+      myStackPane.setScaleX(1);
+      myStackPane.setScaleY(1);
+    });
     return FXGL.entityBuilder()
         .at(matCoordsX + 985, matCoordsY + 155)
         .view(myStackPane)
@@ -370,19 +442,13 @@ public class GameFactory implements EntityFactory {
     StackPane mytokens = new StackPane();
     mytokens.getChildren().addAll(myRectangle, tokens);
 
-    mytokens.setOnMouseEntered(e -> {
-      myRectangle.setOpacity(0.7);
-    });
-    mytokens.setOnMouseExited(e -> {
-          myRectangle.setOpacity(0.5);
-        }
+    mytokens.setOnMouseEntered(e -> myRectangle.setOpacity(0.7));
+    mytokens.setOnMouseExited(e -> myRectangle.setOpacity(0.5)
     );
     return FXGL.entityBuilder()
         .at(getAppWidth() - 280, 10)
         .view(mytokens)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING);
-        })
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.TOKEN_ACQUIRING))
         .build();
   }
 
@@ -396,7 +462,8 @@ public class GameFactory implements EntityFactory {
     Text number = new Text();
     // Binds number to world property associated with the currency type in the bank and session.
     number.textProperty().bind(
-        FXGL.getWorldProperties().intProperty(GameScreen.getSessionId() + currencyType.toString())
+        FXGL.getWorldProperties()
+            .intProperty(GameScreen.getSessionId() + currencyType.getGem().name())
             .asString());
 
     number.setFont(CURSIVE_FONT_FACTORY.newFont(50));
@@ -404,6 +471,7 @@ public class GameFactory implements EntityFactory {
     number.setStrokeWidth(2.);
     number.setStroke(Paint.valueOf("#000000"));
     number.setStyle("-fx-background-color: ffffff00; ");
+
     // pane
     StackPane myToken = new StackPane();
     StackPane.setAlignment(token, Pos.CENTER);
@@ -423,13 +491,14 @@ public class GameFactory implements EntityFactory {
     StackPane stackPane = new StackPane();
     Texture texture = FXGL.texture("setting.png");
     stackPane.getChildren().add(texture);
+    // animation
+    stackPane.setOnMouseEntered(e -> stackPane.setOpacity(0.8));
+    stackPane.setOnMouseExited(e -> stackPane.setOpacity(1.0));
     return FXGL.entityBuilder()
         .view(stackPane)
         .at(10, 10)
         .scale(0.1, 0.1)
-        .onClick(e -> {
-          OpenPrompt.openPrompt(PromptTypeInterface.PromptType.PAUSE);
-        })
+        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.PAUSE))
         .build();
   }
 
@@ -464,6 +533,36 @@ public class GameFactory implements EntityFactory {
   }
 
   /**
+   * Adds the trade routes placeholder to the game board.
+   *
+   * @param data spawn data
+   * @return card entity
+   */
+  @Spawns("TradeRoutesPlaceholder")
+  public Entity buildTradeRoutesPlaceholder(SpawnData data) {
+    return FXGL.entityBuilder()
+        .at(matCoordsX - 173, matCoordsY)
+        .view("TradeRoutesPlaceholder.png")
+        .scale(0.174, 0.174)
+        .build();
+  }
+
+  /**
+   * Adds the trade routes to the game board.
+   *
+   * @param data spawn data
+   * @return card entity
+   */
+  @Spawns("TradeRoutes")
+  public Entity buildTradeRoutes(SpawnData data) {
+    return FXGL.entityBuilder()
+        .at(matCoordsX - 173, matCoordsY)
+        .view("TradeRoutes.png")
+        .scale(0.174, 0.174)
+        .build();
+  }
+
+  /**
    * Adds the background to the game board.
    *
    * @param data spawn data
@@ -477,54 +576,4 @@ public class GameFactory implements EntityFactory {
         .scale(1, 1)
         .build();
   }
-
-  private enum CircleType {
-    /**
-     * Ruby circle type.
-     */
-    RUBY(Color.RED),
-    /**
-     * Emerald circle type.
-     */
-    EMERALD(Color.GREEN),
-    /**
-     * Sapphire circle type.
-     */
-    SAPPHIRE(Color.BLUE),
-    /**
-     * Diamond circle type.
-     */
-    DIAMOND(Color.WHITE),
-    /**
-     * Onyx circle type.
-     */
-    ONYX(Color.BLACK),
-    /**
-     * Gold circle type.
-     */
-    GOLD(Color.GOLD);
-
-    private final Color color;
-
-    CircleType(Color color) {
-      this.color = color;
-    }
-
-    private Color getColor() {
-      return this.color;
-    }
-
-    /**
-     * Gets stroke color.
-     *
-     * @return the stroke color
-     */
-    public Color getStrokeColor() {
-      if (this == ONYX) {
-        return Color.WHITE;
-      }
-      return Color.BLACK;
-    }
-  }
-
 }

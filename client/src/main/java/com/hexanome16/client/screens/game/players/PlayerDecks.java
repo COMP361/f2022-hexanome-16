@@ -7,8 +7,7 @@ import static com.hexanome16.client.Config.OPPONENT_SCALE;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.utils.AuthUtils;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.hexanome16.common.dto.PlayerJson;
 import java.util.List;
 
 /**
@@ -22,57 +21,72 @@ public class PlayerDecks {
   private static final double vertical = 180; // vertical distance between cards
   private static final List<String> cards =
       List.of("red", "green", "blue", "white", "black", "gold");
+  private static final String[] origColors = {"yellow", "black", "red", "blue"};
+  private static String[] colors = origColors.clone();
 
   /**
    * Generates the player decks.
    *
    * @param players players for this session
    */
-  public static void generateAll(String[] players) {
+  public static void generateAll(PlayerJson[] players) {
     String myName = AuthUtils.getPlayer().getName();
-    while (!players[0].equals(myName)) {
-      String firstPerson = players[0];
+    colors = origColors.clone();
+    while (!players[0].getUsername().equals(myName)) {
+      PlayerJson firstPerson = players[0];
+      String firstColor = colors[0];
       for (int i = 1; i < players.length; i++) {
         players[i - 1] = players[i];
+        colors[i - 1] = colors[i];
       }
       players[players.length - 1] = firstPerson;
+      colors[players.length - 1] = firstColor;
     }
 
     // number of players for this session
-    int numOfPlayers = players.length;
+    final int numOfPlayers = players.length;
     // current decks
-    PlayerDecks decks = new PlayerDecks();
+    final PlayerDecks decks = new PlayerDecks();
+    FXGL.getGameWorld().removeEntities(
+        FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER_TURN));
     // spawn who is playing
     FXGL.spawn("PlayersTurn", 95, 60);
+    FXGL.getGameWorld().removeEntities(
+        FXGL.getGameWorld().getEntitiesByType(EntityType.PLAYER));
     // spawn the players
     int curr = 0;
     // spawn the current player
-    if (curr < numOfPlayers) {
-      decks.spawnHorizontalPlayer(players[curr++], APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
-    }
+    decks.spawnBottomPlayer(players[curr].getUsername(), players[curr].getPrestigePoints(),
+        APP_WIDTH / 4.0, APP_HEIGHT - vertical, 1);
+    curr++;
     // spawn a player on the left
     if (curr < numOfPlayers) {
-      decks.spawnLeftPlayer(players[curr++], 150.0, OPPONENT_SCALE);
+      decks.spawnLeftPlayer(players[curr].getUsername(), players[curr].getPrestigePoints(),
+          150.0, OPPONENT_SCALE);
+      curr++;
     }
     // spawn a player at the top
     if (curr < numOfPlayers) {
-      decks.spawnHorizontalPlayer(players[curr++], 140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
+      decks.spawnTopPlayer(players[curr].getUsername(), players[curr].getPrestigePoints(),
+          140 + APP_WIDTH / 4.0, 1, OPPONENT_SCALE);
+      curr++;
     }
     // spawn a player at the right
     if (curr < numOfPlayers) {
-      decks.spawnRightPlayer(players[curr], APP_WIDTH / 4.0 + 7 * horizontal + 10,
-          150.0, OPPONENT_SCALE);
+      decks.spawnRightPlayer(players[curr].getUsername(), players[curr].getPrestigePoints(),
+          APP_WIDTH / 4.0 + 7 * horizontal + 100, 150.0, OPPONENT_SCALE);
     }
   }
 
   // helper
-  private void spawnHorizontalPlayer(String name, double horizontal, double vertical,
-                                     double scale) {
+  private void spawnBottomPlayer(String name, int prestigePoints, double horizontal,
+                                 double vertical, double scale) {
     // iteration variable
     int i = 0;
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
-        .put("name", name)).setScaleUniform(0.2 * scale);
+        .put("name", name).put("color", colors[0]).put("prestigePoints", prestigePoints))
+        .setScaleUniform(0.2 * scale);
     // spawn the playing cards deck
     while (i < 6) {
       FXGL.spawn("Card",
@@ -97,11 +111,46 @@ public class PlayerDecks {
   }
 
   // helper
-  private void spawnLeftPlayer(String name, double verticalShift, double scale) {
+  private void spawnTopPlayer(String name, int prestigePoints, double horizontal, double vertical,
+                              double scale) {
+    // iteration variable
+    int i = 0;
+    // spawn the player icon
+    FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
+        .put("name", name).put("color", colors[2]).put("prestigePoints", prestigePoints))
+        .setScaleUniform(0.3 * scale);
+    // spawn the playing cards deck
+    while (i < 6) {
+      FXGL.spawn("Card",
+              new SpawnData(horizontal + (i * PlayerDecks.horizontal) * scale, vertical)
+                  .put("color", cards.get(i++)).put("player", name))
+          .setScaleUniform(0.25 * scale);
+    }
+    // spawn the nobles deck
+    FXGL.spawn("NobleCard", horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+        .setScaleUniform(0.2 * scale);
+    // spawn the player's bank
+    FXGL.spawn("PlayerTokens", new SpawnData(horizontal - (2 * PlayerDecks.horizontal + 20) * scale,
+        vertical).put("player", name)).setScaleUniform(1.2 * scale);
+    // spawn the reserved nobles and cards
+    FXGL.spawn("ReservedNobles", horizontal + (i * PlayerDecks.horizontal + 10) * scale,
+            vertical + 95 * scale)
+        .setScaleUniform(0.1 * scale);
+    for (int j = 10; j <= 130; j += 60) {
+      FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
+          * scale, vertical).put("player", name)).setScaleUniform(0.07 * scale);
+    }
+  }
+
+  // helper
+  private void spawnLeftPlayer(String name, int prestigePoints, double verticalShift,
+                               double scale) {
+    int horizontal = 100;
     // spawn the player icon
     FXGL.spawn("Player",
-        new SpawnData(horizontal + horizontal * scale, verticalShift + 110)
-            .put("name", name)).setScaleUniform(0.2 * scale);
+        new SpawnData(horizontal + 100, verticalShift + 110)
+            .put("name", name).put("color", colors[1]).put("prestigePoints", prestigePoints))
+        .setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
     FXGL.spawn("Card",
@@ -109,7 +158,7 @@ public class PlayerDecks {
                 .put("color", cards.get(i++)).put("player", name))
         .setScaleUniform(0.25 * scale);
     FXGL.spawn("Card",
-            new SpawnData(horizontal + horizontal * scale, verticalShift + 120 + vertical * scale)
+            new SpawnData(horizontal + 100, verticalShift + 120 + vertical * scale)
                 .put("color", cards.get(i++)).put("player", name))
         .setScaleUniform(0.25 * scale);
     FXGL.spawn("Card",
@@ -117,7 +166,7 @@ public class PlayerDecks {
                 .put("color", cards.get(i++)).put("player", name))
         .setScaleUniform(0.25 * scale);
     FXGL.spawn("Card",
-            new SpawnData(horizontal + horizontal * scale,
+            new SpawnData(horizontal + 100,
                 verticalShift + 130 + 2 * vertical * scale)
                 .put("color", cards.get(i++)).put("player", name))
         .setScaleUniform(0.25 * scale);
@@ -126,7 +175,7 @@ public class PlayerDecks {
                 .put("color", cards.get(i++)).put("player", name))
         .setScaleUniform(0.25 * scale);
     FXGL.spawn("Card",
-            new SpawnData(horizontal + horizontal * scale,
+            new SpawnData(horizontal + 100,
                 verticalShift + 140 + 3 * vertical * scale)
                 .put("color", cards.get(i)).put("player", name))
         .setScaleUniform(0.25 * scale);
@@ -140,22 +189,22 @@ public class PlayerDecks {
         .setScaleUniform(0.1 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 240 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 300 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
+            .put("player", name)).setScaleUniform(0.07 * scale);
   }
 
-  private void spawnRightPlayer(String name, double horizontalShift,
+  private void spawnRightPlayer(String name, int prestigePoints, double horizontalShift,
                                 double verticalShift, double scale) {
     // spawn the player icon
     FXGL.spawn("Player",
             new SpawnData(horizontalShift + horizontal * scale,
-                verticalShift + 110).put("name", name))
-        .setScaleUniform(0.2 * scale);
+                verticalShift + 110).put("name", name).put("color", colors[3])
+                .put("prestigePoints", prestigePoints)).setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
     FXGL.spawn("Card",
@@ -195,13 +244,13 @@ public class PlayerDecks {
             verticalShift + 120 + vertical * scale)
         .setScaleUniform(0.1 * scale);
     FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 180 + vertical * scale)
-        .put("player", name)).setScaleUniform(0.07 * scale);
-    FXGL.spawn("ReservedCards",  new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 240 + vertical * scale)
+        verticalShift + 180 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
     FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
-            verticalShift + 300 + vertical * scale)
+        verticalShift + 240 + vertical * scale)
+        .put("player", name)).setScaleUniform(0.07 * scale);
+    FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
+        verticalShift + 300 + vertical * scale)
         .put("player", name)).setScaleUniform(0.07 * scale);
   }
 }

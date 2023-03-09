@@ -6,26 +6,26 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
-import com.google.gson.Gson;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
-import com.hexanome16.client.screens.game.PriceMap;
-import com.hexanome16.client.screens.game.PurchaseMap;
 import com.hexanome16.client.screens.game.UpdateGameInfo;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -38,9 +38,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * A class responsible for populating Buy card prompt.
@@ -50,7 +51,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   /**
    * The Card is reserved.
    */
-  protected boolean cardIsReserved;
+  protected boolean cardIsReserved = false;
   /**
    * The Card image.
    */
@@ -115,10 +116,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
    * The proposed offer.
    */
   PurchaseMap atProposedOffer;
-  /**
-   * The Player name.
-   */
-  String playerName;
 
   private static PurchaseMap getPurchaseMapOfCurrentInput() {
     int rubyAmount = 0;
@@ -134,26 +131,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
       amountInBank = FXGL.getWorldProperties()
           .getInt(BankType.GAME_BANK + "/" + e);
       switch (e) {
-        case RED_TOKENS:
-          rubyAmount = amountInBank;
-          break;
-        case GREEN_TOKENS:
-          emeraldAmount = amountInBank;
-          break;
-        case BLUE_TOKENS:
-          sapphireAmount = amountInBank;
-          break;
-        case WHITE_TOKENS:
-          diamondAmount = amountInBank;
-          break;
-        case BLACK_TOKENS:
-          onyxAmount = amountInBank;
-          break;
-        case GOLD_TOKENS:
-          goldAmount = amountInBank;
-          break;
-        default:
-          continue;
+        case RED_TOKENS -> rubyAmount = amountInBank;
+        case GREEN_TOKENS -> emeraldAmount = amountInBank;
+        case BLUE_TOKENS -> sapphireAmount = amountInBank;
+        case WHITE_TOKENS -> diamondAmount = amountInBank;
+        case BLACK_TOKENS -> onyxAmount = amountInBank;
+        case GOLD_TOKENS -> goldAmount = amountInBank;
+        default -> { /* do nothing */ }
       }
     }
     // Creates a Purchase map of the current amounts in the Transaction bank
@@ -162,31 +146,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
   }
 
   // -------------------------------------------------------------------------------------------- //
-
-  /**
-   * Transforms String of bank retrieved from server to a Map .
-   *
-   * @param bankPriceMapAsString String of bank
-   * @return Map mapping CurrencyType to amount of each currency type in bank
-   */
-  public static Map<CurrencyType, Integer> toGemAmountMap(String bankPriceMapAsString) {
-
-    // parse through string and add values to prompt values
-    Gson myGson = new Gson();
-    Map<String, Double> stringPlayerBank = myGson.fromJson(bankPriceMapAsString, Map.class);
-    Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
-
-    // put each gem type with its value in the string
-    gemPlayerBank.put(CurrencyType.RED_TOKENS, stringPlayerBank.get("rubyAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, stringPlayerBank.get("emeraldAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, stringPlayerBank.get("sapphireAmount").intValue());
-    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, stringPlayerBank.get("diamondAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, stringPlayerBank.get("onyxAmount").intValue());
-    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, stringPlayerBank.get("goldAmount").intValue());
-    gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
-
-    return gemPlayerBank;
-  }
 
   /**
    * Close buy prompt.
@@ -227,6 +186,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     return atHeight;
   }
 
+  @Override
+  public boolean isCancelable() {
+    return true;
+  }
+
   /**
    * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
    *
@@ -236,6 +200,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   public void populatePrompt(Entity entity, Entity cardEntity) {
     atCardEntity = cardEntity;
     atCardPriceMap = cardEntity.getComponent(CardComponent.class).getPriceMap();
+    cardIsReserved = !cardEntity.getComponent(CardComponent.class).getOnBoard();
     populatePrompt(entity);
   }
 
@@ -284,8 +249,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
       gameBank.getChildren().add(n);
     }
 
-    // initiate ReserveBuy
-    setCardIsReserved();
     reserveBuy.getChildren().addAll(createReserveBuy(atButtonWidth, atButtonHeight));
 
     // adding to view
@@ -296,8 +259,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   private Collection<StackPane> createBank(BankType banktype) {
 
     // all tokens stack pane
-    EnumMap<CurrencyType, StackPane> tokens =
-        new EnumMap<CurrencyType, StackPane>(CurrencyType.class);
+    EnumMap<CurrencyType, StackPane> tokens = new EnumMap<>(CurrencyType.class);
 
     // all tokens initialize and set up will need to modify gold cards tho
     for (CurrencyType t : CurrencyType.values()) {
@@ -307,9 +269,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
       tokens.put(t, myToken);
 
-      myToken.setOnMouseClicked(e -> {
-        mouseClickToken(e, t, myToken.getChildren().get(0), banktype);
-      });
+      myToken.setOnMouseClicked(e -> mouseClickToken(e, t, myToken.getChildren().get(0), banktype));
     }
 
     // bonus gold cards Fixing
@@ -328,9 +288,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
     bonusCard.setStrokeWidth(atHeight / 120);
     bonusCard.setStroke(CurrencyType.BONUS_GOLD_CARDS.getStrokeColor());
 
-    bonusGoldText.textProperty().addListener((observable, oldValue, newValue) -> {
-      handleTextChange(oldValue, newValue, bonusCard);
-    });
+    bonusGoldText.textProperty().addListener((observable, oldValue, newValue) ->
+        handleTextChange(oldValue, newValue, bonusCard));
 
     // return bank nodes
     return tokens.values();
@@ -346,7 +305,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
   protected Collection<StackPane> createReserveBuy(double buttonWidth, double buttonHeight) {
 
     // buttons container, will contain all the button that we create
-    EnumMap<ButtonType, StackPane> buttons = new EnumMap<ButtonType, StackPane>(ButtonType.class);
+    EnumMap<ButtonType, StackPane> buttons = new EnumMap<>(ButtonType.class);
 
     // creates a button for each button type
     for (ButtonType t : ButtonType.values()) {
@@ -401,11 +360,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     tokensCircle.setStrokeWidth(atHeight / 120);
     tokensCircle.setStroke(tokenType.getStrokeColor());
 
-    tokensAmount.textProperty().addListener((observable, oldValue, newValue) -> {
-      handleTextChange(oldValue, newValue, tokensCircle);
-    });
+    tokensAmount.textProperty().addListener((observable, oldValue, newValue) ->
+        handleTextChange(oldValue, newValue, tokensCircle)
+    );
 
-    return new ArrayList<Node>(List.of(tokensCircle, tokensAmount));
+    return new ArrayList<>(List.of(tokensCircle, tokensAmount));
   }
 
   private void handleTextChange(String oldValue, String newValue, Node tokenNode) {
@@ -442,10 +401,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     // sends a request to server telling it purchase information
-    PromptsRequests.buyCard(promptSessionId,
+    Pair<Headers, String> serverResponse = PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         authToken,
         atProposedOffer);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
 
@@ -462,16 +422,6 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
 
     cardImage = FXGL.texture("card1.png");
-  }
-
-
-  // TO OVERRIDE/MODIFY ////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Need to override to not have a ReserveButton, set cardIsReserved to true to do so.
-   */
-  protected void setCardIsReserved() {
-    cardIsReserved = false;
   }
 
   /**
