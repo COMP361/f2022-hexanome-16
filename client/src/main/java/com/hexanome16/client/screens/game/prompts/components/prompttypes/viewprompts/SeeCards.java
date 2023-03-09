@@ -36,7 +36,7 @@ public class SeeCards implements PromptTypeInterface {
   /**
    * The height.
    */
-  private final double atHeight = getAppHeight() / 2.;
+  private final double atHeight = getAppHeight() * 0.8;
   /**
    * The card width.
    */
@@ -54,6 +54,7 @@ public class SeeCards implements PromptTypeInterface {
    */
   private final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
   //List<String> cards = List.of("card1.png", "card2.png");
+
 
   /**
    * Fetches cards in the provided player's inventory.
@@ -90,14 +91,14 @@ public class SeeCards implements PromptTypeInterface {
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");
-    myPromptMessage.setFont(GAME_FONT.newFont(15));
+    myPromptMessage.setFont(GAME_FONT.newFont(50));
     myPromptMessage.setFill(Config.SECONDARY_COLOR);
     myPromptMessage.setTextAlignment(TextAlignment.CENTER);
     myPromptMessage.setWrappingWidth(atWidth);
 
     ScrollPane myScrollPane = new ScrollPane();
     myScrollPane.setPrefViewportWidth(atWidth);
-    myScrollPane.setPrefViewportHeight(atHeight - 20); // 20 is height of X button
+    myScrollPane.setPrefViewportHeight(atHeight - 60); // 20 is height of X button
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     myScrollPane.setPannable(true);
     myScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
