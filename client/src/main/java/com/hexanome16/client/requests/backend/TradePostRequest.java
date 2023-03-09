@@ -16,7 +16,7 @@ public class TradePostRequest {
    *
    * @param sessionId Session ID.
    * @param username  username of player.
-   * @return a list of trade posts.
+   * @return an array of trade posts.
    */
   public static TradePostJson[] getTradePosts(long sessionId, String username) {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
