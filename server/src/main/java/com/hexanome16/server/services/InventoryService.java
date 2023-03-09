@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
@@ -14,12 +15,14 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerLevelCard;
+import com.hexanome16.server.models.ServerNoble;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.util.ArrayList;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +135,12 @@ public class InventoryService implements InventoryServiceInterface {
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
 
+    ResponseEntity<String> error =
+        addNobleAction(game, player);
+    if (error != null) {
+      return error;
+    }
+
     Level level = (cardToBuy).getLevel();
 
     // Remove card from the board and add new card
@@ -157,7 +166,30 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, cardToBuy);
 
-    return player.peekTopAction().getActionDetails();
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+  }
+
+  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
+    var noblesList = new ArrayList<Noble>();
+    for (ServerNoble noble : game.getRemainingNobles().values()) {
+      if (player.canBeVisitedBy(noble)) {
+        noblesList.add(noble);
+      }
+    }
+    if (!noblesList.isEmpty()) {
+      try {
+        player.addNobleListToPerform(noblesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
   }
 
   // TODO :: Add this methode everywhere when a card is aquired, (like bought
@@ -222,7 +254,7 @@ public class InventoryService implements InventoryServiceInterface {
     );
 
     serviceUtils.endCurrentPlayersTurn(game);
-    return new ResponseEntity<>(HttpStatus.OK);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
 
@@ -270,7 +302,7 @@ public class InventoryService implements InventoryServiceInterface {
     game.incGameBankFromPlayer(player, 0, 0, 0, 0, 0, -1);
 
     serviceUtils.endCurrentPlayersTurn(game);
-    return new ResponseEntity<>(HttpStatus.OK);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @SneakyThrows
@@ -319,7 +351,7 @@ public class InventoryService implements InventoryServiceInterface {
     if (nextAction != null) {
       return nextAction.getActionDetails();
     }
-    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @Override
@@ -363,6 +395,6 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 }
