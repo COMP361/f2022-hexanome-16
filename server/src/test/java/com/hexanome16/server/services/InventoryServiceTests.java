@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -533,8 +534,8 @@ public class InventoryServiceTests {
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
-    assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
-    assertEquals(CustomHttpResponses.OK.getStatus(), response.getStatusCodeValue());
+    assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.END_OF_TURN.getStatus(), response.getStatusCodeValue());
   }
 
   /**

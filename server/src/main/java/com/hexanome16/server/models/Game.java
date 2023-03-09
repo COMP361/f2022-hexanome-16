@@ -41,12 +41,21 @@ public class Game {
   private final GameBank gameBank;
   private final WinCondition[] winConditions;
   private final Map<String, ServerLevelCard> remainingCards;
+  /**
+   * Remaining nobles to be acquired.
+   */
   private final Map<String, ServerNoble> remainingNobles;
+  private final Map<RouteType, TradePost> tradePosts;
   private BroadcastMap broadcastContentManagerMap;
   private int currentPlayerIndex = 0;
+  /**
+   * Deck of all possible nobles.
+   */
   private Deck<ServerNoble> nobleDeck;
+  /**
+   * Selected nobles for this game (5 of the 10 possible).
+   */
   private Deck<ServerNoble> onBoardNobles;
-  private final Map<RouteType, TradePost> tradePosts;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -121,8 +130,8 @@ public class Game {
    * @param creator       the creator
    * @param savegame      the savegame
    * @param winConditions the win conditions
-   * @param isTradeRoute if trade route expansion
-   * @param isCities if cities expansion
+   * @param isTradeRoute  if trade route expansion
+   * @param isCities      if cities expansion
    * @return the game
    */
   @SneakyThrows
