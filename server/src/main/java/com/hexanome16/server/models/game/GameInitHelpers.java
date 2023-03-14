@@ -11,13 +11,36 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-class GameInitHelpers {
+/**
+ * This class provide helper methods to initialize the game.
+ */
+public class GameInitHelpers {
+  private final String cardsJsonPath;
+
+  private final Game game;
+
+  /**
+   * Constructor.
+   *
+   * @param game the game to initialize
+   */
+  @SneakyThrows
+  public GameInitHelpers(Game game) {
+    this.game = game;
+    Resource resource = new ClassPathResource("application.properties");
+    Properties props = PropertiesLoaderUtils.loadProperties(resource);
+    cardsJsonPath = props.getProperty("path.cards");
+  }
+
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private static final int levelCardsTotal = 90;
 
@@ -43,32 +66,27 @@ class GameInitHelpers {
     return levelMap;
   }
 
-  static void createDecks(Game game) throws IOException {
-    createBaseLevelDecks(game);
-    createNobleDeck(game);
-    createBagDeck(game);
-    createGoldDeck(game);
-    createDoubleDeck(game);
-    createNobleReserveDeck(game);
-    createBagCascadeDeck(game);
-    createSacrificeDeck(game);
-    createCascadeTwoDeck(game);
+  void createDecks() {
+    createBaseLevelDecks();
+    createNobleDeck();
+    createBagDeck();
+    createGoldDeck();
+    createDoubleDeck();
+    createNobleReserveDeck();
+    createBagCascadeDeck();
+    createSacrificeDeck();
+    createCascadeTwoDeck();
   }
 
   @SneakyThrows
-  static void createBaseLevelDecks(Game game) {
+  void createBaseLevelDecks() {
     DevelopmentCardJson[] cardJsonList;
     try {
-      cardJsonList = objectMapper.readValue(new File("/app/cards.json"),
+      cardJsonList = objectMapper.readValue(new File(cardsJsonPath + "/cards.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      cardJsonList =
-          objectMapper.readValue(new File("./src/main/resources/cards.json"),
-              DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load cards.json", e);
     }
-    game.getLevelDecks().put(Level.ONE, new Deck<>());
-    game.getLevelDecks().put(Level.TWO, new Deck<>());
-    game.getLevelDecks().put(Level.THREE, new Deck<>());
     for (int i = 0; i < levelCardsTotal; i++) {
       DevelopmentCardJson cardJson = cardJsonList[i];
       String textureLevel = i < 40 ? "level_one" : i < 70 ? "level_two" : "level_three";
@@ -87,13 +105,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createNobleDeck(Game game) {
+  void createNobleDeck() {
     CardJson[] nobleJsonList;
     try {
-      nobleJsonList = objectMapper.readValue(new File("/app/nobles.json"), CardJson[].class);
+      nobleJsonList = objectMapper.readValue(new File(cardsJsonPath + "/nobles.json"),
+          CardJson[].class);
     } catch (Exception e) {
-      nobleJsonList =
-          objectMapper.readValue(new File("./src/main/resources/nobles.json"), CardJson[].class);
+      throw new RuntimeException("Could not load nobles.json", e);
     }
     Deck<ServerNoble> deck = new Deck<>();
     for (CardJson nobleJson : nobleJsonList) {
@@ -108,13 +126,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createBagDeck(Game game) {
+  void createBagDeck() {
     DevelopmentCardJson[] bagJsonList;
     try {
-      bagJsonList = objectMapper.readValue(new File("/app/bag.json"), DevelopmentCardJson[].class);
-    } catch (Exception e) {
-      bagJsonList = objectMapper.readValue(new File("./src/main/resources/bag.json"),
+      bagJsonList = objectMapper.readValue(new File(cardsJsonPath + "/bag.json"),
           DevelopmentCardJson[].class);
+    } catch (Exception e) {
+      throw new RuntimeException("Could not load bag.json", e);
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson bagJson : bagJsonList) {
@@ -132,14 +150,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createGoldDeck(Game game) {
+  void createGoldDeck() {
     DevelopmentCardJson[] goldJsonList;
     try {
-      goldJsonList = objectMapper.readValue(new File("/app/gold.json"),
+      goldJsonList = objectMapper.readValue(new File(cardsJsonPath + "/gold.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      goldJsonList = objectMapper.readValue(new File("./src/main/resources/gold.json"),
-          DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load gold.json", e);
     }
     Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDONE);
     for (DevelopmentCardJson goldJson : goldJsonList) {
@@ -157,15 +174,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createDoubleDeck(Game game) {
+  void createDoubleDeck() {
     DevelopmentCardJson[] doubleJsonList;
     try {
-      doubleJsonList = objectMapper.readValue(new File("/app/double.json"),
+      doubleJsonList = objectMapper.readValue(new File(cardsJsonPath + "/double.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      doubleJsonList =
-          objectMapper.readValue(new File("./src/main/resources/double.json"),
-              DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load double.json", e);
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson doubleJson : doubleJsonList) {
@@ -183,14 +198,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createNobleReserveDeck(Game game) {
+  void createNobleReserveDeck() {
     DevelopmentCardJson[] nobleReserveList;
     try {
-      nobleReserveList = objectMapper.readValue(new File("/app/noble_reserve.json"),
+      nobleReserveList = objectMapper.readValue(new File(cardsJsonPath + "/noble_reserve.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      nobleReserveList = objectMapper.readValue(new File("./src/main/resources/noble_reserve.json"),
-          DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load noble_reserve.json", e);
     }
     Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTWO);
     for (DevelopmentCardJson nobleReserveJson : nobleReserveList) {
@@ -209,14 +223,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createBagCascadeDeck(Game game) {
+  void createBagCascadeDeck() {
     DevelopmentCardJson[] bagCascadeList;
     try {
-      bagCascadeList = objectMapper.readValue(new File("/app/bag_cascade.json"),
+      bagCascadeList = objectMapper.readValue(new File(cardsJsonPath + "/bag_cascade.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      bagCascadeList = objectMapper.readValue(new File("./src/main/resources/bag_cascade.json"),
-          DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load bag_cascade.json", e);
     }
     Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTWO);
     for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
@@ -234,14 +247,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createSacrificeDeck(Game game) {
+  void createSacrificeDeck() {
     DevelopmentCardJson[] sacrificeList;
     try {
-      sacrificeList = objectMapper.readValue(new File("/app/sacrifice.json"),
+      sacrificeList = objectMapper.readValue(new File(cardsJsonPath + "/sacrifice.json"),
           DevelopmentCardJson[].class);
     } catch (Exception e) {
-      sacrificeList = objectMapper.readValue(new File("./src/main/resources/sacrifice.json"),
-          DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load sacrifice.json", e);
     }
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson sacrificeJson : sacrificeList) {
@@ -259,15 +271,13 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createCascadeTwoDeck(Game game) {
+  void createCascadeTwoDeck() {
     DevelopmentCardJson[] cascadeTwoJsonList;
     try {
-      cascadeTwoJsonList =
-          objectMapper.readValue(new File("/app/cascade_two.json"), DevelopmentCardJson[].class);
+      cascadeTwoJsonList = objectMapper.readValue(new File(cardsJsonPath + "/cascade_two.json"),
+          DevelopmentCardJson[].class);
     } catch (Exception e) {
-      cascadeTwoJsonList =
-          objectMapper.readValue(new File("./src/main/resources/cascade_two.json"),
-              DevelopmentCardJson[].class);
+      throw new RuntimeException("Could not load cascade_two.json", e);
     }
     Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTHREE);
     for (DevelopmentCardJson cascadeTwoJson : cascadeTwoJsonList) {
@@ -285,7 +295,7 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createOnBoardDecks(Game game) {
+  void createOnBoardDecks() {
     Deck<ServerLevelCard> baseOneDeck = new Deck<>();
     Deck<ServerLevelCard> baseTwoDeck = new Deck<>();
     Deck<ServerLevelCard> baseThreeDeck = new Deck<>();
@@ -328,7 +338,7 @@ class GameInitHelpers {
   }
 
   @SneakyThrows
-  static void createOnBoardRedDecks(Game game) {
+  void createOnBoardRedDecks() {
     Deck<ServerLevelCard> redOneDeck = new Deck<>();
     Deck<ServerLevelCard> redTwoDeck = new Deck<>();
     Deck<ServerLevelCard> redThreeDeck = new Deck<>();
