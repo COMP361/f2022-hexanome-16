@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;

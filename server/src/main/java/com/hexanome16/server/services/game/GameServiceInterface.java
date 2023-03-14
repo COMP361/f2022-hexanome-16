@@ -1,9 +1,7 @@
 package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.ServerPlayer;
-import lombok.NonNull;
+import com.hexanome16.server.models.game.Game;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 
