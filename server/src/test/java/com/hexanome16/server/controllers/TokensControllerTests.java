@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;

@@ -6,7 +6,7 @@ import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.Arrays;

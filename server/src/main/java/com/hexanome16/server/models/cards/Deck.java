@@ -1,5 +1,6 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.cards;
 
+import com.hexanome16.server.models.inventory.InventoryAddable;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Collections;
 import java.util.EmptyStackException;

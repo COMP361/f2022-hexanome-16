@@ -4,7 +4,7 @@ import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;

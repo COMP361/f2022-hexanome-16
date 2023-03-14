@@ -8,7 +8,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
