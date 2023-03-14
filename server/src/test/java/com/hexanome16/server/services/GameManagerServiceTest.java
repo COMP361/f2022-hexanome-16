@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.PlayerDummies;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import java.lang.reflect.Field;
