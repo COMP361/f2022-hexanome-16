@@ -21,6 +21,8 @@ COPY server/checkstyle.xml .
 RUN apk add --no-cache sed
 RUN sed -i 's/server.host=host.docker.internal/server.host=splendor-server/g' src/main/resources/application.properties
 RUN sed -i 's/ls.host=localhost/ls.host=lobby-service/g' src/main/resources/application.properties
+RUN sed -i 's/path.cards=\.\/src\/main\/resources\/cards/path.cards=\/app\/cards/g' src/main/resources/application.properties
+RUN sed -i 's/path.savegames=\.\/src\/main\/resources\/savegames/path.savegames=\/app\/savegames/g' src/main/resources/application.properties
 
 # Build the application
 RUN mvn -Ddocker.test.skip=true package
@@ -39,7 +41,9 @@ RUN chmod +x /wait
 COPY --from=build /app/server/target/server-0.0.1-SNAPSHOT.jar /app/splendor.jar
 
 #Copy the json file
-COPY server/src/main/resources/*.json /app/
+COPY server/src/main/resources/cards /app/cards
+COPY server/src/main/resources/savegames /app/savegames
+COPY server/src/main/resources/application.properties /app/application.properties
 
 # allow debug if startup fails, with: docker run -it --entrypoint /bin/bash splendor-server -s
 RUN apk add --no-cache bash coreutils grep sed curl

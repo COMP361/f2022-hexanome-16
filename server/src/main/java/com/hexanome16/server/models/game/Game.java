@@ -1,10 +1,7 @@
 package com.hexanome16.server.models.game;
 
 import static com.hexanome16.server.models.game.GameInitHelpers.createBoardMap;
-import static com.hexanome16.server.models.game.GameInitHelpers.createDecks;
 import static com.hexanome16.server.models.game.GameInitHelpers.createLevelMap;
-import static com.hexanome16.server.models.game.GameInitHelpers.createOnBoardDecks;
-import static com.hexanome16.server.models.game.GameInitHelpers.createOnBoardRedDecks;
 import static com.hexanome16.server.models.game.GameInitHelpers.createRedMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -149,9 +146,10 @@ public class Game {
 
   @SneakyThrows
   private void init() {
-    createDecks(this);
-    createOnBoardDecks(this);
-    createOnBoardRedDecks(this);
+    GameInitHelpers helper = new GameInitHelpers(this);
+    helper.createDecks();
+    helper.createOnBoardDecks();
+    helper.createOnBoardRedDecks();
     this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
