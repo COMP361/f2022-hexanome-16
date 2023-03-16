@@ -37,7 +37,7 @@ public class BroadcastMap {
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(new PlayerListJson(Arrays.stream(game.getPlayers()).map(
               player -> new PlayerJson(player.getName(), !game.isNotPlayersTurn(player),
-                  player.getInventory().getPrestigePoints())
+                  player.getInventory().getPrestigePoints(), player.getPlayerOrder())
           ).toArray(PlayerJson[]::new)));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));

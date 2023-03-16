@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 public class Player implements BroadcastContent {
   private String name;
   private String preferredColour;
+  @JsonIgnore
+  private int playerOrder;
 
   @JsonIgnore
   @Override
