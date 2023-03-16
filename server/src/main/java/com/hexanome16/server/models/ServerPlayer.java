@@ -32,9 +32,10 @@ public class ServerPlayer extends Player {
    *
    * @param name            name of the player.
    * @param preferredColour preferred color of the player.
+   * @param playerOrder     order of the player.
    */
-  public ServerPlayer(String name, String preferredColour) {
-    super(name, preferredColour);
+  public ServerPlayer(String name, String preferredColour, int playerOrder) {
+    super(name, preferredColour, playerOrder);
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
   }
