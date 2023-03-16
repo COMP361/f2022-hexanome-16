@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  ServerPlayer imad = new ServerPlayer("imad", "white");
-  ServerPlayer tristan = new ServerPlayer("tristan", "blue");
+  ServerPlayer imad = new ServerPlayer("imad", "white", 0);
+  ServerPlayer tristan = new ServerPlayer("tristan", "blue", 1);
   private Game game;
 
   /**

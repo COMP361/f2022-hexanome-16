@@ -76,7 +76,7 @@ public class DummyAuths {
    * </pre>
    */
   public static final List<ServerPlayer> invalidPlayerList =
-      List.of(new ServerPlayer("imad", "#FFFFFF"), new ServerPlayer("el", "#FFFFFF"));
+      List.of(new ServerPlayer("imad", "#FFFFFF", 0), new ServerPlayer("el", "#FFFFFF", 1));
 
   /**
    * Immutable static list of players in json format.

@@ -160,7 +160,7 @@ public class ServiceUtils {
         BroadcastMapKey.PLAYERS,
         new PlayerListJson(Arrays.stream(game.getPlayers()).map(player -> new PlayerJson(
             player.getName(), !game.isNotPlayersTurn(player), player.getInventory()
-            .getPrestigePoints())).toArray(PlayerJson[]::new))
+            .getPrestigePoints(), player.getPlayerOrder())).toArray(PlayerJson[]::new))
     );
   }
 
