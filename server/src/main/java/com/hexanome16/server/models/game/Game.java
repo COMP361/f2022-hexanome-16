@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -101,8 +102,9 @@ public class Game {
    * @param payload   the payload
    */
   Game(long sessionId, SessionJson payload) {
-    this(sessionId, Arrays.stream(payload.getPlayers()).map(player -> new ServerPlayer(
-            player.getName(), player.getPreferredColour())).toArray(ServerPlayer[]::new),
+    this(sessionId, IntStream.range(0, payload.getPlayers().length)
+            .mapToObj(i -> new ServerPlayer(payload.getPlayers()[i].getName(),
+                payload.getPlayers()[i].getPreferredColour(), i)).toArray(ServerPlayer[]::new),
         payload.getCreator(), payload.getSavegame(),
         new WinCondition[] {WinCondition.fromServerName(payload.getGame())},
         payload.getGame().contains("TradeRoutes"), payload.getGame().contains("Cities"));
