@@ -44,7 +44,7 @@ public class DeckFactory implements EntityFactory {
     number.setStroke(Paint.valueOf("#936D35"));
     number.setStyle("-fx-background-color: ffffff00; ");
     // current card
-    Texture card = FXGL.texture(cardName);
+    Texture card = FXGL.texture(cardName.toLowerCase());
     // pane
     StackPane pane = new StackPane();
     StackPane.setAlignment(card, Pos.CENTER);

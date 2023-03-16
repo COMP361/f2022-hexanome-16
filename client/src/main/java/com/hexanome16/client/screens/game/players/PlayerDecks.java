@@ -8,6 +8,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.price.Gem;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ public class PlayerDecks {
   private static final double horizontal = 150; // horizontal distance between cards
   private static final double vertical = 180; // vertical distance between cards
   private static final List<String> cards =
-      List.of("red", "green", "blue", "white", "black", "gold");
+      Arrays.stream(Gem.values()).map(Gem::getBonusType).toList();
   private static final String[] origColors = {"yellow", "black", "red", "blue"};
   private static String[] colors = origColors.clone();
 
@@ -32,6 +34,7 @@ public class PlayerDecks {
   public static void generateAll(PlayerJson[] players) {
     String myName = AuthUtils.getPlayer().getName();
     colors = origColors.clone();
+    System.out.println("Players before: " + Arrays.toString(players));
     while (!players[0].getUsername().equals(myName)) {
       PlayerJson firstPerson = players[0];
       String firstColor = colors[0];
@@ -42,6 +45,7 @@ public class PlayerDecks {
       players[players.length - 1] = firstPerson;
       colors[players.length - 1] = firstColor;
     }
+    System.out.println("Players after: " + Arrays.toString(players));
 
     // number of players for this session
     final int numOfPlayers = players.length;
