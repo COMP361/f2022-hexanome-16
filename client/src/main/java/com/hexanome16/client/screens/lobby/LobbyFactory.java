@@ -22,6 +22,7 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -57,13 +57,13 @@ public class LobbyFactory implements EntityFactory {
   private static final AtomicReference<Map<String, Session>> sessions =
       new AtomicReference<>(new HashMap<>());
   private static final AtomicReference<String> hashCode = new AtomicReference<>("");
-  private static final AtomicReference<Thread> fetchSessionsThread =
+  private static final AtomicReference<BackgroundService> fetchSessionsService =
       new AtomicReference<>(null);
   private static TableView<Map.Entry<String, Session>> activeSessionList;
   private static TableView<Map.Entry<String, Session>> otherSessionList;
   private static final AtomicReference<GameServiceJson[]> gameServices =
       new AtomicReference<>(new GameServiceJson[0]);
-  private static final AtomicReference<Thread> fetchGameServicesThread
+  private static final AtomicReference<BackgroundService> fetchGameServersService
       = new AtomicReference<>(null);
   private static final AtomicReference<String> selectedGameService = new AtomicReference<>("");
   private static ComboBox<GameServiceJson> gameServiceDropdown;
@@ -108,72 +108,52 @@ public class LobbyFactory implements EntityFactory {
    * Service.
    */
   private static void createFetchGameServicesThread() {
-    if (shouldFetch.get()) {
-      Task<Void> fetchGameServicesTask = new Task<>() {
-        @Override
-        protected Void call() throws Exception {
-          gameServices.set(ListGameServicesRequest.execute());
-          Thread.sleep(5000);
-          return null;
-        }
-      };
-      fetchGameServicesTask.setOnSucceeded(e -> {
-        fetchGameServicesThread.get().interrupt();
-        Platform.runLater(LobbyFactory::updateGameServicesList);
-        if (shouldFetch.get()) {
-          createFetchGameServicesThread();
-        }
-      });
-      fetchGameServicesTask.setOnFailed(e -> {
-        fetchGameServicesThread.get().interrupt();
-        if (shouldFetch.get()) {
-          createFetchGameServicesThread();
-        }
-      });
-      Thread thread = new Thread(fetchGameServicesTask);
-      thread.setDaemon(true);
-      thread.start();
-      fetchGameServicesThread.set(thread);
-    }
+    BackgroundService fetchService = new BackgroundService(() -> {
+      gameServices.set(ListGameServicesRequest.execute());
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }, () -> {
+      Platform.runLater(LobbyFactory::updateGameServicesList);
+      if (shouldFetch.get()) {
+        fetchGameServersService.get().restart();
+      }
+    }, () -> {
+      if (shouldFetch.get()) {
+        fetchGameServersService.get().restart();
+      }
+    });
+    fetchService.start();
+    fetchGameServersService.set(fetchService);
   }
 
   /**
    * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
    */
   private static void createFetchSessionThread() {
-    if (shouldFetch.get()) {
-      Task<Void> fetchSessionsTask = new Task<>() {
-        @Override
-        protected Void call() {
-          Pair<String, Map<String, Session>> sessionList
-              = ListSessionsRequest.execute(hashCode.get());
-          hashCode.set(sessionList.getKey());
-          sessions.set(sessionList.getValue());
-          if (sessions.get() == null) {
-            hashCode.set("");
-            sessions.set(new HashMap<>());
-          }
-          return null;
-        }
-      };
-      fetchSessionsTask.setOnSucceeded(e -> {
-        fetchSessionsThread.get().interrupt();
-        Platform.runLater(LobbyFactory::updateSessionList);
-        if (shouldFetch.get()) {
-          createFetchSessionThread();
-        }
-      });
-      fetchSessionsTask.setOnFailed(e -> {
-        fetchSessionsThread.get().interrupt();
-        shouldFetch.set(false);
-        throw new RuntimeException(fetchSessionsTask.getException());
-      });
-      fetchSessionsTask.setOnCancelled(e -> fetchSessionsThread.get().interrupt());
-      Thread thread = new Thread(fetchSessionsTask);
-      thread.setDaemon(true);
-      thread.start();
-      fetchSessionsThread.set(thread);
-    }
+    BackgroundService fetchService = new BackgroundService(() -> {
+      Pair<String, Map<String, Session>> sessionList
+          = ListSessionsRequest.execute(hashCode.get());
+      hashCode.set(sessionList.getKey());
+      sessions.set(sessionList.getValue());
+      if (sessions.get() == null) {
+        hashCode.set("");
+        sessions.set(new HashMap<>());
+      }
+    }, () -> {
+      Platform.runLater(LobbyFactory::updateSessionList);
+      if (shouldFetch.get()) {
+        fetchSessionsService.get().restart();
+      }
+    }, () -> {
+      if (shouldFetch.get()) {
+        fetchSessionsService.get().restart();
+      }
+    });
+    fetchService.start();
+    fetchSessionsService.set(fetchService);
   }
 
   /**
@@ -276,7 +256,7 @@ public class LobbyFactory implements EntityFactory {
                   join.setOnAction(event -> {
                     if (session.isLaunched()) {
                       shouldFetch.set(false);
-                      fetchSessionsThread.get().interrupt();
+                      fetchSessionsService.get().cancel();
                       LobbyScreen.exitLobby();
                       FXGL.getWorldProperties().setValue("players", session.getPlayers());
                       GameScreen.initGame(Long.parseLong(sessionEntry.getKey()));
@@ -300,7 +280,7 @@ public class LobbyFactory implements EntityFactory {
                     LaunchSessionRequest.execute(Long.parseLong(sessionEntry.getKey()),
                         AuthUtils.getAuth().getAccessToken());
                     shouldFetch.set(false);
-                    fetchSessionsThread.get().interrupt();
+                    fetchSessionsService.get().cancel();
                     LobbyScreen.exitLobby();
                     FXGL.getWorldProperties().setValue("players", session.getPlayers());
                     GameScreen.initGame(Long.parseLong(sessionEntry.getKey()));
@@ -361,12 +341,12 @@ public class LobbyFactory implements EntityFactory {
     sessionTableView.getItems().addAll(sessionArr.entrySet());
     sessionTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
 
-    if (fetchSessionsThread.get() == null || !fetchSessionsThread.get().isAlive()) {
+    if (fetchSessionsService.get() == null || !fetchSessionsService.get().isRunning()) {
       shouldFetch.set(true);
       createFetchSessionThread();
     }
 
-    if (fetchGameServicesThread.get() == null) {
+    if (fetchGameServersService.get() == null) {
       createFetchGameServicesThread();
     }
 
