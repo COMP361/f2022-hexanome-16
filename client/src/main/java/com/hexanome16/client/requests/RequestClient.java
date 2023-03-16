@@ -14,15 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.util.CustomHttpResponses;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import javafx.util.Pair;
 import kong.unirest.core.GetRequest;
-import kong.unirest.core.Header;
 import kong.unirest.core.Headers;
 import kong.unirest.core.HttpRequestWithBody;
 import kong.unirest.core.HttpResponse;
@@ -166,8 +168,7 @@ public class RequestClient {
    * @return The response body as String.
    */
   public static Pair<Headers, String> sendRequestHeadersString(Request<?> request) {
-    AtomicReference<String> res = new AtomicReference<>(null);
-    AtomicReference<Headers> headers = new AtomicReference<>(null);
+    AtomicReference<Pair<Headers, String>> res = new AtomicReference<>(null);
     HttpRequestWithBody req = Unirest.request(request.getMethod().name(),
         request.getDest().getUrl() + request.getPath());
     if (request.getQueryParams() != null) {
@@ -186,8 +187,7 @@ public class RequestClient {
     try {
       future.get(TIMEOUT, TimeUnit.SECONDS)
           .ifSuccess(response -> {
-            res.set(response.getBody());
-            headers.set(response.getHeaders());
+            res.set(new Pair<>(response.getHeaders(), response.getBody()));
             request.setStatus(response.getStatus());
           })
           .ifFailure(e -> {
@@ -199,15 +199,20 @@ public class RequestClient {
                   TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
                   request.getQueryParams()
                       .put("access_token", AuthUtils.getAuth().getAccessToken());
-                  res.set(sendRequestString(request));
+                  res.set(sendRequestHeadersString(request));
                 }
               }
-              case HTTP_NOT_FOUND -> res.set(CustomHttpResponses.INVALID_SESSION_ID.getBody());
-              default -> res.set(e.getParsingError().isEmpty() ? e.getBody()
-                  : e.getParsingError().get().toString());
+              case HTTP_NOT_FOUND -> {
+                Headers headers = new Headers();
+                headers.add(CustomHttpResponses.INVALID_SESSION_ID.getHeaders().entrySet().stream()
+                    .collect(Collectors.toMap(
+                        Map.Entry::getKey, entry -> entry.getValue().get(0))));
+                res.set(new Pair<>(headers, CustomHttpResponses.INVALID_SESSION_ID.getBody()));
+              }
+              default -> res.set(new Pair<>(e.getHeaders(), e.getBody()));
             }
           });
-      return new Pair<>(headers.get(), res.get());
+      return res.get();
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       return null;
     }
@@ -221,8 +226,7 @@ public class RequestClient {
    */
   public static String sendRequestString(Request<?> request) {
     Pair<Headers, String> myPair = sendRequestHeadersString(request);
-    assert myPair != null;
-    return myPair.getValue();
+    return Objects.requireNonNull(myPair).getValue();
   }
 
 }
