@@ -47,7 +47,7 @@ class GameServiceTests {
 
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, false, false);
+            WinCondition.BASE);
     gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
     when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
@@ -111,7 +111,7 @@ class GameServiceTests {
 
     Game validGame = Game.create(123L,
         PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(),
-        "", new WinCondition[]{WinCondition.BASE}, false, false);
+        "", WinCondition.BASE);
     when(gameManagerMock.getGame(validSessionId)).thenReturn(validGame);
 
     // Act

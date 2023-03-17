@@ -63,12 +63,11 @@ public enum WinCondition {
   /**
    * Check if a game is won.
    *
-   * @param winConditions The win conditions to check.
+   * @param winCondition The win conditions to check.
    * @param players       The players to check.
    * @return The player(s) who won the game, or empty array if no player has won.
    */
-  public static ServerPlayer[] getWinners(WinCondition[] winConditions, ServerPlayer[] players) {
-    return Arrays.stream(winConditions).map(winCondition -> winCondition.isMet(players))
-        .filter(players1 -> players1.length > 0).findFirst().orElse(new ServerPlayer[0]);
+  public static ServerPlayer[] getWinners(WinCondition winCondition, ServerPlayer[] players) {
+    return winCondition.isMet(players);
   }
 }

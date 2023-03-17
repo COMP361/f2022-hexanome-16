@@ -45,8 +45,7 @@ public class GameTest {
   @BeforeEach
   public void init() throws IOException {
     game = Game.create(12345,
-        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[] {WinCondition.BASE},
-        false, false);
+        new ServerPlayer[] {imad, tristan}, "imad", "", WinCondition.BASE);
   }
 
   /**
@@ -131,8 +130,7 @@ public class GameTest {
   @Test
   public void testPlayerArrayGetsCloned() throws IOException {
     ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
-    game = Game.create(12345,
-        players, "imad", "", new WinCondition[] {WinCondition.BASE}, false, false);
+    game = Game.create(12345, players, "imad", "", WinCondition.BASE);
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
     players[0] = null;
@@ -162,7 +160,7 @@ public class GameTest {
    */
   @Test
   public void testAddOnBoardCard() {
-    List<ServerNoble> cardList = game.getNobleDeck().getCardList();
+    List<ServerNoble> cardList = game.getOnBoardNobles().getCardList();
     game.addOnBoardCard(Level.ONE);
     assertNotEquals(cardList.size() + 1, game.getOnBoardDeck(Level.ONE).getCardList().size());
   }

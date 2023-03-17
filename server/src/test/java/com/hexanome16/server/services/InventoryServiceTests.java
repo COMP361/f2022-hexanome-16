@@ -67,7 +67,7 @@ public class InventoryServiceTests {
 
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, false, false);
+            WinCondition.BASE);
 
     gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
     serviceUtils = DummyServiceUtils.getDummyServiceUtils();
@@ -414,7 +414,7 @@ public class InventoryServiceTests {
 
     ServerLevelCard myCard = createValidCard();
     validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    validMockGame.getRemainingCards().put(
+    validMockGame.getHashToCardMap().put(
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard
     );
 
@@ -469,7 +469,7 @@ public class InventoryServiceTests {
 
 
     validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    validMockGame.getRemainingCards().put(
+    validMockGame.getHashToCardMap().put(
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId
@@ -496,7 +496,7 @@ public class InventoryServiceTests {
     // Test not enough funds
     ServerLevelCard invalidCard = createInvalidCard();
     validMockGame.getLevelDeck(invalidCard.getLevel()).addCard(invalidCard);
-    validMockGame.getRemainingCards().put(
+    validMockGame.getHashToCardMap().put(
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard
     );
 
@@ -523,7 +523,7 @@ public class InventoryServiceTests {
 
 
     validMockGame.getLevelDeck(myCard.getLevel()).addCard(myCard);
-    validMockGame.getRemainingCards().put(
+    validMockGame.getHashToCardMap().put(
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId

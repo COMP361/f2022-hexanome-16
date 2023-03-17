@@ -148,7 +148,7 @@ public class ServiceUtils {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
-      ServerPlayer[] winners = WinCondition.getWinners(game.getWinConditions(), game.getPlayers());
+      ServerPlayer[] winners = WinCondition.getWinners(game.getWinCondition(), game.getPlayers());
       if (winners.length > 0) {
         game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.WINNERS,
