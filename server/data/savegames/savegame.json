@@ -7,103 +7,121 @@
     "imad",
     "peini"
   ],
-  "data": {
-    "decks": {
-      "onBoard": {
-        "ONE": [
-          {
-            "id": 20,
-            "level": "ONE",
-            "bonus": "ONYX",
-            "prestigePoint": 0,
-            "price": {
-              "ONYX": 0,
-              "SAPPHIRE": 1,
-              "EMERALD": 1,
-              "RUBY": 1,
-              "DIAMOND": 1
-            }
+  "decks": {
+    "onBoardDecks": {
+      "ONE": [
+        {
+          "id": 20,
+          "level": "ONE",
+          "bonus": "ONYX",
+          "prestigePoint": 0,
+          "price": {
+            "ONYX": 0,
+            "SAPPHIRE": 1,
+            "EMERALD": 1,
+            "RUBY": 1,
+            "DIAMOND": 1
           }
-        ],
-        "nobles": [
-          {
-            "id": 0,
-            "prestigePoint": 3,
-            "price": {
-              "ONYX": 0,
-              "SAPPHIRE": 4,
-              "EMERALD": 4,
-              "RUBY": 0,
-              "DIAMOND": 0
-            }
-          }
-        ]
-      },
-      "remaining": {
-        "ONE": [
-          {
-            "id": 1,
-            "level": "ONE",
-            "bonus": "ONYX",
-            "prestigePoint": 0,
-            "price": {
-              "ONYX": 0,
-              "SAPPHIRE": 1,
-              "EMERALD": 1,
-              "RUBY": 1,
-              "DIAMOND": 1
-            }
-          }
-        ],
-        "nobles": [
-          {
-            "id": 1,
-            "prestigePoint": 3,
-            "price": {
-              "ONYX": 0,
-              "SAPPHIRE": 4,
-              "EMERALD": 4,
-              "RUBY": 0,
-              "DIAMOND": 0
-            }
-          }
-        ]
-      }
+        }
+      ]
     },
-    "players": [
+    "onBoardNobles": [
       {
-        "name": "costa",
-        "current": true,
-        "bank": {
+        "id": 0,
+        "prestigePoint": 3,
+        "price": {
+          "ONYX": 0,
+          "SAPPHIRE": 4,
+          "EMERALD": 4,
+          "RUBY": 0,
+          "DIAMOND": 0
+        }
+      }
+    ],
+    "remainingDecks": {
+      "ONE": [
+        {
+          "id": 1,
+          "level": "ONE",
+          "bonus": "ONYX",
+          "prestigePoint": 0,
+          "price": {
+            "ONYX": 0,
+            "SAPPHIRE": 1,
+            "EMERALD": 1,
+            "RUBY": 1,
+            "DIAMOND": 1
+          }
+        }
+      ]
+    }
+  },
+  "players": [
+    {
+      "name": "costa",
+      "current": true,
+      "playerBank": {
+        "ONYX": 0,
+        "SAPPHIRE": 0,
+        "EMERALD": 0,
+        "RUBY": 0,
+        "DIAMOND": 0,
+        "GOLD": 3
+      },
+      "prestigePoints": 1,
+      "inventory": {
+        "cards": {
+          "obtained": [
+            {
+              "id": 1,
+              "level": "ONE",
+              "bonus": "ONYX",
+              "prestigePoint": 0,
+              "price": {
+                "ONYX": 0,
+                "SAPPHIRE": 1,
+                "EMERALD": 1,
+                "RUBY": 1,
+                "DIAMOND": 1
+              }
+            }
+          ],
+          "reserved": []
+        },
+        "nobles": {
+          "obtained": [
+            {
+              "id": 0,
+              "prestigePoint": 3,
+              "price": {
+                "ONYX": 0,
+                "SAPPHIRE": 4,
+                "EMERALD": 4,
+                "RUBY": 0,
+                "DIAMOND": 0
+              }
+            }
+          ],
+          "reserved": []
+        },
+        "gemBonuses": {
           "ONYX": 0,
           "SAPPHIRE": 0,
           "EMERALD": 0,
           "RUBY": 0,
           "DIAMOND": 0,
-          "GOLD": 3
+          "GOLD": 0
         },
-        "prestigePoints": 1,
-        "inventory": {
-          "cards": {
-            "obtained": [
-              {
-                "id": 1,
-                "level": "ONE",
-                "bonus": "ONYX",
-                "prestigePoint": 0,
-                "price": {
-                  "ONYX": 0,
-                  "SAPPHIRE": 1,
-                  "EMERALD": 1,
-                  "RUBY": 1,
-                  "DIAMOND": 1
-                }
-              }
-            ],
-            "reserved": []
-          },
-          "nobles": {
-            "obtained": [
+        "tradingPosts": [
+          "BLACK_ROUTE"
+        ],
+        "cities": []
+      },
+      "pendingActions": [
+        {
+          "actionType": "CHOOSE_NOBLE",
+          "data": {
+            "nobles": [
               {
                 "id": 0,
                 "prestigePoint": 3,
@@ -115,39 +133,22 @@
                   "DIAMOND": 0
                 }
               }
-            ],
-            "reserved": []
-          },
-          "gemBonuses": {
-            "ONYX": 0,
-            "SAPPHIRE": 0,
-            "EMERALD": 0,
-            "RUBY": 0,
-            "DIAMOND": 0,
-            "GOLD": {
-              "permanent": 0,
-              "temporary": 0
-            }
+            ]
           }
         },
-        "tradingPosts": [
-          "BLACK_ROUTE"
-        ],
-        "cities": [],
-        "pendingActions": [
-          {
-            "type": "TAKE_TWO"
-          }
-        ]
-      }
-    ],
-    "bank": {
-      "ONYX": 0,
-      "SAPPHIRE": 0,
-      "EMERALD": 0,
-      "RUBY": 0,
-      "DIAMOND": 0,
-      "GOLD": 3
+        {
+          "actionType": "TAKE_TWO",
+          "data": null
+        }
+      ]
     }
+  ],
+  "gameBank": {
+    "ONYX": 0,
+    "SAPPHIRE": 0,
+    "EMERALD": 0,
+    "RUBY": 0,
+    "DIAMOND": 0,
+    "GOLD": 3
   }
 }

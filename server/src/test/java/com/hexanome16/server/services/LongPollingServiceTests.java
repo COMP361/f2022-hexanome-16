@@ -44,7 +44,7 @@ public class LongPollingServiceTests {
 
     Game validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, false, false);
+            WinCondition.BASE);
 
     GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
