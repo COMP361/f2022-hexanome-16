@@ -1,5 +1,6 @@
 package com.hexanome16.common.models.sessions;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class SaveGameJson {
   private String savegameid;
   private String gamename;

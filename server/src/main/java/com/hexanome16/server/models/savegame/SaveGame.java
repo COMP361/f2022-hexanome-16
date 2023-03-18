@@ -107,11 +107,10 @@ public class SaveGame {
    * Saves a game to a savegame JSON file.
    *
    * @param game the game to save
-   * @return the id of the savegame (name of the JSON file)
+   * @param id   the id of the savegame (name of the JSON file)
    */
   @SneakyThrows
-  public static String saveGame(Game game) {
-    String id = UUID.randomUUID().toString();
+  public static void saveGame(Game game, String id) {
     String gamename = game.getWinCondition().getGameServiceJson().getName();
     String[] usernames = Arrays.stream(game.getPlayers()).sorted(Comparator.comparingInt(
         ServerPlayer::getPlayerOrder)).map(ServerPlayer::getName).toArray(String[]::new);
@@ -128,6 +127,5 @@ public class SaveGame {
     SaveGame saveGame = new SaveGame(gamename, id, usernames, game.getCreator(), onBoardDecks,
         onBoardNobles, remainingDecks, remainingNobles, gameBank, serverPlayers);
     objectWriter.writeValue(new File(savegamesPath + "/" + id + ".json"), saveGame);
-    return id;
   }
 }

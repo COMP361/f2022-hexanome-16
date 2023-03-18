@@ -1,5 +1,6 @@
 package com.hexanome16.server.models.actions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.util.CustomHttpResponses;
 import org.springframework.http.ResponseEntity;
 
@@ -13,6 +14,7 @@ public interface Action {
    *
    * @return Information needed for action to perform.
    */
+  @JsonIgnore
   ResponseEntity<String> getActionDetails();
 
   /**
@@ -20,5 +22,6 @@ public interface Action {
    *
    * @return the action type
    */
+  @JsonIgnore
   CustomHttpResponses.ActionType getActionType();
 }
