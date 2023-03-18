@@ -126,7 +126,6 @@ public class Inventory {
    *
    * @return the prestige points
    */
-  @JsonIgnore
   public int getPrestigePoints() {
     return prestigePoints;
   }

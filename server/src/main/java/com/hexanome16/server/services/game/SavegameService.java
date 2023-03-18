@@ -68,6 +68,7 @@ public class SavegameService implements SavegameServiceInterface {
     String gamename = game.getWinCondition().getGameServiceJson().getName();
     String[] usernames = Arrays.stream(game.getPlayers()).sorted(Comparator.comparingInt(
         ServerPlayer::getPlayerOrder)).map(ServerPlayer::getName).toArray(String[]::new);
+    String currentPlayer = game.getCurrentPlayer().getName();
     Map<Level, ServerLevelCard[]> onBoardDecks = game.getOnBoardDecks().entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey,
             entry -> entry.getValue().getCardList().toArray(ServerLevelCard[]::new)));
@@ -78,8 +79,8 @@ public class SavegameService implements SavegameServiceInterface {
     ServerNoble[] remainingNobles = game.getRemainingNobles().values().toArray(ServerNoble[]::new);
     PurchaseMap gameBank = game.getGameBank().toPurchaseMap();
     ServerPlayer[] serverPlayers = game.getPlayers();
-    SaveGame saveGame = new SaveGame(gamename, id, usernames, game.getCreator(), onBoardDecks,
-        onBoardNobles, remainingDecks, remainingNobles, gameBank, serverPlayers);
+    SaveGame saveGame = new SaveGame(gamename, id, currentPlayer, usernames, game.getCreator(),
+        onBoardDecks, onBoardNobles, remainingDecks, remainingNobles, gameBank, serverPlayers);
     objectWriter.writeValue(new File(savegamesPath + "/" + id + ".json"), saveGame);
   }
 
