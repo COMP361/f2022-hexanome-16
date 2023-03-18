@@ -33,7 +33,7 @@ public class ServerPlayerTest {
    */
   @BeforeEach
   public void init() {
-    costa = new ServerPlayer("costa", "#000000");
+    costa = new ServerPlayer("costa", "#000000", 0);
   }
 
   /**

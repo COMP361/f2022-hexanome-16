@@ -34,7 +34,6 @@ public class PlayerDecks {
   public static void generateAll(PlayerJson[] players) {
     String myName = AuthUtils.getPlayer().getName();
     colors = origColors.clone();
-    System.out.println("Players before: " + Arrays.toString(players));
     while (!players[0].getUsername().equals(myName)) {
       PlayerJson firstPerson = players[0];
       String firstColor = colors[0];
@@ -45,7 +44,6 @@ public class PlayerDecks {
       players[players.length - 1] = firstPerson;
       colors[players.length - 1] = firstColor;
     }
-    System.out.println("Players after: " + Arrays.toString(players));
 
     // number of players for this session
     final int numOfPlayers = players.length;
