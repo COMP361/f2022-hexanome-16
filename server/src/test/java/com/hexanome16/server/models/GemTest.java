@@ -24,7 +24,7 @@ public class GemTest {
     assertEquals(Gem.SAPPHIRE.getBonusType(), "BLUE");
     assertEquals(Gem.DIAMOND.getBonusType(), "WHITE");
     assertEquals(Gem.ONYX.getBonusType(), "BLACK");
-    assertEquals(Gem.GOLD.getBonusType(), "NULL");
+    assertEquals(Gem.GOLD.getBonusType(), "GOLD");
   }
 
   /**

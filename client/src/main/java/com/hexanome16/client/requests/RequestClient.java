@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.util.CustomHttpResponses;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -123,7 +124,9 @@ public class RequestClient {
                   if (AuthUtils.getAuth() != null && req.getQueryParams() != null
                       && req.getQueryParams().containsKey("access_token")) {
                     TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-                    req.getQueryParams().put("access_token", AuthUtils.getAuth().getAccessToken());
+                    Map<String, Object> queryParams = new HashMap<>(req.getQueryParams());
+                    queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
+                    req.setQueryParams(queryParams);
                     res.set(longPollString(req));
                   } else {
                     res.set(e.getParsingError().isEmpty() ? e.getBody()

@@ -30,8 +30,6 @@
               <option value="clean" />
               <option value="compile" />
               <option value="javafx:run" />
-              <option value="-Dcheckstyle.skip" />
-              <option value="-Dmaven.javadoc.skip=true" />
             </list>
           </option>
           <option name="pomFileName" />

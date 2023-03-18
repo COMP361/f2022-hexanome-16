@@ -19,6 +19,7 @@ public class Request<T> {
   private final RequestDest dest;
   private final String path;
   private final Class<T> responseClass;
+  @Setter
   private Map<String, Object> queryParams;
   private Map<String, String> headers;
   private Object body;
