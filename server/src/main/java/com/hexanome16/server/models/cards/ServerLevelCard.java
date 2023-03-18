@@ -8,6 +8,7 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ServerLevelCard extends LevelCard implements InventoryAddable, Reservable {
 
   /**
@@ -60,5 +62,4 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
   }
-
 }

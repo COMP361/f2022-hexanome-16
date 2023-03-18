@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
@@ -17,14 +18,22 @@ import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Player class.
  */
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServerPlayer extends Player {
-  private final Queue<Action> queueOfCascadingActionTypes;
+  private Queue<Action> queueOfCascadingActionTypes;
   private Inventory inventory; // the player has an inventory, not a bank
 
   /**
@@ -46,6 +55,7 @@ public class ServerPlayer extends Player {
    *
    * @return the bank
    */
+  @JsonIgnore
   public PlayerBank getBank() {
     return this.inventory.getPlayerBank();
   }
@@ -112,6 +122,7 @@ public class ServerPlayer extends Player {
    * @param goldAmount     minimum amount or gold player should have
    * @return true if player has at least input amounts of each gem type, false otherwise.
    */
+  @JsonIgnore
   public boolean hasAtLeast(int rubyAmount, int emeraldAmount, int sapphireAmount,
                             int diamondAmount, int onyxAmount, int goldAmount) {
     return hasAtLeast(new PurchaseMap(rubyAmount, emeraldAmount,
@@ -125,6 +136,7 @@ public class ServerPlayer extends Player {
    * @param purchaseMap specified amount for each gem.
    * @return True if it has enough, false otherwise.
    */
+  @JsonIgnore
   public boolean hasAtLeast(PurchaseMap purchaseMap) {
     boolean response = true;
     for (Gem gem : Gem.values()) {
@@ -158,6 +170,7 @@ public class ServerPlayer extends Player {
    * @param visitor the visitor whose requirements need to be met
    * @return true if player meets requirements
    */
+  @JsonIgnore
   public boolean canBeVisitedBy(Visitable visitor) {
     return visitor.playerMeetsRequirements(inventory);
   }
