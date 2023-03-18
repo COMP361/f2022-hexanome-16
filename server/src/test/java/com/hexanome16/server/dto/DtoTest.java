@@ -20,13 +20,13 @@ import org.junit.jupiter.api.Test;
 public class DtoTest {
 
   private final Game game =
-      Game.create(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE},
-          false, false);
+      Game.create(12345, new ServerPlayer[] {}, "", "", WinCondition.BASE);
 
   private final DeckJson deckJson = new DeckJson(game.getLevelDeck(Level.ONE).getCardList(),
       Level.ONE);
 
-  private final NobleDeckJson nobleDeckJson = new NobleDeckJson(game.getNobleDeck().getCardList());
+  private final NobleDeckJson nobleDeckJson = new NobleDeckJson(
+      game.getOnBoardNobles().getCardList());
 
   private final PlayerJson playerJson = new PlayerJson("player", true, 10, 0);
 

@@ -42,7 +42,7 @@ public class BroadcastMap {
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
-          new BroadcastContentManager<>(new NobleDeckJson(game.getNobleDeck().getCardList()));
+          new BroadcastContentManager<>(new NobleDeckJson(game.getOnBoardNobles().getCardList()));
       map.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
       map.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
       map.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);

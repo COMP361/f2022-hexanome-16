@@ -35,7 +35,7 @@ public class ServiceUtilsTests {
     gameManagerServiceInterface = DummyGameManagerService.getDummyGameManagerService();
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, true, false);
+            WinCondition.BASE);
     serviceUtils = new ServiceUtils(gameManagerServiceInterface,
         new DummyAuthService());
   }

@@ -13,11 +13,9 @@ import com.hexanome16.server.models.cards.ServerNoble;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 /**
@@ -27,6 +25,7 @@ public class GameInitHelpers {
   private final String cardsJsonPath;
 
   private final Game game;
+  private Deck<ServerNoble> nobleDeck;
 
   /**
    * Constructor.
@@ -36,9 +35,9 @@ public class GameInitHelpers {
   @SneakyThrows
   public GameInitHelpers(Game game) {
     this.game = game;
-    Resource resource = new ClassPathResource("application.properties");
-    Properties props = PropertiesLoaderUtils.loadProperties(resource);
-    cardsJsonPath = props.getProperty("path.cards");
+    cardsJsonPath = PropertiesLoaderUtils.loadProperties(
+        new ClassPathResource("application.properties")).getProperty("path.cards");
+    this.nobleDeck = new Deck<>();
   }
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -46,24 +45,14 @@ public class GameInitHelpers {
 
   static Map<Level, Deck<ServerLevelCard>> createLevelMap() {
     HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
-    levelMap.put(Level.ONE, new Deck<>());
-    levelMap.put(Level.TWO, new Deck<>());
-    levelMap.put(Level.THREE, new Deck<>());
-    return levelMap;
-  }
-
-  static Map<Level, Deck<ServerLevelCard>> createRedMap() {
-    HashMap<Level, Deck<ServerLevelCard>> levelMap = new HashMap<>();
-    levelMap.put(Level.REDONE, new Deck<>());
-    levelMap.put(Level.REDTWO, new Deck<>());
-    levelMap.put(Level.REDTHREE, new Deck<>());
+    for (Level level : Level.values()) {
+      levelMap.put(level, new Deck<>());
+    }
     return levelMap;
   }
 
   static Map<Level, Deck<ServerLevelCard>> createBoardMap() {
-    Map<Level, Deck<ServerLevelCard>> levelMap = createLevelMap();
-    levelMap.putAll(createRedMap());
-    return levelMap;
+    return createLevelMap();
   }
 
   void createDecks() {
@@ -95,13 +84,13 @@ public class GameInitHelpers {
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
-      game.getLevelDecks().get(level).addCard(card);
+      game.getRemainingCards().get(level).addCard(card);
       if (level != Level.ONE) {
-        game.getLevelDecks().get(level).shuffle();
+        game.getRemainingCards().get(level).shuffle();
       }
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
-    game.getLevelDecks().get(Level.ONE).reverse();
+    game.getRemainingCards().get(Level.ONE).reverse();
   }
 
   @SneakyThrows
@@ -122,7 +111,7 @@ public class GameInitHelpers {
           noble);
     }
     deck.shuffle();
-    game.nobleDeck = deck;
+    this.nobleDeck = deck;
   }
 
   @SneakyThrows
@@ -143,10 +132,10 @@ public class GameInitHelpers {
           bagJson.getPrice(),
           Level.REDONE, gemBonus);
       deck.addCard(bag);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
-    game.getRedDecks().put(Level.REDONE, deck);
+    game.getRemainingCards().put(Level.REDONE, deck);
   }
 
   @SneakyThrows
@@ -158,7 +147,7 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load gold.json", e);
     }
-    Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDONE);
+    Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDONE);
     for (DevelopmentCardJson goldJson : goldJsonList) {
       Gem gem = Gem.valueOf(goldJson.getBonus());
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 2));
@@ -167,10 +156,10 @@ public class GameInitHelpers {
           goldJson.getPrice(),
           Level.REDONE, gemBonus);
       deck.addCard(gold);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
     }
     deck.shuffle();
-    game.getRedDecks().put(Level.REDONE, deck);
+    game.getRemainingCards().put(Level.REDONE, deck);
   }
 
   @SneakyThrows
@@ -191,10 +180,10 @@ public class GameInitHelpers {
           doubleJson.getPrice(),
           Level.REDTWO, gemBonus);
       deck.addCard(bag);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
     deck.shuffle();
-    game.getRedDecks().put(Level.REDTWO, deck);
+    game.getRemainingCards().put(Level.REDTWO, deck);
   }
 
   @SneakyThrows
@@ -206,7 +195,7 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load noble_reserve.json", e);
     }
-    Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTWO);
+    Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTWO);
     for (DevelopmentCardJson nobleReserveJson : nobleReserveList) {
       Gem gem = Gem.valueOf(nobleReserveJson.getBonus());
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
@@ -214,12 +203,12 @@ public class GameInitHelpers {
           nobleReserveJson.getPrestigePoint(), "noble_reserve" + nobleReserveJson.getId(),
           nobleReserveJson.getPrice(), Level.REDTWO, gemBonus);
       deck.addCard(nobleReserve);
-      game.getRemainingCards().put(
+      game.getHashToCardMap().put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
           nobleReserve);
     }
     deck.shuffle();
-    game.getRedDecks().put(Level.REDTWO, deck);
+    game.getRemainingCards().put(Level.REDTWO, deck);
   }
 
   @SneakyThrows
@@ -231,7 +220,7 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load bag_cascade.json", e);
     }
-    Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTWO);
+    Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTWO);
     for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
       Gem gem = Gem.valueOf(bagCascadeJson.getBonus());
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
@@ -239,11 +228,11 @@ public class GameInitHelpers {
           bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
           bagCascadeJson.getPrice(), Level.REDTWO, gemBonus);
       deck.addCard(bagCascade);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
     }
     //deck.shuffle();
-    game.getRedDecks().put(Level.REDTWO, deck);
+    game.getRemainingCards().put(Level.REDTWO, deck);
   }
 
   @SneakyThrows
@@ -263,11 +252,11 @@ public class GameInitHelpers {
           sacrificeJson.getPrestigePoint(), "sacrifice" + sacrificeJson.getId(),
           sacrificeJson.getPrice(), Level.REDTHREE, gemBonus);
       deck.addCard(sacrifice);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(sacrifice)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(sacrifice)),
           sacrifice);
     }
     deck.shuffle();
-    game.getRedDecks().put(Level.REDTHREE, deck);
+    game.getRemainingCards().put(Level.REDTHREE, deck);
   }
 
   @SneakyThrows
@@ -279,7 +268,7 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load cascade_two.json", e);
     }
-    Deck<ServerLevelCard> deck = game.getRedDecks().get(Level.REDTHREE);
+    Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTHREE);
     for (DevelopmentCardJson cascadeTwoJson : cascadeTwoJsonList) {
       Gem gem = Gem.valueOf(cascadeTwoJson.getBonus());
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
@@ -287,11 +276,11 @@ public class GameInitHelpers {
           cascadeTwoJson.getPrestigePoint(), "cascade_two" + cascadeTwoJson.getId(),
           cascadeTwoJson.getPrice(), Level.REDTHREE, LevelCard.BonusType.CASCADING_TWO, gemBonus);
       deck.addCard(cascadeTwo);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
           cascadeTwo);
     }
     //deck.shuffle();
-    game.getRedDecks().put(Level.REDTHREE, deck);
+    game.getRemainingCards().put(Level.REDTHREE, deck);
   }
 
   @SneakyThrows
@@ -302,22 +291,22 @@ public class GameInitHelpers {
 
     // lay the cards face up on the game board
     for (int i = 0; i < 4; i++) {
-      ServerLevelCard levelOne = game.getLevelDecks().get(Level.ONE).removeNextCard();
+      ServerLevelCard levelOne = game.getRemainingCards().get(Level.ONE).removeNextCard();
       levelOne.setFaceDown(false);
       baseOneDeck.addCard(levelOne);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)),
           levelOne);
 
-      ServerLevelCard levelTwo = game.getLevelDecks().get(Level.TWO).removeNextCard();
+      ServerLevelCard levelTwo = game.getRemainingCards().get(Level.TWO).removeNextCard();
       levelTwo.setFaceDown(false);
       baseTwoDeck.addCard(levelTwo);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)),
           levelTwo);
 
-      ServerLevelCard levelThree = game.getLevelDecks().get(Level.THREE).removeNextCard();
+      ServerLevelCard levelThree = game.getRemainingCards().get(Level.THREE).removeNextCard();
       levelThree.setFaceDown(false);
       baseThreeDeck.addCard(levelThree);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
           levelThree);
     }
 
@@ -329,10 +318,8 @@ public class GameInitHelpers {
     // same thing but with the nobles
     Deck<ServerNoble> nobleDeck = new Deck<>();
     for (int i = 0; i < 5; i++) {
-      ServerNoble noble = game.getNobleDeck().removeNextCard();
+      ServerNoble noble = this.nobleDeck.removeNextCard();
       nobleDeck.addCard(noble);
-      game.getRemainingNobles().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)),
-          noble);
     }
     game.onBoardNobles = nobleDeck;
   }
@@ -343,22 +330,22 @@ public class GameInitHelpers {
     Deck<ServerLevelCard> redTwoDeck = new Deck<>();
     Deck<ServerLevelCard> redThreeDeck = new Deck<>();
     for (int i = 0; i < 2; i++) {
-      ServerLevelCard levelOne = game.getRedDecks().get(Level.REDONE).removeNextCard();
+      ServerLevelCard levelOne = game.getRemainingCards().get(Level.REDONE).removeNextCard();
       levelOne.setFaceDown(false);
       redOneDeck.addCard(levelOne);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelOne)),
           levelOne);
 
-      ServerLevelCard levelTwo = game.getRedDecks().get(Level.REDTWO).removeNextCard();
+      ServerLevelCard levelTwo = game.getRemainingCards().get(Level.REDTWO).removeNextCard();
       levelTwo.setFaceDown(false);
       redTwoDeck.addCard(levelTwo);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelTwo)),
           levelTwo);
 
-      ServerLevelCard levelThree = game.getRedDecks().get(Level.REDTHREE).removeNextCard();
+      ServerLevelCard levelThree = game.getRemainingCards().get(Level.REDTHREE).removeNextCard();
       levelThree.setFaceDown(false);
       redThreeDeck.addCard(levelThree);
-      game.getRemainingCards().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
+      game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(levelThree)),
           levelThree);
     }
     game.getOnBoardDecks().put(Level.REDONE, redOneDeck);

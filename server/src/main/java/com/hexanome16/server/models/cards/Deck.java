@@ -2,6 +2,7 @@ package com.hexanome16.server.models.cards;
 
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
@@ -22,6 +23,16 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    */
   public Deck() {
     cardList = new Stack<>();
+  }
+
+  /**
+   * Instantiates a new Deck.
+   *
+   * @param cardList the card list
+   */
+  public Deck(T[] cardList) {
+    this.cardList = new Stack<>();
+    this.cardList.addAll(Arrays.stream(cardList).toList());
   }
 
   /**
