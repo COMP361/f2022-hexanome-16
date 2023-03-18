@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
 
@@ -93,23 +94,18 @@ public class GameScreen {
               return;
             }
             PlayerJson[] players = playersJson.getValue().getPlayers();
-            usernamesMap.forEach((k, v) -> {
-              for (int i = 0; i < players.length; i++) {
-                if (players[i].getUsername().equals(v.getUsername())) {
-                  usernamesMap.replace(i, players[i]);
-                }
-              }
-            });
             Optional<PlayerJson> current = Arrays.stream(players)
                 .filter(PlayerJson::isCurrent).findFirst();
             if (current.isPresent()) {
+              Arrays.stream(players).forEach(playerJson -> {
+                usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
+              });
               currentPlayer = current.get().getUsername();
               UpdateGameInfo.fetchGameBank(getSessionId());
               UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
               UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
-              PlayerDecks.generateAll(usernamesMap.entrySet().stream()
-                  .sorted(Comparator.comparingInt(Map.Entry::getKey)).map(Map.Entry::getValue)
-                  .toArray(PlayerJson[]::new));
+              PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
+                  PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
             }
           });
           updateCurrentPlayer.restart();
@@ -192,8 +188,8 @@ public class GameScreen {
     UpdateGameInfo.initPlayerTurn();
     String[] usernames = FXGL.getWorldProperties().getValue("players");
     currentPlayer = usernames[0];
-    PlayerJson[] players = Arrays.stream(usernames).map(
-        username -> new PlayerJson(username, Objects.equals(currentPlayer, username), 0)
+    PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+        i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
     ).toArray(PlayerJson[]::new);
     if (updateCurrentPlayer == null) {
       playersJson = new Pair<>("", new PlayerListJson(players));
@@ -207,7 +203,7 @@ public class GameScreen {
 
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
-    PlayerDecks.generateAll(playersJson.getValue().getPlayers());
+    PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
   }
 
   // puts values necessary for game bank in the world properties
