@@ -1,5 +1,6 @@
 package com.hexanome16.server.models.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
@@ -7,6 +8,9 @@ import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -15,6 +19,7 @@ import lombok.ToString;
  * @param <T> Inventory Addable to be contained in the deck
  */
 @ToString
+@Data
 public class Deck<T extends InventoryAddable> implements BroadcastContent {
   private final Stack<T> cardList;
 
@@ -40,6 +45,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    *
    * @return immutable copy of internal card list
    */
+  @JsonIgnore
   public List<T> getCardList() {
     return Collections.unmodifiableList(cardList);
   }
@@ -49,6 +55,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    *
    * @param card the card to be added.
    */
+  @JsonIgnore
   public void addCard(T card) {
     cardList.push(card);
   }
@@ -59,6 +66,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * @param card the card to be removed.
    * @return if the card was in the deck.
    */
+  @JsonIgnore
   public boolean removeCard(T card) {
     return cardList.remove(card);
   }
@@ -66,6 +74,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
   /**
    * Shuffle the deck.
    */
+  @JsonIgnore
   public void shuffle() {
     Collections.shuffle(cardList);
   }
@@ -75,6 +84,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    *
    * @return card, null if deck is empty
    */
+  @JsonIgnore
   public T nextCard() {
     try {
       return cardList.peek();
@@ -88,6 +98,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    *
    * @return card, null if deck is empty
    */
+  @JsonIgnore
   public T removeNextCard() {
     try {
       return cardList.pop();
@@ -101,6 +112,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    *
    * @return amount of remaining cards
    */
+  @JsonIgnore
   public int remainingAmount() {
     return cardList.size();
   }
@@ -113,6 +125,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
   }
 
   @Override
+  @JsonIgnore
   public boolean isEmpty() {
     return cardList.isEmpty();
   }
@@ -121,6 +134,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * Compares two deck to see if they have the same sequence of cards.
    */
   @Override
+  @JsonIgnore
   public boolean equals(Object o) {
     if (o == this) {
       return true;
@@ -149,6 +163,7 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
    * @param other a {@link java.lang.Object} object
    * @return a boolean
    */
+  @JsonIgnore
   protected boolean canEqual(final Object other) {
     return other instanceof Deck;
   }

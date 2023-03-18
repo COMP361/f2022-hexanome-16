@@ -170,7 +170,7 @@ public class GameTest {
    */
   @Test
   public void testRemoveOnBoardCard() {
-    List<ServerLevelCard> cardList = game.getLevelDeck(Level.ONE).getCardList();
+    List<ServerLevelCard> cardList = game.getOnBoardDeck(Level.ONE).getCardList();
     ServerLevelCard card = cardList.get(0);
     game.removeOnBoardCard(card);
     assertFalse(game.getOnBoardDeck(Level.ONE).getCardList().contains(card));

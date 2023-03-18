@@ -1,5 +1,6 @@
 package com.hexanome16.server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.server.models.cards.ServerLevelCard;
@@ -23,6 +24,7 @@ public class TradePost {
    * @param inventory player's inventory.
    * @return if the player can earn this trade post.
    */
+  @JsonIgnore
   public boolean canBeTakenByPlayerWith(Inventory inventory) {
     switch (routeType) {
       case ONYX_ROUTE -> {
@@ -46,6 +48,7 @@ public class TradePost {
    *
    * @return the bonus prestige points.
    */
+  @JsonIgnore
   public int getBonusPrestigePoints() {
     switch (routeType) {
       case ONYX_ROUTE -> {
