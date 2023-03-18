@@ -1,4 +1,4 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.actions;
 
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;

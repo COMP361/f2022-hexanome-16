@@ -1,10 +1,12 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.inventory;
 
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerLevelCard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,9 +109,9 @@ public class Inventory {
    * @param tradePost the trade post to be added.
    */
   public void addTradePost(TradePost tradePost) {
-    if (!tradePosts.containsKey(tradePost.routeType)) {
+    if (!tradePosts.containsKey(tradePost.getRouteType())) {
       prestigePoints += tradePost.getBonusPrestigePoints();
-      tradePosts.put(tradePost.routeType, tradePost);
+      tradePosts.put(tradePost.getRouteType(), tradePost);
     }
   }
 

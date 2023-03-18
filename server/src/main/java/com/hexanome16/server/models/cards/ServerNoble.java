@@ -1,8 +1,8 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.cards;
 
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceMap;
-import org.apache.commons.lang.NotImplementedException;
+import com.hexanome16.server.models.inventory.Inventory;
 
 /**
  * Noble class.
