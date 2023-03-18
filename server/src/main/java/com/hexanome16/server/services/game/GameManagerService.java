@@ -2,6 +2,8 @@ package com.hexanome16.server.services.game;
 
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.models.savegame.SaveGame;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Service;

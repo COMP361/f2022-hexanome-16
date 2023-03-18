@@ -29,6 +29,18 @@ public abstract class Bank implements BankInterface {
     }
   }
 
+  /**
+   * The constructor that initializes the bank with given amount of tokens to start with.
+   *
+   * @param initMap the tokens map to start with
+   */
+  protected Bank(PurchaseMap initMap) {
+    bank = new Hashtable<>(Gem.values().length);
+    for (Gem gem : Gem.values()) {
+      bank.put(gem, initMap.getGemCost(gem));
+    }
+  }
+
   @Override
   public void addGemsToBank(Gem gem, int amount) {
     bank.put(gem, bank.getOrDefault(gem, 0) + amount);

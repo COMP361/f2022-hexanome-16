@@ -2,8 +2,8 @@ package com.hexanome16.server.models.game;
 
 import static com.hexanome16.server.models.game.GameInitHelpers.createBoardMap;
 import static com.hexanome16.server.models.game.GameInitHelpers.createLevelMap;
-import static com.hexanome16.server.models.game.GameInitHelpers.createRedMap;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.Level;
@@ -16,12 +16,14 @@ import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.NonNull;
@@ -35,17 +37,26 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Getter
 @ToString
 public class Game {
+
   private static final ObjectMapper objectMapper = new ObjectMapper();
-  private final Map<Level, Deck<ServerLevelCard>> levelDecks;
-  private final Map<Level, Deck<ServerLevelCard>> redDecks;
-  private final Map<Level, Deck<ServerLevelCard>> onBoardDecks;
+
   private final long sessionId;
-  private final ServerPlayer[] players;
   private final String creator;
+  private final ServerPlayer[] players;
+
+
+  private final Map<Level, Deck<ServerLevelCard>> remainingCards;
+
+  private final Map<Level, Deck<ServerLevelCard>> onBoardDecks;
+  /**
+   * Selected nobles for this game (5 of the 10 possible).
+   */
+  Deck<ServerNoble> onBoardNobles;
+
   private final String savegame;
   private final GameBank gameBank;
-  private final WinCondition[] winConditions;
-  private final Map<String, ServerLevelCard> remainingCards;
+  private final WinCondition winCondition;
+  private final Map<String, ServerLevelCard> hashToCardMap;
   /**
    * Remaining nobles to be acquired.
    */
@@ -53,14 +64,6 @@ public class Game {
   private final Map<RouteType, TradePost> tradePosts;
   private BroadcastMap broadcastContentManagerMap;
   private int currentPlayerIndex = 0;
-  /**
-   * Deck of all possible nobles.
-   */
-  Deck<ServerNoble> nobleDeck;
-  /**
-   * Selected nobles for this game (5 of the 10 possible).
-   */
-  Deck<ServerNoble> onBoardNobles;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -69,26 +72,24 @@ public class Game {
    * @param players       a non-null list of players
    * @param creator       the creator
    * @param savegame      the savegame
-   * @param winConditions the win conditions
+   * @param winCondition  the win condition
    */
   @SneakyThrows
   Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
-       WinCondition[] winConditions, boolean isTradeRoute, boolean isCities) {
+       WinCondition winCondition) {
     this.sessionId = sessionId;
     this.players = players.clone();
     this.creator = creator;
     this.savegame = savegame;
-    this.winConditions = winConditions;
+    this.winCondition = winCondition;
     this.gameBank = new GameBank();
-    this.levelDecks = createLevelMap();
-    this.redDecks = createRedMap();
+    this.remainingCards = createLevelMap();
     this.onBoardDecks = createBoardMap();
-    this.nobleDeck = new Deck<>();
     this.onBoardNobles = new Deck<>();
-    this.remainingCards = new HashMap<>();
+    this.hashToCardMap = new HashMap<>();
     this.remainingNobles = new HashMap<>();
     this.tradePosts = new HashMap<>();
-    if (isTradeRoute) {
+    if (winCondition == WinCondition.TRADEROUTES) {
       for (RouteType route : RouteType.values()) {
         tradePosts.put(route, new TradePost(route));
       }
@@ -106,8 +107,45 @@ public class Game {
             .mapToObj(i -> new ServerPlayer(payload.getPlayers()[i].getName(),
                 payload.getPlayers()[i].getPreferredColour(), i)).toArray(ServerPlayer[]::new),
         payload.getCreator(), payload.getSavegame(),
-        new WinCondition[] {WinCondition.fromServerName(payload.getGame())},
-        payload.getGame().contains("TradeRoutes"), payload.getGame().contains("Cities"));
+        WinCondition.fromServerName(payload.getGame()));
+  }
+
+  Game(long sessionId, SaveGame saveGame) {
+    this.sessionId = sessionId;
+    this.creator = saveGame.getCreator();
+    this.players = saveGame.getPlayers();
+    this.savegame = saveGame.getId();
+    this.winCondition = WinCondition.fromServerName(saveGame.getGamename());
+    this.gameBank = new GameBank(saveGame.getBank());
+    this.remainingCards = saveGame.getRemainingDecks().entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> new Deck<>(e.getValue())));
+    this.onBoardDecks = saveGame.getOnBoardDecks().entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> new Deck<>(e.getValue())));
+    Map<Level, ServerLevelCard[]> remainingCards = saveGame.getRemainingDecks();
+    remainingCards.putAll(saveGame.getOnBoardDecks());
+    this.hashToCardMap = remainingCards.values().stream().flatMap(Arrays::stream)
+        .collect(Collectors.toMap(card -> {
+          try {
+            return DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
+          } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+          }
+        }, card -> card));
+    this.onBoardNobles = new Deck<>(saveGame.getOnBoardNobles());
+    this.remainingNobles = Arrays.stream(saveGame.getRemainingNobles())
+        .collect(Collectors.toMap(noble -> {
+          try {
+            return DigestUtils.md5Hex(objectMapper.writeValueAsString(noble));
+          } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+          }
+        }, noble -> noble));
+    this.tradePosts = new HashMap<>();
+    if (winCondition == WinCondition.TRADEROUTES) {
+      for (RouteType route : RouteType.values()) {
+        tradePosts.put(route, new TradePost(route));
+      }
+    }
   }
 
   /**
@@ -121,7 +159,21 @@ public class Game {
   public static Game create(long sessionId, SessionJson payload) {
     System.out.println(payload);
     Game game = new Game(sessionId, payload);
-    game.init();
+    game.initDecks();
+    game.initBroadcast();
+    return game;
+  }
+
+  /**
+   * Creates a new game instance from a savegame.
+   *
+   * @param sessionId session id
+   * @param saveGame the savegame
+   * @return the game
+   */
+  public static Game create(long sessionId, SaveGame saveGame) {
+    Game game = new Game(sessionId, saveGame);
+    game.initBroadcast();
     return game;
   }
 
@@ -132,26 +184,26 @@ public class Game {
    * @param players       a non-null list of players
    * @param creator       the creator
    * @param savegame      the savegame
-   * @param winConditions the win conditions
-   * @param isTradeRoute  if trade route expansion
-   * @param isCities      if cities expansion
+   * @param winCondition  the win condition
    * @return the game
    */
   @SneakyThrows
   public static Game create(long sessionId, ServerPlayer[] players, String creator, String savegame,
-                            WinCondition[] winConditions, boolean isTradeRoute, boolean isCities) {
-    Game game =
-        new Game(sessionId, players, creator, savegame, winConditions, isTradeRoute, isCities);
-    game.init();
+                            WinCondition winCondition) {
+    Game game = new Game(sessionId, players, creator, savegame, winCondition);
+    game.initDecks();
+    game.initBroadcast();
     return game;
   }
 
-  @SneakyThrows
-  private void init() {
+  private void initDecks() {
     GameInitHelpers helper = new GameInitHelpers(this);
     helper.createDecks();
     helper.createOnBoardDecks();
     helper.createOnBoardRedDecks();
+  }
+
+  private void initBroadcast() {
     this.broadcastContentManagerMap = new BroadcastMap(this);
   }
 
@@ -187,7 +239,7 @@ public class Game {
    * @return the card
    */
   public ServerLevelCard getCardByHash(String hash) {
-    return remainingCards.get(hash);
+    return hashToCardMap.get(hash);
   }
 
   /**
@@ -207,10 +259,7 @@ public class Game {
    * @return the deck
    */
   public Deck<ServerLevelCard> getLevelDeck(Level level) {
-    return switch (level) {
-      case ONE, TWO, THREE -> levelDecks.get(level);
-      case REDONE, REDTWO, REDTHREE -> redDecks.get(level);
-    };
+    return remainingCards.get(level);
   }
 
   /**
@@ -234,7 +283,7 @@ public class Game {
     ServerLevelCard card = this.getLevelDeck(level).removeNextCard();
     card.setFaceDown(false);
     this.onBoardDecks.get(level).addCard(card);
-    remainingCards.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
+    hashToCardMap.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
   }
 
   /**
