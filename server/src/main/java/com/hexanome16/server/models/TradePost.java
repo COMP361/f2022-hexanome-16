@@ -2,8 +2,11 @@ package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.inventory.Inventory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * Class for each trade post.
@@ -11,7 +14,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TradePost {
-  RouteType routeType;
+  @Getter
+  private RouteType routeType;
 
   /**
    * To determine if the trade post can be granted to the player.
