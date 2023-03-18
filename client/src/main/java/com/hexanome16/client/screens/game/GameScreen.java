@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.requests.backend.TradePostRequest;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.requests.lobbyservice.savegames.CreateSavegameRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
@@ -57,16 +59,24 @@ public class GameScreen {
   private static final Map<Integer, BackgroundService> updateTradingPosts = new HashMap<>();
   private static final Map<Integer, TradePostJson[]> tradingPosts = new HashMap<>();
   private static long sessionId = -1;
+  private static String gameServer;
+  private static final AtomicBoolean shouldFetch = new AtomicBoolean(false);
 
   private static BackgroundService createFetchLevelThread(Level level) {
     BackgroundService fetchService = new BackgroundService(
         () -> levelDecks.put(level, GameRequest.updateDeck(
             sessionId, level, levelDecks.get(level).getKey())),
         () -> {
-          Platform.runLater(() -> GameScreen.updateLevelDeck(level));
-          levelThreads.get(level).restart();
+          if (shouldFetch.get()) {
+            Platform.runLater(() -> GameScreen.updateLevelDeck(level));
+            levelThreads.get(level).restart();
+          }
         },
-        () -> levelThreads.get(level).restart()
+        () -> {
+          if (shouldFetch.get()) {
+            levelThreads.get(level).restart();
+          }
+        }
     );
     fetchService.start();
     return fetchService;
@@ -76,10 +86,16 @@ public class GameScreen {
     updateNobles = new BackgroundService(
         () -> nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey()),
         () -> {
-          Platform.runLater(GameScreen::updateNobles);
-          updateNobles.restart();
+          if (shouldFetch.get()) {
+            Platform.runLater(GameScreen::updateNobles);
+            updateNobles.restart();
+          }
         },
-        () -> updateNobles.restart()
+        () -> {
+          if (shouldFetch.get()) {
+            updateNobles.restart();
+          }
+        }
     );
     updateNobles.start();
   }
@@ -88,29 +104,35 @@ public class GameScreen {
     updateCurrentPlayer = new BackgroundService(
         () -> playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey()),
         () -> {
-          Platform.runLater(() -> {
-            PlayerListJson playerListJson = playersJson.getValue();
-            if (playerListJson == null) {
-              return;
-            }
-            PlayerJson[] players = playersJson.getValue().getPlayers();
-            Optional<PlayerJson> current = Arrays.stream(players)
-                .filter(PlayerJson::isCurrent).findFirst();
-            if (current.isPresent()) {
-              Arrays.stream(players).forEach(playerJson -> {
-                usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
-              });
-              currentPlayer = current.get().getUsername();
-              UpdateGameInfo.fetchGameBank(getSessionId());
-              UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
-              UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
-              PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
-                  PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
-            }
-          });
-          updateCurrentPlayer.restart();
+          if (shouldFetch.get()) {
+            Platform.runLater(() -> {
+              PlayerListJson playerListJson = playersJson.getValue();
+              if (playerListJson == null) {
+                return;
+              }
+              PlayerJson[] players = playersJson.getValue().getPlayers();
+              Optional<PlayerJson> current = Arrays.stream(players)
+                  .filter(PlayerJson::isCurrent).findFirst();
+              if (current.isPresent()) {
+                Arrays.stream(players).forEach(playerJson -> {
+                  usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
+                });
+                currentPlayer = current.get().getUsername();
+                UpdateGameInfo.fetchGameBank(getSessionId());
+                UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
+                UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+                PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
+                    PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
+              }
+            });
+            updateCurrentPlayer.restart();
+          }
         },
-        () -> updateCurrentPlayer.restart()
+        () -> {
+          if (shouldFetch.get()) {
+            updateCurrentPlayer.restart();
+          }
+        }
     );
     updateCurrentPlayer.start();
   }
@@ -121,21 +143,28 @@ public class GameScreen {
         () -> tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
             usernamesMap.get(index).getUsername())),
         () -> {
-          Platform.runLater(() -> {
-            for (TradePostJson tradePost : tradingPosts.get(index)) {
-              switch (tradePost.getRouteType()) {
-                case ONYX_ROUTE -> {
-                  FXGL.spawn(colors[index] + "Marker");
-                }
-                default -> {
-                  //todo add other routes
+          if (shouldFetch.get()) {
+            Platform.runLater(() -> {
+              for (TradePostJson tradePost :
+                  tradingPosts.getOrDefault(index, new TradePostJson[0])) {
+                switch (tradePost.getRouteType()) {
+                  case ONYX_ROUTE -> {
+                    FXGL.spawn(colors[index] + "Marker");
+                  }
+                  default -> {
+                    //todo add other routes
+                  }
                 }
               }
-            }
-          });
-          updateTradingPosts.get(index).restart();
+            });
+            updateTradingPosts.get(index).restart();
+          }
         },
-        () -> updateTradingPosts.get(index).restart()
+        () -> {
+          if (shouldFetch.get()) {
+            updateTradingPosts.get(index).restart();
+          }
+        }
     );
     fetchService.start();
     return fetchService;
@@ -154,6 +183,7 @@ public class GameScreen {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+    shouldFetch.set(true);
     initializeBankGameVars(id);
 
     sessionId = id;
@@ -170,9 +200,9 @@ public class GameScreen {
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
-    String name =
+    gameServer =
         SessionDetailsRequest.execute(sessionId, "").getValue().getGameParameters().getName();
-    if (name.contains("TradeRoutes")) {
+    if (gameServer.contains("TradeRoutes")) {
       FXGL.spawn("TradeRoutes");
     }
     for (Level level : Level.values()) {
@@ -292,9 +322,19 @@ public class GameScreen {
   }
 
   /**
+   * Saves this game in Lobby Service.
+   */
+  public static void saveGame() {
+    CreateSavegameRequest.execute(gameServer, usernamesMap.entrySet().stream().sorted(
+        Comparator.comparingInt(Map.Entry::getKey)).map(e -> e.getValue().getUsername()).toArray(
+        String[]::new), sessionId);
+  }
+
+  /**
    * Resets every component and clears the game board when exit the game.
    */
   public static void exitGame() {
+    shouldFetch.set(false);
     for (Level level : Level.values()) {
       levelCards.get(level).clear();
       levelThreads.get(level).cancel();

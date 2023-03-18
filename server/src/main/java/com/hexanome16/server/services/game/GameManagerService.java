@@ -25,11 +25,6 @@ public class GameManagerService implements GameManagerServiceInterface {
     try {
       Game game = Game.create(sessionId, payload);
       gameMap.put(sessionId, game);
-      // TODO: remove this after testing
-      if (Arrays.stream(game.getPlayers())
-          .noneMatch(player -> player.getName().equals("tristan"))) {
-        SaveGame.saveGame(game);
-      }
     } catch (Exception e) {
       // Returns to lobby service,
       // not client so there's nothing we can't do anything to notify client

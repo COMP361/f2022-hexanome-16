@@ -206,11 +206,8 @@ public class RequestClient {
                 }
               }
               case HTTP_NOT_FOUND -> {
-                Headers headers = new Headers();
-                headers.add(CustomHttpResponses.INVALID_SESSION_ID.getHeaders().entrySet().stream()
-                    .collect(Collectors.toMap(
-                        Map.Entry::getKey, entry -> entry.getValue().get(0))));
-                res.set(new Pair<>(headers, CustomHttpResponses.INVALID_SESSION_ID.getBody()));
+                res.set(new Pair<>(e.getHeaders(),
+                    CustomHttpResponses.INVALID_SESSION_ID.getBody()));
               }
               default -> res.set(new Pair<>(e.getHeaders(), e.getBody()));
             }
