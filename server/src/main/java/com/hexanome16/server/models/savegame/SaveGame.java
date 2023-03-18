@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 public class SaveGame {
   private String gamename;
   private String id;
+  private String currentPlayer;
   private String[] usernames;
   private String creator;
   private Map<Level, ServerLevelCard[]> onBoardDecks;

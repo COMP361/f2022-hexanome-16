@@ -26,7 +26,7 @@ public class CreateSavegameRequest {
    */
   public static void execute(String gamename, String[] usernames, long sessionId) {
     String savegameId = UUID.randomUUID().toString();
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+    RequestClient.sendRequestString(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/gameservices/" + gamename + "/savegames/" + savegameId,
         Map.of("access_token", AuthUtils.getAuth().getAccessToken(), "sessionId", sessionId),
         new SaveGameJson(savegameId, gamename, usernames), Void.class));

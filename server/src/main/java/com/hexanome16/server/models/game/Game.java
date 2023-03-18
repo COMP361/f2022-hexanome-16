@@ -63,7 +63,7 @@ public class Game {
   private final Map<String, ServerNoble> remainingNobles;
   private final Map<RouteType, TradePost> tradePosts;
   private BroadcastMap broadcastContentManagerMap;
-  private int currentPlayerIndex = 0;
+  private int currentPlayerIndex;
 
   /**
    * Game constructor, create a new with a unique session id.
@@ -79,6 +79,7 @@ public class Game {
        WinCondition winCondition) {
     this.sessionId = sessionId;
     this.players = players.clone();
+    this.currentPlayerIndex = 0;
     this.creator = creator;
     this.savegame = savegame;
     this.winCondition = winCondition;
@@ -114,6 +115,9 @@ public class Game {
     this.sessionId = sessionId;
     this.creator = saveGame.getCreator();
     this.players = saveGame.getPlayers();
+    this.currentPlayerIndex = Arrays.stream(saveGame.getPlayers())
+        .filter(player -> player.getName().equals(saveGame.getCurrentPlayer()))
+        .findFirst().orElseThrow().getPlayerOrder();
     this.savegame = saveGame.getId();
     this.winCondition = WinCondition.fromServerName(saveGame.getGamename());
     this.gameBank = new GameBank(saveGame.getBank());
@@ -173,6 +177,7 @@ public class Game {
   public static Game create(long sessionId, SaveGame saveGame) {
     Game game = new Game(sessionId, saveGame);
     game.initBroadcast();
+    System.out.println(Arrays.toString(game.getPlayers()));
     return game;
   }
 
