@@ -8,6 +8,7 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.SavegameServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.UrlUtils;
@@ -42,6 +43,7 @@ public class SavegameController {
   private final AuthServiceInterface authService;
   private final ServiceUtils serviceUtils;
   private final GameManagerServiceInterface gameManagerService;
+  private final SavegameServiceInterface savegameService;
   private final UrlUtils urlUtils;
 
   @Value("${gs.username}")
@@ -55,18 +57,21 @@ public class SavegameController {
    * @param restTemplateBuilder The RestTemplateBuilder.
    * @param authService         The AuthService.
    * @param gameManagerService  The GameManagerService.
+   * @param savegameService     The SavegameService.
    * @param serviceUtils        The ServiceUtils.
    * @param urlUtils            The UrlUtils.
    */
   public SavegameController(@Autowired RestTemplateBuilder restTemplateBuilder,
                             @Autowired AuthServiceInterface authService,
                             @Autowired GameManagerServiceInterface gameManagerService,
+                            @Autowired SavegameServiceInterface savegameService,
                             @Autowired ServiceUtils serviceUtils,
                             @Autowired UrlUtils urlUtils) {
     this.restTemplate = restTemplateBuilder.build();
     this.urlUtils = urlUtils;
     this.authService = authService;
     this.serviceUtils = serviceUtils;
+    this.savegameService = savegameService;
     this.gameManagerService = gameManagerService;
   }
 
@@ -94,6 +99,8 @@ public class SavegameController {
 
   /**
    * This method creates a savegame in Lobby Service.
+   * This is essentially a proxy for the Lobby Service endpoint, which is unfortunately
+   * required since LS expects a service token and not a user token.
    *
    * @param gamename     The name of the game server.
    * @param savegameId   The id of the savegame.
@@ -126,7 +133,7 @@ public class SavegameController {
     HttpEntity<SaveGameJson> entity = new HttpEntity<>(saveGameJson, headers);
     try {
       restTemplate.put(url, entity);
-      SaveGame.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)), savegameId);
+      savegameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)), savegameId);
     } catch (Exception e) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }

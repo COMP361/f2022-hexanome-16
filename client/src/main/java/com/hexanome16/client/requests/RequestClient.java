@@ -121,10 +121,10 @@ public class RequestClient {
             .ifFailure(e -> {
               switch (e.getStatus()) {
                 case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
-                  if (AuthUtils.getAuth() != null && req.getQueryParams() != null
-                      && req.getQueryParams().containsKey("access_token")) {
+                  if (AuthUtils.getAuth() != null && req.getQueryParams() != null) {
                     TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-                    Map<String, Object> queryParams = new HashMap<>(req.getQueryParams());
+                    Map<String, Object> queryParams =
+                        new HashMap<>(Map.copyOf(req.getQueryParams()));
                     queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
                     req.setQueryParams(queryParams);
                     res.set(longPollString(req));

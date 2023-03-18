@@ -5,6 +5,7 @@ import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class LevelCard {
   protected Level level;
   protected CardInfo cardInfo;
