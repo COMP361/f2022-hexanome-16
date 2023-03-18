@@ -9,7 +9,7 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import com.hexanome16.common.models.auth.TokensInfo;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;

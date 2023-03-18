@@ -1,7 +1,7 @@
 package com.hexanome16.server.services.game;
 
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 
 /**
  * Interface for managing games.
