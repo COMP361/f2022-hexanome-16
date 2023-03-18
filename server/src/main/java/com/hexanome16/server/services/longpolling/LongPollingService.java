@@ -2,7 +2,7 @@ package com.hexanome16.server.services.longpolling;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;

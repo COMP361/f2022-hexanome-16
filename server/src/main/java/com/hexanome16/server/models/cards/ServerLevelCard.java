@@ -1,9 +1,11 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.cards;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.inventory.Inventory;
+import com.hexanome16.server.models.inventory.InventoryAddable;
 import lombok.Getter;
 
 /**

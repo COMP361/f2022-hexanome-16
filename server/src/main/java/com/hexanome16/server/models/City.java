@@ -2,6 +2,8 @@ package com.hexanome16.server.models;
 
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.server.models.cards.Visitable;
+import com.hexanome16.server.models.inventory.Inventory;
 import lombok.Getter;
 import org.apache.commons.lang.NotImplementedException;
 

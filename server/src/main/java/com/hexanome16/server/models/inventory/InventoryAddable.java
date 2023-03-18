@@ -1,4 +1,4 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.inventory;
 
 import com.hexanome16.common.models.CardInfo;
 

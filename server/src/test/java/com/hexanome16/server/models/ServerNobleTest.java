@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.inventory.Inventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
