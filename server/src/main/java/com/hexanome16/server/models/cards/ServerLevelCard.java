@@ -1,17 +1,21 @@
 package com.hexanome16.server.models.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Card instead of noble.
  */
-@Getter
+@Data
+@NoArgsConstructor
 public class ServerLevelCard extends LevelCard implements InventoryAddable, Reservable {
 
   /**
@@ -45,11 +49,13 @@ public class ServerLevelCard extends LevelCard implements InventoryAddable, Rese
     super(level, id, prestigePoint, texturePath, price, bonusType, gemBonus);
   }
 
+  @JsonIgnore
   @Override
   public boolean addToInventory(Inventory inventory) {
     return inventory.acquireCard(this);
   }
 
+  @JsonIgnore
   @Override
   public boolean reserveCard(Inventory inventory) {
     return inventory.reserveCard(this);
