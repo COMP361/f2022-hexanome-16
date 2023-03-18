@@ -179,11 +179,11 @@ public class GameScreen {
   public static void initGame(long id) {
     // This is a hack to make sure that the game on server is initialized before we try to fetch
     try {
+      shouldFetch.set(true);
       Thread.sleep(500);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    shouldFetch.set(true);
     initializeBankGameVars(id);
 
     sessionId = id;
@@ -211,20 +211,18 @@ public class GameScreen {
       levelThreads.put(level, createFetchLevelThread(level));
     }
 
-    if (updateNobles == null) {
-      nobleJson = new Pair<>("", new NobleDeckJson());
-      fetchNoblesThread();
-    }
+    nobleJson = new Pair<>("", new NobleDeckJson());
+    fetchNoblesThread();
     UpdateGameInfo.initPlayerTurn();
+
     String[] usernames = FXGL.getWorldProperties().getValue("players");
     currentPlayer = usernames[0];
     PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
         i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
     ).toArray(PlayerJson[]::new);
-    if (updateCurrentPlayer == null) {
-      playersJson = new Pair<>("", new PlayerListJson(players));
-      fetchPlayersThread();
-    }
+    playersJson = new Pair<>("", new PlayerListJson(players));
+    fetchPlayersThread();
+
     for (int i = 0; i < usernames.length; i++) {
       usernamesMap.put(i, players[i]);
       tradingPosts.put(i, new TradePostJson[0]);

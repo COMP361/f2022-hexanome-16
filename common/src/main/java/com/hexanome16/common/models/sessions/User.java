@@ -1,5 +1,6 @@
 package com.hexanome16.common.models.sessions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,5 @@ public class User {
   private String name;
   private String password;
   private String role;
-  @Setter
   private String preferredColour;
 }

@@ -3,10 +3,16 @@ package com.hexanome16.server.models.cards;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.inventory.Inventory;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * Noble class.
  */
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ServerNoble extends Noble implements Reservable, Visitable {
 
   /**

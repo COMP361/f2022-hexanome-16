@@ -45,9 +45,7 @@ public class TokensControllerTests {
     tokenService = Mockito.mock(TokenService.class);
     tokensController =
         new TokensController(tokenService);
-    payload.setPlayers(new ServerPlayer[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
+    payload.setPlayers(DummyAuths.validPlayerList.toArray(ServerPlayer[]::new));
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setGame(WinCondition.BASE.getGameServiceJson().getName());
