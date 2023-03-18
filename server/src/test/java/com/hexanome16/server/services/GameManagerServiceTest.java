@@ -12,17 +12,23 @@ import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.game.SavegameService;
+import com.hexanome16.server.services.game.SavegameServiceInterface;
 import java.lang.reflect.Field;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 class GameManagerServiceTest {
   private GameManagerService gameManagerService;
+  private SavegameServiceInterface savegameServiceInterface;
 
   @BeforeEach
   void setUp() {
-    gameManagerService = new GameManagerService();
+    savegameServiceInterface = Mockito.mock(SavegameService.class);
+    gameManagerService = new GameManagerService(savegameServiceInterface);
   }
 
   /**

@@ -6,6 +6,7 @@ import com.hexanome16.server.models.savegame.SaveGame;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +15,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameManagerService implements GameManagerServiceInterface {
   private final Map<Long, Game> gameMap = new HashMap<>();
+  private final SavegameServiceInterface savegameService;
+
+  /**
+   * Constructor.
+   *
+   * @param savegameService the savegame service
+   */
+  public GameManagerService(@Autowired SavegameServiceInterface savegameService) {
+    this.savegameService = savegameService;
+  }
 
   @Override
   public Game getGame(long sessionId) {
@@ -23,7 +34,12 @@ public class GameManagerService implements GameManagerServiceInterface {
   @Override
   public String createGame(long sessionId, SessionJson payload) {
     try {
-      Game game = Game.create(sessionId, payload);
+      Game game;
+      if (payload.getSavegame() == null || payload.getSavegame().isBlank()) {
+        game = Game.create(sessionId, payload);
+      } else {
+        game = Game.create(sessionId, savegameService.loadGame(payload.getSavegame()));
+      }
       gameMap.put(sessionId, game);
     } catch (Exception e) {
       // Returns to lobby service,

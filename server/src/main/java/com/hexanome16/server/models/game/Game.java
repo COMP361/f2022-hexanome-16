@@ -157,7 +157,6 @@ public class Game {
    */
   @SneakyThrows
   public static Game create(long sessionId, SessionJson payload) {
-    System.out.println(payload);
     Game game = new Game(sessionId, payload);
     game.initDecks();
     game.initBroadcast();
