@@ -14,7 +14,6 @@ public interface Action {
    *
    * @return Information needed for action to perform.
    */
-  @JsonIgnore
   ResponseEntity<String> getActionDetails();
 
   /**
@@ -22,6 +21,5 @@ public interface Action {
    *
    * @return the action type
    */
-  @JsonIgnore
   CustomHttpResponses.ActionType getActionType();
 }
