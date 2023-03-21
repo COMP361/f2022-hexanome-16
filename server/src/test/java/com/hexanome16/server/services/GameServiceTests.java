@@ -10,24 +10,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.models.Deck;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.ServerLevelCard;
-import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.util.ServiceUtils;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -53,7 +47,7 @@ class GameServiceTests {
 
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, false, false);
+            WinCondition.BASE);
     gameManagerMock = Mockito.mock(GameManagerService.class);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
     when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
@@ -117,7 +111,7 @@ class GameServiceTests {
 
     Game validGame = Game.create(123L,
         PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(),
-        "", new WinCondition[]{WinCondition.BASE}, false, false);
+        "", WinCondition.BASE);
     when(gameManagerMock.getGame(validSessionId)).thenReturn(validGame);
 
     // Act

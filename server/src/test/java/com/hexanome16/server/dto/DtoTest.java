@@ -7,8 +7,8 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.DevelopmentCardJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
@@ -20,15 +20,15 @@ import org.junit.jupiter.api.Test;
 public class DtoTest {
 
   private final Game game =
-      Game.create(12345, new ServerPlayer[] {}, "", "", new WinCondition[] {WinCondition.BASE},
-          false, false);
+      Game.create(12345, new ServerPlayer[] {}, "", "", WinCondition.BASE);
 
   private final DeckJson deckJson = new DeckJson(game.getLevelDeck(Level.ONE).getCardList(),
       Level.ONE);
 
-  private final NobleDeckJson nobleDeckJson = new NobleDeckJson(game.getNobleDeck().getCardList());
+  private final NobleDeckJson nobleDeckJson = new NobleDeckJson(
+      game.getOnBoardNobles().getCardList());
 
-  private final PlayerJson playerJson = new PlayerJson("player", true, 10);
+  private final PlayerJson playerJson = new PlayerJson("player", true, 10, 0);
 
   /**
    * Instantiates a new Dto test.

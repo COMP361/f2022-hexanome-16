@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import com.hexanome16.server.models.game.Game;
 import java.util.List;
 import org.mockito.Mockito;
 

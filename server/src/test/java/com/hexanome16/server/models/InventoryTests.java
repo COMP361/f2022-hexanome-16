@@ -6,12 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.inventory.Inventory;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -117,6 +121,23 @@ public class InventoryTests {
     noble = new ServerNoble(0, 3, "noble0.png", priceMap);
     inventory.acquireNoble(noble);
     assertTrue(inventory.getOwnedNobles().contains(noble));
+  }
+
+  @Test
+  void acquireNobleShouldAddNoblePrestigePoints() {
+    // Arrange
+    ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+    PriceMap priceMap = new PriceMap(0, 0, 0, 0, 1);
+    int pointsToAdd = 2;
+    CardInfo info = new CardInfo(1, pointsToAdd, "boo", priceMap);
+    when(mockNoble.getCardInfo()).thenReturn(info);
+    int current = inventory.getPrestigePoints();
+    // Act
+    inventory.acquireNoble(mockNoble);
+
+
+    // Assert
+    assertEquals(current + pointsToAdd, inventory.getPrestigePoints());
   }
 
   /**

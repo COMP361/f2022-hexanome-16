@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.DummyGameManagerService;
@@ -35,7 +35,7 @@ public class ServiceUtilsTests {
     gameManagerServiceInterface = DummyGameManagerService.getDummyGameManagerService();
     validMockGame =
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
-            new WinCondition[] {WinCondition.BASE}, true, false);
+            WinCondition.BASE);
     serviceUtils = new ServiceUtils(gameManagerServiceInterface,
         new DummyAuthService());
   }

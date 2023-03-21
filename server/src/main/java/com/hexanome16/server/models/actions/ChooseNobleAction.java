@@ -1,4 +1,4 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.actions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
