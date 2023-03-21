@@ -27,6 +27,7 @@ public class LobbyScreen {
     spawn("ownHeader");
     spawn("otherHeader");
     spawn("gameServiceList");
+    spawn("savegameCheckbox");
   }
 
   /**
@@ -52,6 +53,10 @@ public class LobbyScreen {
     getGameWorld().getEntitiesByType(EntityType.OTHER_HEADER)
         .forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(EntityType.GAME_SERVICE_LIST)
+        .forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.SAVEGAME_CHECKBOX)
+        .forEach(Entity::removeFromWorld);
+    getGameWorld().getEntitiesByType(EntityType.SAVEGAMES_LIST)
         .forEach(Entity::removeFromWorld);
   }
 }

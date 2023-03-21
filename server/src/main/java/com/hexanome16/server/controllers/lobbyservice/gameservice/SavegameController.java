@@ -76,28 +76,6 @@ public class SavegameController {
   }
 
   /**
-   * This method gets a specific savegame (used for game creation).
-   *
-   * @param gamename   The name of the game server.
-   * @param savegameId The id of the savegame.
-   * @return the savegame json as string
-   */
-  @GetMapping("/gameservices/{gamename}/savegames/{savegameId}")
-  public ResponseEntity<String> getSavegame(@PathVariable String gamename,
-                                            @PathVariable String savegameId) {
-    ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
-    URI url = urlUtils.createLobbyServiceUri(
-        "/api/gameservices/" + gamename + "/savegames/" + savegameId,
-        "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
-    assert url != null;
-    try {
-      return restTemplate.getForEntity(url, String.class);
-    } catch (Exception e) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-    }
-  }
-
-  /**
    * This method creates a savegame in Lobby Service.
    * This is essentially a proxy for the Lobby Service endpoint, which is unfortunately
    * required since LS expects a service token and not a user token.
@@ -145,20 +123,11 @@ public class SavegameController {
    *
    * @param gamename    The name of the game server.
    * @param savegameId  The id of the savegame.
-   * @param accessToken The access token of the player.
-   * @param sessionId   The session id (used for player verification).
    * @return status response
    */
   @DeleteMapping("/gameservices/{gamename}/savegames/{savegameId}")
   public ResponseEntity<String> deleteSavegame(@PathVariable String gamename,
-                                               @PathVariable String savegameId,
-                                               @RequestParam String accessToken,
-                                               @RequestParam String sessionId) {
-    Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> verifiedPlayer =
-        serviceUtils.validRequest(Long.parseLong(sessionId), accessToken);
-    if (verifiedPlayer.getLeft().getStatusCodeValue() != 200) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
+                                               @PathVariable String savegameId) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     URI url = urlUtils.createLobbyServiceUri(
         "/api/gameservices/" + gamename + "/savegames/" + savegameId,

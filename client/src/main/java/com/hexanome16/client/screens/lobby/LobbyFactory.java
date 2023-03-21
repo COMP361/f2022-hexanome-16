@@ -2,24 +2,16 @@ package com.hexanome16.client.screens.lobby;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
-import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
-import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
-import com.hexanome16.client.requests.lobbyservice.savegames.GetSavegamesRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
-import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
-import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;
-import com.hexanome16.client.requests.lobbyservice.sessions.LaunchSessionRequest;
-import com.hexanome16.client.requests.lobbyservice.sessions.LeaveSessionRequest;
-import com.hexanome16.client.requests.lobbyservice.sessions.ListSessionsRequest;
-import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.utils.AuthUtils;
@@ -27,29 +19,23 @@ import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.models.sessions.Session;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import javafx.util.Pair;
 
 /**
  * This class is used to create the entities of the lobby screen.
@@ -67,12 +53,12 @@ public class LobbyFactory implements EntityFactory {
       new AtomicReference<>(new GameServiceJson[0]);
   static final AtomicReference<BackgroundService> fetchGameServersService
       = new AtomicReference<>(null);
-  static final AtomicReference<String> selectedGameService = new AtomicReference<>("");
+  static final AtomicReference<GameServiceJson> selectedGameService = new AtomicReference<>(null);
   static ComboBox<GameServiceJson> gameServiceDropdown;
+  static CheckBox saveGameCheckbox;
   static final AtomicReference<SaveGameJson[]> saveGames =
       new AtomicReference<>(new SaveGameJson[0]);
-  static final AtomicReference<BackgroundService> fetchSaveGamesService =
-      new AtomicReference<>(null);
+  static TableView<SaveGameJson> saveGameList;
 
   /**
    * This method adds the table with sessions where the user is playing to the lobby screen.
@@ -104,7 +90,7 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("createSessionButton")
   public Entity createSessionButton(SpawnData data) {
-    Button button = new Button("Create Session");
+    Button button = new Button("Create New Session");
     button.setFont(CURSIVE_FONT_FACTORY.newFont(45));
     button.setTextFill(Config.SECONDARY_COLOR);
     button.setStyle("-fx-background-color: #6495ed;" + "-fx-padding: 10px");
@@ -114,7 +100,7 @@ public class LobbyFactory implements EntityFactory {
       Long sessionId = CreateSessionRequest.execute(
           AuthUtils.getAuth().getAccessToken(),
           AuthUtils.getPlayer().getName(),
-          selectedGameService.get(),
+          selectedGameService.get().getName(),
           ""
       );
       System.out.println("Created session with id: " + sessionId);
@@ -122,7 +108,7 @@ public class LobbyFactory implements EntityFactory {
     return entityBuilder(data)
         .type(EntityType.CREATE_SESSION_BUTTON)
         .viewWithBBox(button)
-        .at(750 - 15, 200 - 12)
+        .at(500, 188)
         .build();
   }
 
@@ -135,7 +121,7 @@ public class LobbyFactory implements EntityFactory {
   @Spawns("gameServiceList")
   public Entity gameServiceList(SpawnData data) {
     gameServiceDropdown = new ComboBox<>();
-    gameServiceDropdown.setPrefSize(250, 60);
+    gameServiceDropdown.setPrefSize(300, 60);
     gameServiceDropdown.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7; "
         + "-fx-border-color: #CFFBE7; -fx-font-size: 24px;");
     Callback<ListView<GameServiceJson>, ListCell<GameServiceJson>> cellFactory = new Callback<>() {
@@ -158,13 +144,20 @@ public class LobbyFactory implements EntityFactory {
     gameServiceDropdown.setOnAction(event -> {
       GameServiceJson selected = gameServiceDropdown.getSelectionModel().getSelectedItem();
       if (selected != null) {
-        selectedGameService.set(selected.getName());
+        selectedGameService.set(selected);
+        gameServiceDropdown.setPromptText(selected.getDisplayName());
+        LobbyHelpers.updateSessionList();
+        LobbyHelpers.updateSavegamesList(selected.getName());
       }
     });
+    gameServiceDropdown.setPromptText("Select a game service");
+    if (selectedGameService.get() != null) {
+      gameServiceDropdown.getSelectionModel().select(selectedGameService.get());
+    }
     return entityBuilder(data)
         .type(EntityType.GAME_SERVICE_LIST)
         .viewWithBBox(gameServiceDropdown)
-        .at(950, 200)
+        .at(810, 200)
         .build();
   }
 
@@ -200,7 +193,8 @@ public class LobbyFactory implements EntityFactory {
    */
   @Spawns("otherHeader")
   public Entity otherHeader(SpawnData data) {
-    Text otherSessions = new Text("Other Sessions");
+    Text otherSessions = new Text(saveGameCheckbox != null && saveGameCheckbox.isSelected()
+        ? "Saved Games" : "Other Sessions");
     otherSessions.setFont(CURSIVE_FONT_FACTORY.newFont(300));
     otherSessions.setFill(Paint.valueOf("#FCD828"));
     otherSessions.setStrokeWidth(2.);
@@ -210,7 +204,7 @@ public class LobbyFactory implements EntityFactory {
     return entityBuilder(data)
         .type(EntityType.OTHER_HEADER)
         .viewWithBBox(otherSessions)
-        .at(880 - 20, 400 + getAppHeight() / 4.0 + 20)
+        .at(860, 420 + getAppHeight() / 4.0)
         .build();
   }
 
@@ -298,5 +292,50 @@ public class LobbyFactory implements EntityFactory {
         .viewWithBBox(new Rectangle(1920, 1080, Config.PRIMARY_COLOR))
         .at(0, 0)
         .build();
+  }
+
+  /**
+   * Adds a checkbox to the lobby screen that shows saved games (used for session creation).
+   *
+   * @param data The data of the entity.
+   * @return Checkbox to show saved games.
+   */
+  @Spawns("savegameCheckbox")
+  public Entity savegamesCheckbox(SpawnData data) {
+    saveGameCheckbox = new CheckBox("Show saved games");
+    saveGameCheckbox.setFont(CURSIVE_FONT_FACTORY.newFont(40));
+    saveGameCheckbox.setTextFill(Color.WHITE);
+    saveGameCheckbox.setStyle("-fx-background-color: transparent;");
+    saveGameCheckbox.setSelected(false);
+    saveGameCheckbox.setOnAction(event -> {
+      getGameWorld().getEntitiesByType(EntityType.OTHER_HEADER)
+          .forEach(Entity::removeFromWorld);
+      spawn("otherHeader");
+      if (saveGameCheckbox.isSelected()) {
+        getGameWorld().getEntitiesByType(EntityType.OTHER_SESSION_LIST)
+            .forEach(Entity::removeFromWorld);
+        spawn("savegamesList");
+      } else {
+        getGameWorld().getEntitiesByType(EntityType.SAVEGAMES_LIST)
+            .forEach(Entity::removeFromWorld);
+        spawn("otherSessionList");
+      }
+    });
+    return entityBuilder(data)
+        .type(EntityType.SAVEGAME_CHECKBOX)
+        .viewWithBBox(saveGameCheckbox)
+        .at(1150, 200)
+        .build();
+  }
+
+  /**
+   * The savegame table.
+   *
+   * @param data The data of the entity.
+   * @return Table of saved games.
+   */
+  @Spawns("savegamesList")
+  public Entity savegamesList(SpawnData data) {
+    return LobbyHelpers.saveGameList(data);
   }
 }
