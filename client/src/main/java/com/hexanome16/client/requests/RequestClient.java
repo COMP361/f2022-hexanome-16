@@ -200,8 +200,10 @@ public class RequestClient {
                 if (AuthUtils.getAuth() != null && request.getQueryParams() != null
                     && request.getQueryParams().containsKey("access_token")) {
                   TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
-                  request.getQueryParams()
-                      .put("access_token", AuthUtils.getAuth().getAccessToken());
+                  Map<String, Object> queryParams =
+                      new HashMap<>(Map.copyOf(request.getQueryParams()));
+                  queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
+                  request.setQueryParams(queryParams);
                   res.set(sendRequestHeadersString(request));
                 }
               }
