@@ -14,6 +14,9 @@ public class LobbyScreen {
    * Spawns all related elements onto the lobby screen.
    */
   public static void initLobby() {
+    LobbyFactory.shouldFetch.set(true);
+    LobbyHelpers.createFetchSessionThread();
+    LobbyHelpers.createFetchGameServicesThread();
     spawn("background");
     spawn("ownSessionList");
     spawn("otherSessionList");
@@ -30,6 +33,9 @@ public class LobbyScreen {
    * Removes all related elements from the lobby screen.
    */
   public static void exitLobby() {
+    LobbyFactory.shouldFetch.set(false);
+    LobbyFactory.fetchGameServersService.get().cancel();
+    LobbyFactory.fetchSessionsService.get().cancel();
     getGameWorld().getEntitiesByType(EntityType.BACKGROUND).forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(EntityType.OWN_SESSION_LIST)
         .forEach(Entity::removeFromWorld);
