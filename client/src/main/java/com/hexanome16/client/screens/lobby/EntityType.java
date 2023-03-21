@@ -44,4 +44,12 @@ public enum EntityType {
    * Game service list.
    */
   GAME_SERVICE_LIST,
+  /**
+   * Checkbox for creating a game from savegame.
+   */
+  SAVEGAME_CHECKBOX,
+  /**
+   * List of savegames.
+   */
+  SAVEGAMES_LIST
 }
