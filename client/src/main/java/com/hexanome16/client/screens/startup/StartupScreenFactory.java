@@ -16,6 +16,7 @@ import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.client.utils.UiUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
@@ -76,7 +77,7 @@ public class StartupScreenFactory implements EntityFactory {
   public Entity text(SpawnData data) {
     String text =
         (String) data.getData().getOrDefault("message", "Click diamond to enter the game!");
-    Text message = createMessage(text, 115, "#FCD828");
+    Text message = UiUtils.createMessage(text, 115, "#FCD828");
     animateMessage(message, 1500);
     return FXGL.entityBuilder(data)
         .view(message)
@@ -109,7 +110,7 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("login")
   public Entity login(SpawnData data) {
-    Text message = createMessage("Login", 96, "#FCD828");
+    Text message = UiUtils.createMessage("Login", 96, "#FCD828");
     animateLoginElement(message, 1000);
     return FXGL.entityBuilder(data)
         .view(message)
@@ -125,7 +126,7 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("userText")
   public Entity userText(SpawnData data) {
-    Text user = createMessage("Username", 45, "#000000");
+    Text user = UiUtils.createMessage("Username", 45, "#000000");
     user.setStrokeWidth(1);
     animateLoginElement(user, 1000);
     return FXGL.entityBuilder(data)
@@ -142,7 +143,7 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("passwordText")
   public Entity passwordText(SpawnData data) {
-    Text password = createMessage("Password", 45, "#000000");
+    Text password = UiUtils.createMessage("Password", 45, "#000000");
     password.setStrokeWidth(1);
     animateLoginElement(password, 1000);
     return FXGL.entityBuilder(data)
@@ -205,7 +206,7 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("loginButton")
   public Entity loginButton(SpawnData data) {
-    FXGLButton button = createButton("Login");
+    FXGLButton button = UiUtils.createButton("Login");
     button.setOnMouseClicked(e -> {
       getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
       AuthRequest.execute(username, password);
@@ -232,7 +233,7 @@ public class StartupScreenFactory implements EntityFactory {
    */
   @Spawns("cancelButton")
   public Entity cancelButton(SpawnData data) {
-    FXGLButton button = createButton("Cancel");
+    FXGLButton button = UiUtils.createButton("Cancel");
     button.setOpacity(0.85);
     button.setOnMouseClicked(e -> StartupScreen.backToStartupScreen());
     animateLoginElement(button, 1000);
@@ -270,35 +271,6 @@ public class StartupScreenFactory implements EntityFactory {
     loginScreen.setFill(Paint.valueOf("#936D35"));
     loginScreen.setOpacity(0.2);
     return loginScreen;
-  }
-
-  private Text createMessage(String text, double size, String color) {
-    Text message = new Text(text);
-    message.setFont(CURSIVE_FONT_FACTORY.newFont(size));
-    message.setFill(Paint.valueOf(color));
-    message.setStrokeWidth(2.);
-    message.setStroke(Paint.valueOf("#936D35"));
-    message.setStyle("-fx-background-color: ffffff00; ");
-    return message;
-  }
-
-  private FXGLButton createButton(String message) {
-    FXGLButton button = new FXGLButton(message);
-    button.setOnMouseClicked(e -> MainMenuScreen.initUi());
-    // TODO: set background colour to a better looking one
-    button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #000000;"
-        + "-fx-background-radius: 25px;"
-        + "-fx-text-fill: #fff;"));
-    button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #603232;"
-        + "-fx-background-radius: 25px;"
-        + "-fx-text-fill: #fff;"));
-    button.setFont(CURSIVE_FONT_FACTORY.newFont(30));
-    button.setPrefSize(130, 50);
-    button.setStyle("-fx-background-color: #603232;"
-        + "-fx-background-radius: 25px;"
-        + "-fx-text-fill: #fff;");
-    button.setOpacity(0.95);
-    return button;
   }
 
   private FXGLButton createButton() {

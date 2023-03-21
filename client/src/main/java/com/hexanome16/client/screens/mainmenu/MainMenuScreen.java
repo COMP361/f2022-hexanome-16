@@ -29,7 +29,6 @@ public class MainMenuScreen {
 
   private static void setupUi() {
     uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
-      //MainMenuScreen.clearUI();
       SettingsScreen.initUi(true);
     });
     uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
@@ -42,6 +41,10 @@ public class MainMenuScreen {
     });
     uiControllerSingleton.logoutButton.setOnMouseClicked(event -> {
       LogoutRequest.execute();
+      MainMenuScreen.clearUi();
+      StartupScreen.backToStartupScreen();
+    });
+    uiControllerSingleton.registerButton.setOnMouseClicked(event -> {
       MainMenuScreen.clearUi();
       StartupScreen.backToStartupScreen();
     });
