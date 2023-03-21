@@ -8,7 +8,10 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.requests.lobbyservice.gameservices.ListGameServicesRequest;
+import com.hexanome16.client.requests.lobbyservice.savegames.CreateSavegameRequest;
+import com.hexanome16.client.requests.lobbyservice.savegames.DeleteSavegameRequest;
 import com.hexanome16.client.requests.lobbyservice.savegames.GetSavegamesRequest;
+import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.DeleteSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.JoinSessionRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.LaunchSessionRequest;
@@ -23,6 +26,7 @@ import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -49,11 +53,15 @@ class LobbyHelpers {
 
     if (AuthUtils.getPlayer() != null) {
       for (Map.Entry<String, Session> entry : LobbyFactory.sessions.get().entrySet()) {
-        if (Arrays.asList(entry.getValue().getPlayers())
-            .contains(AuthUtils.getPlayer().getName())) {
-          LobbyFactory.activeSessionList.getItems().add(entry);
-        } else {
-          LobbyFactory.otherSessionList.getItems().add(entry);
+        if (LobbyFactory.selectedGameService.get() != null
+            && entry.getValue().getGameParameters().getName().equals(
+                LobbyFactory.selectedGameService.get().getName())) {
+          if (Arrays.asList(entry.getValue().getPlayers())
+              .contains(AuthUtils.getPlayer().getName())) {
+            LobbyFactory.activeSessionList.getItems().add(entry);
+          } else {
+            LobbyFactory.otherSessionList.getItems().add(entry);
+          }
         }
       }
     }
@@ -64,11 +72,29 @@ class LobbyHelpers {
    */
   static void updateGameServicesList() {
     if (LobbyFactory.gameServices.get() != null && LobbyFactory.gameServices.get().length > 0) {
-      ObservableList<GameServiceJson> newItems = Arrays.stream(LobbyFactory.gameServices.get()).collect(
-          javafx.collections.FXCollections::observableArrayList,
-          javafx.collections.ObservableList::add,
-          javafx.collections.ObservableList::addAll);
+      GameServiceJson prevSelection = LobbyFactory.gameServiceDropdown.getSelectionModel()
+          .getSelectedItem();
+      ObservableList<GameServiceJson> newItems = Arrays.stream(LobbyFactory.gameServices.get())
+          .collect(javafx.collections.FXCollections::observableArrayList,
+              javafx.collections.ObservableList::add,
+              javafx.collections.ObservableList::addAll);
       LobbyFactory.gameServiceDropdown.setItems(newItems);
+      if (prevSelection != null && newItems.contains(prevSelection)) {
+        LobbyFactory.gameServiceDropdown.getSelectionModel().select(prevSelection);
+      }
+    }
+  }
+
+  static void updateSavegamesList(String gameServer) {
+    if (LobbyFactory.saveGameList == null) {
+      return;
+    }
+    LobbyFactory.saveGameList.getItems().clear();
+    if (AuthUtils.getPlayer() != null) {
+      SaveGameJson[] saveGames = GetSavegamesRequest.execute(gameServer);
+      if (saveGames != null) {
+        LobbyFactory.saveGameList.getItems().addAll(saveGames);
+      }
     }
   }
 
@@ -123,25 +149,6 @@ class LobbyHelpers {
     });
     fetchService.start();
     LobbyFactory.fetchSessionsService.set(fetchService);
-  }
-
-  static void createFetchSavegamesThread(String gameServer) {
-    BackgroundService fetchService = new BackgroundService(() -> {
-      LobbyFactory.saveGames.set(GetSavegamesRequest.execute(gameServer));
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    },
-        () -> {},
-        () -> {
-          if (LobbyFactory.shouldFetch.get()) {
-            LobbyFactory.fetchSaveGamesService.get().restart();
-          }
-        });
-    fetchService.start();
-    LobbyFactory.fetchSaveGamesService.set(fetchService);
   }
 
   static Entity sessionList(SpawnData data, boolean isActive) {
@@ -208,6 +215,7 @@ class LobbyHelpers {
               final Button leave = new Button("Leave");
               final Button launch = new Button("Launch");
               final Button delete = new Button("Delete");
+              final Button save = new Button("Save");
 
               @Override
               public void updateItem(String item, boolean empty) {
@@ -256,6 +264,13 @@ class LobbyHelpers {
                   delete.setStyle(
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
                   );
+                  save.setOnAction(event -> CreateSavegameRequest.execute(
+                      session.getGameParameters().getName(),
+                      session.getPlayers(),
+                      Long.parseLong(sessionEntry.getKey())));
+                  save.setStyle(
+                      "-fx-text-fill: yellow; -fx-border-color: yellow;" + commonButtonStyle
+                  );
                   ArrayList<Button> buttons = new ArrayList<>();
                   if (isActive) {
                     if (!session.isLaunched()) {
@@ -266,6 +281,7 @@ class LobbyHelpers {
                       buttons.add(isOwn ? delete : leave);
                     } else {
                       buttons.add(join);
+                      buttons.add(save);
                     }
                   } else if (!session.isLaunched() && session.getPlayers().length
                       < session.getGameParameters().getMaxSessionPlayers()) {
@@ -311,6 +327,104 @@ class LobbyHelpers {
   }
 
   static Entity saveGameList(SpawnData spawnData) {
-    return null;
+    TableView<SaveGameJson> savegameTableView = new TableView<>();
+    LobbyFactory.saveGameList = savegameTableView;
+    savegameTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7;");
+    final List<SaveGameJson> savegames = Arrays.stream(LobbyFactory.saveGames.get()).filter(
+        saveGame -> Arrays.asList(saveGame.getPlayers()).contains(AuthUtils.getPlayer().getName())
+    ).toList();
+
+    String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
+        + "-fx-text-fill: #CFFBE7; -fx-font-size: 16px;";
+
+    TableColumn<SaveGameJson, String> idColumn = new TableColumn<>("ID");
+    idColumn.setCellValueFactory(
+        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSavegameid()));
+    idColumn.setStyle(columnStyle);
+
+    TableColumn<SaveGameJson, String> gameServerColumn = new TableColumn<>("Game Server");
+    gameServerColumn.setCellValueFactory(
+        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getGamename()));
+    gameServerColumn.setStyle(columnStyle);
+
+    TableColumn<SaveGameJson, String> playersColumn = new TableColumn<>("Players");
+    playersColumn.setCellValueFactory(
+        cellData -> new ReadOnlyStringWrapper(String.join(", ", cellData.getValue().getPlayers())));
+    playersColumn.setStyle(columnStyle);
+
+    TableColumn<SaveGameJson, String> actionsColumn = new TableColumn<>("Actions");
+    actionsColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper("actions"));
+    actionsColumn.setStyle(columnStyle);
+
+    Callback<TableColumn<SaveGameJson, String>,
+        TableCell<SaveGameJson, String>> actionsCellFactory =
+        new Callback<>() {
+          @Override
+          public TableCell<SaveGameJson, String> call(
+              final TableColumn<SaveGameJson, String> param) {
+            return new TableCell<>() {
+              final Button create = new Button("Create Session");
+              final Button delete = new Button("Delete");
+
+              @Override
+              public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                  setGraphic(null);
+                } else {
+                  final SaveGameJson saveGame = getTableView().getItems().get(getIndex());
+                  create.setOnAction(event -> {
+                    CreateSessionRequest.execute(
+                        AuthUtils.getAuth().getAccessToken(),
+                        AuthUtils.getPlayer().getName(),
+                        saveGame.getGamename(),
+                        saveGame.getSavegameid()
+                    );
+                  });
+                  String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
+                      + "-fx-border-radius: 5px; -fx-background-radius: 5px;";
+                  create.setStyle(
+                      "-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle
+                  );
+                  delete.setOnAction(event -> DeleteSavegameRequest.execute(
+                      saveGame.getGamename(), saveGame.getSavegameid()));
+                  delete.setStyle(
+                      "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
+                  );
+                  HBox buttonBox = new HBox(new Button[] {create, delete});
+                  buttonBox.setStyle("-fx-alignment: CENTER; -fx-spacing: 5px; -fx-padding: 5px;");
+                  setGraphic(buttonBox);
+                }
+                setText(null);
+              }
+            };
+          }
+        };
+    actionsColumn.setCellFactory(actionsCellFactory);
+
+    Label placeholder = new Label("No savegames found");
+    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
+    savegameTableView.setPlaceholder(placeholder);
+
+    savegameTableView.getColumns().add(idColumn);
+    savegameTableView.getColumns().add(gameServerColumn);
+    savegameTableView.getColumns().add(playersColumn);
+    savegameTableView.getColumns().add(actionsColumn);
+
+    savegameTableView.resizeColumn(idColumn, 320);
+    savegameTableView.resizeColumn(gameServerColumn, 319);
+    savegameTableView.resizeColumn(playersColumn, 319);
+    savegameTableView.resizeColumn(actionsColumn, 320);
+    savegameTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+    savegameTableView.setFixedCellSize(50);
+
+    savegameTableView.getItems().addAll(savegames);
+    savegameTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
+
+    return entityBuilder(spawnData)
+        .type(EntityType.SAVEGAMES_LIST)
+        .viewWithBBox(savegameTableView)
+        .at(160, 450 + getAppHeight() / 4.0)
+        .build();
   }
 }
