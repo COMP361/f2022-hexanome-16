@@ -2,6 +2,7 @@ package com.hexanome16.server.models.actions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
  */
 @Data
 @NoArgsConstructor
+@JsonDeserialize(as = ChooseNobleAction.class)
 public class ChooseNobleAction implements Action {
   @Getter
   private Noble[] nobles;
