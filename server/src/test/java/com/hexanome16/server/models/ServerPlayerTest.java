@@ -10,6 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.cards.Visitable;
+import com.hexanome16.server.models.inventory.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +33,7 @@ public class ServerPlayerTest {
    */
   @BeforeEach
   public void init() {
-    costa = new ServerPlayer("costa", "#000000");
+    costa = new ServerPlayer("costa", "#000000", 0);
   }
 
   /**

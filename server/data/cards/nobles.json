@@ -36,8 +36,8 @@
     "id": 3,
     "prestigePoint": 3,
     "price": {
-      "ONYX": 0,
-      "SAPPHIRE": 4,
+      "ONYX": 4,
+      "SAPPHIRE": 0,
       "EMERALD": 0,
       "RUBY": 4,
       "DIAMOND": 0

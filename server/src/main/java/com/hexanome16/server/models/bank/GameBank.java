@@ -1,6 +1,7 @@
 package com.hexanome16.server.models.bank;
 
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,6 +16,15 @@ public class GameBank extends Bank {
    */
   public GameBank() {
     super(7);
+  }
+
+  /**
+   * The game starts with the given amount of tokens (used by savegame).
+   *
+   * @param initMap the amount of tokens to start with
+   */
+  public GameBank(PurchaseMap initMap) {
+    super(initMap);
   }
 
   /**

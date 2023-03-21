@@ -1,20 +1,27 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.inventory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerLevelCard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 
 /**
  * Player inventory class.
  */
 @Getter
+@Data
+@AllArgsConstructor
 public class Inventory {
   /* fields *************************************************************************************/
   private final PlayerBank playerBank;
@@ -22,7 +29,7 @@ public class Inventory {
   private final List<Noble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
-  private final PriceInterface gemBonuses;
+  private final PurchaseMap gemBonuses;
   private final Map<RouteType, TradePost> tradePosts;
   private int prestigePoints;
 
@@ -97,6 +104,7 @@ public class Inventory {
    * @param price minimum amount needed in inventory
    * @return true if the inventory has at least enough for the price
    */
+  @JsonIgnore
   public boolean hasAtLeastGivenBonuses(PriceInterface price) {
     return gemBonuses.hasAtLeastAmountOfGems(price);
   }
@@ -107,9 +115,9 @@ public class Inventory {
    * @param tradePost the trade post to be added.
    */
   public void addTradePost(TradePost tradePost) {
-    if (!tradePosts.containsKey(tradePost.routeType)) {
+    if (!tradePosts.containsKey(tradePost.getRouteType())) {
       prestigePoints += tradePost.getBonusPrestigePoints();
-      tradePosts.put(tradePost.routeType, tradePost);
+      tradePosts.put(tradePost.getRouteType(), tradePost);
     }
   }
 

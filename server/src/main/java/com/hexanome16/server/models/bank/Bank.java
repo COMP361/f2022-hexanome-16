@@ -4,17 +4,22 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.Hashtable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
  * Bank class. Used for storing tokens.
  */
+@Data
+@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public abstract class Bank implements BankInterface {
-  @Getter
   private final Hashtable<Gem, Integer> bank;
 
   /**
@@ -26,6 +31,18 @@ public abstract class Bank implements BankInterface {
     bank = new Hashtable<>(Gem.values().length);
     for (Gem gem : Gem.values()) {
       bank.put(gem, gem == Gem.GOLD && initAmount > 5 ? 5 : initAmount);
+    }
+  }
+
+  /**
+   * The constructor that initializes the bank with given amount of tokens to start with.
+   *
+   * @param initMap the tokens map to start with
+   */
+  protected Bank(PurchaseMap initMap) {
+    bank = new Hashtable<>(Gem.values().length);
+    for (Gem gem : Gem.values()) {
+      bank.put(gem, initMap.getGemCost(gem));
     }
   }
 

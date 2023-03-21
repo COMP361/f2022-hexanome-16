@@ -4,8 +4,8 @@ import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
@@ -148,7 +148,7 @@ public class ServiceUtils {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
-      ServerPlayer[] winners = WinCondition.getWinners(game.getWinConditions(), game.getPlayers());
+      ServerPlayer[] winners = WinCondition.getWinners(game.getWinCondition(), game.getPlayers());
       if (winners.length > 0) {
         game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.WINNERS,
@@ -160,7 +160,7 @@ public class ServiceUtils {
         BroadcastMapKey.PLAYERS,
         new PlayerListJson(Arrays.stream(game.getPlayers()).map(player -> new PlayerJson(
             player.getName(), !game.isNotPlayersTurn(player), player.getInventory()
-            .getPrestigePoints())).toArray(PlayerJson[]::new))
+            .getPrestigePoints(), player.getPlayerOrder())).toArray(PlayerJson[]::new))
     );
   }
 

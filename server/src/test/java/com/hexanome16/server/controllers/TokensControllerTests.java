@@ -8,8 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.game.GameManagerService;
@@ -45,9 +45,7 @@ public class TokensControllerTests {
     tokenService = Mockito.mock(TokenService.class);
     tokensController =
         new TokensController(tokenService);
-    payload.setPlayers(new ServerPlayer[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
+    payload.setPlayers(DummyAuths.validPlayerList.toArray(ServerPlayer[]::new));
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setGame(WinCondition.BASE.getGameServiceJson().getName());

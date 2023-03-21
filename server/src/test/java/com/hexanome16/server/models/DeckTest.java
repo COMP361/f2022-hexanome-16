@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.server.models.cards.Deck;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

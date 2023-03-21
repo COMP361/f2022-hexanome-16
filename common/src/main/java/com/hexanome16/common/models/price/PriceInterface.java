@@ -1,5 +1,6 @@
 package com.hexanome16.common.models.price;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
 
 /**
@@ -19,6 +20,7 @@ public interface PriceInterface {
    *
    * @return the total amount of gems
    */
+  @JsonIgnore
   int getTotalGems();
 
   /**
@@ -26,6 +28,7 @@ public interface PriceInterface {
    *
    * @return the total amount of gems, NON JOKERS
    */
+  @JsonIgnore
   int getTotalNonJokers();
 
   /**
