@@ -1,6 +1,6 @@
 package com.hexanome16.server.models.actions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.util.CustomHttpResponses;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public interface Action {
    *
    * @return Information needed for action to perform.
    */
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   ResponseEntity<String> getActionDetails();
 
   /**
