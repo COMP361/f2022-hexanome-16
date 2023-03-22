@@ -64,6 +64,11 @@ public class TokenAcquiring implements PromptTypeInterface {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     // initiate and set up prompt layout
