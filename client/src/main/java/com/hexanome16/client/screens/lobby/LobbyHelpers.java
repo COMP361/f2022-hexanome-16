@@ -93,7 +93,9 @@ class LobbyHelpers {
     if (AuthUtils.getPlayer() != null) {
       SaveGameJson[] saveGames = GetSavegamesRequest.execute(gameServer);
       if (saveGames != null) {
-        LobbyFactory.saveGameList.getItems().addAll(saveGames);
+        LobbyFactory.saveGameList.getItems().addAll(Arrays.stream(saveGames)
+            .filter(saveGameJson -> Arrays.asList(saveGameJson.getPlayers())
+            .contains(AuthUtils.getPlayer().getName())).toList());
       }
     }
   }
@@ -182,7 +184,7 @@ class LobbyHelpers {
     if (LobbyFactory.selectedGameService.get() == null) {
       placeholder = new Label("Please select a game service in the dropdown above");
     } else {
-      placeholder = new Label("No game sessions found");
+      placeholder = new Label("No sessions found");
     }
     placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
     sessionTableView.setPlaceholder(placeholder);
