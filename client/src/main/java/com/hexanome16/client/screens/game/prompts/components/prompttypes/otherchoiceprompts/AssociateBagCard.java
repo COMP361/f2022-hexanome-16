@@ -17,6 +17,11 @@ public class AssociateBagCard extends BonusChoiceAbstract {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   protected String promptText() {
     return "Choose bag content";
   }
