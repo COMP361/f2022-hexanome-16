@@ -11,6 +11,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.components.CityComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -518,6 +519,21 @@ public class GameFactory implements EntityFactory {
   }
 
   /**
+   * Adds a new city to the game board.
+   *
+   * @param data spawn data
+   * @return city entity
+   */
+  @Spawns("City")
+  public Entity newCity(SpawnData data) {
+    return FXGL.entityBuilder()
+        .view(data.getData().get("texture") + ".png")
+        .with(new CityComponent())
+        .scale(0.12, 0.12)
+        .build();
+  }
+
+  /**
    * Adds the game mat to the game board.
    *
    * @param data spawn data
@@ -528,7 +544,7 @@ public class GameFactory implements EntityFactory {
     return FXGL.entityBuilder()
         .at(matCoordsX, matCoordsY)
         .view("mat.png")
-        .scale(0.6, 0.6)
+        .scale(0.375, 0.375)
         .build();
   }
 
