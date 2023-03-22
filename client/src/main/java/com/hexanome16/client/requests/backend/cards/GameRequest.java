@@ -5,8 +5,8 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.utils.AuthUtils;
-import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
@@ -44,6 +44,20 @@ public class GameRequest {
         "/api/games/" + sessionId + "/nobles", Map.of(
         "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash),
         NobleDeckJson.class));
+  }
+
+  /**
+   * Sends request to server for any city update.
+   *
+   * @param sessionId game id
+   * @param hash      long polling hash
+   * @return cities json
+   */
+  public static Pair<String, CitiesJson> updateCities(long sessionId, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cities", Map.of(
+        "access_token", AuthUtils.getAuth().getAccessToken(), "hash", hash),
+        CitiesJson.class));
   }
 
   /**

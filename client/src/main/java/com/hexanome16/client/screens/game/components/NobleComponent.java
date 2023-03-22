@@ -36,7 +36,7 @@ public class NobleComponent extends Component {
       }
     }
 
-    position.setPosition(matCoordsX + 220 + 138 * gridX, matCoordsY + 5);
+    position.setPosition(matCoordsX + 10 + 110 * gridX, matCoordsY + 5);
   }
 
   private void pop() {
