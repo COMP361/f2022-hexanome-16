@@ -111,7 +111,6 @@ public class GameScreen {
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(GameScreen::updateCities);
-            System.out.println(citiesJson);
             updateCities.restart();
           }
         },
@@ -237,8 +236,11 @@ public class GameScreen {
 
     nobleJson = new Pair<>("", new NobleDeckJson());
     fetchNoblesThread();
-    citiesJson = new Pair<>("", new CitiesJson());
-    fetchCitiesThread();
+
+    if (gameServer.contains("Cities")) {
+      citiesJson = new Pair<>("", new CitiesJson());
+      fetchCitiesThread();
+    }
     UpdateGameInfo.initPlayerTurn();
 
     String[] usernames = FXGL.getWorldProperties().getValue("players");
