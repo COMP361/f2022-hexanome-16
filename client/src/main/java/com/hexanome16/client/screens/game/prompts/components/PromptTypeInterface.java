@@ -5,6 +5,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ErrorPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
@@ -52,6 +53,11 @@ public interface PromptTypeInterface {
     @Override
     public boolean isCancelable() {
       return true;
+    }
+
+    @Override
+    public boolean canBeOpenedOutOfTurn() {
+      return false;
     }
 
     @Override
@@ -121,6 +127,14 @@ public interface PromptTypeInterface {
    * @return true or false.
    */
   boolean isCancelable();
+
+
+  /**
+   * returns true if we want prompt to be openable out of turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  boolean canBeOpenedOutOfTurn();
 
   /**
    * Method which populates the prompt with elements specific to the prompt type.
@@ -224,6 +238,10 @@ public interface PromptTypeInterface {
      * Choose level two prompt type.
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
+    /**
+     * Error prompt type.
+     */
+    ERROR(new ErrorPrompt()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

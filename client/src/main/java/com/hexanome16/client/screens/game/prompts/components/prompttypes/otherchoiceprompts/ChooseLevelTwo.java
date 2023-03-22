@@ -50,6 +50,11 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   protected void promptOpens() {
     chosenLevelIndex = -1;
     cardSelectionBox = new ArrayList<>();
