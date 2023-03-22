@@ -13,6 +13,7 @@ import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsReques
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
@@ -400,5 +401,15 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * returns true if it is the client's turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  public static boolean isClientsTurn() {
+    return currentPlayer.equals(
+        AuthUtils.getPlayer().getName());
   }
 }

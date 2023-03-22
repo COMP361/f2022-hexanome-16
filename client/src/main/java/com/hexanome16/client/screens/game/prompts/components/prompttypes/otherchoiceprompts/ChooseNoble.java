@@ -37,6 +37,11 @@ public class ChooseNoble extends NobleChoiceAbstract {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   protected String promptText() {
     return "Noble conflict";
   }
