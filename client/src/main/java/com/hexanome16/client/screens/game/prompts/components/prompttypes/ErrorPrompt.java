@@ -1,38 +1,52 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
+import com.hexanome16.client.Config;
+import com.hexanome16.client.MainApp;
+import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
-public class ErrorPrompt implements PromptTypeInterface {
-  /**
-   * The width.
-   */
-  double atWidth = FXGL.getAppWidth() / 2.;
-  /**
-   * The height.
-   */
-  double atHeight = FXGL.getAppHeight() / 2.;
-  /**
-   * The top left x.
-   */
-  double atTopLeftX = FXGL.getAppWidth() / 1.5 - atWidth / 1.5;
-  /**
-   * The top left y.
-   */
-  double atTopLeftY = FXGL.getAppHeight() / 1.5 - atHeight / 1.5;
+/**
+ * This prompt displays an error message.
+ */
+public class ErrorPrompt extends ChoicePromptAbstract {
+  private String errorString;
 
   @Override
-  public double getWidth() {
-    return atWidth;
+  protected String promptText() {
+    return "Error";
   }
 
   @Override
-  public double getHeight() {
-    return atHeight;
+  protected double promptTextSize() {
+    return getHeight() / 5.;
+  }
+
+  @Override
+  protected void handlePromptForceQuit() {
+
+  }
+
+  @Override
+  protected boolean canConfirm() {
+    return true;
+  }
+
+  @Override
+  protected void handleConfirmation() {
+    PromptComponent.closePrompts();
+  }
+
+  @Override
+  protected void addToLayout(HBox choicesLayout) {
+    Text errorText = new Text(errorString);
+    errorText.setTextAlignment(TextAlignment.CENTER);
+    errorText.setWrappingWidth(getWidth() * 0.8);
+    errorText.setFont(GAME_FONT.newFont(getHeight() / 20.));
+    errorText.setFill(Config.SECONDARY_COLOR);
+    choicesLayout.getChildren().add(errorText);
   }
 
   @Override
@@ -46,23 +60,14 @@ public class ErrorPrompt implements PromptTypeInterface {
   }
 
   @Override
+  protected void promptOpens() {
+    errorString = MainApp.errorMessage;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
-
-    // initiate and set up the buttons' layout
-    VBox errorHolder = new VBox();
-    errorHolder.setAlignment(Pos.TOP_CENTER);
-    errorHolder.setSpacing(atButtonHeight / 2);
-    errorHolder.setTranslateX(atTopLeftX);
-    errorHolder.setTranslateY(atTopLeftY);
-    errorHolder.setPrefSize(atWidth, atHeight);
-
-    // add buttons to the layout
-    for (Pause.ButtonType t : Pause.ButtonType.values()) {
-      Node newButton = addButton(t);
-      buttonsHolder.getChildren().add(newButton);
-    }
-
-    // add layout to entity
-    entity.getViewComponent().addChild(buttonsHolder);
+    super.populatePrompt(entity);
+    atConfirmButton.setOpacity(1);
+    atConfirmCircle.setOpacity(1);
   }
 }
