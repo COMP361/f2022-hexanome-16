@@ -238,6 +238,10 @@ public interface PromptTypeInterface {
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
     /**
+     * Error prompt type.
+     */
+    ERROR(new ErrorPrompt()),
+    /**
      * Null prompt type.
      * <p><i>NullObject</i></p>
      */
