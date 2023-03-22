@@ -157,6 +157,14 @@ public class LobbyFactory implements EntityFactory {
         gameServiceDropdown.setPromptText(selected.getDisplayName());
         LobbyHelpers.updateSessionList();
         LobbyHelpers.updateSavegamesList(selected.getName());
+        Label activePlaceholder = new Label("No sessions found");
+        activePlaceholder.setStyle(
+            "-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
+        Label otherPlaceholder = new Label("No sessions found");
+        otherPlaceholder.setStyle(
+            "-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
+        LobbyFactory.activeSessionList.setPlaceholder(activePlaceholder);
+        LobbyFactory.otherSessionList.setPlaceholder(otherPlaceholder);
       }
     });
     gameServiceDropdown.setPromptText("Select a game service");
