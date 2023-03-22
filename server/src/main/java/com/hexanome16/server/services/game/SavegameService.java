@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
@@ -73,14 +74,17 @@ public class SavegameService implements SavegameServiceInterface {
         .collect(Collectors.toMap(Map.Entry::getKey,
             entry -> entry.getValue().getCardList().toArray(ServerLevelCard[]::new)));
     ServerNoble[] onBoardNobles = game.getOnBoardNobles().getCardList().toArray(ServerNoble[]::new);
+    ServerCity[] onBoardCities = game.getOnBoardCities().getCardList().toArray(ServerCity[]::new);
     Map<Level, ServerLevelCard[]> remainingDecks = Arrays.stream(Level.values())
         .collect(Collectors.toMap(level -> level, level -> game.getLevelDeck(level)
             .getCardList().toArray(ServerLevelCard[]::new)));
     ServerNoble[] remainingNobles = game.getRemainingNobles().values().toArray(ServerNoble[]::new);
+    ServerCity[] remainingCities = game.getRemainingCities().values().toArray(ServerCity[]::new);
     PurchaseMap gameBank = game.getGameBank().toPurchaseMap();
     ServerPlayer[] serverPlayers = game.getPlayers();
     SaveGame saveGame = new SaveGame(gamename, id, currentPlayer, usernames, game.getCreator(),
-        onBoardDecks, onBoardNobles, remainingDecks, remainingNobles, gameBank, serverPlayers);
+        onBoardDecks, onBoardNobles, onBoardCities, remainingDecks, remainingNobles,
+        remainingCities, gameBank, serverPlayers);
     objectWriter.writeValue(new File(savegamesPath + "/" + id + ".json"), saveGame);
   }
 
