@@ -57,7 +57,7 @@ public class Game {
   /**
    * Selected cities for this game (3 of the 10 possible).
    */
-  private Deck<ServerCity> onBoardCities;
+  Deck<ServerCity> onBoardCities;
   private final Map<String, ServerCity> remainingCities;
   private final String savegame;
   private final GameBank gameBank;

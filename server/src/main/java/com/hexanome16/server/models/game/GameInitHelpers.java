@@ -11,6 +11,7 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class GameInitHelpers {
 
   private final Game game;
   private Deck<ServerNoble> nobleDeck;
+  private Deck<ServerCity> citiesDeck;
 
   /**
    * Constructor.
@@ -59,7 +61,9 @@ public class GameInitHelpers {
   void createDecks() {
     createBaseLevelDecks();
     createNobleDeck();
-    createCities();
+    if (game.getWinCondition() == WinCondition.CITIES) {
+      createCities();
+    }
     createBagDeck();
     createGoldDeck();
     createDoubleDeck();
@@ -324,6 +328,15 @@ public class GameInitHelpers {
       nobleDeck.addCard(noble);
     }
     game.onBoardNobles = nobleDeck;
+
+    if (game.getWinCondition() == WinCondition.CITIES) {
+      Deck<ServerCity> cities = new Deck<>();
+      for (int i = 0; i < 3; i++) {
+        ServerCity city = this.citiesDeck.removeNextCard();
+        cities.addCard(city);
+      }
+      game.onBoardCities = cities;
+    }
   }
 
   @SneakyThrows
@@ -364,14 +377,15 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load cities.json", e);
     }
-    for (int i = 0; i < 3; i++) {
-      CardJson cityJson = cityJsonList[i];
+    Deck<ServerCity> deck = new Deck<>();
+    for (CardJson cityJson : cityJsonList) {
       ServerCity city = new ServerCity(cityJson.getId(), cityJson.getPrestigePoint(),
           "city" + cityJson.getId(), cityJson.getPrice());
-      game.getOnBoardCities().addCard(city);
+      deck.addCard(city);
       game.getRemainingCities().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(city)),
           city);
     }
-    game.getOnBoardCities().shuffle();
+    deck.shuffle();
+    citiesDeck = deck;
   }
 }
