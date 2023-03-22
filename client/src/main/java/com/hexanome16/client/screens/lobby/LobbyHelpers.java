@@ -157,19 +157,36 @@ class LobbyHelpers {
     }
     Map<String, Session> sessionArr;
     TableView<Map.Entry<String, Session>> sessionTableView = new TableView<>();
+
     if (isActive) {
       LobbyFactory.activeSessionList = sessionTableView;
-      sessionArr = LobbyFactory.sessions.get().entrySet().stream().filter(
-          session -> Arrays.asList(session.getValue().getPlayers())
-              .contains(AuthUtils.getPlayer().getName())
+      sessionArr = LobbyFactory.selectedGameService.get() == null ? new HashMap<>()
+          : LobbyFactory.sessions.get().entrySet().stream().filter(
+            session -> LobbyFactory.selectedGameService.get().getName().equals(
+                session.getValue().getGameParameters().getName())
+                && Arrays.asList(session.getValue().getPlayers())
+                    .contains(AuthUtils.getPlayer().getName())
       ).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     } else {
       LobbyFactory.otherSessionList = sessionTableView;
-      sessionArr = LobbyFactory.sessions.get().entrySet().stream().filter(
-          session -> !Arrays.asList(session.getValue().getPlayers())
-              .contains(AuthUtils.getPlayer().getName())
+      sessionArr = LobbyFactory.selectedGameService.get() == null ? new HashMap<>()
+          : LobbyFactory.sessions.get().entrySet().stream().filter(
+            session -> LobbyFactory.selectedGameService.get().getName().equals(
+                session.getValue().getGameParameters().getName())
+                && !Arrays.asList(session.getValue().getPlayers())
+                .contains(AuthUtils.getPlayer().getName())
       ).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
+
+    Label placeholder;
+    if (LobbyFactory.selectedGameService.get() == null) {
+      placeholder = new Label("Please select a game service in the dropdown above");
+    } else {
+      placeholder = new Label("No game sessions found");
+    }
+    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
+    sessionTableView.setPlaceholder(placeholder);
+
     sessionTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7;");
 
     String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
@@ -298,10 +315,6 @@ class LobbyHelpers {
         };
     actionsColumn.setCellFactory(actionsCellFactory);
 
-    Label placeholder = new Label("No sessions found");
-    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
-    sessionTableView.setPlaceholder(placeholder);
-
     sessionTableView.getColumns().add(creatorColumn);
     sessionTableView.getColumns().add(serverColumn);
     sessionTableView.getColumns().add(launchedColumn);
@@ -333,6 +346,15 @@ class LobbyHelpers {
     final List<SaveGameJson> savegames = Arrays.stream(LobbyFactory.saveGames.get()).filter(
         saveGame -> Arrays.asList(saveGame.getPlayers()).contains(AuthUtils.getPlayer().getName())
     ).toList();
+
+    Label placeholder;
+    if (LobbyFactory.selectedGameService.get() == null) {
+      placeholder = new Label("Please select a game service in the dropdown above");
+    } else {
+      placeholder = new Label("No savegames found");
+    }
+    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
+    savegameTableView.setPlaceholder(placeholder);
 
     String columnStyle = "-fx-alignment: CENTER; -fx-background-color: #000000; "
         + "-fx-text-fill: #CFFBE7; -fx-font-size: 16px;";
@@ -401,10 +423,6 @@ class LobbyHelpers {
           }
         };
     actionsColumn.setCellFactory(actionsCellFactory);
-
-    Label placeholder = new Label("No savegames found");
-    placeholder.setStyle("-fx-text-fill: #CFFBE7; -fx-alignment: CENTER; -fx-font-size: 24px;");
-    savegameTableView.setPlaceholder(placeholder);
 
     savegameTableView.getColumns().add(idColumn);
     savegameTableView.getColumns().add(gameServerColumn);
