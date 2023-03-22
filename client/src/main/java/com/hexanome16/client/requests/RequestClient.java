@@ -6,12 +6,16 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.client.MainApp;
 import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.HashMap;
@@ -72,7 +76,6 @@ public class RequestClient {
     try {
       return objectMapper.readValue(response, classT);
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
       return null;
     }
   }
@@ -129,8 +132,10 @@ public class RequestClient {
                     req.setQueryParams(queryParams);
                     res.set(longPollString(req));
                   } else {
-                    res.set(e.getParsingError().isEmpty() ? e.getBody()
-                        : e.getParsingError().get().toString());
+                    MainApp.errorMessage = e.getBody();
+                    FXGL.spawn("PromptBox", new SpawnData().put(
+                        "promptType", PromptTypeInterface.PromptType.ERROR));
+                    res.set(e.getBody());
                   }
                   gotResponse.set(true);
                 }
@@ -138,8 +143,10 @@ public class RequestClient {
                   // Do nothing, just try again.
                 }
                 default -> {
-                  res.set(e.getParsingError().isEmpty() ? e.getBody()
-                      : e.getParsingError().get().toString());
+                  MainApp.errorMessage = e.getBody();
+                  FXGL.spawn("PromptBox", new SpawnData().put(
+                      "promptType", PromptTypeInterface.PromptType.ERROR));
+                  res.set(e.getBody());
                   gotResponse.set(true);
                 }
               }
@@ -203,13 +210,26 @@ public class RequestClient {
                   request.getQueryParams()
                       .put("access_token", AuthUtils.getAuth().getAccessToken());
                   res.set(sendRequestHeadersString(request));
+                } else {
+                  MainApp.errorMessage = e.getBody();
+                  FXGL.spawn("PromptBox", new SpawnData().put(
+                      "promptType", PromptTypeInterface.PromptType.ERROR));
+                  res.set(new Pair<>(e.getHeaders(), e.getBody()));
                 }
               }
               case HTTP_NOT_FOUND -> {
                 res.set(new Pair<>(e.getHeaders(),
                     CustomHttpResponses.INVALID_SESSION_ID.getBody()));
+                MainApp.errorMessage = CustomHttpResponses.INVALID_SESSION_ID.getBody();
+                FXGL.spawn("PromptBox", new SpawnData().put(
+                    "promptType", PromptTypeInterface.PromptType.ERROR));
               }
-              default -> res.set(new Pair<>(e.getHeaders(), e.getBody()));
+              default -> {
+                MainApp.errorMessage = e.getBody();
+                FXGL.spawn("PromptBox", new SpawnData().put(
+                    "promptType", PromptTypeInterface.PromptType.ERROR));
+                res.set(new Pair<>(e.getHeaders(), e.getBody()));
+              }
             }
           });
       return res.get();
