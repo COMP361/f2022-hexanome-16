@@ -55,6 +55,11 @@ public interface PromptTypeInterface {
     }
 
     @Override
+    public boolean canBeOpenedOutOfTurn() {
+      return false;
+    }
+
+    @Override
     public void populatePrompt(Entity entity) {
     }
   };
@@ -121,6 +126,14 @@ public interface PromptTypeInterface {
    * @return true or false.
    */
   boolean isCancelable();
+
+
+  /**
+   * returns true if we want prompt to be openable out of turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  boolean canBeOpenedOutOfTurn();
 
   /**
    * Method which populates the prompt with elements specific to the prompt type.

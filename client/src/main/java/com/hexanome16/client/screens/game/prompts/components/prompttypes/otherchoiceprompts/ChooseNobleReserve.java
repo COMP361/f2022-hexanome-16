@@ -16,6 +16,11 @@ public class ChooseNobleReserve extends NobleChoiceAbstract {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   protected String promptText() {
     return "Reserve a noble";
   }
