@@ -1,6 +1,7 @@
-package com.hexanome16.server.models;
+package com.hexanome16.server.models.cards;
 
 import com.hexanome16.common.models.CardInfo;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -8,22 +9,22 @@ import lombok.Getter;
 import org.apache.commons.lang.NotImplementedException;
 
 /**
- * City class for the Cities expansion.
+ * ServerCity class for the Cities expansion.
  */
-public class City implements Visitable {
+public class ServerCity extends City implements Visitable {
   @Getter
   private final CardInfo cardInfo;
 
 
   /**
-   * Instantiates a new City.
+   * Instantiates a new ServerCity.
    *
    * @param id            the id
    * @param prestigePoint the number of prestige points
    * @param texturePath   the texture path
    * @param price         the price
    */
-  public City(int id, int prestigePoint, String texturePath, PriceMap price) {
+  public ServerCity(int id, int prestigePoint, String texturePath, PriceMap price) {
     cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
   }
 

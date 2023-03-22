@@ -110,6 +110,22 @@ public class GameController {
   }
 
   /**
+   * Returns cities present on the game board.
+   *
+   * @param sessionId   session id
+   * @param accessToken access token
+   * @param hash        the hash
+   * @return nobles present on the game board
+   */
+  @GetMapping(value = "/games/{sessionId}/cities", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getCities(@PathVariable long sessionId,
+                                                          @RequestParam String accessToken,
+                                                          @RequestParam String hash) {
+    return longPollingService.getCities(sessionId, accessToken, hash);
+  }
+
+
+  /**
    * Return the username of current player.
    *
    * @param sessionId   game id
