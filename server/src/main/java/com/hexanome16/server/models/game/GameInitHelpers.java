@@ -8,6 +8,7 @@ import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.cards.Deck;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import java.io.File;
@@ -58,6 +59,7 @@ public class GameInitHelpers {
   void createDecks() {
     createBaseLevelDecks();
     createNobleDeck();
+    createCities();
     createBagDeck();
     createGoldDeck();
     createDoubleDeck();
@@ -351,5 +353,25 @@ public class GameInitHelpers {
     game.getOnBoardDecks().put(Level.REDONE, redOneDeck);
     game.getOnBoardDecks().put(Level.REDTWO, redTwoDeck);
     game.getOnBoardDecks().put(Level.REDTHREE, redThreeDeck);
+  }
+
+  @SneakyThrows
+  void createCities() {
+    CardJson[] cityJsonList;
+    try {
+      cityJsonList = objectMapper.readValue(new File(cardsJsonPath + "/cities.json"),
+          CardJson[].class);
+    } catch (Exception e) {
+      throw new RuntimeException("Could not load cities.json", e);
+    }
+    for (int i = 0; i < 3; i++) {
+      CardJson cityJson = cityJsonList[i];
+      ServerCity city = new ServerCity(cityJson.getId(), cityJson.getPrestigePoint(),
+          "city" + cityJson.getId(), cityJson.getPrice());
+      game.getOnBoardCities().addCard(city);
+      game.getRemainingCities().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(city)),
+          city);
+    }
+    game.getOnBoardCities().shuffle();
   }
 }
