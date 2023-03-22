@@ -11,7 +11,9 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.MainApp;
 import com.hexanome16.client.requests.lobbyservice.sessions.CreateSessionRequest;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.utils.AuthUtils;
@@ -97,13 +99,20 @@ public class LobbyFactory implements EntityFactory {
     button.setOnMouseEntered(e -> button.setOpacity(0.7));
     button.setOnMouseExited(e -> button.setOpacity(1.0));
     button.setOnAction(event -> {
-      Long sessionId = CreateSessionRequest.execute(
-          AuthUtils.getAuth().getAccessToken(),
-          AuthUtils.getPlayer().getName(),
-          selectedGameService.get().getName(),
-          ""
-      );
-      System.out.println("Created session with id: " + sessionId);
+      if (selectedGameService.get() == null) {
+        MainApp.errorMessage =
+            "Please select a game service in the dropdown menu to create a session.";
+        spawn("PromptBox", new SpawnData().put(
+            "promptType", PromptTypeInterface.PromptType.ERROR));
+      } else {
+        Long sessionId = CreateSessionRequest.execute(
+            AuthUtils.getAuth().getAccessToken(),
+            AuthUtils.getPlayer().getName(),
+            selectedGameService.get().getName(),
+            ""
+        );
+        System.out.println("Created session with id: " + sessionId);
+      }
     });
     return entityBuilder(data)
         .type(EntityType.CREATE_SESSION_BUTTON)

@@ -9,6 +9,7 @@ import static com.hexanome16.client.Config.APP_VERSION;
 import static com.hexanome16.client.Config.APP_WIDTH;
 import static com.hexanome16.client.Config.CURSOR_HOTSPOT;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
@@ -48,6 +49,7 @@ public class MainApp extends GameApplication {
     gameSettings.setDeveloperMenuEnabled(false);
     gameSettings.setManualResizeEnabled(true);
     gameSettings.setPreserveResizeRatio(true);
+    gameSettings.setApplicationMode(ApplicationMode.RELEASE);
   }
 
   @Override
