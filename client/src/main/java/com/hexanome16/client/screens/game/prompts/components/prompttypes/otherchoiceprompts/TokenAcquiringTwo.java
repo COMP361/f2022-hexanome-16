@@ -53,4 +53,9 @@ public class TokenAcquiringTwo extends BonusChoiceAbstract {
   public boolean isCancelable() {
     return true;
   }
+
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
+  }
 }

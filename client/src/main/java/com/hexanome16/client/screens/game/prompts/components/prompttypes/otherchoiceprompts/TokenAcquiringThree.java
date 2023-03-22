@@ -105,4 +105,9 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
     return true;
   }
 
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
+  }
+
 }
