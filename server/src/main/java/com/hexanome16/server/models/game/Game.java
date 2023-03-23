@@ -152,14 +152,19 @@ public class Game {
             throw new RuntimeException(e);
           }
         }, noble -> noble));
-    this.remainingCities = Arrays.stream(saveGame.getRemainingCities())
-        .collect(Collectors.toMap(city -> {
-          try {
-            return DigestUtils.md5Hex(objectMapper.writeValueAsString(city));
-          } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-          }
-        }, city -> city));
+    this.remainingCities = new HashMap<>();
+    this.onBoardCities = new Deck<>();
+    if (winCondition == WinCondition.CITIES) {
+      remainingCities.putAll(Arrays.stream(saveGame.getRemainingCities())
+          .collect(Collectors.toMap(city -> {
+            try {
+              return DigestUtils.md5Hex(objectMapper.writeValueAsString(city));
+            } catch (JsonProcessingException e) {
+              throw new RuntimeException(e);
+            }
+          }, city -> city)));
+      onBoardCities = new Deck<>(saveGame.getOnBoardCities());
+    }
     this.tradePosts = new HashMap<>();
     if (winCondition == WinCondition.TRADEROUTES) {
       for (RouteType route : RouteType.values()) {
@@ -193,7 +198,6 @@ public class Game {
   public static Game create(long sessionId, SaveGame saveGame) {
     Game game = new Game(sessionId, saveGame);
     game.initBroadcast();
-    System.out.println(Arrays.toString(game.getPlayers()));
     return game;
   }
 
