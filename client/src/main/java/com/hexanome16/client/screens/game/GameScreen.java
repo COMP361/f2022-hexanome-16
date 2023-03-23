@@ -292,6 +292,9 @@ public class GameScreen {
    * Updates on board nobles.
    */
   private static void updateNobles() {
+    if (nobleJson == null || nobleJson.getValue() == null) {
+      return;
+    }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
@@ -310,6 +313,9 @@ public class GameScreen {
    * Updates on board cities.
    */
   private static void updateCities() {
+    if (citiesJson == null || citiesJson.getValue() == null) {
+      return;
+    }
     Map<String, City> citiesMap = citiesJson.getValue().getCities();
     for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
       if (!cities.containsKey(entry.getKey())) {
@@ -330,6 +336,9 @@ public class GameScreen {
    * @param level level of the deck
    */
   private static void updateLevelDeck(Level level) {
+    if (levelDecks.get(level) == null || levelDecks.get(level).getValue() == null) {
+      return;
+    }
     Map<String, LevelCard> cardHashList = levelDecks.get(level).getValue().getCards();
     Map<String, LevelCard> cardMap = levelCards.get(level);
     CardComponent[] grid = CardComponent.getGrid(level);
