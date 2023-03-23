@@ -100,8 +100,15 @@ public class InventoryService implements InventoryServiceInterface {
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+    if (game.getTradePosts().size() > 0
+        && player.getInventory().getTradePosts().containsKey(RouteType.SAPPHIRE_ROUTE)) {
+      if (!proposedDeal.canBeUsedToBuyAlt(PurchaseMap.toPurchaseMap(cardPriceMap))) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+      }
+    } else {
+      if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+      }
     }
 
 
@@ -206,8 +213,8 @@ public class InventoryService implements InventoryServiceInterface {
   /**
    * Let the player reserve a face up card.
    *
-   * @param sessionId           game session id.
-   * @param cardMd5             card hash.
+   * @param sessionId   game session id.
+   * @param cardMd5     card hash.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws JsonProcessingException exception
@@ -262,8 +269,8 @@ public class InventoryService implements InventoryServiceInterface {
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId           game session id.
-   * @param level               deck level.
+   * @param sessionId   game session id.
+   * @param level       deck level.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    */

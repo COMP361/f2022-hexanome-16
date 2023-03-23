@@ -6,7 +6,6 @@ import static com.almasb.fxgl.dsl.FXGL.getEventBus;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
@@ -21,7 +20,6 @@ import com.hexanome16.client.screens.game.prompts.components.events.SplendorEven
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -485,7 +483,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
       // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
       // check if we can buy card with the gems we put down.
-      return amountInBankMap.canBeUsedToBuy(priceToMeet);
+      if (GameScreen.hasSapphireRoute()) {
+        return amountInBankMap.canBeUsedToBuyAlt(priceToMeet);
+      } else {
+        return amountInBankMap.canBeUsedToBuy(priceToMeet);
+      }
     }
 
     /**

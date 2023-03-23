@@ -4,7 +4,6 @@ import static java.util.Objects.hash;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.PurchaseMapDeserializer;
-import java.util.Hashtable;
 import java.util.Map;
 import lombok.Data;
 import lombok.ToString;
@@ -136,6 +135,56 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     ) {
       return (otherPriceMap.getTotalNonJokers() - this.getTotalNonJokers())
           == this.getGemCost(Gem.GOLD);
+    }
+    return false;
+  }
+
+  /**
+   * Same as canBeUsedToBuy but one gold token equals to two gems of same color.
+   *
+   * @param otherPriceMap priceMap we want to compare to.
+   * @return true if the implied can be used to commit the purchase, false otherwise.
+   */
+  public boolean canBeUsedToBuyAlt(PriceInterface otherPriceMap) {
+    if (otherPriceMap == null) {
+      return false;
+    }
+    if (this == otherPriceMap) {
+      return true;
+    }
+
+    if (this.getTotalNonJokers() <= otherPriceMap.getTotalNonJokers()
+        && this.getGemCost(Gem.RUBY) <= otherPriceMap.getGemCost(Gem.RUBY)
+        && this.getGemCost(Gem.EMERALD) <= otherPriceMap.getGemCost(Gem.EMERALD)
+        && this.getGemCost(Gem.SAPPHIRE) <= otherPriceMap.getGemCost(Gem.SAPPHIRE)
+        && this.getGemCost(Gem.DIAMOND) <= otherPriceMap.getGemCost(Gem.DIAMOND)
+        && this.getGemCost(Gem.ONYX) <= otherPriceMap.getGemCost(Gem.ONYX)
+    ) {
+      if ((otherPriceMap.getTotalNonJokers() - this.getTotalNonJokers())
+          == this.getGemCost(Gem.GOLD)) {
+        return true;
+      } else {
+        int[] remaining = new int[5];
+        remaining[0] = otherPriceMap.getGemCost(Gem.RUBY) - this.getGemCost(Gem.RUBY);
+        remaining[1] = otherPriceMap.getGemCost(Gem.EMERALD) - this.getGemCost(Gem.EMERALD);
+        remaining[2] = otherPriceMap.getGemCost(Gem.SAPPHIRE) - this.getGemCost(Gem.SAPPHIRE);
+        remaining[3] = otherPriceMap.getGemCost(Gem.DIAMOND) - this.getGemCost(Gem.DIAMOND);
+        remaining[4] = otherPriceMap.getGemCost(Gem.ONYX) - this.getGemCost(Gem.ONYX);
+        int goldAmount = this.getGemCost(Gem.GOLD);
+        int costRemaining = 0;
+        for (int i = 0; i < 5; i++) {
+          while (goldAmount > 0 && remaining[i] > 0) {
+            goldAmount--;
+            if (remaining[i] == 1) {
+              remaining[i] = 0;
+            } else {
+              remaining[i] -= 2;
+            }
+          }
+          costRemaining += remaining[i];
+        }
+        return costRemaining == 0;
+      }
     }
     return false;
   }
