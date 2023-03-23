@@ -25,6 +25,7 @@ import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -173,7 +174,10 @@ public class GameScreen {
                   tradingPosts.getOrDefault(index, new TradePostJson[0])) {
                 switch (tradePost.getRouteType()) {
                   case ONYX_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker");
+                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
+                  }
+                  case SAPPHIRE_ROUTE -> {
+                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
                   }
                   default -> {
                     //todo add other routes
@@ -450,6 +454,20 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * Whether the player has the sapphire route. Used by BuyCardPrompt.
+   *
+   * @return if the current player has the sapphire route.
+   */
+  public static boolean hasSapphireRoute() {
+    for (TradePostJson tradePost : tradingPosts.get(0)) {
+      if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
