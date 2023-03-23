@@ -18,6 +18,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherch
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import java.util.function.Predicate;
@@ -158,6 +159,11 @@ public interface PromptTypeInterface {
      * <p><i>Helper</i></p>
      */
     TOKEN_ACQUIRING_TWO(new TokenAcquiringTwo()),
+    /**
+     * Token discarding prompt, only one at a time.
+     * <p><i>Main</i></p>
+     */
+    TOKEN_DISCARD(new TokenDiscard()),
     /**
      * Token acquiring three prompt type.
      * <p><i>Helper</i></p>

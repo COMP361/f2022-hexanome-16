@@ -139,6 +139,20 @@ public class ServerPlayerTest {
   }
 
   /**
+   * Testing addDiscardTokenAction().
+   */
+  @Test
+  public void testAddDiscardTokenAction() {
+    costa.addDiscardTokenAction();
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.DISCARD.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+  }
+
+  /**
    * Test can be visited by.
    */
   @Test

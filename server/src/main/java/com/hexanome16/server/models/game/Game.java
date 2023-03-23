@@ -510,6 +510,22 @@ public class Game {
   }
 
 
+  /**
+   * takes back a token from the player.
+   *
+   * @param gem type of token game is taking back.
+   * @param player player whose funds are being taken.
+   */
+  public void takeBackToken(Gem gem, ServerPlayer player) {
+    Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
+    gemIntegerMapGame.put(gem, 1);
+    gameBank.addGemsToBank(new PurchaseMap(gemIntegerMapGame));
+    Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
+    gemIntegerMapPlayer.put(gem, 1);
+    player.decPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
+  }
+
+
   // HELPERS ///////////////////////////////////////////////////////////////////////////////////////
 
   private int findPlayerIndex(ServerPlayer player) {

@@ -4,6 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import net.sf.saxon.trans.SymbolicName;
 
 /**
  * Enum class which contains all the token bonus Types that can be taken directly from the bank.
@@ -29,7 +30,11 @@ public enum BonusType {
   /**
    * Black bonus type.
    */
-  BLACK(Color.BLACK, FXGL.texture("onyx.png"));
+  BLACK(Color.BLACK, FXGL.texture("onyx.png")),
+  /**
+   * Gold token type.
+   */
+  GOLD(Color.GOLD.darker(), FXGL.texture("gold.png"));
 
   private final Color color;
   private final Texture texture;
@@ -70,6 +75,24 @@ public enum BonusType {
       case "BLUE" -> BonusType.BLUE;
       case "WHITE" -> BonusType.WHITE;
       case "BLACK" -> BonusType.BLACK;
+      default -> null;
+    };
+  }
+
+  /**
+   * Returns the Bonus type that relates to the input string.
+   *
+   * @param bonusTypeString String representation of the bonus type.
+   * @return BonusType associated to that string, null if string is not valid
+   */
+  public static BonusType fromStringDiscard(String bonusTypeString) {
+    return switch (bonusTypeString) {
+      case "RED" -> BonusType.RED;
+      case "GREEN" -> BonusType.GREEN;
+      case "BLUE" -> BonusType.BLUE;
+      case "WHITE" -> BonusType.WHITE;
+      case "BLACK" -> BonusType.BLACK;
+      case "GOLD" -> BonusType.GOLD;
       default -> null;
     };
   }

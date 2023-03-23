@@ -108,6 +108,14 @@ public enum CustomHttpResponses implements BroadcastContent {
   TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_TWO.getMessage()))),
   /**
+   * Used for indicating that player must discard a token.
+   * <p>
+   * Only use with CustomResponse to pass in list of tokens in body.
+   * </p>
+   */
+  DISCARD_TOKEN("Inser custom body with tokens to choose from", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.DISCARD.getMessage()))),
+  /**
    * Used for indicating that player doesn't have to perform any additional actions.
    */
   END_OF_TURN("No Further Actions needed", HTTP_OK,
@@ -138,7 +146,8 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Class for ActionTypes, holds strings used all over the code.
    */
   public enum ActionType {
-    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"), END_TURN("done");
+    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
+    DISCARD("discard-token"), END_TURN("done");
 
     /**
      * Action Type string.
