@@ -13,6 +13,7 @@ import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsReques
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * GameScreen class spawns all the entities for game board.
@@ -261,6 +263,13 @@ public class GameScreen {
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
     PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
+
+
+    // open action prompt if needed.
+    Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,
+        AuthUtils.getPlayer().getName(),
+        AuthUtils.getAuth().getAccessToken());
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   // puts values necessary for game bank in the world properties
