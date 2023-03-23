@@ -113,4 +113,17 @@ public class TokensControllerTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
+  /**
+   * Test Delete on /games/{sessionId}/tokens;.
+   */
+  @Test
+  public void testDeleteToken() {
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    when(tokenService.discardToken(validSessionId, validAccessToken, "RED"))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.discardToken(validSessionId, validAccessToken, "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
 }
