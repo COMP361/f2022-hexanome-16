@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -106,9 +107,9 @@ public class ServerPlayerTest {
     costa.addCitiesToPerform(
         new ArrayList<>(
             List.of(
-                new City(123, 3, "idk",
+                new ServerCity(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1)),
-                new City(123, 3, "idk",
+                new ServerCity(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
             )
         ));

@@ -12,6 +12,7 @@ import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
@@ -21,9 +22,7 @@ import java.util.Queue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Player class.
@@ -222,8 +221,8 @@ public class ServerPlayer extends Player {
    * @param citiesList list of cities to choose from. Not empty please.
    * @throws JsonProcessingException thrown if cities cannot be parsed
    */
-  public void addCitiesToPerform(ArrayList<City> citiesList) throws JsonProcessingException {
-    addActionToQueue(new ChooseCityAction(citiesList.toArray(new City[0])));
+  public void addCitiesToPerform(ArrayList<ServerCity> citiesList) throws JsonProcessingException {
+    addActionToQueue(new ChooseCityAction(citiesList.toArray(new ServerCity[0])));
   }
 
   /**
