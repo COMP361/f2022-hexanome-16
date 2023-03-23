@@ -271,5 +271,20 @@ public class GameTest {
     assertEquals(game.getGameBank(), gameBank);
   }
 
+  /**
+   * Testing take Back Token.
+   */
+  @Test
+  public void testTakeBackToken() {
+    PlayerBank myBank = new PlayerBank();
+    assertEquals(imad.getBank(), myBank);
+    myBank.removeGemsFromBank(Gem.RUBY, 1);
+    game.takeBackToken(Gem.RUBY, imad);
+    GameBank gameBank = new GameBank();
+    gameBank.addGemsToBank(Gem.RUBY, 1);
+    assertEquals(imad.getBank(), myBank);
+    assertEquals(game.getGameBank(), gameBank);
+  }
+
 
 }

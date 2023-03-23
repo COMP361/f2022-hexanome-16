@@ -2,6 +2,8 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherc
 
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.UpdateGameInfo;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.utils.AuthUtils;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * Class responsible for populating Acquiring 2 tokens prompt.
@@ -63,9 +67,15 @@ public class TokenAcquiringThree extends BonusChoiceAbstract {
     // this is where you handle what to do with their choice, refer to selectedTokenTypes
     long promptSessionId = GameScreen.getSessionId();
     String auth = AuthUtils.getAuth().getAccessToken();
-    PromptsRequests.takeThree(promptSessionId, auth, selectedTokenTypes.get(0),
+
+    final Pair<Headers, String>
+        serverResponse = PromptsRequests.takeThree(promptSessionId, auth, selectedTokenTypes.get(0),
         selectedTokenTypes.get(1), selectedTokenTypes.get(2));
     PromptComponent.closePrompts();
+    UpdateGameInfo.fetchGameBank(promptSessionId);
+    UpdateGameInfo.fetchPlayerBank(promptSessionId, AuthUtils.getPlayer().getName(),
+        false);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
 
