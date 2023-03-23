@@ -34,6 +34,19 @@ public interface LongPollingServiceInterface {
                                                    String hash);
 
   /**
+   * Returns cities present on the game board.
+   *
+   * @param sessionId   session id
+   * @param accessToken access token
+   * @param hash        the hash
+   * @return cities present on the game board
+   */
+  DeferredResult<ResponseEntity<String>> getCities(long sessionId,
+                                                   String accessToken,
+                                                   String hash);
+
+
+  /**
    * Return the username of current player.
    *
    * @param sessionId   game id

@@ -19,8 +19,10 @@ import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -46,12 +48,15 @@ public class GameScreen {
   private static final Map<Level, Map<String, LevelCard>> levelCards = new HashMap<>();
 
   private static final Map<String, Noble> nobles = new HashMap<>();
+  private static final Map<String, City> cities = new HashMap<>();
 
   private static final Map<Level, Pair<String, DeckJson>> levelDecks = new HashMap<>();
   private static final Map<Level, BackgroundService> levelThreads = new HashMap<>();
 
   private static Pair<String, NobleDeckJson> nobleJson;
+  private static Pair<String, CitiesJson> citiesJson;
   private static BackgroundService updateNobles;
+  private static BackgroundService updateCities;
 
   private static Pair<String, PlayerListJson> playersJson;
 
@@ -101,6 +106,24 @@ public class GameScreen {
         }
     );
     updateNobles.start();
+  }
+
+  private static void fetchCitiesThread() {
+    updateCities = new BackgroundService(
+        () -> citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(GameScreen::updateCities);
+            updateCities.restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateCities.restart();
+          }
+        }
+    );
+    updateCities.start();
   }
 
   private static void fetchPlayersThread() {
@@ -216,6 +239,11 @@ public class GameScreen {
 
     nobleJson = new Pair<>("", new NobleDeckJson());
     fetchNoblesThread();
+
+    if (gameServer.contains("Cities")) {
+      citiesJson = new Pair<>("", new CitiesJson());
+      fetchCitiesThread();
+    }
     UpdateGameInfo.initPlayerTurn();
 
     String[] usernames = FXGL.getWorldProperties().getValue("players");
@@ -273,6 +301,24 @@ public class GameScreen {
         FXGL.spawn("Noble",
             new SpawnData().put("id", noble.getCardInfo().id())
                 .put("texture", noble.getCardInfo().texturePath())
+                .put("price", pm).put("MD5", entry.getKey()));
+      }
+    }
+  }
+
+  /**
+   * Updates on board cities.
+   */
+  private static void updateCities() {
+    Map<String, City> citiesMap = citiesJson.getValue().getCities();
+    for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
+      if (!cities.containsKey(entry.getKey())) {
+        cities.put(entry.getKey(), entry.getValue());
+        City city = entry.getValue();
+        PriceInterface pm = city.getCardInfo().price();
+        FXGL.spawn("City",
+            new SpawnData().put("id", city.getCardInfo().id())
+                .put("texture", city.getCardInfo().texturePath())
                 .put("price", pm).put("MD5", entry.getKey()));
       }
     }
@@ -350,14 +396,17 @@ public class GameScreen {
     levelDecks.clear();
     levelThreads.clear();
     nobleJson = null;
+    citiesJson = null;
     playersJson = null;
     currentPlayer = null;
     updateNobles = null;
+    updateCities = null;
     updateCurrentPlayer = null;
     updateTradingPosts.clear();
     tradingPosts.clear();
     usernamesMap.clear();
     nobles.clear();
+    cities.clear();
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
@@ -410,5 +459,15 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * returns true if it is the client's turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  public static boolean isClientsTurn() {
+    return currentPlayer.equals(
+        AuthUtils.getPlayer().getName());
   }
 }

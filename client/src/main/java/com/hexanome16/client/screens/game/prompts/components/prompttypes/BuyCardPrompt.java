@@ -191,6 +191,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
     return true;
   }
 
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
+  }
+
   /**
    * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
    *
