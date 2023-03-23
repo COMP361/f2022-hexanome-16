@@ -267,4 +267,20 @@ public class PromptsRequests {
         Map.of("access_token", accessToken),
         String.class));
   }
+
+  /**
+   * Retrieves the action that needs to be performed.
+   *
+   * @param sessionId session Id.
+   * @param username username of the player whose action we're trying to retrieve
+   * @param accessToken access token.
+   * @return server Response.
+   */
+  public static Pair<Headers, String> getActionForPlayer(long sessionId,
+                                                         String username, String accessToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.GET,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/players/" + username + "/actions",
+        Map.of("access_token", accessToken), Void.class));
+  }
 }
