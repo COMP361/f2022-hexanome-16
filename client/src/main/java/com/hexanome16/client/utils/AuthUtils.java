@@ -1,15 +1,22 @@
 package com.hexanome16.client.utils;
 
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.sessions.User;
 import java.util.Base64;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import lombok.SneakyThrows;
 
 /**
  * This class provides methods to create authorization headers for requests.
  */
 public class AuthUtils {
-  private static TokensInfo auth;
-  private static User player;
+  private static final Timer refreshTimer = new Timer();
+  private static final AtomicReference<TokensInfo> auth = new AtomicReference<>();
+  private static final AtomicReference<User> player = new AtomicReference<>();
 
   private AuthUtils() {
     super();
@@ -32,7 +39,7 @@ public class AuthUtils {
    * @return The player authentication information.
    */
   public static TokensInfo getAuth() {
-    return auth;
+    return auth.get();
   }
 
   /**
@@ -41,7 +48,18 @@ public class AuthUtils {
    * @param auth The player authentication information.
    */
   public static void setAuth(TokensInfo auth) {
-    AuthUtils.auth = auth;
+    if (auth == null) {
+      AuthUtils.auth.set(null);
+      refreshTimer.cancel();
+    } else {
+      AuthUtils.auth.set(auth);
+      refreshTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          TokenRequest.execute(auth.getRefreshToken());
+        }
+      }, Math.max(auth.getExpiresIn() - 30, 0) * 1000L);
+    }
   }
 
   /**
@@ -50,7 +68,7 @@ public class AuthUtils {
    * @return The player information.
    */
   public static User getPlayer() {
-    return player;
+    return player.get();
   }
 
   /**
@@ -59,6 +77,6 @@ public class AuthUtils {
    * @param player The player information.
    */
   public static void setPlayer(User player) {
-    AuthUtils.player = player;
+    AuthUtils.player.set(player);
   }
 }
