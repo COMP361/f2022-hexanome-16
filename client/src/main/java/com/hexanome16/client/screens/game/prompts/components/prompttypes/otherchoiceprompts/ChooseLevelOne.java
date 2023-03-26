@@ -34,6 +34,10 @@ public class ChooseLevelOne extends ChooseLevelTwo {
             .toList());
   }
 
+  @Override
+  protected String promptText() {
+    return "Choose Level One";
+  }
 
   @Override
   protected void handleConfirmation() {
