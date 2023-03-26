@@ -141,6 +141,9 @@ public class RequestClient {
                   // Do nothing, just try again.
                 }
                 default -> {
+                  MainApp.errorMessage = e.getBody();
+                  Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
+                      "promptType", PromptTypeInterface.PromptType.ERROR)));
                   res.set(e.getBody());
                   gotResponse.set(true);
                 }
