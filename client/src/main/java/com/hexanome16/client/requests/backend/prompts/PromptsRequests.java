@@ -50,6 +50,19 @@ public class PromptsRequests {
         LevelCard[].class));
   }
 
+
+  /**
+   * Gets the list of all the cards of level one on the board for game with session id.
+   *
+   * @param sessionId sessionId of game.
+   * @return Array of all level 1 cards on board.
+   */
+  public static LevelCard[] getLevelOneCardsOnBoard(long sessionId) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelOne", null,
+        LevelCard[].class));
+  }
+
   /**
    * Get nobles of the player with provided username and session id.
    *
@@ -255,6 +268,23 @@ public class PromptsRequests {
   }
 
   /**
+   * Sends a request to take a level one card for free.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param accessToken access token to allow action.
+   * @param hash desired card's Hash.
+   * @return server response.
+   */
+  public static Pair<Headers, String> takeLevelOne(long sessionId,
+                                                   String accessToken, String hash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelOne",
+        Map.of("access_token", accessToken, "chosenCard", hash),
+        Void.class));
+  }
+
+  /**
    * Sends a request to claim a noble.
    *
    * @param sessionId session id
@@ -303,4 +333,6 @@ public class PromptsRequests {
         Map.of("access_token", accessToken, "tokenType",
             chosenBonus.name()), Void.class));
   }
+
+
 }

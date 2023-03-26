@@ -546,7 +546,8 @@ public class InventoryServiceTests {
   @Test
   void testTakeLevelTwoCard() throws JsonProcessingException {
 
-    ServerLevelCard card = createValidCard();
+    ServerLevelCard card = new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.TWO,
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));;
     MultiValueMap<String, String> goodHeaders = new HttpHeaders();
     goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage()));
@@ -566,7 +567,9 @@ public class InventoryServiceTests {
     when(validPlayer.peekTopAction())
         .thenReturn(mockAction);
     when(game.getCardByHash(cardHash)).thenReturn(card);
-    when(game.getOnBoardDeck(card.getLevel())).thenReturn(new Deck<>());
+    when(game.getOnBoardDeck(Level.TWO))
+        .thenReturn(new Deck<>());
+    when(game.getOnBoardDeck(Level.REDTWO)).thenReturn(new Deck<>(new ServerLevelCard[]{card}));
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
@@ -603,6 +606,78 @@ public class InventoryServiceTests {
     when(game.getCardByHash(cardHash)).thenReturn(card);
     response = inventoryService
         .takeLevelTwoCard(123, "testingToken",
+            cardHash);
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+  }
+
+  /**
+   * testing takeLevelTwoCard().
+   *
+   * @throws JsonProcessingException if Json parsing fails.
+   */
+  @Test
+  void testTakeLevelOneCard() throws JsonProcessingException {
+
+    ServerLevelCard card = new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE,
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));;
+    MultiValueMap<String, String> goodHeaders = new HttpHeaders();
+    goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
+        List.of(CustomHttpResponses.ActionType.LEVEL_ONE.getMessage()));
+    ResponseEntity<String> goodResponse = new ResponseEntity<>(
+        goodHeaders, HttpStatus.OK);
+    ServerPlayer validPlayer = Mockito.mock(ServerPlayer.class);
+    Game game = Mockito.mock(Game.class);
+    String cardHash = DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
+
+    when(serviceUtils.validRequestAndCurrentTurn(123, "testingToken"))
+        .thenReturn(
+            new ImmutablePair<>(goodResponse,
+                new ImmutablePair<>(game, validPlayer)));
+    Action mockAction = mock(Action.class);
+    when(mockAction.getActionDetails()).thenReturn(goodResponse);
+    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.LEVEL_ONE);
+    when(validPlayer.peekTopAction())
+        .thenReturn(mockAction);
+    when(game.getCardByHash(cardHash)).thenReturn(card);
+    when(game.getOnBoardDeck(Level.ONE))
+        .thenReturn(new Deck<>());
+    when(game.getOnBoardDeck(Level.REDONE)).thenReturn(new Deck<>(new ServerLevelCard[]{card}));
+    var mapMock = Mockito.mock(BroadcastMap.class);
+    when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
+
+    ResponseEntity<String> response = inventoryService
+        .takeLevelOneCard(123, "testingToken",
+            cardHash);
+    assertEquals(goodResponse, response);
+
+    ResponseEntity<String> badRequest = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    when(serviceUtils.validRequestAndCurrentTurn(1234, "bad"))
+        .thenReturn(new ImmutablePair<>(
+            badRequest,
+            new ImmutablePair<>(null, null)));
+
+    response = inventoryService.takeLevelOneCard(1234,
+        "bad", cardHash);
+    assertEquals(badRequest, response);
+
+    when(game.getCardByHash(cardHash)).thenReturn(null);
+    response = inventoryService
+        .takeLevelOneCard(123, "testingToken",
+            cardHash);
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+
+    MultiValueMap<String, String> badHeaders = new HttpHeaders();
+    badHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
+        List.of(CustomHttpResponses.ActionType.END_TURN.getMessage()));
+    mockAction = mock(Action.class);
+    when(mockAction.getActionDetails()).thenReturn(
+        new ResponseEntity<>(badHeaders, HttpStatus.BAD_REQUEST));
+    when(validPlayer.peekTopAction())
+        .thenReturn(mockAction);
+    when(game.getCardByHash(cardHash)).thenReturn(card);
+    response = inventoryService
+        .takeLevelOneCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
   }
