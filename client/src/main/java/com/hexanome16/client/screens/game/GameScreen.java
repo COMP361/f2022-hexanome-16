@@ -178,8 +178,17 @@ public class GameScreen {
                   case ONYX_ROUTE -> {
                     FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
                   }
+                  case EMERALD_ROUTE -> {
+                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 1));
+                  }
                   case SAPPHIRE_ROUTE -> {
                     FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
+                  }
+                  case DIAMOND_ROUTE -> {
+                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 3));
+                  }
+                  case RUBY_ROUTE -> {
+                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 4));
                   }
                   default -> {
                     //todo add other routes
