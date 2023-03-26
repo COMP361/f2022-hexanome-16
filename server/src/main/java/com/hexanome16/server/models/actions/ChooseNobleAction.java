@@ -2,21 +2,28 @@ package com.hexanome16.server.models.actions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 /**
  * The type Choose noble action.
  */
+@Data
+@NoArgsConstructor
+@JsonDeserialize(as = ChooseNobleAction.class)
 public class ChooseNobleAction implements Action {
   @Getter
-  private final Noble[] nobles;
-  private final String nobleJson;
+  private Noble[] nobles;
+  private String nobleJson;
   @Getter
-  private final CustomHttpResponses.ActionType actionType = CustomHttpResponses.ActionType.NOBLE;
+  private CustomHttpResponses.ActionType actionType = CustomHttpResponses.ActionType.NOBLE;
 
   /**
    * Instantiates a new Choose noble action.

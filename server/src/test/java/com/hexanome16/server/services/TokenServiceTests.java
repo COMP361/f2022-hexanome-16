@@ -3,6 +3,7 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,6 +16,8 @@ import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.actions.Action;
+import com.hexanome16.server.models.actions.DiscardTokenAction;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
@@ -178,4 +181,56 @@ public class TokenServiceTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
 
   }
+
+
+  /**
+   * Testing discard token.
+   */
+  @Test
+  public void testDiscardToken() {
+    final Game validGame = GameDummies.getInstance().get(0);
+    final ServerPlayer validPlayer1 = Mockito.mock(ServerPlayer.class);
+    final ServerPlayer validPlayer2 = Mockito.mock(ServerPlayer.class);
+    final long badSessionId = DummyAuths.invalidSessionIds.get(0);
+    final long goodSessionId = DummyAuths.validSessionIds.get(0);
+    final String badTokenInfo = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
+    final String goodTokenInfo1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final String goodTokenInfo2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final Action returnedAction = Mockito.mock(Action.class);
+    final Action badReturnedAction = Mockito.mock(Action.class);
+
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(badSessionId, badTokenInfo))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT NOT VALID PLAYER DOESNT HAVE DISCARD AS TOP ACTION
+    when(serviceUtils.validRequestAndCurrentTurn(goodSessionId, goodTokenInfo1))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer1)));
+    when(validPlayer1.peekTopAction()).thenReturn(null);
+
+    // VALID REQUEST + GOOD ACTION QUEUE
+    when(serviceUtils.validRequestAndCurrentTurn(goodSessionId, goodTokenInfo2))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer2)));
+    when(validPlayer2.peekTopAction()).thenReturn(returnedAction, null);
+    when(returnedAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.DISCARD);
+
+    var response = tokensService.discardToken(badSessionId, badTokenInfo, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo1, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    when(validPlayer1.peekTopAction()).thenReturn(badReturnedAction);
+    when(badReturnedAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.END_TURN);
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo1, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo2, "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
 }

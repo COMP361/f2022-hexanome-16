@@ -14,6 +14,7 @@ import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.cards.Deck;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.savegame.SaveGame;
@@ -53,6 +54,11 @@ public class Game {
    */
   Deck<ServerNoble> onBoardNobles;
 
+  /**
+   * Selected cities for this game (3 of the 10 possible).
+   */
+  Deck<ServerCity> onBoardCities;
+  private final Map<String, ServerCity> remainingCities;
   private final String savegame;
   private final GameBank gameBank;
   private final WinCondition winCondition;
@@ -68,11 +74,11 @@ public class Game {
   /**
    * Game constructor, create a new with a unique session id.
    *
-   * @param sessionId     session id
-   * @param players       a non-null list of players
-   * @param creator       the creator
-   * @param savegame      the savegame
-   * @param winCondition  the win condition
+   * @param sessionId    session id
+   * @param players      a non-null list of players
+   * @param creator      the creator
+   * @param savegame     the savegame
+   * @param winCondition the win condition
    */
   @SneakyThrows
   Game(long sessionId, @NonNull ServerPlayer[] players, String creator, String savegame,
@@ -87,8 +93,10 @@ public class Game {
     this.remainingCards = createLevelMap();
     this.onBoardDecks = createBoardMap();
     this.onBoardNobles = new Deck<>();
+    this.onBoardCities = new Deck<>();
     this.hashToCardMap = new HashMap<>();
     this.remainingNobles = new HashMap<>();
+    this.remainingCities = new HashMap<>();
     this.tradePosts = new HashMap<>();
     if (winCondition == WinCondition.TRADEROUTES) {
       for (RouteType route : RouteType.values()) {
@@ -144,6 +152,19 @@ public class Game {
             throw new RuntimeException(e);
           }
         }, noble -> noble));
+    this.remainingCities = new HashMap<>();
+    this.onBoardCities = new Deck<>();
+    if (winCondition == WinCondition.CITIES) {
+      remainingCities.putAll(Arrays.stream(saveGame.getRemainingCities())
+          .collect(Collectors.toMap(city -> {
+            try {
+              return DigestUtils.md5Hex(objectMapper.writeValueAsString(city));
+            } catch (JsonProcessingException e) {
+              throw new RuntimeException(e);
+            }
+          }, city -> city)));
+      onBoardCities = new Deck<>(saveGame.getOnBoardCities());
+    }
     this.tradePosts = new HashMap<>();
     if (winCondition == WinCondition.TRADEROUTES) {
       for (RouteType route : RouteType.values()) {
@@ -171,24 +192,23 @@ public class Game {
    * Creates a new game instance from a savegame.
    *
    * @param sessionId session id
-   * @param saveGame the savegame
+   * @param saveGame  the savegame
    * @return the game
    */
   public static Game create(long sessionId, SaveGame saveGame) {
     Game game = new Game(sessionId, saveGame);
     game.initBroadcast();
-    System.out.println(Arrays.toString(game.getPlayers()));
     return game;
   }
 
   /**
    * Creates a new game instance.
    *
-   * @param sessionId     session id
-   * @param players       a non-null list of players
-   * @param creator       the creator
-   * @param savegame      the savegame
-   * @param winCondition  the win condition
+   * @param sessionId    session id
+   * @param players      a non-null list of players
+   * @param creator      the creator
+   * @param savegame     the savegame
+   * @param winCondition the win condition
    * @return the game
    */
   @SneakyThrows
@@ -491,6 +511,22 @@ public class Game {
     gemIntegerMapPlayer.put(desiredGemTwo, 1);
     gemIntegerMapPlayer.put(desiredGemThree, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
+  }
+
+
+  /**
+   * takes back a token from the player.
+   *
+   * @param gem type of token game is taking back.
+   * @param player player whose funds are being taken.
+   */
+  public void takeBackToken(Gem gem, ServerPlayer player) {
+    Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
+    gemIntegerMapGame.put(gem, 1);
+    gameBank.addGemsToBank(new PurchaseMap(gemIntegerMapGame));
+    Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
+    gemIntegerMapPlayer.put(gem, 1);
+    player.decPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
 
 

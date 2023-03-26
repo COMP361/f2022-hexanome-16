@@ -76,7 +76,7 @@ public interface TokenServiceInterface {
    * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
    *     HTTP BAD_REQUEST otherwise.</p>
    */
-  ResponseEntity<String> giveBackToken(long sessionId,
-                                       String accessToken,
-                                       String tokenType);
+  ResponseEntity<String> discardToken(long sessionId,
+                                      String accessToken,
+                                      String tokenType);
 }

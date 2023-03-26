@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -106,9 +107,9 @@ public class ServerPlayerTest {
     costa.addCitiesToPerform(
         new ArrayList<>(
             List.of(
-                new City(123, 3, "idk",
+                new ServerCity(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1)),
-                new City(123, 3, "idk",
+                new ServerCity(123, 3, "idk",
                     new PurchaseMap(1, 1, 1, 1, 1, 1))
             )
         ));
@@ -135,6 +136,20 @@ public class ServerPlayerTest {
         Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), actions.getBody());
+  }
+
+  /**
+   * Testing addDiscardTokenAction().
+   */
+  @Test
+  public void testAddDiscardTokenAction() {
+    costa.addDiscardTokenAction();
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.DISCARD.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
   }
 
   /**

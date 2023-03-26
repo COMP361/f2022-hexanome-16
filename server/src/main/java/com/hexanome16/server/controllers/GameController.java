@@ -3,6 +3,7 @@ package com.hexanome16.server.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,22 @@ public class GameController {
   }
 
   /**
+   * Returns cities present on the game board.
+   *
+   * @param sessionId   session id
+   * @param accessToken access token
+   * @param hash        the hash
+   * @return nobles present on the game board
+   */
+  @GetMapping(value = "/games/{sessionId}/cities", produces = "application/json; charset=utf-8")
+  public DeferredResult<ResponseEntity<String>> getCities(@PathVariable long sessionId,
+                                                          @RequestParam String accessToken,
+                                                          @RequestParam String hash) {
+    return longPollingService.getCities(sessionId, accessToken, hash);
+  }
+
+
+  /**
    * Return the username of current player.
    *
    * @param sessionId   game id
@@ -152,6 +169,21 @@ public class GameController {
     return gameService.getGameBankInfo(sessionId);
   }
 
+
+  /**
+   * Gets player's top action.
+   *
+   * @param sessionId session Id.
+   * @param username username of player whose action we want to retrieve.
+   * @param accessToken access token of player.
+   * @return Response entity of the top action.
+   */
+  @GetMapping(value = {"/games/{sessionId}/players/{username}/actions"})
+  public ResponseEntity<String> getPlayerAction(@PathVariable long sessionId,
+                                                @PathVariable String username,
+                                                @RequestParam String accessToken) {
+    return gameService.getPlayerAction(sessionId, accessToken);
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
 }
