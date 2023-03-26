@@ -165,6 +165,19 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/gameBank", PurchaseMap.class));
   }
 
+  /**
+   * Retrieves the bonuses available to take two of from the server.
+   *
+   * @param sessionId session ID of the game whose tokens info we want to retrieve.
+   * @return An array List of the possible bonus types.
+   */
+  public static ArrayList<BonusType> getAvailableOneBonus(long sessionId) {
+    return Arrays.stream(
+            Objects.requireNonNull(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/oneToken", String[].class))))
+        .filter(Objects::nonNull).map(BonusType::fromString)
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
 
   /**
    * Retrieves the bonuses available to take two of from the server.
@@ -196,10 +209,28 @@ public class PromptsRequests {
   }
 
   /**
-   * Sends a request to the server to buy a card.
+   * Sends a request to the server to take one token.
    *
    * @param sessionId id of the game request is sent from.
    * @param authToken username of player trying to buy card.
+   * @param bonusType Desired bonus Type.
+   * @return server response.
+   */
+  @SneakyThrows
+  public static Pair<Headers, String> takeOne(long sessionId,
+                                              String authToken,
+                                              BonusType bonusType) {
+    return RequestClient.sendRequestHeadersString(
+        new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+            "/api/games/" + sessionId + "/oneToken",
+            Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
+  }
+
+  /**
+   * Sends a request to the server to take two tokens.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param authToken username of player.
    * @param bonusType Desired bonus Type.
    * @return server response.
    */
@@ -214,10 +245,10 @@ public class PromptsRequests {
   }
 
   /**
-   * Sends a request to the server to buy a card.
+   * Sends a request to the server to take three tokens.
    *
    * @param sessionId      id of the game request is sent from.
-   * @param authToken      username of player trying to buy card.
+   * @param authToken      username of player.
    * @param bonusTypeOne   First desired Bonus Type.
    * @param bonusTypeTwo   Second desired Bonus Type.
    * @param bonusTypeThree Third desired Bonus Type.

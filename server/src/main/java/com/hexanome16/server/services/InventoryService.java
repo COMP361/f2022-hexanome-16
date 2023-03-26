@@ -18,6 +18,7 @@ import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
@@ -100,7 +101,7 @@ public class InventoryService implements InventoryServiceInterface {
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    if (game.getTradePosts().size() > 0
+    if (game.getWinCondition() ==  WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.SAPPHIRE_ROUTE)) {
       if (!proposedDeal.canBeUsedToBuyAlt(PurchaseMap.toPurchaseMap(cardPriceMap))) {
         return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
@@ -157,9 +158,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Receive trade posts
     for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      System.out.println(tradePost.getKey().name());
       if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        System.out.println("can be taken");
         player.getInventory().addTradePost(tradePost.getValue());
       }
     }
