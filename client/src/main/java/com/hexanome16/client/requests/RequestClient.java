@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.client.MainApp;
-import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.util.Pair;
 import kong.unirest.core.GetRequest;
 import kong.unirest.core.Headers;
@@ -125,7 +124,6 @@ public class RequestClient {
               switch (e.getStatus()) {
                 case HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
                   if (AuthUtils.getAuth() != null && req.getQueryParams() != null) {
-                    TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
                     Map<String, Object> queryParams =
                         new HashMap<>(Map.copyOf(req.getQueryParams()));
                     queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
@@ -133,8 +131,8 @@ public class RequestClient {
                     res.set(longPollString(req));
                   } else {
                     MainApp.errorMessage = e.getBody();
-                    FXGL.spawn("PromptBox", new SpawnData().put(
-                        "promptType", PromptTypeInterface.PromptType.ERROR));
+                    Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
+                        "promptType", PromptTypeInterface.PromptType.ERROR)));
                     res.set(e.getBody());
                   }
                   gotResponse.set(true);
@@ -143,9 +141,6 @@ public class RequestClient {
                   // Do nothing, just try again.
                 }
                 default -> {
-                  MainApp.errorMessage = e.getBody();
-                  FXGL.spawn("PromptBox", new SpawnData().put(
-                      "promptType", PromptTypeInterface.PromptType.ERROR));
                   res.set(e.getBody());
                   gotResponse.set(true);
                 }
@@ -206,7 +201,6 @@ public class RequestClient {
               case HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
                 if (AuthUtils.getAuth() != null && request.getQueryParams() != null
                     && request.getQueryParams().containsKey("access_token")) {
-                  TokenRequest.execute(AuthUtils.getAuth().getRefreshToken());
                   Map<String, Object> queryParams =
                       new HashMap<>(Map.copyOf(request.getQueryParams()));
                   queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
@@ -214,8 +208,8 @@ public class RequestClient {
                   res.set(sendRequestHeadersString(request));
                 } else {
                   MainApp.errorMessage = e.getBody();
-                  FXGL.spawn("PromptBox", new SpawnData().put(
-                      "promptType", PromptTypeInterface.PromptType.ERROR));
+                  Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
+                      "promptType", PromptTypeInterface.PromptType.ERROR)));
                   res.set(new Pair<>(e.getHeaders(), e.getBody()));
                 }
               }
@@ -223,13 +217,13 @@ public class RequestClient {
                 res.set(new Pair<>(e.getHeaders(),
                     CustomHttpResponses.INVALID_SESSION_ID.getBody()));
                 MainApp.errorMessage = CustomHttpResponses.INVALID_SESSION_ID.getBody();
-                FXGL.spawn("PromptBox", new SpawnData().put(
-                    "promptType", PromptTypeInterface.PromptType.ERROR));
+                Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
+                    "promptType", PromptTypeInterface.PromptType.ERROR)));
               }
               default -> {
                 MainApp.errorMessage = e.getBody();
-                FXGL.spawn("PromptBox", new SpawnData().put(
-                    "promptType", PromptTypeInterface.PromptType.ERROR));
+                Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
+                    "promptType", PromptTypeInterface.PromptType.ERROR)));
                 res.set(new Pair<>(e.getHeaders(), e.getBody()));
               }
             }
