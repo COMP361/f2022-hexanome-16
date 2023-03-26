@@ -1,6 +1,7 @@
 package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -16,15 +17,19 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
+import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.util.ServiceUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -49,10 +54,11 @@ class GameServiceTests {
         Game.create(DummyAuths.validSessionIds.get(0), PlayerDummies.validDummies, "imad", "",
             WinCondition.BASE);
     gameManagerMock = Mockito.mock(GameManagerService.class);
+    serviceUtils = Mockito.mock(ServiceUtils.class);
     when(gameManagerMock.getGame(DummyAuths.validSessionIds.get(0))).thenReturn(validMockGame);
     when(gameManagerMock.getGame(DummyAuths.invalidSessionIds.get(0))).thenReturn(null);
 
-    gameService = new GameService(new DummyAuthService(), gameManagerMock);
+    gameService = new GameService(new DummyAuthService(), gameManagerMock, serviceUtils);
 
   }
 
@@ -124,6 +130,43 @@ class GameServiceTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
     LevelCard[] body = objectMapper.readValue(response.getBody(), LevelCard[].class);
     assertEquals(6, body.length);
+  }
+
+  /**
+   * testing get level two on board.
+   */
+  @Test
+  public void testGetPlayerAction() {
+
+    long sessionId = DummyAuths.validSessionIds.get(0);
+    String accessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    ServerPlayer serverPlayer = Mockito.mock(ServerPlayer.class);
+    Game game = DummyAuths.validGames.get(sessionId);
+
+    when(gameManagerMock.getGame(123341231)).thenReturn(null);
+    when(gameManagerMock.getGame(sessionId))
+        .thenReturn(game);
+    when(serviceUtils.findPlayerByToken(game, "bad")).thenReturn(null);
+    when(serviceUtils.findPlayerByToken(game, accessToken))
+        .thenReturn(serverPlayer);
+    when(serverPlayer.peekTopAction()).thenReturn(Mockito.mock(Action.class));
+    when(serverPlayer.peekTopAction().getActionDetails())
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+
+    // Valid everything
+    ResponseEntity<String> response =
+        gameService.getPlayerAction(sessionId, accessToken);
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+
+    // Bad session Id
+    response = gameService.getPlayerAction(123341231, accessToken);
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // Bad player
+    response = gameService.getPlayerAction(sessionId, "bad");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
   }
 
 }

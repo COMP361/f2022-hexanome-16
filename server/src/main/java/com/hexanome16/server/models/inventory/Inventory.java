@@ -3,6 +3,7 @@ package com.hexanome16.server.models.inventory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.TradePost;
@@ -132,5 +133,25 @@ public class Inventory {
    */
   public int getPrestigePoints() {
     return prestigePoints;
+  }
+
+
+  /**
+   * true of there are more than 10 tokens in the inventory.
+   *
+   * @return true or false.
+   */
+  public boolean hasMoreThanTenTokens() {
+    return playerBank.hasMoreThanKtokens(10);
+  }
+
+  /**
+   * gets owned token types.
+   *
+   * @return Array of owned tokens.
+   */
+  @JsonIgnore
+  public Gem[] getOwnedTokenTypes() {
+    return playerBank.getOwnedTokenTypes();
   }
 }

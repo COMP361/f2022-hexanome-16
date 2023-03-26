@@ -45,4 +45,13 @@ public interface GameServiceInterface {
    * @throws JsonProcessingException throws an exception if fail to Json convert.
    */
   ResponseEntity<String> getLevelTwoOnBoard(long sessionId) throws JsonProcessingException;
+
+  /**
+   * Gets the player's top action.
+   *
+   * @param sessionId session Identification number of the game.
+   * @param accessToken access
+   * @return Top action's response entity.
+   */
+  ResponseEntity<String> getPlayerAction(long sessionId, String accessToken);
 }

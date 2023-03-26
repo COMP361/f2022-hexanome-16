@@ -12,14 +12,19 @@ import com.hexanome16.server.services.game.SavegameServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.UrlUtils;
+import java.io.File;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -50,6 +55,8 @@ public class SavegameController {
   private String gsUsername;
   @Value("${gs.password}")
   private String gsPassword;
+  @Value("${path.savegames}")
+  private String savegamesPath;
 
   /**
    * Constructor.
@@ -73,28 +80,6 @@ public class SavegameController {
     this.serviceUtils = serviceUtils;
     this.savegameService = savegameService;
     this.gameManagerService = gameManagerService;
-  }
-
-  /**
-   * This method gets a specific savegame (used for game creation).
-   *
-   * @param gamename   The name of the game server.
-   * @param savegameId The id of the savegame.
-   * @return the savegame json as string
-   */
-  @GetMapping("/gameservices/{gamename}/savegames/{savegameId}")
-  public ResponseEntity<String> getSavegame(@PathVariable String gamename,
-                                            @PathVariable String savegameId) {
-    ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
-    URI url = urlUtils.createLobbyServiceUri(
-        "/api/gameservices/" + gamename + "/savegames/" + savegameId,
-        "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
-    assert url != null;
-    try {
-      return restTemplate.getForEntity(url, String.class);
-    } catch (Exception e) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-    }
   }
 
   /**
@@ -122,6 +107,32 @@ public class SavegameController {
     if (verifiedPlayer.getLeft().getStatusCodeValue() != 200) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN);
     }
+    savegameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)), savegameId);
+    return createSavegameHelper(gamename, savegameId, saveGameJson);
+  }
+
+  /**
+   * This method loads all present savegames to Lobby Service.
+   */
+  @EventListener(ApplicationReadyEvent.class)
+  @Order(15000)
+  @SneakyThrows
+  public void initSaveGames() {
+    File[] savegameFiles = new File(savegamesPath).listFiles();
+    if (savegameFiles == null) {
+      return;
+    }
+    for (File savegameFile : savegameFiles) {
+      if (savegameFile.isFile()) {
+        SaveGame saveGame = savegameService.loadGame(savegameFile.getName().replace(".json", ""));
+        createSavegameHelper(saveGame.getGamename(), saveGame.getId(),
+            new SaveGameJson(saveGame.getId(), saveGame.getGamename(), saveGame.getUsernames()));
+      }
+    }
+  }
+
+  private ResponseEntity<String> createSavegameHelper(String gamename, String savegameId,
+                                                      SaveGameJson saveGameJson) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     URI url = urlUtils.createLobbyServiceUri(
         "/api/gameservices/" + gamename + "/savegames/" + savegameId,
@@ -133,8 +144,8 @@ public class SavegameController {
     HttpEntity<SaveGameJson> entity = new HttpEntity<>(saveGameJson, headers);
     try {
       restTemplate.put(url, entity);
-      savegameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)), savegameId);
     } catch (Exception e) {
+      e.printStackTrace();
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
@@ -145,20 +156,11 @@ public class SavegameController {
    *
    * @param gamename    The name of the game server.
    * @param savegameId  The id of the savegame.
-   * @param accessToken The access token of the player.
-   * @param sessionId   The session id (used for player verification).
    * @return status response
    */
   @DeleteMapping("/gameservices/{gamename}/savegames/{savegameId}")
   public ResponseEntity<String> deleteSavegame(@PathVariable String gamename,
-                                               @PathVariable String savegameId,
-                                               @RequestParam String accessToken,
-                                               @RequestParam String sessionId) {
-    Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> verifiedPlayer =
-        serviceUtils.validRequest(Long.parseLong(sessionId), accessToken);
-    if (verifiedPlayer.getLeft().getStatusCodeValue() != 200) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_ACCESS_TOKEN);
-    }
+                                               @PathVariable String savegameId) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
     URI url = urlUtils.createLobbyServiceUri(
         "/api/gameservices/" + gamename + "/savegames/" + savegameId,
