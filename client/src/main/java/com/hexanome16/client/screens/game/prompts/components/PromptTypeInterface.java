@@ -5,6 +5,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ErrorPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
@@ -17,6 +18,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherch
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import java.util.function.Predicate;
@@ -158,6 +160,11 @@ public interface PromptTypeInterface {
      */
     TOKEN_ACQUIRING_TWO(new TokenAcquiringTwo()),
     /**
+     * Token discarding prompt, only one at a time.
+     * <p><i>Main</i></p>
+     */
+    TOKEN_DISCARD(new TokenDiscard()),
+    /**
      * Token acquiring three prompt type.
      * <p><i>Helper</i></p>
      */
@@ -237,6 +244,10 @@ public interface PromptTypeInterface {
      * Choose level two prompt type.
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
+    /**
+     * Error prompt type.
+     */
+    ERROR(new ErrorPrompt()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

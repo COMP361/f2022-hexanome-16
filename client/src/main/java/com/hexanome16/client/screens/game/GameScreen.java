@@ -13,6 +13,7 @@ import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsReques
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
@@ -39,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * GameScreen class spawns all the entities for game board.
@@ -265,6 +267,13 @@ public class GameScreen {
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
     PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
+
+
+    // open action prompt if needed.
+    Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,
+        AuthUtils.getPlayer().getName(),
+        AuthUtils.getAuth().getAccessToken());
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   // puts values necessary for game bank in the world properties
@@ -287,6 +296,9 @@ public class GameScreen {
    * Updates on board nobles.
    */
   private static void updateNobles() {
+    if (nobleJson == null || nobleJson.getValue() == null) {
+      return;
+    }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
@@ -305,6 +317,9 @@ public class GameScreen {
    * Updates on board cities.
    */
   private static void updateCities() {
+    if (citiesJson == null || citiesJson.getValue() == null) {
+      return;
+    }
     Map<String, City> citiesMap = citiesJson.getValue().getCities();
     for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
       if (!cities.containsKey(entry.getKey())) {
@@ -325,6 +340,9 @@ public class GameScreen {
    * @param level level of the deck
    */
   private static void updateLevelDeck(Level level) {
+    if (levelDecks.get(level) == null || levelDecks.get(level).getValue() == null) {
+      return;
+    }
     Map<String, LevelCard> cardHashList = levelDecks.get(level).getValue().getCards();
     Map<String, LevelCard> cardMap = levelCards.get(level);
     CardComponent[] grid = CardComponent.getGrid(level);
