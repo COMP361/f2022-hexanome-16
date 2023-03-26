@@ -201,12 +201,13 @@ public class PromptsRequests {
    * @param sessionId id of the game request is sent from.
    * @param authToken username of player trying to buy card.
    * @param bonusType Desired bonus Type.
+   * @return server response.
    */
   @SneakyThrows
-  public static void takeTwo(long sessionId,
+  public static Pair<Headers, String> takeTwo(long sessionId,
                              String authToken,
                              BonusType bonusType) {
-    RequestClient.sendRequestString(
+    return RequestClient.sendRequestHeadersString(
         new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
         Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
@@ -220,14 +221,16 @@ public class PromptsRequests {
    * @param bonusTypeOne   First desired Bonus Type.
    * @param bonusTypeTwo   Second desired Bonus Type.
    * @param bonusTypeThree Third desired Bonus Type.
+   * @return server response.
    */
   @SneakyThrows
-  public static void takeThree(long sessionId,
+  public static Pair<Headers, String> takeThree(long sessionId,
                                String authToken,
                                BonusType bonusTypeOne,
                                BonusType bonusTypeTwo,
                                BonusType bonusTypeThree) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+    return RequestClient.sendRequestHeadersString(
+        new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
         Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
@@ -266,5 +269,38 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/nobles/" + nobleId,
         Map.of("access_token", accessToken),
         String.class));
+  }
+
+  /**
+   * Retrieves the action that needs to be performed.
+   *
+   * @param sessionId session Id.
+   * @param username username of the player whose action we're trying to retrieve
+   * @param accessToken access token.
+   * @return server Response.
+   */
+  public static Pair<Headers, String> getActionForPlayer(long sessionId,
+                                                         String username, String accessToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.GET,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/players/" + username + "/actions",
+        Map.of("access_token", accessToken), Void.class));
+  }
+
+  /**
+   * Makes Discard one action choice response to server.
+   *
+   * @param sessionId session id
+   * @param accessToken auth of player
+   * @param chosenBonus bonus type chosen.
+   * @return server response.
+   */
+  public static Pair<Headers, String> discardOne(long sessionId, String accessToken,
+                                                 BonusType chosenBonus) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.DELETE,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/tokens",
+        Map.of("access_token", accessToken, "tokenType",
+            chosenBonus.name()), Void.class));
   }
 }

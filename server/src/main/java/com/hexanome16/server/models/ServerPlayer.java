@@ -5,13 +5,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
+import com.hexanome16.server.models.actions.DiscardTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
@@ -21,9 +24,7 @@ import java.util.Queue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Player class.
@@ -222,8 +223,8 @@ public class ServerPlayer extends Player {
    * @param citiesList list of cities to choose from. Not empty please.
    * @throws JsonProcessingException thrown if cities cannot be parsed
    */
-  public void addCitiesToPerform(ArrayList<City> citiesList) throws JsonProcessingException {
-    addActionToQueue(new ChooseCityAction(citiesList.toArray(new City[0])));
+  public void addCitiesToPerform(ArrayList<ServerCity> citiesList) throws JsonProcessingException {
+    addActionToQueue(new ChooseCityAction(citiesList.toArray(new ServerCity[0])));
   }
 
   /**
@@ -232,6 +233,35 @@ public class ServerPlayer extends Player {
   public void addTakeTwoToPerform() {
     addActionToQueue(new TakeTwoAction());
   }
+
+
+  /**
+   * Adds Discard token as an action that needs to be performed.
+   */
+  public void addDiscardTokenAction() {
+    Gem[] gems = inventory.getOwnedTokenTypes();
+    addActionToQueue(new DiscardTokenAction(gems));
+  }
+
+
+  /**
+   * true if player needs to discard tokens before ending their turn.
+   *
+   * @return true or false.
+   */
+  public boolean needToDiscardTokens() {
+    return inventory.hasMoreThanTenTokens();
+  }
+
+  /**
+   * decreases player bank by purchaseMap.
+   *
+   * @param purchaseMap purchase map.
+   */
+  public void decPlayerBank(PurchaseMap purchaseMap) {
+    inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 

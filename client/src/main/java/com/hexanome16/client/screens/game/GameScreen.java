@@ -13,12 +13,16 @@ import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsReques
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -35,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * GameScreen class spawns all the entities for game board.
@@ -43,12 +48,15 @@ public class GameScreen {
   private static final Map<Level, Map<String, LevelCard>> levelCards = new HashMap<>();
 
   private static final Map<String, Noble> nobles = new HashMap<>();
+  private static final Map<String, City> cities = new HashMap<>();
 
   private static final Map<Level, Pair<String, DeckJson>> levelDecks = new HashMap<>();
   private static final Map<Level, BackgroundService> levelThreads = new HashMap<>();
 
   private static Pair<String, NobleDeckJson> nobleJson;
+  private static Pair<String, CitiesJson> citiesJson;
   private static BackgroundService updateNobles;
+  private static BackgroundService updateCities;
 
   private static Pair<String, PlayerListJson> playersJson;
 
@@ -98,6 +106,24 @@ public class GameScreen {
         }
     );
     updateNobles.start();
+  }
+
+  private static void fetchCitiesThread() {
+    updateCities = new BackgroundService(
+        () -> citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(GameScreen::updateCities);
+            updateCities.restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateCities.restart();
+          }
+        }
+    );
+    updateCities.start();
   }
 
   private static void fetchPlayersThread() {
@@ -213,6 +239,11 @@ public class GameScreen {
 
     nobleJson = new Pair<>("", new NobleDeckJson());
     fetchNoblesThread();
+
+    if (gameServer.contains("Cities")) {
+      citiesJson = new Pair<>("", new CitiesJson());
+      fetchCitiesThread();
+    }
     UpdateGameInfo.initPlayerTurn();
 
     String[] usernames = FXGL.getWorldProperties().getValue("players");
@@ -232,6 +263,13 @@ public class GameScreen {
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
     PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
+
+
+    // open action prompt if needed.
+    Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,
+        AuthUtils.getPlayer().getName(),
+        AuthUtils.getAuth().getAccessToken());
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   // puts values necessary for game bank in the world properties
@@ -254,6 +292,9 @@ public class GameScreen {
    * Updates on board nobles.
    */
   private static void updateNobles() {
+    if (nobleJson == null || nobleJson.getValue() == null) {
+      return;
+    }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
@@ -269,11 +310,35 @@ public class GameScreen {
   }
 
   /**
+   * Updates on board cities.
+   */
+  private static void updateCities() {
+    if (citiesJson == null || citiesJson.getValue() == null) {
+      return;
+    }
+    Map<String, City> citiesMap = citiesJson.getValue().getCities();
+    for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
+      if (!cities.containsKey(entry.getKey())) {
+        cities.put(entry.getKey(), entry.getValue());
+        City city = entry.getValue();
+        PriceInterface pm = city.getCardInfo().price();
+        FXGL.spawn("City",
+            new SpawnData().put("id", city.getCardInfo().id())
+                .put("texture", city.getCardInfo().texturePath())
+                .put("price", pm).put("MD5", entry.getKey()));
+      }
+    }
+  }
+
+  /**
    * Updates on board decks.
    *
    * @param level level of the deck
    */
   private static void updateLevelDeck(Level level) {
+    if (levelDecks.get(level) == null || levelDecks.get(level).getValue() == null) {
+      return;
+    }
     Map<String, LevelCard> cardHashList = levelDecks.get(level).getValue().getCards();
     Map<String, LevelCard> cardMap = levelCards.get(level);
     CardComponent[] grid = CardComponent.getGrid(level);
@@ -340,14 +405,17 @@ public class GameScreen {
     levelDecks.clear();
     levelThreads.clear();
     nobleJson = null;
+    citiesJson = null;
     playersJson = null;
     currentPlayer = null;
     updateNobles = null;
+    updateCities = null;
     updateCurrentPlayer = null;
     updateTradingPosts.clear();
     tradingPosts.clear();
     usernamesMap.clear();
     nobles.clear();
+    cities.clear();
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
@@ -400,5 +468,15 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * returns true if it is the client's turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  public static boolean isClientsTurn() {
+    return currentPlayer.equals(
+        AuthUtils.getPlayer().getName());
   }
 }

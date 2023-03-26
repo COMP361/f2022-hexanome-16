@@ -3,6 +3,7 @@ package com.hexanome16.server.util.broadcastmap;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
@@ -43,9 +44,12 @@ public class BroadcastMap {
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
           new BroadcastContentManager<>(new NobleDeckJson(game.getOnBoardNobles().getCardList()));
+      BroadcastContentManager<BroadcastContent> broadcastContentManagerCities =
+          new BroadcastContentManager<>(new CitiesJson(game.getOnBoardCities().getCardList()));
       map.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
       map.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
       map.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
+      map.put(BroadcastMapKey.CITIES, broadcastContentManagerCities);
     } catch (Exception e) {
       e.printStackTrace();
     }
