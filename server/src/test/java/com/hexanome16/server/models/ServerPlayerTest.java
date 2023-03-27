@@ -139,6 +139,21 @@ public class ServerPlayerTest {
   }
 
   /**
+   * Testing addTakeOneToPerform().
+   */
+  @Test
+  public void testAddTakeOneToPerform() {
+    costa.addTakeOneToPerform();
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.LEVEL_ONE.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+    assertEquals(CustomHttpResponses.TAKE_LEVEL_ONE.getBody(), actions.getBody());
+  }
+
+  /**
    * Testing addDiscardTokenAction().
    */
   @Test

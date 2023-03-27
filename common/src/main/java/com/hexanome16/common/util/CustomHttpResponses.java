@@ -108,6 +108,14 @@ public enum CustomHttpResponses implements BroadcastContent {
   TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_TWO.getMessage()))),
   /**
+   * Used for indicating that player must take a level one card.
+   * <p>
+   * No need for a body so just use with getResponse
+   * </p>
+   */
+  TAKE_LEVEL_ONE("Player must take a level one card", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_ONE.getMessage()))),
+  /**
    * Used for indicating that player must discard a token.
    * <p>
    * Only use with CustomResponse to pass in list of tokens in body.
@@ -147,7 +155,7 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   public enum ActionType {
     NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
-    DISCARD("discard-token"), END_TURN("done");
+    LEVEL_ONE("take-level-one"), DISCARD("discard-token"), END_TURN("done");
 
     /**
      * Action Type string.

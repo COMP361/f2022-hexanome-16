@@ -96,6 +96,19 @@ public class GameController {
   }
 
   /**
+   * Returns the level one cards on board.
+   *
+   * @param sessionId Identification number of the session.
+   * @return level one cards on board.
+   * @throws JsonProcessingException throws an exception if fails to convert to json
+   */
+  @GetMapping(value = "games/{sessionId}/board/cards/levelOne")
+  public ResponseEntity<String> getLevelOneOnBoard(@PathVariable long sessionId)
+      throws JsonProcessingException {
+    return gameService.getLevelOneOnBoard(sessionId);
+  }
+
+  /**
    * Returns nobles present on the game board.
    *
    * @param sessionId   session id

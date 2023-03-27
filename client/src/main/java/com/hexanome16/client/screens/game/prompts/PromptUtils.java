@@ -80,6 +80,10 @@ public class PromptUtils {
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_TWO));
       } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.LEVEL_ONE.getMessage())) {
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_ONE));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
           .equals(CustomHttpResponses.ActionType.NOBLE.getMessage())) {
         Noble[] nobles = objectMapper.readValue(serverResponse.getValue(), Noble[].class);
         ChooseNoble.setNobleList(nobles);
