@@ -132,11 +132,11 @@ public class GameInitHelpers {
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson bagJson : bagJsonList) {
       Gem gem = Gem.valueOf(bagJson.getBonus());
-      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
+      PurchaseMap gemBonus = new PurchaseMap(Map.of());
       ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
-          Level.REDONE, gemBonus);
+          Level.REDONE, LevelCard.BonusType.BAG, gemBonus);
       deck.addCard(bag);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -229,7 +229,7 @@ public class GameInitHelpers {
     Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTWO);
     for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
       Gem gem = Gem.valueOf(bagCascadeJson.getBonus());
-      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
+      PurchaseMap gemBonus = new PurchaseMap(Map.of());
       ServerLevelCard bagCascade = new ServerLevelCard(bagCascadeJson.getId(),
           bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
           bagCascadeJson.getPrice(), Level.REDTWO,

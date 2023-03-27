@@ -5,8 +5,10 @@ import static com.hexanome16.client.requests.RequestClient.objectMapper;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
 import com.hexanome16.common.models.Level;
@@ -95,6 +97,10 @@ public class PromptUtils {
         TokenDiscard.setPossibleBonuses(tokens);
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_DISCARD));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.ASSOCIATE_BAG.getMessage())) {
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.ASSOCIATE_BAG_CARD));
       }
     }
   }
