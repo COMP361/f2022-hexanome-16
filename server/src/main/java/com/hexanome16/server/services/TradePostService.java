@@ -67,6 +67,7 @@ public class TradePostService {
     int i = 0;
     for (Map.Entry<RouteType, TradePost> entry : tradePosts.entrySet()) {
       tradePostJsons[i] = new TradePostJson(entry.getKey());
+      i++;
     }
 
     return new ResponseEntity<>(

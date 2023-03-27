@@ -19,6 +19,7 @@ public class TradePostRequest {
    * @return an array of trade posts.
    */
   public static TradePostJson[] getTradePosts(long sessionId, String username) {
+    System.out.println("trade post request");
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/tradePost", Map.of("username", username),
         TradePostJson[].class));

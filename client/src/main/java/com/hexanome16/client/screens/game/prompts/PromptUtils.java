@@ -93,7 +93,7 @@ public class PromptUtils {
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_DISCARD));
       } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
           .equals(CustomHttpResponses.ActionType.TAKE.getMessage())) {
-        String bonus = objectMapper.readValue(serverResponse.getValue(), String.class);
+        String bonus = serverResponse.getValue();
         TokenAcquiringOne.setBonus(bonus);
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_ACQUIRING_ONE));

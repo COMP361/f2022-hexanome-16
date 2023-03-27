@@ -21,8 +21,6 @@ public class TakeTokenAction implements Action {
   private CustomHttpResponses.ActionType actionType =
       CustomHttpResponses.ActionType.TAKE;
 
-  private Gem gem;
-
   private String gemJson;
 
   /**
@@ -33,9 +31,8 @@ public class TakeTokenAction implements Action {
   @SneakyThrows
   public TakeTokenAction(Optional<Gem> gem) {
     if (gem.isPresent()) {
-      this.gem = gem.get();
       ObjectMapper objectMapper = new ObjectMapper();
-      this.gemJson = objectMapper.writeValueAsString(gem);
+      this.gemJson = objectMapper.writeValueAsString(gem.get().getBonusType());
     } else {
       this.gemJson = "";
     }
