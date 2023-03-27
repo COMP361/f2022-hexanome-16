@@ -16,7 +16,7 @@ import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.io.IOException;
