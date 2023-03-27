@@ -104,4 +104,23 @@ public interface InventoryServiceInterface {
   ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String accessToken)
       throws JsonProcessingException;
 
+  /**
+   * Associates a bag card to a token type.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @param tokenType chosen token type.
+   * @return information on next action or invalid request message
+   */
+  ResponseEntity<String> associateBagCard(long sessionId, String accessToken, String tokenType);
+
+  /**
+   * Get owned bonuses for player with token in game.
+   *
+   * @param sessionId session id of game.
+   * @param accessToken access token of player.
+   * @return Response entity with a Json string representation of
+   *          a String[gem.getBonusTypeEquivalent]
+   */
+  ResponseEntity<String> getOwnedBonuses(long sessionId, String accessToken);
 }

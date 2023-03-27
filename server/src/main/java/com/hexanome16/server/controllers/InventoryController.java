@@ -118,6 +118,20 @@ public class InventoryController {
   }
 
   /**
+   * Get owned bonuses for player with token in game.
+   *
+   * @param sessionId session id of game.
+   * @param accessToken access token of player.
+   * @return Response entity with a Json string representation of
+   *          a String[gem.getBonusTypeEquivalent]
+   */
+  @GetMapping(value = "/games/{sessionId}/cards/bonuses")
+  public ResponseEntity<String> getOwnedBonuses(@PathVariable long sessionId,
+                                                @RequestParam String accessToken) {
+    return inventoryService.getOwnedBonuses(sessionId, accessToken);
+  }
+
+  /**
    * get Nobles.
    *
    * @param sessionId session id.
@@ -297,5 +311,21 @@ public class InventoryController {
       throws JsonProcessingException {
     return inventoryService.takeLevelOneCard(sessionId, accessToken, chosenCard);
   }
+
+  /**
+   * Associates a bag card to a token type.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @param tokenType chosen token type.
+   * @return information on next action or invalid request message
+   */
+  @PutMapping(value = "/games/{sessionId}/cards/bagcards")
+  public ResponseEntity<String> associateBagCard(@PathVariable long sessionId,
+                                                 @RequestParam String accessToken,
+                                                 @RequestParam String tokenType) {
+    return inventoryService.associateBagCard(sessionId, accessToken, tokenType);
+  }
+
 
 }
