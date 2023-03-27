@@ -8,6 +8,10 @@ enum EntityType {
    */
   TITLE("title"),
   /**
+   * Register form container.
+   */
+  FORM("form"),
+  /**
    * Username field.
    */
   USERNAME("username"),
@@ -16,10 +20,6 @@ enum EntityType {
    */
   PASSWORD("password"),
   /**
-   * Colour field (color picker?).
-   */
-  COLOR("color"),
-  /**
    * User role field (dropdown).
    */
   ROLE("role"),
@@ -27,10 +27,6 @@ enum EntityType {
    * Submit button.
    */
   SUBMIT("submit"),
-  /**
-   * Cancel button.
-   */
-  CANCEL("cancel"),
   /**
    * Close button.
    */
