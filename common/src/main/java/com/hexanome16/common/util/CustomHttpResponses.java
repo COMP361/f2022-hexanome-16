@@ -121,8 +121,12 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Only use with CustomResponse to pass in list of tokens in body.
    * </p>
    */
-  DISCARD_TOKEN("Inser custom body with tokens to choose from", HTTP_OK,
+  DISCARD_TOKEN("Insert custom body with tokens to choose from", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.DISCARD.getMessage()))),
+
+  TAKE_TOKEN("Insert custom body containing a gem that cannot be chosen", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.TAKE.getMessage()))),
+
   /**
    * Used for indicating that player doesn't have to perform any additional actions.
    */
@@ -155,7 +159,8 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   public enum ActionType {
     NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
-    LEVEL_ONE("take-level-one"), DISCARD("discard-token"), END_TURN("done");
+    DISCARD("discard-token"), TAKE("take-token"),
+    LEVEL_ONE("take-level-one"), END_TURN("done");
 
     /**
      * Action Type string.

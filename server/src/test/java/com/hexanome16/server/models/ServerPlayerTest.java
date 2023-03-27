@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
@@ -17,6 +18,7 @@ import com.hexanome16.server.models.inventory.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -163,6 +165,28 @@ public class ServerPlayerTest {
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.DISCARD.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+  }
+
+  /**
+   * Testing addTakeTokenAction().
+   */
+  @Test
+  public void testAddTakeTokenAction() {
+    costa.addTakeTokenAction(Optional.empty());
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.TAKE.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+
+    costa.addTakeTokenAction(Optional.ofNullable(Gem.DIAMOND));
+    actions = costa.peekTopAction().getActionDetails();
+    headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.TAKE.getMessage(),
         Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
   }

@@ -5,13 +5,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
 import com.hexanome16.server.models.actions.TakeOneAction;
+import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
@@ -21,6 +21,7 @@ import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -250,6 +251,15 @@ public class ServerPlayer extends Player {
     addActionToQueue(new DiscardTokenAction(gems));
   }
 
+  /**
+   * Adds Take Token as an action that needs to be performed.
+   *
+   * @param gem (optional) gem that cannot be taken
+   */
+  public void addTakeTokenAction(Optional<Gem> gem) {
+    addActionToQueue(new TakeTokenAction(gem));
+  }
+
 
   /**
    * true if player needs to discard tokens before ending their turn.
@@ -268,8 +278,6 @@ public class ServerPlayer extends Player {
   public void decPlayerBank(PurchaseMap purchaseMap) {
     inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
   }
-
-
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
