@@ -197,4 +197,25 @@ class InventoryControllerTests {
       fail("Mock threw an exception");
     }
   }
+
+  /**
+   * testing take one card.
+   */
+  @Test
+  @DisplayName("testing take one Card.")
+  void testTakeLevelOne() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
 }

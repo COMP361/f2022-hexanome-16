@@ -95,6 +95,22 @@ public class GameService implements GameServiceInterface {
   }
 
   @Override
+  public ResponseEntity<String> getLevelOneOnBoard(long sessionId) throws JsonProcessingException {
+    Game game = gameManagerService.getGame(sessionId);
+    Deck<ServerLevelCard> levelTwoNormal = game.getOnBoardDecks().get(Level.ONE);
+    Deck<ServerLevelCard> levelTwoRed = game.getOnBoardDecks().get(Level.REDONE);
+    ArrayList<ServerLevelCard> allLevelTwoCards = new ArrayList<>();
+
+    allLevelTwoCards.addAll(levelTwoNormal.getCardList());
+    allLevelTwoCards.addAll(levelTwoRed.getCardList());
+
+    return CustomResponseFactory
+        .getCustomResponse(CustomHttpResponses.OK,
+            objectMapper.writeValueAsString(allLevelTwoCards.toArray()),
+            null);
+  }
+
+  @Override
   public ResponseEntity<String> getPlayerAction(long sessionId, String accessToken) {
     Game game = gameManagerService.getGame(sessionId);
     if (game == null) {

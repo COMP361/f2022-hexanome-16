@@ -232,7 +232,8 @@ public class GameInitHelpers {
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard bagCascade = new ServerLevelCard(bagCascadeJson.getId(),
           bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
-          bagCascadeJson.getPrice(), Level.REDTWO, gemBonus);
+          bagCascadeJson.getPrice(), Level.REDTWO,
+          LevelCard.BonusType.CASCADING_ONE_BAG, gemBonus);
       deck.addCard(bagCascade);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
