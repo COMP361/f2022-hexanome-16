@@ -2,6 +2,7 @@ package com.hexanome16.server.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +13,7 @@ import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,8 @@ class InventoryControllerTests {
     this.inventoryServiceMock = createInventoryServiceMock();
     this.gameManagerServiceMock = createGameManagerServiceMock();
     this.serviceUtils = createServiceUtilsMock();
+    inventoryController =
+        new InventoryController(inventoryServiceMock, gameManagerServiceMock, serviceUtils);
   }
 
   /**
@@ -192,10 +196,22 @@ class InventoryControllerTests {
           .thenReturn(res);
       assertEquals(res,
           inventoryController.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
     } catch (Exception e) {
       fail("Mock threw an exception");
     }
+  }
+
+  @SneakyThrows
+  @Test
+  void testClaimNoble() {
+    // Arrange
+
+    // Act
+    inventoryController.claimNoble(1L, "noble", "token");
+
+    // Assert
+    verify(inventoryServiceMock).acquireNoble(1L, "noble", "token");
   }
 
   /**
@@ -213,7 +229,7 @@ class InventoryControllerTests {
           .thenReturn(res);
       assertEquals(res,
           inventoryController.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
     } catch (Exception e) {
       fail("Mock threw an exception");
     }
