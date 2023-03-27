@@ -31,6 +31,21 @@ public interface TokenServiceInterface {
   ResponseEntity<String> availableThreeTokensType(long sessionId) throws JsonProcessingException;
 
   /**
+   * Allows to take 1 token of a given type.
+   * This function checks if the action is valid
+   *
+   * @param sessionId           the session's Identification number.
+   * @param accessToken authentication token of the player who wants to take the tokens.
+   * @param tokenType           String representing the token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *     HTTP BAD_REQUEST otherwise.</p>
+   */
+  ResponseEntity<String> takeOneToken(long sessionId,
+                                       String accessToken,
+                                       String tokenType);
+
+  /**
    * Allows to take 2 tokens of a given type.
    * This function checks if the action is valid
    *

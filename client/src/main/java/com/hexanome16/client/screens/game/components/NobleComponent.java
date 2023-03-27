@@ -12,7 +12,8 @@ import javafx.scene.input.MouseEvent;
  * FXGL component for noble tiles on board.
  */
 public class NobleComponent extends Component {
-  private static boolean[] grid = new boolean[5];
+  private static NobleComponent[] grid = new NobleComponent[5];
+  private final String nobleHash;
   private TransformComponent position;
   private ViewComponent view;
   private int gridX;
@@ -21,7 +22,16 @@ public class NobleComponent extends Component {
    * Reset noble grid.
    */
   public static void reset() {
-    grid = new boolean[5];
+    grid = new NobleComponent[5];
+  }
+
+  /**
+   * Create a new noble component.
+   *
+   * @param hash noble hash.
+   */
+  public NobleComponent(String hash) {
+    this.nobleHash = hash;
   }
 
   @Override
@@ -29,9 +39,9 @@ public class NobleComponent extends Component {
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     for (int i = 0; i < grid.length; i++) {
-      if (!grid[i]) {
+      if (grid[i] == null) {
         gridX = i;
-        grid[i] = true;
+        grid[i] = this;
         break;
       }
     }
@@ -47,5 +57,36 @@ public class NobleComponent extends Component {
   private void restore() {
     position.setScaleX(0.15);
     position.setScaleY(0.15);
+  }
+
+  /**
+   * Return on board noble grid.
+   *
+   * @return on board noble grid.
+   */
+  public static NobleComponent[] getGrid() {
+    return grid;
+  }
+
+  /**
+   * Return noble MD5.
+   *
+   * @return noble MD5.
+   */
+  public String getNobleHash() {
+    return nobleHash;
+  }
+
+  /**
+   * Removes this noble from the game board.
+   */
+  public void removeFromMat() {
+    entity.removeFromWorld();
+    for (int i = 0; i < grid.length; i++) {
+      if (grid[i] == this) {
+        grid[i] = null;
+        break;
+      }
+    }
   }
 }

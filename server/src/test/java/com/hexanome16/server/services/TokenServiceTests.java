@@ -3,7 +3,6 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -17,11 +16,10 @@ import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
-import com.hexanome16.server.models.actions.DiscardTokenAction;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.ServiceUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
@@ -182,6 +180,45 @@ public class TokenServiceTests {
 
   }
 
+  /**
+   * Testing takeOne.
+   */
+  @Test
+  public void testTakeOne() {
+    Game validGame = GameDummies.getInstance().get(0);
+    ServerPlayer validPlayer = PlayerDummies.validDummies[0];
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKEN MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer)));
+    when(validGame.allowedTakeOneOf(Gem.ONYX)).thenReturn(false);
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKEN MOCK
+    when(validGame.allowedTakeOneOf(Gem.RUBY)).thenReturn(true);
+
+    // INVALID REQUEST
+    var response = tokensService.takeOneToken(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+
+  }
 
   /**
    * Testing discard token.

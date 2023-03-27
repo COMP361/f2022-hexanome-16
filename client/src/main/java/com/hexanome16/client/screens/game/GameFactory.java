@@ -176,7 +176,7 @@ public class GameFactory implements EntityFactory {
   public Entity newYellowMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("yellow_marker.png")
-        .at(matCoordsX - 162, matCoordsY + 116)
+        .at(matCoordsX - 162, matCoordsY + 116 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -192,7 +192,7 @@ public class GameFactory implements EntityFactory {
   public Entity newBlackMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("black_marker.png")
-        .at(matCoordsX - 162, matCoordsY + 64)
+        .at(matCoordsX - 162, matCoordsY + 64 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -208,7 +208,7 @@ public class GameFactory implements EntityFactory {
   public Entity newRedMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("red_marker.png")
-        .at(matCoordsX - 102, matCoordsY + 116)
+        .at(matCoordsX - 102, matCoordsY + 116 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -224,7 +224,7 @@ public class GameFactory implements EntityFactory {
   public Entity newBlueMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("blue_marker.png")
-        .at(matCoordsX - 102, matCoordsY + 64)
+        .at(matCoordsX - 102, matCoordsY + 64 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -513,7 +513,7 @@ public class GameFactory implements EntityFactory {
   public Entity newNoble(SpawnData data) {
     return FXGL.entityBuilder()
         .view(data.getData().get("texture") + ".png")
-        .with(new NobleComponent())
+        .with(new NobleComponent(data.get("MD5")))
         .scale(0.15, 0.15)
         .build();
   }

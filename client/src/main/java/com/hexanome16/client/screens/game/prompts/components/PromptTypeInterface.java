@@ -13,9 +13,11 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbu
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
@@ -160,6 +162,11 @@ public interface PromptTypeInterface {
      */
     TOKEN_ACQUIRING_TWO(new TokenAcquiringTwo()),
     /**
+     * Token acquiring one prompt type.
+     * <p><i>Helper</i></p>
+     */
+    TOKEN_ACQUIRING_ONE(new TokenAcquiringOne()),
+    /**
      * Token discarding prompt, only one at a time.
      * <p><i>Main</i></p>
      */
@@ -244,6 +251,10 @@ public interface PromptTypeInterface {
      * Choose level two prompt type.
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
+    /**
+     * Choose level one prompt type.
+     */
+    CHOOSE_LEVEL_ONE(new ChooseLevelOne()),
     /**
      * Error prompt type.
      */

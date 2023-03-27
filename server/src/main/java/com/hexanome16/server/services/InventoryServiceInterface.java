@@ -80,6 +80,18 @@ public interface InventoryServiceInterface {
   ResponseEntity<String> takeLevelTwoCard(long sessionId, String accessToken,
                                           String chosenCard);
 
+
+  /**
+   * Takes a card of level one if allowed to.
+   *
+   * @param sessionId Id of game.
+   * @param accessToken token of requesting player.
+   * @param chosenCard chosen card's hash
+   * @return Response Entity with the next action that needs to be done.
+   */
+  ResponseEntity<String> takeLevelOneCard(long sessionId, String accessToken, String chosenCard);
+
+
   /**
    * Acquire noble response entity.
    *
@@ -91,4 +103,24 @@ public interface InventoryServiceInterface {
    */
   ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String accessToken)
       throws JsonProcessingException;
+
+  /**
+   * Associates a bag card to a token type.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @param tokenType chosen token type.
+   * @return information on next action or invalid request message
+   */
+  ResponseEntity<String> associateBagCard(long sessionId, String accessToken, String tokenType);
+
+  /**
+   * Get owned bonuses for player with token in game.
+   *
+   * @param sessionId session id of game.
+   * @param accessToken access token of player.
+   * @return Response entity with a Json string representation of
+   *          a String[gem.getBonusTypeEquivalent]
+   */
+  ResponseEntity<String> getOwnedBonuses(long sessionId, String accessToken);
 }

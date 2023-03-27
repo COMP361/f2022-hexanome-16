@@ -178,6 +178,25 @@ class GameControllerTest {
       fail("Mockito threw an exception.");
     }
   }
+
+  /**
+   * testing get level 1 cards.
+   */
+  @Test
+  @DisplayName("get Level 1 cards on board")
+  void testGetLevelOneOnBoard() {
+    GameServiceInterface gameServiceMock = createGameServiceMock();
+    gameController = new GameController(gameServiceMock,
+        createGameManagerServiceMock(), createLongPollingServiceMock());
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    try {
+      when(gameServiceMock.getLevelOneOnBoard(DummyAuths.validSessionIds.get(0)))
+          .thenReturn(res);
+      assertEquals(res, gameController.getLevelOneOnBoard(DummyAuths.validSessionIds.get(0)));
+    } catch (Exception e) {
+      fail("Mockito threw an exception.");
+    }
+  }
 }
 
 

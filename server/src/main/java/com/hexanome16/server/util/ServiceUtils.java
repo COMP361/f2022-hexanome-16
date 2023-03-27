@@ -6,9 +6,9 @@ import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.Arrays;
 import lombok.NonNull;
@@ -52,8 +52,8 @@ public class ServiceUtils {
    * the ResponseEntity will have a success code and the game and player will be populated.
    * </p>
    *
-   * @param sessionId          game's identification number.
-   * @param authToken          access token.
+   * @param sessionId game's identification number.
+   * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
   public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequestAndCurrentTurn(
@@ -90,8 +90,8 @@ public class ServiceUtils {
    * the ResponseEntity will have a success code and the game and player will be populated.
    * </p>
    *
-   * @param sessionId          game's identification number.
-   * @param authToken          access token.
+   * @param sessionId game's identification number.
+   * @param authToken access token.
    * @return The pair of response and a pair of game and player
    */
   public Pair<ResponseEntity<String>, Pair<Game, ServerPlayer>> validRequest(
