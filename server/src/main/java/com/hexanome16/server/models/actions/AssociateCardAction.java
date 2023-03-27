@@ -39,8 +39,7 @@ public class AssociateCardAction implements Action {
 
   @Override
   public ResponseEntity<String> getActionDetails() {
-    return CustomResponseFactory.getCustomResponse(CustomHttpResponses.ASSOCIATE_BAG_CARD,
-        null, null);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.ASSOCIATE_BAG_CARD);
   }
 
 }

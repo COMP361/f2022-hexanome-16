@@ -218,4 +218,44 @@ class InventoryControllerTests {
       fail("Mock threw an exception");
     }
   }
+
+  /**
+   * testing GET owned bonuses.
+   */
+  @Test
+  void testOwnedBonuses() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken()))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
+              DummyAuths.validTokensInfos.get(0).getAccessToken()));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
+
+  /**
+   * testing put bag cards. (for associating bag to gem bonus.)
+   */
+  @Test
+  void testBagCard() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.associateBagCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.associateBagCard(DummyAuths.validSessionIds.get(0),
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
 }

@@ -2,6 +2,7 @@ package com.hexanome16.server.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,7 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
+import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
@@ -35,6 +37,7 @@ import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -962,6 +965,66 @@ public class InventoryServiceTests {
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
         response.getStatusCodeValue());
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getBody(), response.getBody());
+  }
+
+  /**
+   * Test getOwnedBonuses().
+   */
+  @Test
+  public void testGetOwnedBonuses() {
+    long sessionId = DummyAuths.validSessionIds.get(0);
+    String auth = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    ResponseEntity<String> response = inventoryService.getOwnedBonuses(sessionId, auth);
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
+  /**
+   * Test associateBagCard().
+   */
+  @Test
+  public void testAssociateBagCard() {
+    long sessionId = DummyAuths.validSessionIds.get(0);
+    String auth = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    ServerPlayer player = Mockito.mock(ServerPlayer.class);
+    Game game = Mockito.mock(Game.class);
+    ResponseEntity<String> ok = new ResponseEntity<>(HttpStatus.OK);
+    when(serviceUtils.validRequestAndCurrentTurn(sessionId, auth))
+        .thenReturn(new ImmutablePair<>(ok, new ImmutablePair<>(game, player)));
+
+    // EMPTY INVENTORY
+    when(player.ownedGemBonuses()).thenReturn(Set.of());
+    var response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // ACTION RELATED CHECKS
+    when(player.ownedGemBonuses()).thenReturn(Set.of(Gem.RUBY));
+
+    AssociateCardAction action = Mockito.mock(AssociateCardAction.class);
+    ServerLevelCard bagCard = Mockito.mock(ServerLevelCard.class);
+    when(action.getCard()).thenReturn(bagCard);
+    when(player.peekTopAction()).thenReturn(null, action);
+    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // Gem Checks
+    when(player.peekTopAction()).thenReturn(action);
+    when(action.getActionType()).thenReturn(CustomHttpResponses.ActionType.ASSOCIATE_BAG);
+    // NULL gem
+    response = inventoryService.associateBagCard(sessionId, auth, "NULL");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+    // gold gems
+    response = inventoryService.associateBagCard(sessionId, auth, "GOLD");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+    // other gems
+    response = inventoryService.associateBagCard(sessionId, auth, "GREEN");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // HAPPY PATH
+    when(player.peekTopAction()).thenReturn(action, null);
+    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
   private ServerLevelCard createValidCard() {
