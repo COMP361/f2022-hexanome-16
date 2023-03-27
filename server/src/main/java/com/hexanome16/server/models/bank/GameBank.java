@@ -40,9 +40,9 @@ public class GameBank extends Bank {
   }
 
   /**
-   * Gets all the token types one can take 3 of.
+   * Gets all the token types one can take 1 of.
    *
-   * @return a list of all the token types you can take 3 of.
+   * @return a list of all the token types you can take 1 of.
    */
   public ArrayList<Gem> availableThreeTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));

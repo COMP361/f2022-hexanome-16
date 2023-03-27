@@ -182,6 +182,45 @@ public class TokenServiceTests {
 
   }
 
+  /**
+   * Testing takeOne.
+   */
+  @Test
+  public void testTakeOne() {
+    Game validGame = GameDummies.getInstance().get(0);
+    ServerPlayer validPlayer = PlayerDummies.validDummies[0];
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKEN MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer)));
+    when(validGame.allowedTakeOneOf(Gem.ONYX)).thenReturn(false);
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKEN MOCK
+    when(validGame.allowedTakeOneOf(Gem.RUBY)).thenReturn(true);
+
+    // INVALID REQUEST
+    var response = tokensService.takeOneToken(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+
+  }
 
   /**
    * Testing discard token.

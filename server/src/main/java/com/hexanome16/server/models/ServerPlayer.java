@@ -12,6 +12,7 @@ import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
 import com.hexanome16.server.models.actions.TakeOneAction;
+import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
@@ -23,6 +24,7 @@ import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -265,6 +267,15 @@ public class ServerPlayer extends Player {
     addActionToQueue(new AssociateCardAction(acquiredCard));
   }
 
+  /**
+   * Adds Take Token as an action that needs to be performed.
+   *
+   * @param gem (optional) gem that cannot be taken
+   */
+  public void addTakeTokenAction(Optional<Gem> gem) {
+    addActionToQueue(new TakeTokenAction(gem));
+  }
+
 
   /**
    * true if player needs to discard tokens before ending their turn.
@@ -300,8 +311,6 @@ public class ServerPlayer extends Player {
     }
     return gems;
   }
-
-
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
