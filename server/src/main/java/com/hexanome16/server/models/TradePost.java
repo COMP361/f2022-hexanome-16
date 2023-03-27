@@ -95,16 +95,10 @@ public class TradePost {
    */
   @JsonIgnore
   public int getBonusPrestigePoints(Map<RouteType, TradePost> tradePostList) {
-    switch (routeType) {
-      case ONYX_ROUTE -> {
-        return 1 + tradePostList.size();
-      }
-      case EMERALD_ROUTE -> {
-        return 5;
-      }
-      default -> {
-        return 0;
-      }
-    }
+    return switch (routeType) {
+      case ONYX_ROUTE -> 1 + tradePostList.size();
+      case EMERALD_ROUTE -> 5;
+      default -> 0;
+    };
   }
 }
