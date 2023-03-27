@@ -3,7 +3,6 @@ package com.hexanome16.server.services.token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
@@ -12,8 +11,6 @@ import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -184,7 +181,7 @@ public class TokenService implements TokenServiceInterface {
 
   private void actionUponTokenInteraction(Game game, ServerPlayer player) {
     if (player.needToDiscardTokens()) {
-      player.addDiscardTokenAction();
+      player.addDiscardTokenToPerform();
     }
   }
 }

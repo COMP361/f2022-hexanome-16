@@ -77,7 +77,18 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   SERVER_SIDE_ERROR("There was an error on the server, please try again later",
       HTTP_INTERNAL_ERROR),
-
+  /**
+   * Used in associate bag, need to have bonuses already in
+   * inventory to associate a bag.
+   */
+  NO_BONUS_TO_ASSOCIATE("Player inventory is empty and so cannot associate bag card",
+      HTTP_BAD_REQUEST),
+  /**
+   * Used in associate Bag, Gem cannot be gold,
+   * or null and needs to be in inventory.
+   */
+  BAD_GEM_TO_ASSOCIATE_TO_BAG("Chosen Gem to associate to bag is bad",
+      HTTP_BAD_REQUEST),
   /**
    * Used when an action is requested but not at the top of the action queue.
    */
@@ -121,8 +132,17 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Only use with CustomResponse to pass in list of tokens in body.
    * </p>
    */
-  DISCARD_TOKEN("Inser custom body with tokens to choose from", HTTP_OK,
+  DISCARD_TOKEN("Insert custom body with tokens to choose from", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.DISCARD.getMessage()))),
+  /**
+   * Used for indicating that player must Associate a bag card.
+   * <p>
+   * Only use with CustomResponse to pass in list of Gem types in body.
+   * </p>
+   */
+  ASSOCIATE_BAG_CARD("Please associate your bag card to a bonus type"
+      + "(the ones for which we have a bonus card in our inventory)", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.ASSOCIATE_BAG.getMessage()))),
   /**
    * Used for indicating that player doesn't have to perform any additional actions.
    */
@@ -155,7 +175,8 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   public enum ActionType {
     NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
-    LEVEL_ONE("take-level-one"), DISCARD("discard-token"), END_TURN("done");
+    LEVEL_ONE("take-level-one"), DISCARD("discard-token"), ASSOCIATE_BAG("associate-bag"),
+    END_TURN("done");
 
     /**
      * Action Type string.

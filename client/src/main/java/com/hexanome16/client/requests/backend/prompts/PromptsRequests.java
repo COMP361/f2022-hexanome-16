@@ -209,6 +209,20 @@ public class PromptsRequests {
   }
 
   /**
+   * Retrieves the bonuses available to associate to a bag card for the player from the server.
+   *
+   * @param sessionId session id.
+   * @param auth auth of player whose available bonuses we are interested in.
+   * @return BonusType string representations in an array.
+   */
+  public static String[] getPossibleBonuses(long sessionId, String auth) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/cards/bonuses",
+        Map.of("access_token", auth),
+        String[].class));
+  }
+
+  /**
    * Sends a request to the server to buy a card.
    *
    * @param sessionId id of the game request is sent from.
@@ -330,6 +344,23 @@ public class PromptsRequests {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.DELETE,
         RequestDest.SERVER,
         "/api/games/" + sessionId + "/tokens",
+        Map.of("access_token", accessToken, "tokenType",
+            chosenBonus.name()), Void.class));
+  }
+
+  /**
+   * Makes Associate bag action choice response to server.
+   *
+   * @param sessionId session id
+   * @param accessToken auth of player
+   * @param chosenBonus bonus type chosen.
+   * @return server response.
+   */
+  public static Pair<Headers, String> associateBag(long sessionId, String accessToken,
+                                                   BonusType chosenBonus) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cards/bagcards",
         Map.of("access_token", accessToken, "tokenType",
             chosenBonus.name()), Void.class));
   }

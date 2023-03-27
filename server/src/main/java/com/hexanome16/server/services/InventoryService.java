@@ -15,6 +15,7 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
+import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
@@ -23,7 +24,9 @@ import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -94,6 +97,9 @@ public class InventoryService implements InventoryServiceInterface {
 
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    if (cardToBuy.isBag() && player.ownedGemBonuses().isEmpty()) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.NO_BONUS_TO_ASSOCIATE);
     }
 
     // Get card price as a priceMap
@@ -193,20 +199,6 @@ public class InventoryService implements InventoryServiceInterface {
     return null;
   }
 
-  // TODO :: Add this methode everywhere when a card is aquired, (like bought
-  //  or by cascading, not upon reserving a card)
-  private void actionUponCardAcquiral(Game game, ServerPlayer player,
-                                      ServerLevelCard acquiredCard) {
-    // ACTION RELATED SHENANIGANS
-    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
-      player.addTakeTwoToPerform();
-    }
-    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
-      player.addTakeOneToPerform();
-      // TODO : ASSOCIATE BAG CARD
-    }
-
-  }
 
   /**
    * Let the player reserve a face up card.
@@ -468,5 +460,88 @@ public class InventoryService implements InventoryServiceInterface {
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
+  public ResponseEntity<String> associateBagCard(long sessionId, String accessToken,
+                                                 String tokenType) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final Gem gem = Gem.getGem(tokenType);
+
+    if (player.ownedGemBonuses().isEmpty()) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.NO_BONUS_TO_ASSOCIATE);
+    }
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.ASSOCIATE_BAG) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    if (gem == null || gem == Gem.GOLD || !player.ownedGemBonuses().contains(gem)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_GEM_TO_ASSOCIATE_TO_BAG);
+    }
+    AssociateCardAction associateBagAction = (AssociateCardAction) currentAction;
+    ServerLevelCard bagCard = associateBagAction.getCard();
+    bagCard.associateBagToGem(gem);
+
+    player.removeTopAction();
+    var nextAction = player.peekTopAction();
+
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
+  @SneakyThrows
+  public ResponseEntity<String> getOwnedBonuses(long sessionId, String accessToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    Set<Gem> set = player.ownedGemBonuses();
+    set.remove(Gem.GOLD);
+    Gem[] gems = set.toArray(Gem[]::new);
+    String[] bonusTypes = Arrays.stream(gems).map(Gem::getBonusType).toArray(String[]::new);
+    String json = objectMapper.writeValueAsString(bonusTypes);
+    return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, json, null);
+  }
+
+
+  // ACTION RELATED SHENANIGANS
+
+
+  // TODO :: Add this methode everywhere when a card is aquired, (like bought
+  //  or by cascading, not upon reserving a card)
+  @SneakyThrows
+  private void actionUponCardAcquiral(Game game, ServerPlayer player,
+                                      ServerLevelCard acquiredCard) {
+    // ACTION RELATED SHENANIGANS
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
+      player.addTakeTwoToPerform();
+    }
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
+      player.addTakeOneToPerform();
+    }
+    if (acquiredCard.isBag()) {
+      player.addAcquireCardToPerform(acquiredCard);
+    }
   }
 }

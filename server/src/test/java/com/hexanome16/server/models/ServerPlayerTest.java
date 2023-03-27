@@ -158,7 +158,7 @@ public class ServerPlayerTest {
    */
   @Test
   public void testAddDiscardTokenAction() {
-    costa.addDiscardTokenAction();
+    costa.addDiscardTokenToPerform();
     ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
     var headers = actions.getHeaders();
     assertEquals(
