@@ -25,6 +25,7 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -142,6 +143,11 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
+
+    if (game.getWinCondition() == WinCondition.TRADEROUTES
+        && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
+      player.addTakeTokenAction(Optional.empty());
+    }
 
     ResponseEntity<String> error =
         addNobleAction(game, player);

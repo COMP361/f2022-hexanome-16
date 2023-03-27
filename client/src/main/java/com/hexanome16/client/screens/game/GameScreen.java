@@ -152,6 +152,17 @@ public class GameScreen {
                     PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
               }
             });
+
+            // update trade routes
+            String[] usernames = FXGL.getWorldProperties().getValue("players");
+            PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+                i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
+            ).toArray(PlayerJson[]::new);
+            for (int i = 0; i < usernames.length; i++) {
+              usernamesMap.put(i, players[i]);
+              tradingPosts.put(i, new TradePostJson[0]);
+              fetchTradePostsThread(i);
+            }
             updateCurrentPlayer.restart();
           }
         },
@@ -164,49 +175,36 @@ public class GameScreen {
     updateCurrentPlayer.start();
   }
 
-  private static BackgroundService fetchTradePostsThread(int index) {
+  private static void fetchTradePostsThread(int index) {
     String[] colors = {"Yellow", "Black", "Red", "Blue"};
-    BackgroundService fetchService = new BackgroundService(
-        () -> tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
-            usernamesMap.get(index).getUsername())),
-        () -> {
-          if (shouldFetch.get()) {
-            Platform.runLater(() -> {
-              for (TradePostJson tradePost :
-                  tradingPosts.getOrDefault(index, new TradePostJson[0])) {
-                switch (tradePost.getRouteType()) {
-                  case ONYX_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
-                  }
-                  case EMERALD_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 1));
-                  }
-                  case SAPPHIRE_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
-                  }
-                  case DIAMOND_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 3));
-                  }
-                  case RUBY_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 4));
-                  }
-                  default -> {
-                    //todo add other routes
-                  }
-                }
-              }
-            });
-            updateTradingPosts.get(index).restart();
-          }
-        },
-        () -> {
-          if (shouldFetch.get()) {
-            updateTradingPosts.get(index).restart();
+    tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
+        usernamesMap.get(index).getUsername()));
+    if (shouldFetch.get()) {
+      Platform.runLater(() -> {
+        for (TradePostJson tradePost :
+            tradingPosts.getOrDefault(index, new TradePostJson[0])) {
+          switch (tradePost.getRouteType()) {
+            case ONYX_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
+            }
+            case EMERALD_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 1));
+            }
+            case SAPPHIRE_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
+            }
+            case DIAMOND_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 3));
+            }
+            case RUBY_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 4));
+            }
+            default -> {
+            }
           }
         }
-    );
-    fetchService.start();
-    return fetchService;
+      });
+    }
   }
 
   /**
@@ -267,16 +265,9 @@ public class GameScreen {
     playersJson = new Pair<>("", new PlayerListJson(players));
     fetchPlayersThread();
 
-    for (int i = 0; i < usernames.length; i++) {
-      usernamesMap.put(i, players[i]);
-      tradingPosts.put(i, new TradePostJson[0]);
-      updateTradingPosts.put(i, fetchTradePostsThread(i));
-    }
-
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
     PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
-
 
     // open action prompt if needed.
     Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,

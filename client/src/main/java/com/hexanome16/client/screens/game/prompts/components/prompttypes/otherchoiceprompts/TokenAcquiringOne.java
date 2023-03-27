@@ -37,7 +37,9 @@ public class TokenAcquiringOne extends TokenAcquiringTwo {
     long promptSessionId = GameScreen.getSessionId();
     ArrayList<BonusType> availableBonuses =
         PromptsRequests.getAvailableThreeBonuses(promptSessionId);
-    availableBonuses.remove(bonus.get());
+    if (bonus.isPresent()) {
+      availableBonuses.remove(bonus.get());
+    }
     return availableBonuses;
   }
 

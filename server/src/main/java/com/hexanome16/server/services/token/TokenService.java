@@ -95,6 +95,8 @@ public class TokenService implements TokenServiceInterface {
 
     currentGame.giveOneOf(desiredGem, requestingPlayer);
 
+    requestingPlayer.removeTopAction();
+
     actionUponTokenInteraction(currentGame, requestingPlayer);
 
     var nextAction = requestingPlayer.peekTopAction();
