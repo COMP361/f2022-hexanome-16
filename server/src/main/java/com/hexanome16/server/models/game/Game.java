@@ -18,7 +18,7 @@ import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.savegame.SaveGame;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.ArrayList;
 import java.util.Arrays;

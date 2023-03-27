@@ -513,7 +513,7 @@ public class GameFactory implements EntityFactory {
   public Entity newNoble(SpawnData data) {
     return FXGL.entityBuilder()
         .view(data.getData().get("texture") + ".png")
-        .with(new NobleComponent())
+        .with(new NobleComponent(data.get("MD5")))
         .scale(0.15, 0.15)
         .build();
   }

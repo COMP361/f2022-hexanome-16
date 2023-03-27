@@ -1,4 +1,4 @@
-package com.hexanome16.server.models.winconditions;
+package com.hexanome16.server.services.winconditions;
 
 import com.hexanome16.common.dto.GameServiceJson;
 import com.hexanome16.server.models.ServerPlayer;
