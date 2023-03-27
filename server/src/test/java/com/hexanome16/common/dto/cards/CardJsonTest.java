@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CardJsonTest {
-  CardJson underTest;
+  private CardJson underTest;
 
   @BeforeEach
   void setUp() {
