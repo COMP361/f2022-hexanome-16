@@ -300,6 +300,17 @@ public class GameScreen {
       return;
     }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
+    NobleComponent[] grid = NobleComponent.getGrid();
+    //remove nobles
+    String hashToRemove = "";
+    for (NobleComponent noble : grid) {
+      if (noble != null && nobleMap.containsKey(noble.getNobleHash())) {
+        hashToRemove = noble.getNobleHash();
+        noble.removeFromMat();
+      }
+    }
+    nobleMap.remove(hashToRemove);
+    //add nobles
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
         nobles.put(entry.getKey(), entry.getValue());
