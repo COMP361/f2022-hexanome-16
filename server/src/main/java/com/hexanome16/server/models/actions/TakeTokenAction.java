@@ -6,6 +6,7 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.Optional;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 /**
  * Class for the action to take another token.
  */
-@Getter
+@Data
 @NoArgsConstructor
 @JsonDeserialize(as = TakeTokenAction.class)
 public class TakeTokenAction implements Action {

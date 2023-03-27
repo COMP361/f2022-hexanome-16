@@ -10,8 +10,8 @@ import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
-import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeOneAction;
+import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
@@ -278,8 +278,6 @@ public class ServerPlayer extends Player {
   public void decPlayerBank(PurchaseMap purchaseMap) {
     inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
   }
-
-
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
