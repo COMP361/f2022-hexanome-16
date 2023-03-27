@@ -1,6 +1,7 @@
 package com.hexanome16.common.dto.cards;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.common.models.price.PriceMap;
 import org.junit.jupiter.api.BeforeEach;
