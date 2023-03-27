@@ -44,7 +44,7 @@ public class TradePost {
             numOfEmerald++;
           }
         }
-        return numOfEmerald >= 5 && inventory.getOwnedNobles().size() >= 0;
+        return numOfEmerald >= 5 && inventory.getOwnedNobles().size() >= 1;
       }
       case SAPPHIRE_ROUTE -> {
         int numOfSapphire = 0;
