@@ -135,6 +135,7 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("NobleCard")
   public Entity nobleCard(SpawnData data) {
+    String player = (String) data.getData().getOrDefault("player", "");
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
     // animation
@@ -150,7 +151,10 @@ public class DeckFactory implements EntityFactory {
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.2, 0.2)
-        .onClick(e -> PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS))
+        .onClick(e -> {
+          SeeCards.fetchNobles(player);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+        })
         .build();
   }
 

@@ -2,8 +2,8 @@ package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.ServerGameParams;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
