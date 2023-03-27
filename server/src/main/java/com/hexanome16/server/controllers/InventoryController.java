@@ -281,4 +281,21 @@ public class InventoryController {
     return inventoryService.takeLevelTwoCard(sessionId, accessToken, chosenCard);
   }
 
+  /**
+   * Takes a level one card.
+   *
+   * @param sessionId session Id.
+   * @param accessToken auth token.
+   * @param chosenCard chosen card's md5.
+   * @return information on next action or invalid request message.
+   * @throws JsonProcessingException exception if json processing fails.
+   */
+  @PutMapping(value = {"/games/{sessionId}/board/cards/levelOne"})
+  public ResponseEntity<String> takeLevelOneCard(@PathVariable long sessionId,
+                                                 @RequestParam String accessToken,
+                                                 @RequestParam String chosenCard)
+      throws JsonProcessingException {
+    return inventoryService.takeLevelOneCard(sessionId, accessToken, chosenCard);
+  }
+
 }

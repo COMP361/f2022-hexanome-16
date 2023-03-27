@@ -80,6 +80,18 @@ public interface InventoryServiceInterface {
   ResponseEntity<String> takeLevelTwoCard(long sessionId, String accessToken,
                                           String chosenCard);
 
+
+  /**
+   * Takes a card of level one if allowed to.
+   *
+   * @param sessionId Id of game.
+   * @param accessToken token of requesting player.
+   * @param chosenCard chosen card's hash
+   * @return Response Entity with the next action that needs to be done.
+   */
+  ResponseEntity<String> takeLevelOneCard(long sessionId, String accessToken, String chosenCard);
+
+
   /**
    * Acquire noble response entity.
    *
@@ -91,4 +103,5 @@ public interface InventoryServiceInterface {
    */
   ResponseEntity<String> acquireNoble(long sessionId, String nobleHash, String accessToken)
       throws JsonProcessingException;
+
 }
