@@ -1,6 +1,5 @@
 package com.hexanome16.server.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 
 /**

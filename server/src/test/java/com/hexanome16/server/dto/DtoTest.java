@@ -9,7 +9,7 @@ import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 

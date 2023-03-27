@@ -44,7 +44,7 @@ public class TradePost {
             numOfEmerald++;
           }
         }
-        return numOfEmerald >= 5 && inventory.getReservedCards().size() >= 0;
+        return numOfEmerald >= 5 && inventory.getOwnedNobles().size() >= 1;
       }
       case SAPPHIRE_ROUTE -> {
         int numOfSapphire = 0;
@@ -95,16 +95,10 @@ public class TradePost {
    */
   @JsonIgnore
   public int getBonusPrestigePoints(Map<RouteType, TradePost> tradePostList) {
-    switch (routeType) {
-      case ONYX_ROUTE -> {
-        return 1 + tradePostList.size();
-      }
-      case EMERALD_ROUTE -> {
-        return 5;
-      }
-      default -> {
-        return 0;
-      }
-    }
+    return switch (routeType) {
+      case ONYX_ROUTE -> 1 + tradePostList.size();
+      case EMERALD_ROUTE -> 5;
+      default -> 0;
+    };
   }
 }
