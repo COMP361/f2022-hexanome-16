@@ -13,7 +13,6 @@ public interface TradePostServiceInterface {
    * @param sessionId sessionId of the game.
    * @param username  username of the player.
    * @return the trade posts the player has.
-   * @throws JsonProcessingException json exception
    */
-  public ResponseEntity<String> getPlayerTradePosts(long sessionId, String username);
+  ResponseEntity<String> getPlayerTradePosts(long sessionId, String username);
 }
