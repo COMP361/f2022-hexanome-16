@@ -28,12 +28,21 @@ import kong.unirest.core.Headers;
  */
 public class ChooseLevelTwo extends ChoicePromptAbstract {
 
-  private ArrayList<LevelCard> levelTwoCards;
-  private int chosenLevelIndex;
+  /**
+   * List of Level Two cards.
+   */
+  protected ArrayList<LevelCard> levelCards;
+  /**
+   * chosen card's index.
+   */
+  protected int chosenLevelIndex;
+  /**
+   * Card selection box.
+   */
+  protected ArrayList<Node> cardSelectionBox;
   private double cardWidth;
   private double cardHeight;
   private double cardSpacing;
-  private ArrayList<Node> cardSelectionBox;
 
   /**
    * default constructor.
@@ -58,7 +67,7 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
   protected void promptOpens() {
     chosenLevelIndex = -1;
     cardSelectionBox = new ArrayList<>();
-    levelTwoCards = new ArrayList<>(
+    levelCards = new ArrayList<>(
         Arrays.stream(
             PromptsRequests.getLevelTwoCardsOnBoard(GameScreen.getSessionId()))
             .toList());
@@ -86,7 +95,7 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
 
   @Override
   protected void handleConfirmation() {
-    LevelCard chosenCard = levelTwoCards.get(chosenLevelIndex);
+    LevelCard chosenCard = levelCards.get(chosenLevelIndex);
     String hash = GameScreen.getCardHash(chosenCard);
     PromptComponent.closePrompts();
     long sessionId = GameScreen.getSessionId();
@@ -101,10 +110,10 @@ public class ChooseLevelTwo extends ChoicePromptAbstract {
     cardWidth = FXGL.getAppWidth() * 0.1;
     cardHeight = cardWidth * 1.44;
     cardSpacing = (8 * (getWidth() / 10.)
-        - (cardWidth * levelTwoCards.size()))
-        / (levelTwoCards.size() + 1);
+        - (cardWidth * levelCards.size()))
+        / (levelCards.size() + 1);
     choicesLayout.setSpacing(cardSpacing);
-    for (LevelCard levelCard : levelTwoCards) {
+    for (LevelCard levelCard : levelCards) {
       Texture texture = FXGL.texture(levelCard.getCardInfo().texturePath() + ".png");
       Node node = makeNode(texture);
       choicesLayout.getChildren().add(node);

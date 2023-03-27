@@ -13,6 +13,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbu
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
@@ -250,6 +251,10 @@ public interface PromptTypeInterface {
      * Choose level two prompt type.
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
+    /**
+     * Choose level one prompt type.
+     */
+    CHOOSE_LEVEL_ONE(new ChooseLevelOne()),
     /**
      * Error prompt type.
      */

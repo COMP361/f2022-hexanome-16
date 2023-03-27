@@ -213,6 +213,11 @@ public class InventoryService implements InventoryServiceInterface {
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
       player.addTakeTwoToPerform();
     }
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
+      player.addTakeOneToPerform();
+      // TODO : ASSOCIATE BAG CARD
+    }
+
   }
 
   /**
@@ -338,7 +343,12 @@ public class InventoryService implements InventoryServiceInterface {
     final Game game = request.getRight().getLeft();
     final ServerPlayer player = request.getRight().getRight();
     final ServerLevelCard card = game.getCardByHash(chosenCard);
-    if (card == null) {
+
+    ArrayList<ServerLevelCard> levelTwoCards = new ArrayList<>();
+    levelTwoCards.addAll(game.getOnBoardDeck(Level.TWO).getCardList());
+    levelTwoCards.addAll(game.getOnBoardDeck(Level.REDTWO).getCardList());
+
+    if (card == null  || !levelTwoCards.contains(card)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
     var currentAction = player.peekTopAction();
@@ -346,6 +356,60 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
     if (currentAction.getActionType() != CustomHttpResponses.ActionType.LEVEL_TWO) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    // remove from board, add to inventory and remove action from queue.
+    game.removeOnBoardCard(card);
+    player.addCardToInventory(card);
+    player.removeTopAction();
+
+    Level level = (card).getLevel();
+    // Add new card to the deck
+    game.addOnBoardCard(level);
+
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
+    );
+
+    actionUponCardAcquiral(game, player, card);
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
+  public ResponseEntity<String> takeLevelOneCard(long sessionId, String accessToken,
+                                                 String chosenCard) {
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> left = request.getLeft();
+    if (!left.getStatusCode().is2xxSuccessful()) {
+      return left;
+    }
+
+
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerLevelCard card = game.getCardByHash(chosenCard);
+
+    ArrayList<ServerLevelCard> levelOneCards = new ArrayList<>();
+    levelOneCards.addAll(game.getOnBoardDeck(Level.ONE).getCardList());
+    levelOneCards.addAll(game.getOnBoardDeck(Level.REDONE).getCardList());
+
+    if (card == null || !levelOneCards.contains(card)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.LEVEL_ONE) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
     }
 
