@@ -110,8 +110,6 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     priceMap.put(gem, priceMap.getOrDefault(gem, 0) - amount);
   }
 
-  // TODO: TEST CASE
-
   /**
    * Checks if implied argument can be used instead of the parameter to commit a purchase.
    *
