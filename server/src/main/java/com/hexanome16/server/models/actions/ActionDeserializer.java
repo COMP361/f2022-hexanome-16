@@ -25,6 +25,7 @@ public class ActionDeserializer extends JsonDeserializer<Action> {
         case "CITY" -> mapper.readValue(root.toString(), ChooseCityAction.class);
         case "DISCARD_TOKEN" -> mapper.readValue(root.toString(), DiscardTokenAction.class);
         case "TAKE_TOKEN" -> mapper.readValue(root.toString(), TakeTokenAction.class);
+        case "ASSOCIATE_BAG" -> mapper.readValue(root.toString(), AssociateCardAction.class);
         default -> null;
       };
     } else {

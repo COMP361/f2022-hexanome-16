@@ -221,7 +221,7 @@ public class TokenService implements TokenServiceInterface {
 
   private void actionUponTokenInteraction(Game game, ServerPlayer player) {
     if (player.needToDiscardTokens()) {
-      player.addDiscardTokenAction();
+      player.addDiscardTokenToPerform();
     }
   }
 }

@@ -7,6 +7,7 @@ import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.actions.Action;
+import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
@@ -16,13 +17,16 @@ import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
 import com.hexanome16.server.models.cards.ServerCity;
+import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -246,9 +250,21 @@ public class ServerPlayer extends Player {
   /**
    * Adds Discard token as an action that needs to be performed.
    */
-  public void addDiscardTokenAction() {
+  public void addDiscardTokenToPerform() {
     Gem[] gems = inventory.getOwnedTokenTypes();
     addActionToQueue(new DiscardTokenAction(gems));
+  }
+
+  /**
+   * adds Acquire card as an action that needs to be perfromed.
+   *
+   * @param acquiredCard card to which we will be associating,
+   *                     acquiredCard needs to be a bag type card.
+   * @throws JsonProcessingException if fails if json fails.
+   */
+  public void addAcquireCardToPerform(ServerLevelCard acquiredCard) throws JsonProcessingException {
+    assert acquiredCard.isBag();
+    addActionToQueue(new AssociateCardAction(acquiredCard));
   }
 
   /**
@@ -279,6 +295,22 @@ public class ServerPlayer extends Player {
     inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
   }
 
+  /**
+   * returns a set of all the gem bonuses the player owns.
+   *
+   * @return set of owned Gems.
+   */
+  public Set<Gem> ownedGemBonuses() {
+    Set<Gem> gems = new HashSet<>();
+    for (ServerLevelCard card : inventory.getOwnedCards()) {
+      for (Gem gem : Gem.values()) {
+        if (card.getGemBonus().getGemCost(gem) > 0) {
+          gems.add(gem);
+        }
+      }
+    }
+    return gems;
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 

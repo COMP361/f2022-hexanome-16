@@ -12,6 +12,7 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.ServerCity;
+import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -156,11 +158,28 @@ public class ServerPlayerTest {
   }
 
   /**
+   * Testing addAcquireCardToPerform().
+   */
+  @Test
+  public void testAddAcquireCardToPerform() throws JsonProcessingException {
+    ServerLevelCard card = Mockito.mock(ServerLevelCard.class);
+    when(card.isBag()).thenReturn(true);
+    costa.addAcquireCardToPerform(card);
+    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    var headers = actions.getHeaders();
+    assertEquals(
+        CustomHttpResponses.ActionType.ASSOCIATE_BAG.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, actions.getStatusCode());
+    assertEquals(CustomHttpResponses.ASSOCIATE_BAG_CARD.getBody(), actions.getBody());
+  }
+
+  /**
    * Testing addDiscardTokenAction().
    */
   @Test
   public void testAddDiscardTokenAction() {
-    costa.addDiscardTokenAction();
+    costa.addDiscardTokenToPerform();
     ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
     var headers = actions.getHeaders();
     assertEquals(
@@ -223,5 +242,14 @@ public class ServerPlayerTest {
 
     // Assert
     assertFalse(response);
+  }
+
+  /**
+   * Tests ownedGemBonuses().
+   */
+  @Test
+  public void testOwnedGemBonuses() {
+    Set<Gem> gems = costa.ownedGemBonuses();
+    assertEquals(Set.of(), gems);
   }
 }
