@@ -87,7 +87,7 @@ public class PlayerDecks {
     int i = 0;
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
-        .put("name", name).put("color", colors[0]).put("prestigePoints", prestigePoints))
+            .put("name", name).put("color", colors[0]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.2 * scale);
     // spawn the playing cards deck
     while (i < 6) {
@@ -97,7 +97,9 @@ public class PlayerDecks {
           .setScaleUniform(0.25 * scale);
     }
     // spawn the nobles deck
-    FXGL.spawn("NobleCard", horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+    FXGL.spawn("NobleCard",
+            new SpawnData(horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+               .put("player", name))
         .setScaleUniform(0.2 * scale);
     // spawn the player's bank
     FXGL.spawn("PlayerTokens", new SpawnData(horizontal - (2 * PlayerDecks.horizontal + 20) * scale,
@@ -119,7 +121,7 @@ public class PlayerDecks {
     int i = 0;
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
-        .put("name", name).put("color", colors[2]).put("prestigePoints", prestigePoints))
+            .put("name", name).put("color", colors[2]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.3 * scale);
     // spawn the playing cards deck
     while (i < 6) {
@@ -150,8 +152,8 @@ public class PlayerDecks {
     int horizontal = 100;
     // spawn the player icon
     FXGL.spawn("Player",
-        new SpawnData(horizontal + 100, verticalShift + 110)
-            .put("name", name).put("color", colors[1]).put("prestigePoints", prestigePoints))
+            new SpawnData(horizontal + 100, verticalShift + 110)
+                .put("name", name).put("color", colors[1]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
@@ -204,9 +206,9 @@ public class PlayerDecks {
                                 double verticalShift, double scale) {
     // spawn the player icon
     FXGL.spawn("Player",
-            new SpawnData(horizontalShift + horizontal * scale,
-                verticalShift + 110).put("name", name).put("color", colors[3])
-                .put("prestigePoints", prestigePoints)).setScaleUniform(0.3 * scale);
+        new SpawnData(horizontalShift + horizontal * scale,
+            verticalShift + 110).put("name", name).put("color", colors[3])
+            .put("prestigePoints", prestigePoints)).setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
     FXGL.spawn("Card",

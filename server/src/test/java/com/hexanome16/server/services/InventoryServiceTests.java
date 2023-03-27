@@ -29,8 +29,8 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
@@ -550,7 +550,8 @@ public class InventoryServiceTests {
   void testTakeLevelTwoCard() throws JsonProcessingException {
 
     ServerLevelCard card = new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.TWO,
-        new PurchaseMap(Map.of(Gem.RUBY, 1)));;
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));
+    ;
     MultiValueMap<String, String> goodHeaders = new HttpHeaders();
     goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage()));
@@ -572,7 +573,7 @@ public class InventoryServiceTests {
     when(game.getCardByHash(cardHash)).thenReturn(card);
     when(game.getOnBoardDeck(Level.TWO))
         .thenReturn(new Deck<>());
-    when(game.getOnBoardDeck(Level.REDTWO)).thenReturn(new Deck<>(new ServerLevelCard[]{card}));
+    when(game.getOnBoardDeck(Level.REDTWO)).thenReturn(new Deck<>(new ServerLevelCard[] {card}));
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
@@ -622,7 +623,8 @@ public class InventoryServiceTests {
   void testTakeLevelOneCard() throws JsonProcessingException {
 
     ServerLevelCard card = new ServerLevelCard(20, 0, "", new PriceMap(7, 1, 1, 1, 0), Level.ONE,
-        new PurchaseMap(Map.of(Gem.RUBY, 1)));;
+        new PurchaseMap(Map.of(Gem.RUBY, 1)));
+    ;
     MultiValueMap<String, String> goodHeaders = new HttpHeaders();
     goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.LEVEL_ONE.getMessage()));
@@ -644,7 +646,7 @@ public class InventoryServiceTests {
     when(game.getCardByHash(cardHash)).thenReturn(card);
     when(game.getOnBoardDeck(Level.ONE))
         .thenReturn(new Deck<>());
-    when(game.getOnBoardDeck(Level.REDONE)).thenReturn(new Deck<>(new ServerLevelCard[]{card}));
+    when(game.getOnBoardDeck(Level.REDONE)).thenReturn(new Deck<>(new ServerLevelCard[] {card}));
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
 

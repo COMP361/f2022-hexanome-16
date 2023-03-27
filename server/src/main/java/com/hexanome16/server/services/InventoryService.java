@@ -19,8 +19,8 @@ import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
@@ -109,7 +109,7 @@ public class InventoryService implements InventoryServiceInterface {
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    if (game.getWinCondition() ==  WinCondition.TRADEROUTES
+    if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.SAPPHIRE_ROUTE)) {
       if (!proposedDeal.canBeUsedToBuyAlt(PurchaseMap.toPurchaseMap(cardPriceMap))) {
         return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
@@ -341,7 +341,7 @@ public class InventoryService implements InventoryServiceInterface {
     levelTwoCards.addAll(game.getOnBoardDeck(Level.TWO).getCardList());
     levelTwoCards.addAll(game.getOnBoardDeck(Level.REDTWO).getCardList());
 
-    if (card == null  || !levelTwoCards.contains(card)) {
+    if (card == null || !levelTwoCards.contains(card)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
     var currentAction = player.peekTopAction();
