@@ -10,11 +10,12 @@ import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
-import java.util.Arrays;
 import java.util.List;
 import javafx.util.Pair;
 import kong.unirest.core.Headers;
@@ -101,6 +102,12 @@ public class PromptUtils {
           .equals(CustomHttpResponses.ActionType.ASSOCIATE_BAG.getMessage())) {
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.ASSOCIATE_BAG_CARD));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.TAKE.getMessage())) {
+        String bonus = serverResponse.getValue();
+        TokenAcquiringOne.setBonus(bonus);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_ACQUIRING_ONE));
       }
     }
   }

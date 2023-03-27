@@ -91,9 +91,7 @@ public class GameInitHelpers {
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
       game.getRemainingCards().get(level).addCard(card);
-      if (level != Level.ONE) {
-        game.getRemainingCards().get(level).shuffle();
-      }
+      game.getRemainingCards().get(level).shuffle();
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
     game.getRemainingCards().get(Level.ONE).reverse();

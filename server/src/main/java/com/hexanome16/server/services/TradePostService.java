@@ -1,6 +1,5 @@
 package com.hexanome16.server.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.models.RouteType;
@@ -12,6 +11,7 @@ import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  * Trade post service for trade post controller.
  */
 @Service
-public class TradePostService {
+public class TradePostService implements TradePostServiceInterface {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
@@ -38,16 +38,9 @@ public class TradePostService {
     this.serviceUtils = serviceUtils;
   }
 
-  /**
-   * Request for the trade post obtained by the player.
-   *
-   * @param sessionId sessionId of the game.
-   * @param username  username of the player.
-   * @return the trade posts the player has.
-   * @throws JsonProcessingException json exception
-   */
-  public ResponseEntity<String> getPlayerTradePosts(long sessionId, String username)
-      throws JsonProcessingException {
+  @SneakyThrows
+  @Override
+  public ResponseEntity<String> getPlayerTradePosts(long sessionId, String username) {
     Game game = gameManagerService.getGame(sessionId);
 
     if (game == null) {
@@ -67,6 +60,7 @@ public class TradePostService {
     int i = 0;
     for (Map.Entry<RouteType, TradePost> entry : tradePosts.entrySet()) {
       tradePostJsons[i] = new TradePostJson(entry.getKey());
+      i++;
     }
 
     return new ResponseEntity<>(

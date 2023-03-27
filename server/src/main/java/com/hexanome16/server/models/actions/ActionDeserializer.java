@@ -12,9 +12,6 @@ import java.io.IOException;
  * This class is responsible for deserializing an Action.
  */
 public class ActionDeserializer extends JsonDeserializer<Action> {
-
-  // TODO : : ADD ASSOCIATEDBAGCARD HERER
-
   @Override
   public Action deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
       throws IOException, JacksonException {
@@ -27,6 +24,8 @@ public class ActionDeserializer extends JsonDeserializer<Action> {
         case "NOBLE" -> mapper.readValue(root.toString(), ChooseNobleAction.class);
         case "CITY" -> mapper.readValue(root.toString(), ChooseCityAction.class);
         case "DISCARD_TOKEN" -> mapper.readValue(root.toString(), DiscardTokenAction.class);
+        case "TAKE_TOKEN" -> mapper.readValue(root.toString(), TakeTokenAction.class);
+        case "ASSOCIATE_BAG" -> mapper.readValue(root.toString(), AssociateCardAction.class);
         default -> null;
       };
     } else {

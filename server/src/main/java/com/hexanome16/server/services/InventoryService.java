@@ -19,6 +19,7 @@ import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
@@ -26,6 +27,7 @@ import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +100,8 @@ public class InventoryService implements InventoryServiceInterface {
     if (cardToBuy == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
-    if (cardToBuy.isBag() && player.ownedGemBonuses().isEmpty()) {
+    if (cardToBuy.isBag() && (player.ownedGemBonuses().isEmpty()
+        || (player.ownedGemBonuses().size() == 1 && player.ownedGemBonuses().contains(Gem.GOLD)))) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.NO_BONUS_TO_ASSOCIATE);
     }
 
@@ -106,8 +109,15 @@ public class InventoryService implements InventoryServiceInterface {
     PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
-    if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
-      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+    if (game.getWinCondition() ==  WinCondition.TRADEROUTES
+        && player.getInventory().getTradePosts().containsKey(RouteType.SAPPHIRE_ROUTE)) {
+      if (!proposedDeal.canBeUsedToBuyAlt(PurchaseMap.toPurchaseMap(cardPriceMap))) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+      }
+    } else {
+      if (!proposedDeal.canBeUsedToBuy(PurchaseMap.toPurchaseMap(cardPriceMap))) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+      }
     }
 
 
@@ -141,6 +151,11 @@ public class InventoryService implements InventoryServiceInterface {
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
 
+    if (game.getWinCondition() == WinCondition.TRADEROUTES
+        && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
+      player.addTakeTokenAction(Optional.empty());
+    }
+
     ResponseEntity<String> error =
         addNobleAction(game, player);
     if (error != null) {
@@ -156,9 +171,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Receive trade posts
     for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      System.out.println(tradePost.getKey().name());
       if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        System.out.println("can be taken");
         player.getInventory().addTradePost(tradePost.getValue());
       }
     }
@@ -203,8 +216,8 @@ public class InventoryService implements InventoryServiceInterface {
   /**
    * Let the player reserve a face up card.
    *
-   * @param sessionId           game session id.
-   * @param cardMd5             card hash.
+   * @param sessionId   game session id.
+   * @param cardMd5     card hash.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    * @throws JsonProcessingException exception
@@ -259,8 +272,8 @@ public class InventoryService implements InventoryServiceInterface {
   /**
    * Let the player reserve a face down card.
    *
-   * @param sessionId           game session id.
-   * @param level               deck level.
+   * @param sessionId   game session id.
+   * @param level       deck level.
    * @param accessToken player's authentication token.
    * @return HttpStatus.OK if the request is valid. HttpStatus.BAD_REQUEST otherwise.
    */
@@ -534,14 +547,14 @@ public class InventoryService implements InventoryServiceInterface {
   private void actionUponCardAcquiral(Game game, ServerPlayer player,
                                       ServerLevelCard acquiredCard) {
     // ACTION RELATED SHENANIGANS
-    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
-      player.addTakeTwoToPerform();
+    if (acquiredCard.isBag()) {
+      player.addAcquireCardToPerform(acquiredCard);
     }
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
       player.addTakeOneToPerform();
     }
-    if (acquiredCard.isBag()) {
-      player.addAcquireCardToPerform(acquiredCard);
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
+      player.addTakeTwoToPerform();
     }
   }
 }
