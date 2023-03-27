@@ -3,7 +3,6 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,12 +19,11 @@ import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.ServiceUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -123,6 +121,33 @@ class GameServiceTests {
     // Act
     ResponseEntity<String> response =
         gameService.getLevelTwoOnBoard(validSessionId);
+
+    // Assert
+
+
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    LevelCard[] body = objectMapper.readValue(response.getBody(), LevelCard[].class);
+    assertEquals(6, body.length);
+  }
+
+  /**
+   * testing get level one on board.
+   *
+   * @throws JsonProcessingException if json fails.
+   */
+  @Test
+  public void testGetLevelOneOnBoard() throws JsonProcessingException {
+    // Arrange
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+
+    Game validGame = Game.create(123L,
+        PlayerDummies.validDummies, PlayerDummies.validDummies[0].getName(),
+        "", WinCondition.BASE);
+    when(gameManagerMock.getGame(validSessionId)).thenReturn(validGame);
+
+    // Act
+    ResponseEntity<String> response =
+        gameService.getLevelOneOnBoard(validSessionId);
 
     // Assert
 

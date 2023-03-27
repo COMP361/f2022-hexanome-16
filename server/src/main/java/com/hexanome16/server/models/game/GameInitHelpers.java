@@ -11,7 +11,7 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,9 +91,7 @@ public class GameInitHelpers {
       ServerLevelCard card = new ServerLevelCard(cardJson.getId(), cardJson.getPrestigePoint(),
           textureLevel + cardJson.getId(), cardJson.getPrice(), level, gemBonus);
       game.getRemainingCards().get(level).addCard(card);
-      if (level != Level.ONE) {
-        game.getRemainingCards().get(level).shuffle();
-      }
+      game.getRemainingCards().get(level).shuffle();
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(card)), card);
     }
     game.getRemainingCards().get(Level.ONE).reverse();
@@ -132,11 +130,11 @@ public class GameInitHelpers {
     Deck<ServerLevelCard> deck = new Deck<>();
     for (DevelopmentCardJson bagJson : bagJsonList) {
       Gem gem = Gem.valueOf(bagJson.getBonus());
-      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
+      PurchaseMap gemBonus = new PurchaseMap(Map.of());
       ServerLevelCard bag = new ServerLevelCard(bagJson.getId(), 0,
           "bag" + bagJson.getId(),
           bagJson.getPrice(),
-          Level.REDONE, gemBonus);
+          Level.REDONE, LevelCard.BonusType.BAG, gemBonus);
       deck.addCard(bag);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bag)), bag);
     }
@@ -229,10 +227,11 @@ public class GameInitHelpers {
     Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTWO);
     for (DevelopmentCardJson bagCascadeJson : bagCascadeList) {
       Gem gem = Gem.valueOf(bagCascadeJson.getBonus());
-      PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
+      PurchaseMap gemBonus = new PurchaseMap(Map.of());
       ServerLevelCard bagCascade = new ServerLevelCard(bagCascadeJson.getId(),
           bagCascadeJson.getPrestigePoint(), "bag_cascade" + bagCascadeJson.getId(),
-          bagCascadeJson.getPrice(), Level.REDTWO, gemBonus);
+          bagCascadeJson.getPrice(), Level.REDTWO,
+          LevelCard.BonusType.CASCADING_ONE_BAG, gemBonus);
       deck.addCard(bagCascade);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);

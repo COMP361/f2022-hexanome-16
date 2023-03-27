@@ -18,7 +18,7 @@ import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.savegame.SaveGame;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -464,13 +464,25 @@ public class Game {
 
 
   /**
-   * Gets all the token types one can take 2 of.
+   * Gets all the token types one can take 1 of.
    *
    * @return An array list of all such token types
    */
   public ArrayList<Gem> availableThreeTokensType() {
     return getGameBank().availableThreeTokensType();
   }
+
+  /**
+   * Returns true if one can take 1 token of the given gem types. False otherwise.
+   *
+   * @param gem first gem type we want.
+   * @return True if one can take 1 token of the given gem types. False otherwise.
+   */
+  public boolean allowedTakeOneOf(Gem gem) {
+    ArrayList<Gem> available = availableThreeTokensType();
+    return available.contains(gem);
+  }
+
 
   /**
    * Returns true if one can take 3 tokens of the given gem types. False otherwise.
@@ -510,6 +522,24 @@ public class Game {
     gemIntegerMapPlayer.put(desiredGemOne, 1);
     gemIntegerMapPlayer.put(desiredGemTwo, 1);
     gemIntegerMapPlayer.put(desiredGemThree, 1);
+    player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
+  }
+
+  /**
+   * Gives 3 tokens of 3 different types to player.
+   *
+   * @param gem   First gem we want to take one of.
+   * @param player          player who will receive the gems.
+   */
+  public void giveOneOf(Gem gem, ServerPlayer player) {
+    // Remove from game bank
+    Map<Gem, Integer> gemIntegerMapGame = new HashMap<>();
+    gemIntegerMapGame.put(gem, 1);
+    gameBank.removeGemsFromBank(new PurchaseMap(gemIntegerMapGame));
+
+    // Give to player bank
+    Map<Gem, Integer> gemIntegerMapPlayer = new HashMap<>();
+    gemIntegerMapPlayer.put(gem, 1);
     player.incPlayerBank(new PurchaseMap(gemIntegerMapPlayer));
   }
 

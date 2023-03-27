@@ -26,6 +26,7 @@ import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -151,6 +152,17 @@ public class GameScreen {
                     PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
               }
             });
+
+            // update trade routes
+            String[] usernames = FXGL.getWorldProperties().getValue("players");
+            PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+                i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
+            ).toArray(PlayerJson[]::new);
+            for (int i = 0; i < usernames.length; i++) {
+              usernamesMap.put(i, players[i]);
+              tradingPosts.put(i, new TradePostJson[0]);
+              fetchTradePostsThread(i);
+            }
             updateCurrentPlayer.restart();
           }
         },
@@ -163,37 +175,36 @@ public class GameScreen {
     updateCurrentPlayer.start();
   }
 
-  private static BackgroundService fetchTradePostsThread(int index) {
+  private static void fetchTradePostsThread(int index) {
     String[] colors = {"Yellow", "Black", "Red", "Blue"};
-    BackgroundService fetchService = new BackgroundService(
-        () -> tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
-            usernamesMap.get(index).getUsername())),
-        () -> {
-          if (shouldFetch.get()) {
-            Platform.runLater(() -> {
-              for (TradePostJson tradePost :
-                  tradingPosts.getOrDefault(index, new TradePostJson[0])) {
-                switch (tradePost.getRouteType()) {
-                  case ONYX_ROUTE -> {
-                    FXGL.spawn(colors[index] + "Marker");
-                  }
-                  default -> {
-                    //todo add other routes
-                  }
-                }
-              }
-            });
-            updateTradingPosts.get(index).restart();
-          }
-        },
-        () -> {
-          if (shouldFetch.get()) {
-            updateTradingPosts.get(index).restart();
+    tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
+        usernamesMap.get(index).getUsername()));
+    if (shouldFetch.get()) {
+      Platform.runLater(() -> {
+        for (TradePostJson tradePost :
+            tradingPosts.getOrDefault(index, new TradePostJson[0])) {
+          switch (tradePost.getRouteType()) {
+            case ONYX_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
+            }
+            case EMERALD_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 1));
+            }
+            case SAPPHIRE_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
+            }
+            case DIAMOND_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 3));
+            }
+            case RUBY_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 4));
+            }
+            default -> {
+            }
           }
         }
-    );
-    fetchService.start();
-    return fetchService;
+      });
+    }
   }
 
   /**
@@ -254,16 +265,9 @@ public class GameScreen {
     playersJson = new Pair<>("", new PlayerListJson(players));
     fetchPlayersThread();
 
-    for (int i = 0; i < usernames.length; i++) {
-      usernamesMap.put(i, players[i]);
-      tradingPosts.put(i, new TradePostJson[0]);
-      updateTradingPosts.put(i, fetchTradePostsThread(i));
-    }
-
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
     PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
-
 
     // open action prompt if needed.
     Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,
@@ -296,6 +300,17 @@ public class GameScreen {
       return;
     }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
+    NobleComponent[] grid = NobleComponent.getGrid();
+    //remove nobles
+    String hashToRemove = "";
+    for (NobleComponent noble : grid) {
+      if (noble != null && nobleMap.containsKey(noble.getNobleHash())) {
+        hashToRemove = noble.getNobleHash();
+        noble.removeFromMat();
+      }
+    }
+    nobleMap.remove(hashToRemove);
+    //add nobles
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
         nobles.put(entry.getKey(), entry.getValue());
@@ -468,6 +483,20 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * Whether the player has the sapphire route. Used by BuyCardPrompt.
+   *
+   * @return if the current player has the sapphire route.
+   */
+  public static boolean hasSapphireRoute() {
+    for (TradePostJson tradePost : tradingPosts.get(0)) {
+      if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
