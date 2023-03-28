@@ -35,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
 public class SavegameServiceTests {
   private SavegameServiceInterface savegameService;
   private GameManagerServiceInterface gameManagerService;
-  private final SaveGame[] testSaveGames = new SaveGame[5];
   private final String gameServer = WinCondition.BASE.getGameServiceJson().getName();
 
   /**
@@ -84,7 +83,7 @@ public class SavegameServiceTests {
   @Test
   @Order(2)
   public void testLoadgame() {
-    testSaveGames[0] = savegameService.loadGame("test_savegame");
+    savegameService.loadGame("test_savegame");
     assertNotNull(gameManagerService.getGame(DummyAuths.validSessionIds.get(0)));
   }
 
@@ -98,14 +97,14 @@ public class SavegameServiceTests {
   @Test
   @Order(4)
   public void testDeleteAllSavegames() {
-    for (int i = 0; i < testSaveGames.length; i++) {
+    for (int i = 0; i < 5; i++) {
       savegameService.saveGame(
           gameManagerService.getGame(DummyAuths.validSessionIds.get(0)), "test_savegame" + i,
           new SaveGameJson("test_savegame" + i, gameServer,
               DummyAuths.validPlayerList.stream().map(Player::getName).toArray(String[]::new)));
     }
     savegameService.deleteAllSavegames(gameServer);
-    for (int i = 0; i < testSaveGames.length; i++) {
+    for (int i = 0; i < 5; i++) {
       assertFalse(new File("./data/savegames/test_savegame" + i + ".json").exists());
     }
   }

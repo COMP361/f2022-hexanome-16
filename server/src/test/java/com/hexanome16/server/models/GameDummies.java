@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.Gem;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.mockito.Mockito;
+import org.mockito.mock.SerializableMode;
 
 /**
  * Game Mockito mocks.
