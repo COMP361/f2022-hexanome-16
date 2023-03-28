@@ -8,26 +8,41 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.MainApp;
 import com.hexanome16.client.requests.lobbyservice.oauth.AuthRequest;
+import com.hexanome16.client.requests.lobbyservice.user.RegisterUserRequest;
 import com.hexanome16.client.screens.mainmenu.MainMenuScreen;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.UiUtils;
+import com.hexanome16.common.models.sessions.Role;
+import java.util.Arrays;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class RegisterFactory {
+/**
+ * This class provides methods to create UI elements for the register screen.
+ */
+public class RegisterFactory implements EntityFactory {
   private static String username = "";
   private static String password = "";
-  private static String role = "";
+  private static Role role = Role.ROLE_PLAYER;
 
-  @Spawns("background")
+  /**
+   * Returns the register screen background.
+   *
+   * @param data The spawn data.
+   * @return The background entity.
+   */
+  @Spawns("regBackground")
   public Entity background(SpawnData data) {
     return entityBuilder(data)
         .type(EntityType.BACKGROUND)
@@ -36,7 +51,13 @@ public class RegisterFactory {
         .build();
   }
 
-  @Spawns("close")
+  /**
+   * Returns the register screen close button.
+   *
+   * @param data The spawn data.
+   * @return The close button entity.
+   */
+  @Spawns("regClose")
   public Entity closeButton(SpawnData data) {
     Button button = new Button("X");
     button.setStyle(
@@ -55,7 +76,13 @@ public class RegisterFactory {
         .build();
   }
 
-  @Spawns("message")
+  /**
+   * Returns the register screen message.
+   *
+   * @param data The spawn data.
+   * @return The message entity.
+   */
+  @Spawns("regMessage")
   public Entity message(SpawnData data) {
     String text =
         (String) data.getData().getOrDefault("message", "");
@@ -72,7 +99,7 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("form")
+  @Spawns("regForm")
   public Entity loginScreen(SpawnData data) {
     Rectangle loginScreen = UiUtils.createLogin();
     UiUtils.animateLoginBox(loginScreen, 1000);
@@ -88,7 +115,7 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("title")
+  @Spawns("regTitle")
   public Entity register(SpawnData data) {
     Text message = UiUtils.createMessage("Register", 96, "#FCD828");
     UiUtils.animateLoginElement(message, 1000);
@@ -104,10 +131,9 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("userText")
+  @Spawns("regUserText")
   public Entity userText(SpawnData data) {
     Text user = UiUtils.createMessage("Username", 45, "#000000");
-    user.setStrokeWidth(1);
     UiUtils.animateLoginElement(user, 1000);
     return FXGL.entityBuilder(data)
         .view(user)
@@ -121,10 +147,9 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("passwordText")
+  @Spawns("regPasswordText")
   public Entity passwordText(SpawnData data) {
     Text password = UiUtils.createMessage("Password", 45, "#000000");
-    password.setStrokeWidth(1);
     UiUtils.animateLoginElement(password, 1000);
     return FXGL.entityBuilder(data)
         .view(password)
@@ -138,7 +163,7 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("username")
+  @Spawns("regUsername")
   public Entity username(SpawnData data) {
     TextField usernameField = new TextField();
     usernameField.setOnKeyTyped(e -> username = usernameField.getText());
@@ -155,7 +180,7 @@ public class RegisterFactory {
    * @param data the data
    * @return the entity
    */
-  @Spawns("password")
+  @Spawns("regPassword")
   public Entity password(SpawnData data) {
     PasswordField passwordField = new PasswordField();
     passwordField.setOnKeyTyped(e -> password = passwordField.getText());
@@ -167,30 +192,62 @@ public class RegisterFactory {
   }
 
   /**
-   * Returns the login button.
+   * Returns the role dropdown label.
    *
    * @param data the data
    * @return the entity
    */
-  @Spawns("submit")
+  @Spawns("regRoleText")
+  public Entity roleText(SpawnData data) {
+    Text role = UiUtils.createMessage("Role", 45, "#000000");
+    UiUtils.animateLoginElement(role, 1000);
+    return FXGL.entityBuilder(data)
+        .view(role)
+        .type(EntityType.ROLE_TEXT)
+        .build();
+  }
+
+  /**
+   * Returns the role dropdown.
+   *
+   * @param data the data
+   * @return the entity
+   */
+  @Spawns("regRole")
+  public Entity role(SpawnData data) {
+    ComboBox<String> roleField = new ComboBox<>();
+    roleField.getItems().addAll("Player", "Service", "Admin");
+    roleField.setOnAction(e -> role = Role.fromString(roleField.getValue()));
+    roleField.getSelectionModel().select(0);
+    UiUtils.animateLoginElement(roleField, 1000);
+    return FXGL.entityBuilder(data)
+        .view(roleField)
+        .type(EntityType.ROLE)
+        .build();
+  }
+
+  /**
+   * Returns the submit button.
+   *
+   * @param data the data
+   * @return the entity
+   */
+  @Spawns("regSubmit")
   public Entity loginButton(SpawnData data) {
-    FXGLButton button = UiUtils.createButton("Login");
+    FXGLButton button = UiUtils.createButton("Register");
     button.setOnMouseClicked(e -> {
-      getGameWorld().removeEntities(getGameWorld().getEntitiesByType(
-          com.hexanome16.client.screens.startup.EntityType.MESSAGE));
-      AuthRequest.execute(username, password);
-      if (AuthUtils.getAuth() == null) {
-        spawn("message",
-            new SpawnData(getAppWidth() / 3.0 - 200, getAppHeight() - 200)
-                .put("message", "Invalid username or password"));
-      } else {
-        MainMenuScreen.initUi();
+      getGameWorld().removeEntities(getGameWorld().getEntitiesByType(EntityType.MESSAGE));
+      MainApp.errorMessage = "";
+      RegisterUserRequest.execute(username, password, role.name(), "#000000");
+      if (MainApp.errorMessage.isBlank()) {
+        spawn("message", new SpawnData(getAppWidth() / 3.0, getAppHeight() - 200)
+            .put("message", "Registration successful!"));
       }
     });
     UiUtils.animateLoginElement(button, 1000);
     return FXGL.entityBuilder(data)
         .view(button)
-        .type(com.hexanome16.client.screens.startup.EntityType.LOGIN)
+        .type(EntityType.SUBMIT)
         .build();
   }
 }

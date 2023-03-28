@@ -56,9 +56,11 @@ public class MainMenuScreen {
         MainMenuScreen.clearUi();
         RegisterScreen.initRegisterScreen();
       } else {
+        MainMenuScreen.clearUi();
         MainApp.errorMessage = "Sorry, only admin accounts are able to register new players.";
         FXGL.spawn("PromptBox", new SpawnData().put("promptType",
-            PromptTypeInterface.PromptType.ERROR));
+            PromptTypeInterface.PromptType.ERROR)
+            .put("handleConfirm", (Runnable) MainMenuScreen::initUi));
       }
     });
   }
