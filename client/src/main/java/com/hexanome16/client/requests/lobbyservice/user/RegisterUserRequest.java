@@ -21,14 +21,14 @@ public class RegisterUserRequest {
    *
    * @param username The username of the user.
    * @param password The password of the user.
-   * @param colour  The preferred colour of the user.
    * @param role   The role of the user.
+   * @param colour  The preferred colour of the user.
    */
-  public static void execute(String username, String password, String colour, String role) {
+  public static void execute(String username, String password, String role, String colour) {
     RequestClient.sendRequestString(new Request<>(RequestMethod.PUT, RequestDest.LS,
         "/api/users/" + username,
         Map.of("access_token", AuthUtils.getAuth().getAccessToken()),
-        new User(username, password, colour, role),
+        new User(username, password, role, colour),
         Void.class));
   }
 }

@@ -6,39 +6,51 @@ enum EntityType {
   /**
    * Title of the register screen.
    */
-  TITLE("title"),
+  TITLE("regTitle"),
   /**
    * Register form container.
    */
-  FORM("form"),
+  FORM("regForm"),
+  /**
+   * Username label.
+   */
+  USER_TEXT("regUserText"),
   /**
    * Username field.
    */
-  USERNAME("username"),
+  USERNAME("regUsername"),
+  /**
+   * Password label.
+   */
+  PASSWORD_TEXT("regPasswordText"),
   /**
    * Password field.
    */
-  PASSWORD("password"),
+  PASSWORD("regPassword"),
+  /**
+   * User role label.
+   */
+  ROLE_TEXT("regRoleText"),
   /**
    * User role field (dropdown).
    */
-  ROLE("role"),
+  ROLE("regRole"),
   /**
    * Submit button.
    */
-  SUBMIT("submit"),
+  SUBMIT("regSubmit"),
   /**
    * Close button.
    */
-  CLOSE("close"),
+  CLOSE("regClose"),
   /**
    * Background.
    */
-  BACKGROUND("background"),
+  BACKGROUND("regBackground"),
   /**
    * Message string.
    */
-  MESSAGE("message");
+  MESSAGE("regMessage");
 
   @Getter
   private final String entityName;

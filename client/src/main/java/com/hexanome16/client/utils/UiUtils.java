@@ -63,6 +63,11 @@ public class UiUtils {
     return button;
   }
 
+  /**
+   * Create a login box.
+   *
+   * @return the rectangle
+   */
   public static Rectangle createLogin() {
     Rectangle loginScreen = new Rectangle();
     loginScreen.setWidth(720);
@@ -74,17 +79,14 @@ public class UiUtils {
     return loginScreen;
   }
 
+  /**
+   * Animate the login box.
+   *
+   * @param loginBox the login box
+   * @param duration the duration of the animation
+   */
   public static void animateLoginBox(Rectangle loginBox, int duration) {
-    ScaleTransition st = new ScaleTransition(Duration.millis(duration), loginBox);
-    st.setAutoReverse(false);
-    st.setCycleCount(1);
-    st.setByX(1.05);
-    st.setByY(1.05);
-    st.setToX(1.0);
-    st.setToY(1.0);
-    st.setFromX(0.1);
-    st.setFromY(0.1);
-    st.play();
+    animateLoginElement(loginBox, duration);
 
     FadeTransition ft = new FadeTransition(Duration.millis(duration), loginBox);
     ft.setFromValue(0.2);
@@ -95,6 +97,12 @@ public class UiUtils {
     ft.play();
   }
 
+  /**
+   * Animate a login element.
+   *
+   * @param node the node to animate
+   * @param duration the duration of the animation
+   */
   public static void animateLoginElement(Node node, int duration) {
     ScaleTransition st = new ScaleTransition(Duration.millis(duration), node);
     st.setAutoReverse(false);
