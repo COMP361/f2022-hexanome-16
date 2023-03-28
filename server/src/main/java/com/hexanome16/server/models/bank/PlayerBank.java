@@ -1,5 +1,6 @@
 package com.hexanome16.server.models.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 
@@ -30,6 +31,7 @@ public class PlayerBank extends Bank {
    * @param k int of max size (return false if k)
    * @return true or false.
    */
+  @JsonIgnore
   public boolean hasMoreThanKtokens(int k) {
     return getBank().values().stream().mapToInt(e -> e).sum() > k;
   }
@@ -39,6 +41,7 @@ public class PlayerBank extends Bank {
    *
    * @return array of owned token types.
    */
+  @JsonIgnore
   public Gem[] getOwnedTokenTypes() {
     return getBank().keySet().stream().filter(gem -> getBank().get(gem) > 0).toArray(Gem[]::new);
   }
