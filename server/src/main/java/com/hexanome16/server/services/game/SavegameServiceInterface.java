@@ -23,6 +23,8 @@ public interface SavegameServiceInterface {
    *
    * @param game The game to save.
    * @param id   The id of the savegame.
+   * @param saveGameJson The savegame json.
+   * @return The response.
    */
   ResponseEntity<String> saveGame(Game game, String id, SaveGameJson saveGameJson);
 
@@ -31,6 +33,7 @@ public interface SavegameServiceInterface {
    *
    * @param gamename   The game server name.
    * @param savegameId The id of the savegame.
+   * @return The response entity.
    */
   ResponseEntity<String> deleteSavegame(String gamename, String savegameId);
 

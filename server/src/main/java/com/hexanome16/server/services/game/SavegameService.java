@@ -3,9 +3,11 @@ package com.hexanome16.server.services.game;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -19,6 +21,7 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.CustomSerializerModifier;
 import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.net.URI;
@@ -59,13 +62,24 @@ public class SavegameService implements SavegameServiceInterface {
 
   /**
    * Constructor.
+   *
+   * @param urlUtils            the url utils
+   * @param restTemplateBuilder the rest template builder
+   * @param authService         the auth service
    */
   public SavegameService(@Autowired UrlUtils urlUtils,
                          @Autowired RestTemplateBuilder restTemplateBuilder,
                          @Autowired AuthServiceInterface authService) {
     ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
             JsonInclude.Include.NON_NULL)
-        .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+        .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE)
+        .registerModule(new SimpleModule() {
+          @Override
+          public void setupModule(Module.SetupContext context) {
+            super.setupModule(context);
+            context.addBeanSerializerModifier(new CustomSerializerModifier());
+          }
+        });
     objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     objectReader = objectMapper.readerFor(SaveGame.class);
     this.urlUtils = urlUtils;
