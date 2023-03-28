@@ -582,9 +582,6 @@ public class Game {
     if (!(o instanceof final Game other)) {
       return false;
     }
-    if (!other.canEqual(this)) {
-      return false;
-    }
     final Object this$remainingCards = this.getRemainingCards();
     final Object other$remainingCards = other.getRemainingCards();
     final Object this$onBoardDecks = this.getOnBoardDecks();
@@ -613,9 +610,5 @@ public class Game {
         && Objects.equals(this$remainingNobles, other$remainingNobles)
         && Objects.equals(this$tradePosts, other$tradePosts)
         && this.getCurrentPlayerIndex() == other.getCurrentPlayerIndex();
-  }
-
-  protected boolean canEqual(final Object other) {
-    return other instanceof Game;
   }
 }
