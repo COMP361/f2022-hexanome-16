@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.Getter;
@@ -573,5 +574,48 @@ public class Game {
     return -1;
   }
 
+  @Override
+  public boolean equals(final Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof final Game other)) {
+      return false;
+    }
+    if (!other.canEqual(this)) {
+      return false;
+    }
+    final Object this$remainingCards = this.getRemainingCards();
+    final Object other$remainingCards = other.getRemainingCards();
+    final Object this$onBoardDecks = this.getOnBoardDecks();
+    final Object other$onBoardDecks = other.getOnBoardDecks();
+    final Object this$onBoardNobles = this.getOnBoardNobles();
+    final Object other$onBoardNobles = other.getOnBoardNobles();
+    final Object this$onBoardCities = this.getOnBoardCities();
+    final Object other$onBoardCities = other.getOnBoardCities();
+    final Object this$remainingCities = this.getRemainingCities();
+    final Object other$remainingCities = other.getRemainingCities();
+    final Object this$gameBank = this.getGameBank();
+    final Object other$gameBank = other.getGameBank();
+    final Object this$winCondition = this.getWinCondition();
+    final Object other$winCondition = other.getWinCondition();
+    final Object this$remainingNobles = this.getRemainingNobles();
+    final Object other$remainingNobles = other.getRemainingNobles();
+    final Object this$tradePosts = this.getTradePosts();
+    final Object other$tradePosts = other.getTradePosts();
+    return Objects.equals(this$remainingCards, other$remainingCards)
+        && Objects.equals(this$onBoardDecks, other$onBoardDecks)
+        && Objects.equals(this$onBoardNobles, other$onBoardNobles)
+        && Objects.equals(this$onBoardCities, other$onBoardCities)
+        && Objects.equals(this$remainingCities, other$remainingCities)
+        && Objects.equals(this$gameBank, other$gameBank)
+        && Objects.equals(this$winCondition, other$winCondition)
+        && Objects.equals(this$remainingNobles, other$remainingNobles)
+        && Objects.equals(this$tradePosts, other$tradePosts)
+        && this.getCurrentPlayerIndex() == other.getCurrentPlayerIndex();
+  }
 
+  protected boolean canEqual(final Object other) {
+    return other instanceof Game;
+  }
 }
