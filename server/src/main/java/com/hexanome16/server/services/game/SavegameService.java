@@ -8,15 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.auth.TokensInfo;
-import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.cards.ServerCity;
-import com.hexanome16.server.models.cards.ServerLevelCard;
-import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
@@ -25,12 +19,11 @@ import com.hexanome16.server.util.CustomSerializerModifier;
 import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,7 +103,8 @@ public class SavegameService implements SavegameServiceInterface {
   @Override
   public ResponseEntity<String> saveGame(Game game, String id, SaveGameJson saveGameJson) {
     SaveGame saveGame = new SaveGame(game, id);
-    objectWriter.writeValue(new File(savegamesPath + "/" + id + ".json"), saveGame);
+    File saveGameFile = new File(savegamesPath + "/" + id + ".json");
+    objectWriter.writeValue(saveGameFile, saveGame);
     return createSavegameHelper(saveGameJson.getGamename(), id, saveGameJson);
   }
 
@@ -150,16 +144,10 @@ public class SavegameService implements SavegameServiceInterface {
     assert url != null;
     try {
       restTemplate.delete(url);
-      File[] savegames = getSavegameFiles();
-      for (File savegame : savegames) {
-        if (!savegame.exists()) {
-          return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-        }
-        SaveGame saveGame = loadGame(savegame.getName().replace(".json", ""));
-        if (!saveGame.getGamename().equals(gamename)) {
-          continue;
-        }
-        if (!savegame.delete()) {
+      DirectoryStream<Path> savegames = getSavegameFiles();
+      for (Path savegame : savegames) {
+        SaveGame saveGame = loadGame(savegame.toFile().getName().replace(".json", ""));
+        if (saveGame.getGamename().equals(gamename) && !savegame.toFile().delete()) {
           return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
         }
       }
@@ -197,8 +185,9 @@ public class SavegameService implements SavegameServiceInterface {
     return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
   }
 
+  @SneakyThrows
   @Override
-  public File[] getSavegameFiles() {
-    return new File(savegamesPath).listFiles();
+  public DirectoryStream<Path> getSavegameFiles() {
+    return Files.newDirectoryStream(Path.of(savegamesPath), "*.json");
   }
 }

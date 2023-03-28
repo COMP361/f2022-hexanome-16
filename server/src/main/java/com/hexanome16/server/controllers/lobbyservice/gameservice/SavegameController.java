@@ -14,6 +14,8 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
@@ -89,13 +91,14 @@ public class SavegameController {
   @Order(15000)
   @SneakyThrows
   public void initSaveGames() {
-    File[] savegameFiles = savegameService.getSavegameFiles();
+    DirectoryStream<Path> savegameFiles = savegameService.getSavegameFiles();
     if (savegameFiles == null) {
       return;
     }
-    for (File savegameFile : savegameFiles) {
-      if (savegameFile.isFile()) {
-        SaveGame saveGame = savegameService.loadGame(savegameFile.getName().replace(".json", ""));
+    for (Path savegameFile : savegameFiles) {
+      if (savegameFile.toFile().canRead()) {
+        SaveGame saveGame = savegameService.loadGame(
+            savegameFile.toFile().getName().replace(".json", ""));
         savegameService.createSavegameHelper(saveGame.getGamename(), saveGame.getId(),
             new SaveGameJson(saveGame.getId(), saveGame.getGamename(), saveGame.getUsernames()));
       }

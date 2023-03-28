@@ -3,7 +3,8 @@ package com.hexanome16.server.services.game;
 import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
-import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -61,5 +62,5 @@ public interface SavegameServiceInterface {
    *
    * @return The savegame files.
    */
-  File[] getSavegameFiles();
+  DirectoryStream<Path> getSavegameFiles();
 }
