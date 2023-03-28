@@ -148,9 +148,8 @@ public class Deck<T extends InventoryAddable> implements BroadcastContent {
     if (this.getCardList().size() != otherDeck.getCardList().size()) {
       return false;
     }
-    for (int i = 0; i < this.getCardList().size() && !this.getCardList().isEmpty(); i++) {
-      if (this.getCardList().get(i).getCardInfo().id()
-          != otherDeck.getCardList().get(i).getCardInfo().id()) {
+    for (InventoryAddable card : this.getCardList()) {
+      if (!otherDeck.getCardList().contains(card)) {
         return false;
       }
     }

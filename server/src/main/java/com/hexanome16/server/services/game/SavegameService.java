@@ -109,27 +109,9 @@ public class SavegameService implements SavegameServiceInterface {
   @SneakyThrows
   @Override
   public ResponseEntity<String> saveGame(Game game, String id, SaveGameJson saveGameJson) {
-    String gamename = game.getWinCondition().getGameServiceJson().getName();
-    String[] usernames = Arrays.stream(game.getPlayers()).sorted(Comparator.comparingInt(
-        ServerPlayer::getPlayerOrder)).map(ServerPlayer::getName).toArray(String[]::new);
-    String currentPlayer = game.getCurrentPlayer().getName();
-    Map<Level, ServerLevelCard[]> onBoardDecks = game.getOnBoardDecks().entrySet().stream()
-        .collect(Collectors.toMap(Map.Entry::getKey,
-            entry -> entry.getValue().getCardList().toArray(ServerLevelCard[]::new)));
-    ServerNoble[] onBoardNobles = game.getOnBoardNobles().getCardList().toArray(ServerNoble[]::new);
-    ServerCity[] onBoardCities = game.getOnBoardCities().getCardList().toArray(ServerCity[]::new);
-    Map<Level, ServerLevelCard[]> remainingDecks = Arrays.stream(Level.values())
-        .collect(Collectors.toMap(level -> level, level -> game.getLevelDeck(level)
-            .getCardList().toArray(ServerLevelCard[]::new)));
-    ServerNoble[] remainingNobles = game.getRemainingNobles().values().toArray(ServerNoble[]::new);
-    ServerCity[] remainingCities = game.getRemainingCities().values().toArray(ServerCity[]::new);
-    PurchaseMap gameBank = game.getGameBank().toPurchaseMap();
-    ServerPlayer[] serverPlayers = game.getPlayers();
-    SaveGame saveGame = new SaveGame(gamename, id, currentPlayer, usernames, game.getCreator(),
-        onBoardDecks, onBoardNobles, onBoardCities, remainingDecks, remainingNobles,
-        remainingCities, gameBank, serverPlayers);
+    SaveGame saveGame = new SaveGame(game, id);
     objectWriter.writeValue(new File(savegamesPath + "/" + id + ".json"), saveGame);
-    return createSavegameHelper(gamename, id, saveGameJson);
+    return createSavegameHelper(saveGameJson.getGamename(), id, saveGameJson);
   }
 
   /**
