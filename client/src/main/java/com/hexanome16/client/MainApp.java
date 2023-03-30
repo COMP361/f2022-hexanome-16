@@ -19,6 +19,7 @@ import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.prompts.PromptFactory;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.lobby.LobbyFactory;
+import com.hexanome16.client.screens.register.RegisterFactory;
 import com.hexanome16.client.screens.startup.StartupScreen;
 import com.hexanome16.client.screens.startup.StartupScreenFactory;
 
@@ -59,6 +60,7 @@ public class MainApp extends GameApplication {
     getGameWorld().addEntityFactory(new DeckFactory());
     getGameWorld().addEntityFactory(new StartupScreenFactory());
     getGameWorld().addEntityFactory(new LobbyFactory());
+    getGameWorld().addEntityFactory(new RegisterFactory());
     getGameScene().setCursor(FXGL.getAssetLoader().loadCursorImage("cursor.png"), CURSOR_HOTSPOT);
     StartupScreen.backToStartupScreen();
   }
