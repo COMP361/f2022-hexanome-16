@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.PurchaseMapDeserializer;
 import java.util.Map;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
@@ -16,6 +17,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @JsonDeserialize(using = PurchaseMapDeserializer.class)
+@NoArgsConstructor
 public class PurchaseMap extends PriceMap implements PriceInterface {
 
   /**
@@ -181,7 +183,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
           }
           costRemaining += remaining[i];
         }
-        return costRemaining == 0;
+        return goldAmount == 0 && costRemaining == 0;
       }
     }
     return false;
