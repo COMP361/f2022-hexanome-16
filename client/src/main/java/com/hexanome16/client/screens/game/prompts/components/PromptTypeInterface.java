@@ -9,8 +9,6 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.ErrorPr
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReserveNobleCard;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelOne;
@@ -217,16 +215,6 @@ public interface PromptTypeInterface {
      * <p><i>Main</i></p>
      */
     BUY_CARD_WITH_CARDS(new BuyCardWithCards()),
-    /**
-     * Buy bag card prompt type.
-     * <p><i>Main</i></p>
-     */
-    BUY_BAG_CARD(new BuyingBagCard()),
-    /**
-     * Buy reserve noble card prompt type.
-     * <p><i>Main</i></p>
-     */
-    BUY_RESERVE_NOBLE_CARD(new BuyReserveNobleCard()),
     /**
      * Pause prompt type.
      * <p><i>Main</i></p>

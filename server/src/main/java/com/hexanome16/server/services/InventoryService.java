@@ -10,6 +10,7 @@ import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -83,7 +84,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
-                                        PurchaseMap proposedDeal) {
+                                        OrientPurchaseMap proposedDeal) {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
