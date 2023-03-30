@@ -39,6 +39,11 @@ public class MainMenuScreenUiController implements UIController {
    */
   @FXML
   VBox logoutButton;
+  /**
+   * The Register button.
+   */
+  @FXML
+  VBox registerButton;
 
   /**
    * Click lobby event.
@@ -157,6 +162,35 @@ public class MainMenuScreenUiController implements UIController {
    */
   @FXML
   void clickLogoutButton(MouseEvent event) {
+  }
+
+  /**
+   * Mouse hover register button.
+   *
+   * @param event the event
+   */
+  @FXML
+  void hoverRegisterButton(MouseEvent event) {
+    resize(registerButton, EXPAND_SIZE);
+  }
+
+  /**
+   * Mouse exit register button.
+   *
+   * @param event the event
+   */
+  @FXML
+  void exitRegisterButton(MouseEvent event) {
+    resize(registerButton, NORMAL_SIZE);
+  }
+
+  /**
+   * Click register button.
+   *
+   * @param event the event
+   */
+  @FXML
+  void clickRegisterButton(MouseEvent event) {
   }
 
   private void resize(Node n, float size) {
