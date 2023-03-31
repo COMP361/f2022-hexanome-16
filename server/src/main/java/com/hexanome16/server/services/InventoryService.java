@@ -537,6 +537,50 @@ public class InventoryService implements InventoryServiceInterface {
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, json, null);
   }
 
+  @Override
+  public ResponseEntity<String> getCards(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+        HttpStatus.OK
+    );
+  }
+
+  @Override
+  public ResponseEntity<String> getNobles(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
+        HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> getReservedCards(long sessionId, String username,
+                                                 String accessToken)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the reserved level cards in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> getReservedNobles(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the reserved nobles in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+        player.getInventory().getReservedNobles()), HttpStatus.OK);
+  }
+
 
   // ACTION RELATED SHENANIGANS
 
