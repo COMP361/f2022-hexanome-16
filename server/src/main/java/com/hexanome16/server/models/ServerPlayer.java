@@ -282,7 +282,7 @@ public class ServerPlayer extends Player {
    *
    * @return true or false.
    */
-  public boolean needToDiscardTokens() {
+  public boolean hasToDiscardTokens() {
     return inventory.hasMoreThanTenTokens();
   }
 
