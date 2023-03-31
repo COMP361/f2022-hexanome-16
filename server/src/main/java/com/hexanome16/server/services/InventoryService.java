@@ -130,8 +130,8 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.SAPPHIRE),
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
-        proposedDeal.getGemCost(Gem.GOLD)
-    )) {
+        proposedDeal.getGemCost(Gem.GOLD))
+            || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_FUNDS);
     }
 
@@ -145,6 +145,13 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD));
 
+    // Remove the golden cards from the player banks
+    int goldBonusAmount = proposedDeal.getGoldenCardsAmount();
+    while (goldBonusAmount > 0) {
+      ServerLevelCard goldCard = player.topGoldCard();
+      player.removeCardFromInventory(goldCard);
+      goldBonusAmount--;
+    }
 
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);

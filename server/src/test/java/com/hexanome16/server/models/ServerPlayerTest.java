@@ -3,11 +3,15 @@ package com.hexanome16.server.models;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.bank.PlayerBank;
@@ -252,4 +256,34 @@ public class ServerPlayerTest {
     Set<Gem> gems = costa.ownedGemBonuses();
     assertEquals(Set.of(), gems);
   }
+
+  /**
+   * Test hasAtLeastGoldenBonus().
+   */
+  @Test
+  public void testHasAtLeastGoldenBonus() {
+    assertTrue(costa.hasAtLeastGoldenBonus(0));
+  }
+
+  /**
+   * Test topGoldCard().
+   */
+  @Test
+  public void testTopGoldCard() {
+    assertNull(costa.topGoldCard());
+  }
+
+  /**
+   * Test removeCardFromInventory.
+   */
+  @Test
+  public void testRemoveCardFromInventory() {
+    var card = new ServerLevelCard();
+    card.setCardInfo(new CardInfo(123, 12, "card",
+        new PriceMap()));
+    card.setGemBonus(new PurchaseMap());
+    costa.getInventory().getOwnedCards().add(card);
+    costa.removeCardFromInventory(card);
+  }
+
 }

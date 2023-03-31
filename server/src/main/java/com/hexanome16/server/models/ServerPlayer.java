@@ -2,6 +2,7 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
@@ -57,6 +58,8 @@ public class ServerPlayer extends Player {
   }
 
 
+
+
   /**
    * Gets bank.
    *
@@ -86,6 +89,34 @@ public class ServerPlayer extends Player {
    */
   public boolean removeReservedCardFromInventory(InventoryAddable inventoryAddable) {
     return this.inventory.getReservedCards().remove(inventoryAddable);
+  }
+
+  /**
+   * Returns true if you have at least golden cards amount of golden token bonus orient cards.
+   *
+   * @param goldenCardsAmount amount of golden cards.
+   * @return true or false.
+   */
+  public boolean hasAtLeastGoldenBonus(int goldenCardsAmount) {
+    return inventory.hasAtLeastGoldenBonus(goldenCardsAmount);
+  }
+
+  /**
+   * Gets the top most gold card.
+   *
+   * @return top most gold card, null if no such card.
+   */
+  public ServerLevelCard topGoldCard() {
+    return inventory.topGoldCard();
+  }
+
+  /**
+   * Removes the card from the player inventory.
+   *
+   * @param card card we want to remove from the inventory.
+   */
+  public void removeCardFromInventory(ServerLevelCard card) {
+    inventory.removeCard(card);
   }
 
 
@@ -311,6 +342,8 @@ public class ServerPlayer extends Player {
     }
     return gems;
   }
+
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
