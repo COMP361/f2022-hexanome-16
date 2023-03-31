@@ -18,6 +18,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -177,6 +178,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
+    when(playerMock.hasAtLeastGoldenBonus(0)).thenReturn(true);
     when(mockAction.getActionDetails()).thenReturn(
         CustomResponseFactory.getResponse(CustomHttpResponses.OK));
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
@@ -196,7 +198,7 @@ public class InventoryServiceTests {
     // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId, cardHash,
-            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
@@ -223,6 +225,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
+    when(playerMock.hasAtLeastGoldenBonus(0)).thenReturn(true);
     when(mockAction.getActionDetails()).thenReturn(
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
@@ -242,7 +245,7 @@ public class InventoryServiceTests {
     // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId, cardHash,
-            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
@@ -271,6 +274,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
+    when(playerMock.hasAtLeastGoldenBonus(0)).thenReturn(true);
     when(mockAction.getActionDetails()).thenReturn(
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
@@ -293,7 +297,7 @@ public class InventoryServiceTests {
     // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId, cardHash,
-            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
@@ -320,7 +324,7 @@ public class InventoryServiceTests {
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
@@ -348,7 +352,7 @@ public class InventoryServiceTests {
     // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId, cardHash,
-            accessToken, new PurchaseMap(0, 0, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(0, 0, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.INVALID_PROPOSED_DEAL.getStatus(),
@@ -374,7 +378,7 @@ public class InventoryServiceTests {
     // Act
     ResponseEntity<String> response =
         inventoryService.buyCard(sessionId, cardHash,
-            accessToken, new PurchaseMap(20, 1, 1, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(20, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.INSUFFICIENT_FUNDS.getStatus(),
@@ -478,7 +482,7 @@ public class InventoryServiceTests {
     // Test invalid sessionId
     ResponseEntity<String> response = inventoryService.buyCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
-        new PurchaseMap(1, 1, 1, 0, 0, 1));
+        new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getStatusCode().value());
 
@@ -486,14 +490,14 @@ public class InventoryServiceTests {
     response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            invalidAccessToken, new PurchaseMap(1, 1, 1, 0, 0, 1));
+            invalidAccessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
     // Test invalid price
     response =
         inventoryService.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
-            accessToken, new PurchaseMap(3, 0, 0, 0, 0, 1));
+            accessToken, new OrientPurchaseMap(3, 0, 0, 0, 0, 1, 0));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
     // Test not enough funds
@@ -505,7 +509,7 @@ public class InventoryServiceTests {
 
     response = inventoryService.buyCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken,
-        new PurchaseMap(7, 1, 1, 0, 0, 1));
+        new OrientPurchaseMap(7, 1, 1, 0, 0, 1, 0));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 

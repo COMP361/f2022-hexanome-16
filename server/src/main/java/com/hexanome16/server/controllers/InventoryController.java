@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
@@ -221,7 +222,7 @@ public class InventoryController {
   @PutMapping(value = "/games/{sessionId}/cards/{cardMd5}")
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
                                         @RequestParam String accessToken,
-                                        @RequestBody PurchaseMap purchaseMap)
+                                        @RequestBody OrientPurchaseMap purchaseMap)
       throws JsonProcessingException {
     return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }

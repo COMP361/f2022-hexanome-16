@@ -2,8 +2,10 @@ package com.hexanome16.client.screens.game;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
@@ -39,10 +41,19 @@ public class UpdateGameInfo {
 
     // get string bank from server
     PurchaseMap bankPriceMap = PromptsRequests.getPlayerBank(sessionId, playerName);
+    LevelCard[] cards = PromptsRequests.getCards(sessionId, playerName);
+    int counter = 0;
+    for (LevelCard card : cards) {
+      if (card.getBonusType() == LevelCard.BonusType.TWO_GOLD_TOKENS) {
+        counter++;
+      }
+    }
 
     if (withinPrompt) {
       // set player info in the prompt to be whatever the server says
-      setPlayerBankInfoPrompt(UpdateGameInfo.toGemAmountMap(bankPriceMap));
+      Map<CurrencyType, Integer> map = UpdateGameInfo.toGemAmountMap(bankPriceMap);
+      map.put(CurrencyType.BONUS_GOLD_CARDS, counter);
+      setPlayerBankInfoPrompt(map);
     } else {
       // set player info in the game to be whatever the server says.
       setPlayerBankInfoGlobal(playerName, UpdateGameInfo.toGemAmountMap(bankPriceMap));
