@@ -220,7 +220,7 @@ public class TokenService implements TokenServiceInterface {
   // HELPERS //////////////////////////////////////////////////////////////
 
   private void actionUponTokenInteraction(Game game, ServerPlayer player) {
-    if (player.needToDiscardTokens()) {
+    if (player.hasToDiscardTokens()) {
       player.addDiscardTokenToPerform();
     }
   }

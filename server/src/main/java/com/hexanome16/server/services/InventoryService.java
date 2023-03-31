@@ -156,8 +156,10 @@ public class InventoryService implements InventoryServiceInterface {
       player.addTakeTokenAction(Optional.empty());
     }
 
+
     ResponseEntity<String> error =
         addNobleAction(game, player);
+
     if (error != null) {
       return error;
     }
@@ -195,22 +197,7 @@ public class InventoryService implements InventoryServiceInterface {
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
-  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
-    var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getRemainingNobles().values()) {
-      if (player.canBeVisitedBy(noble)) {
-        noblesList.add(noble);
-      }
-    }
-    if (!noblesList.isEmpty()) {
-      try {
-        player.addNobleListToPerform(noblesList);
-      } catch (JsonProcessingException e) {
-        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-      }
-    }
-    return null;
-  }
+
 
 
   /**
@@ -263,6 +250,14 @@ public class InventoryService implements InventoryServiceInterface {
         BroadcastMapKey.fromLevel(level),
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
+
+
+    actionUponCardReservation(game, player, card);
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
@@ -317,6 +312,14 @@ public class InventoryService implements InventoryServiceInterface {
         BroadcastMapKey.fromLevel(atLevel),
         new DeckJson(game.getOnBoardDeck(atLevel).getCardList(), atLevel)
     );
+
+    actionUponCardReservation(game, player, card);
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
@@ -600,5 +603,31 @@ public class InventoryService implements InventoryServiceInterface {
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
       player.addTakeTwoToPerform();
     }
+  }
+
+  // Because you gain one gold that you may need to discard a token given you're over
+  // 10 tokens total in your inventory.
+  private void actionUponCardReservation(Game game, ServerPlayer player,
+                                         ServerLevelCard reservedCard) {
+    if (player.hasToDiscardTokens()) {
+      player.addDiscardTokenToPerform();
+    }
+  }
+
+  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
+    var noblesList = new ArrayList<Noble>();
+    for (ServerNoble noble : game.getRemainingNobles().values()) {
+      if (player.canBeVisitedBy(noble)) {
+        noblesList.add(noble);
+      }
+    }
+    if (!noblesList.isEmpty()) {
+      try {
+        player.addNobleListToPerform(noblesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
   }
 }
