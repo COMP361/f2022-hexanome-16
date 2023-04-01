@@ -1,6 +1,7 @@
 package com.hexanome16.server.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ public interface InventoryServiceInterface {
   ResponseEntity<String> buyCard(long sessionId,
                                  String cardMd5,
                                  String accessToken,
-                                 PurchaseMap proposedDeal)
+                                 OrientPurchaseMap proposedDeal)
       throws JsonProcessingException;
 
   /**

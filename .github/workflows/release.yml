@@ -1,0 +1,87 @@
+name: Java CI with Maven
+# triggered every time a push is made to master or a pull request is made to the master or staging
+on:
+  push:
+    branches: [ master, staging ]
+  pull_request:
+    branches: [ master, staging ]
+
+# job to run
+jobs:
+  build-and-release:
+    name: Build Client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Cache the Maven packages to speed up build
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build JAR with Maven
+        run: |
+          mvn install --file common/pom.xml
+          mvn -B package --file client/pom.xml -DskipTests
+          mkdir executable && cp client/target/*jar-with-dependencies.jar executable
+      # https://github.com/actions/upload-artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: executable
+      # https://github.com/actions/create-release
+      - name: Get Existing tag
+        id: existing_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: 1.0.0 # optional fallback tag to use when no tag can be found
+      # https://github.com/marketplace/actions/next-semvers
+      # For example when you input 1.2.3 it will give you the following outputs:
+      # v_major: v2.0.0
+      # v_minor: v1.3.0
+      # v_patch: v1.2.4
+      - name: Get Next Version
+        id: next_tags
+        uses: WyriHaximus/github-action-next-semvers@v1
+        with:
+          version: ${{ steps.existing_tag.outputs.tag }}
+      - name: Determine Release Version
+        id: determine_version
+        run: |
+          branch_name=${{ github.head_ref }}
+          echo $branch_name
+          if [[ $branch_name == staging* ]]; then
+            echo "tag_name=${{ steps.existing_tag.outputs.tag }}" >> $GITHUB_OUTPUT
+            echo "name=Release ${{ steps.existing_tag.outputs.tag }}" >> $GITHUB_OUTPUT
+          elif [[ $branch_name == perf* ]]; then
+            echo "tag_name=$(echo ${{ steps.next_tags.outputs.v_major }} | cut -c 2-)" >> $GITHUB_OUTPUT
+            echo "name=Release ${{ steps.next_tags.outputs.major }}" >> $GITHUB_OUTPUT
+          elif [[ $branch_name == feat* ]]; then
+            echo "tag_name=$(echo ${{ steps.next_tags.outputs.v_minor }} | cut -c 2-)" >> $GITHUB_OUTPUT
+            echo "name=Release ${{ steps.next_tags.outputs.minor }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=$(echo ${{ steps.next_tags.outputs.v_patch }} | cut -c 2-)" >> $GITHUB_OUTPUT
+            echo "name=Release ${{ steps.next_tags.outputs.patch }}" >> $GITHUB_OUTPUT
+          fi
+      # https://github.com/softprops/action-gh-release
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1  # actions/create-release@v1
+        with:
+          tag_name: ${{ steps.determine_version.outputs.tag_name }}
+          name: ${{ steps.determine_version.outputs.name }}
+          draft: false
+          prerelease: ${{ github.base_ref == 'staging' }}
+          fail_on_unmatched_files: true
+          files: client/target/*jar-with-dependencies.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -34,7 +34,7 @@ public class LevelCard {
    * Bonus type class.
    */
   public enum BonusType {
-    NONE, CASCADING_TWO, CASCADING_ONE_BAG, BAG;
+    NONE, CASCADING_TWO, CASCADING_ONE_BAG, BAG, TWO_GOLD_TOKENS;
   }
 
   /**
