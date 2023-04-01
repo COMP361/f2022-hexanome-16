@@ -148,7 +148,7 @@ public class ServiceUtils {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
     if (nextPlayerIndex == 0) {
-      ServerPlayer[] winners = WinCondition.getWinners(game.getWinCondition(), game.getPlayers());
+      ServerPlayer[] winners = game.getWinCondition().getWinners(game.getPlayers());
       if (winners.length > 0) {
         game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.WINNERS,
@@ -178,5 +178,27 @@ public class ServiceUtils {
       }
     }
     return null;
+  }
+
+
+  /**
+   * Returns a player with the username in the game with session Id.
+   *
+   * @param sessionId session identifier.
+   * @param username username of player we want to get.
+   * @return player.
+   * @throws IllegalArgumentException if the username is unvalid.
+   */
+  public ServerPlayer getValidPlayerByName(long sessionId, String username) {
+    Game game = gameManagerService.getGame(sessionId);
+
+    ServerPlayer myPlayer = findPlayerByName(
+        game, username
+    );
+    if (myPlayer == null) {
+      throw new IllegalArgumentException("Invalid Player.");
+    }
+    // get the player from the session id and access token
+    return myPlayer;
   }
 }

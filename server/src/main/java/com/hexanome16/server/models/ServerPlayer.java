@@ -17,7 +17,6 @@ import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
-import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -58,6 +57,8 @@ public class ServerPlayer extends Player {
   }
 
 
+
+
   /**
    * Gets bank.
    *
@@ -87,6 +88,34 @@ public class ServerPlayer extends Player {
    */
   public boolean removeReservedCardFromInventory(InventoryAddable inventoryAddable) {
     return this.inventory.getReservedCards().remove(inventoryAddable);
+  }
+
+  /**
+   * Returns true if you have at least golden cards amount of golden token bonus orient cards.
+   *
+   * @param goldenCardsAmount amount of golden cards.
+   * @return true or false.
+   */
+  public boolean hasAtLeastGoldenBonus(int goldenCardsAmount) {
+    return inventory.hasAtLeastGoldenBonus(goldenCardsAmount);
+  }
+
+  /**
+   * Gets the top most gold card.
+   *
+   * @return top most gold card, null if no such card.
+   */
+  public ServerLevelCard topGoldCard() {
+    return inventory.topGoldCard();
+  }
+
+  /**
+   * Removes the card from the player inventory.
+   *
+   * @param card card we want to remove from the inventory.
+   */
+  public void removeCardFromInventory(ServerLevelCard card) {
+    inventory.removeCard(card);
   }
 
 
@@ -283,7 +312,7 @@ public class ServerPlayer extends Player {
    *
    * @return true or false.
    */
-  public boolean needToDiscardTokens() {
+  public boolean hasToDiscardTokens() {
     return inventory.hasMoreThanTenTokens();
   }
 
@@ -312,6 +341,8 @@ public class ServerPlayer extends Player {
     }
     return gems;
   }
+
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 

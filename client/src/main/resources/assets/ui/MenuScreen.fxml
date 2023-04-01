@@ -62,4 +62,13 @@
             </font>
         </Text>
     </VBox>
+    <VBox fx:id="registerButton" onMouseClicked="#clickRegisterButton" alignment="CENTER"
+          onMouseEntered="#hoverRegisterButton" onMouseExited="#exitRegisterButton"
+          layoutX="100.0" layoutY="50.0" prefHeight="100.0" prefWidth="100.0">
+        <Text fill="#CFFBE7" strokeType="OUTSIDE" underline="false" text="Register">
+            <font>
+                <Font name="Enchanted Land" size="50"/>
+            </font>
+        </Text>
+    </VBox>
 </AnchorPane>
