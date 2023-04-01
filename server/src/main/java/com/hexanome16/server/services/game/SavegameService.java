@@ -105,7 +105,7 @@ public class SavegameService implements SavegameServiceInterface {
     SaveGame saveGame = new SaveGame(game, id);
     File saveGameFile = new File(savegamesPath + "/" + id + ".json");
     objectWriter.writeValue(saveGameFile, saveGame);
-    return createSavegameHelper(saveGameJson.getGamename(), id, saveGameJson);
+    return createSavegameHelper(saveGameJson.getGameName(), id, saveGameJson);
   }
 
   /**
