@@ -12,7 +12,9 @@ jobs:
     name: Build Client
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
@@ -35,9 +37,6 @@ jobs:
           name: my-artifact
           path: executable
       # https://github.com/actions/create-release
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
       - name: Get Existing tag
         id: existing_tag
         uses: WyriHaximus/github-action-get-previous-tag@v1
