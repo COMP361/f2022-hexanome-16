@@ -508,6 +508,7 @@ public class InventoryService implements InventoryServiceInterface {
       return nextAction.getActionDetails();
     }
 
+    game.getOnBoardNobles().removeCard(noble);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
@@ -552,6 +553,7 @@ public class InventoryService implements InventoryServiceInterface {
       return nextAction.getActionDetails();
     }
 
+    game.getOnBoardCities().removeCard(city);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
