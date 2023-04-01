@@ -11,3 +11,5 @@ jobs:
         with:
           token: $
           expire-in: 0 # Set this to 0 to delete all artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
