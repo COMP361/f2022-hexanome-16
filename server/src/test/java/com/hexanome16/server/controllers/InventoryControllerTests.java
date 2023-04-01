@@ -2,9 +2,11 @@ package com.hexanome16.server.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.InventoryService;
@@ -12,6 +14,7 @@ import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,6 +69,8 @@ class InventoryControllerTests {
     this.inventoryServiceMock = createInventoryServiceMock();
     this.gameManagerServiceMock = createGameManagerServiceMock();
     this.serviceUtils = createServiceUtilsMock();
+    inventoryController =
+        new InventoryController(inventoryServiceMock, gameManagerServiceMock, serviceUtils);
   }
 
   /**
@@ -104,7 +109,7 @@ class InventoryControllerTests {
 
     try {
       when(this.inventoryServiceMock.buyCard(123L, "md5", "abc",
-          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
+          new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1))).thenReturn(
           buyCardResponseStub);
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
@@ -116,7 +121,8 @@ class InventoryControllerTests {
 
     try {
       assertEquals(buyCardResponseStub,
-          this.inventoryController.buyCard(123L, "md5", "abc", new PurchaseMap(1, 1, 1, 1, 1, 1)));
+          this.inventoryController.buyCard(123L, "md5", "abc",
+              new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1)));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }
@@ -192,7 +198,80 @@ class InventoryControllerTests {
           .thenReturn(res);
       assertEquals(res,
           inventoryController.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
+
+  @SneakyThrows
+  @Test
+  void testClaimNoble() {
+    // Arrange
+
+    // Act
+    inventoryController.claimNoble(1L, "noble", "token");
+
+    // Assert
+    verify(inventoryServiceMock).acquireNoble(1L, "noble", "token");
+  }
+
+  /**
+   * testing take one card.
+   */
+  @Test
+  @DisplayName("testing take one Card.")
+  void testTakeLevelOne() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
+
+  /**
+   * testing GET owned bonuses.
+   */
+  @Test
+  void testOwnedBonuses() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken()))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
+              DummyAuths.validTokensInfos.get(0).getAccessToken()));
+    } catch (Exception e) {
+      fail("Mock threw an exception");
+    }
+  }
+
+  /**
+   * testing put bag cards. (for associating bag to gem bonus.)
+   */
+  @Test
+  void testBagCard() {
+    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+    inventoryController = new InventoryController(inventoryServiceMock,
+        gameManagerServiceMock, serviceUtils);
+    try {
+      when(inventoryServiceMock.associateBagCard(DummyAuths.validSessionIds.get(0),
+          DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"))
+          .thenReturn(res);
+      assertEquals(res,
+          inventoryController.associateBagCard(DummyAuths.validSessionIds.get(0),
+              DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"));
     } catch (Exception e) {
       fail("Mock threw an exception");
     }

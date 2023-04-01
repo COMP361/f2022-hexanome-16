@@ -1,6 +1,5 @@
 package com.hexanome16.client.screens.game;
 
-import static com.hexanome16.client.requests.RequestClient.objectMapper;
 import static com.hexanome16.client.screens.game.GameFactory.getLevelCardEntity;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -9,25 +8,27 @@ import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.requests.backend.TradePostRequest;
 import com.hexanome16.client.requests.backend.cards.GameRequest;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.requests.lobbyservice.savegames.CreateSavegameRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
-import com.hexanome16.client.screens.game.players.DeckFactory;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
-import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
-import com.hexanome16.common.models.CardInfo;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
-import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,10 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.util.Pair;
-import org.checkerframework.checker.units.qual.N;
+import kong.unirest.core.Headers;
 
 /**
  * GameScreen class spawns all the entities for game board.
@@ -47,129 +49,161 @@ public class GameScreen {
   private static final Map<Level, Map<String, LevelCard>> levelCards = new HashMap<>();
 
   private static final Map<String, Noble> nobles = new HashMap<>();
+  private static final Map<String, City> cities = new HashMap<>();
 
   private static final Map<Level, Pair<String, DeckJson>> levelDecks = new HashMap<>();
-  private static final Map<Level, Thread> levelThreads = new HashMap<>();
+  private static final Map<Level, BackgroundService> levelThreads = new HashMap<>();
 
   private static Pair<String, NobleDeckJson> nobleJson;
-  private static Thread updateNobles;
+  private static Pair<String, CitiesJson> citiesJson;
+  private static BackgroundService updateNobles;
+  private static BackgroundService updateCities;
 
   private static Pair<String, PlayerListJson> playersJson;
 
-  private static Thread updateCurrentPlayer;
+  private static BackgroundService updateCurrentPlayer;
 
-  private static String[] usernames;
   private static final Map<Integer, PlayerJson> usernamesMap = new HashMap<>();
   private static String currentPlayer;
+  private static final Map<Integer, BackgroundService> updateTradingPosts = new HashMap<>();
+  private static final Map<Integer, TradePostJson[]> tradingPosts = new HashMap<>();
   private static long sessionId = -1;
+  private static String gameServer;
+  private static final AtomicBoolean shouldFetch = new AtomicBoolean(false);
 
-  private static Thread createFetchLevelThread(Level level) {
-    Task<Void> updateDeckTask = new Task<>() {
-      @Override
-      protected Void call() {
-        levelDecks.put(level, GameRequest.updateDeck(
-            sessionId, level, levelDecks.get(level).getKey()));
-        return null;
-      }
-    };
-    updateDeckTask.setOnSucceeded(e -> {
-      levelThreads.get(level).interrupt();
-      Platform.runLater(() -> GameScreen.updateLevelDeck(level));
-      levelThreads.put(level, createFetchLevelThread(level));
-    });
-    Thread updateDeck = new Thread(updateDeckTask);
-    updateDeck.setDaemon(true);
-    updateDeck.start();
-    return updateDeck;
+  private static BackgroundService createFetchLevelThread(Level level) {
+    BackgroundService fetchService = new BackgroundService(
+        () -> levelDecks.put(level, GameRequest.updateDeck(
+            sessionId, level, levelDecks.get(level).getKey())),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(() -> GameScreen.updateLevelDeck(level));
+            levelThreads.get(level).restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            levelThreads.get(level).restart();
+          }
+        }
+    );
+    fetchService.start();
+    return fetchService;
   }
 
   private static void fetchNoblesThread() {
-    Task<Void> updateDeckTask = new Task<>() {
-      @Override
-      protected Void call() {
-        nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey());
-        return null;
-      }
-    };
-    updateDeckTask.setOnSucceeded(e -> {
-      if (updateNobles != null) {
-        updateNobles.interrupt();
-        Platform.runLater(GameScreen::updateNobles);
-        fetchNoblesThread();
-      }
-    });
-    updateNobles = new Thread(updateDeckTask);
-    updateNobles.setDaemon(true);
+    updateNobles = new BackgroundService(
+        () -> nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(GameScreen::updateNobles);
+            updateNobles.restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateNobles.restart();
+          }
+        }
+    );
     updateNobles.start();
   }
 
+  private static void fetchCitiesThread() {
+    updateCities = new BackgroundService(
+        () -> citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(GameScreen::updateCities);
+            updateCities.restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateCities.restart();
+          }
+        }
+    );
+    updateCities.start();
+  }
 
   private static void fetchPlayersThread() {
-    Task<Void> updateCurrentPlayerTask = new Task<>() {
-      @Override
-      protected Void call() {
-        playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey());
-        return null;
-      }
-    };
-    updateCurrentPlayerTask.setOnSucceeded(e -> {
-      updateCurrentPlayer.interrupt();
-      fetchTradePosts();
-      Platform.runLater(() -> {
-        System.out.println(playersJson);
-        PlayerListJson playerListJson = playersJson.getValue();
-        if (playerListJson == null) {
-          return;
-        }
-        PlayerJson[] players = playersJson.getValue().getPlayers();
-        usernamesMap.forEach((k, v) -> {
-          for (int i = 0; i < players.length; i++) {
-            if (players[i].getUsername().equals(v.getUsername())) {
-              usernamesMap.replace(i, players[i]);
+    updateCurrentPlayer = new BackgroundService(
+        () -> playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            Platform.runLater(() -> {
+              PlayerListJson playerListJson = playersJson.getValue();
+              if (playerListJson == null) {
+                return;
+              }
+              PlayerJson[] players = playersJson.getValue().getPlayers();
+              Optional<PlayerJson> current = Arrays.stream(players)
+                  .filter(PlayerJson::isCurrent).findFirst();
+              if (current.isPresent()) {
+                Arrays.stream(players).forEach(playerJson -> {
+                  usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
+                });
+                currentPlayer = current.get().getUsername();
+                UpdateGameInfo.fetchGameBank(getSessionId());
+                UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
+                UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+                PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
+                    PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
+              }
+            });
+
+            // update trade routes
+            String[] usernames = FXGL.getWorldProperties().getValue("players");
+            PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+                i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
+            ).toArray(PlayerJson[]::new);
+            for (int i = 0; i < usernames.length; i++) {
+              usernamesMap.put(i, players[i]);
+              tradingPosts.put(i, new TradePostJson[0]);
+              fetchTradePostsThread(i);
             }
+            updateCurrentPlayer.restart();
           }
-        });
-        Optional<PlayerJson> current = Arrays.stream(players)
-            .filter(PlayerJson::isCurrent).findFirst();
-        if (current.isPresent()) {
-          currentPlayer = current.get().getUsername();
-          System.out.println(currentPlayer);
-          UpdateGameInfo.fetchGameBank(getSessionId());
-          UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
-          UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
-          PlayerDecks.generateAll(usernamesMap.entrySet().stream().sorted(Comparator.comparingInt(
-              Map.Entry::getKey)).map(Map.Entry::getValue).toArray(PlayerJson[]::new));
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateCurrentPlayer.restart();
+          }
         }
-      });
-      fetchPlayersThread();
-    });
-    updateCurrentPlayerTask.setOnFailed(e -> {
-      if (updateCurrentPlayer != null) {
-        updateCurrentPlayer.interrupt();
-        System.out.println(e);
-        fetchPlayersThread();
-      }
-    });
-    updateCurrentPlayer = new Thread(updateCurrentPlayerTask);
-    updateCurrentPlayer.setDaemon(true);
+    );
     updateCurrentPlayer.start();
   }
 
-  private static void fetchTradePosts() {
+  private static void fetchTradePostsThread(int index) {
     String[] colors = {"Yellow", "Black", "Red", "Blue"};
-    // add trade post for each player
-    for (Map.Entry<Integer, PlayerJson> user : usernamesMap.entrySet()) {
-      for (TradePostJson tradePost : TradePostRequest.getTradePosts(sessionId,
-          user.getValue().getUsername())) {
-        switch (tradePost.getRouteType()) {
-          case ONYX_ROUTE -> {
-            FXGL.spawn(colors[user.getKey()] + "Marker");
-          }
-          default -> {
-            //todo add other routes
+    tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
+        usernamesMap.get(index).getUsername()));
+    if (shouldFetch.get()) {
+      Platform.runLater(() -> {
+        for (TradePostJson tradePost :
+            tradingPosts.getOrDefault(index, new TradePostJson[0])) {
+          switch (tradePost.getRouteType()) {
+            case ONYX_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 0));
+            }
+            case EMERALD_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 1));
+            }
+            case SAPPHIRE_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 2));
+            }
+            case DIAMOND_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 3));
+            }
+            case RUBY_ROUTE -> {
+              FXGL.spawn(colors[index] + "Marker", new SpawnData().put("index", 4));
+            }
+            default -> {
+            }
           }
         }
-      }
+      });
     }
   }
 
@@ -182,6 +216,7 @@ public class GameScreen {
   public static void initGame(long id) {
     // This is a hack to make sure that the game on server is initialized before we try to fetch
     try {
+      shouldFetch.set(true);
       Thread.sleep(500);
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -202,9 +237,9 @@ public class GameScreen {
     FXGL.spawn("TokenBank");
     FXGL.spawn("Setting");
 
-    String name =
+    gameServer =
         SessionDetailsRequest.execute(sessionId, "").getValue().getGameParameters().getName();
-    if (name.contains("TradeRoutes")) {
+    if (gameServer.contains("TradeRoutes")) {
       FXGL.spawn("TradeRoutes");
     }
     for (Level level : Level.values()) {
@@ -213,29 +248,32 @@ public class GameScreen {
       levelThreads.put(level, createFetchLevelThread(level));
     }
 
-    if (updateNobles == null) {
-      nobleJson = new Pair<>("", new NobleDeckJson());
-      fetchNoblesThread();
+    nobleJson = new Pair<>("", new NobleDeckJson());
+    fetchNoblesThread();
+
+    if (gameServer.contains("Cities")) {
+      citiesJson = new Pair<>("", new CitiesJson());
+      fetchCitiesThread();
     }
     UpdateGameInfo.initPlayerTurn();
-    usernames = FXGL.getWorldProperties().getValue("players");
-    currentPlayer = usernames[0];
-    PlayerJson[] players = Arrays.stream(usernames).map(
-        username -> new PlayerJson(username, Objects.equals(currentPlayer, username), 0)
-    ).toArray(PlayerJson[]::new);
-    if (updateCurrentPlayer == null) {
-      playersJson = new Pair<>("", new PlayerListJson(players));
-      fetchPlayersThread();
-    }
 
-    // build user map
-    for (int i = 0; i < usernames.length; i++) {
-      usernamesMap.put(i, players[i]);
-    }
+    String[] usernames = FXGL.getWorldProperties().getValue("players");
+    currentPlayer = usernames[0];
+    PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+        i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
+    ).toArray(PlayerJson[]::new);
+    playersJson = new Pair<>("", new PlayerListJson(players));
+    fetchPlayersThread();
 
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands
-    PlayerDecks.generateAll(playersJson.getValue().getPlayers());
+    PlayerDecks.generateAll(playersJson.getValue().getPlayers().clone());
+
+    // open action prompt if needed.
+    Pair<Headers, String> serverResponse = PromptsRequests.getActionForPlayer(sessionId,
+        AuthUtils.getPlayer().getName(),
+        AuthUtils.getAuth().getAccessToken());
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   // puts values necessary for game bank in the world properties
@@ -258,7 +296,21 @@ public class GameScreen {
    * Updates on board nobles.
    */
   private static void updateNobles() {
+    if (nobleJson == null || nobleJson.getValue() == null) {
+      return;
+    }
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
+    NobleComponent[] grid = NobleComponent.getGrid();
+    //remove nobles
+    String hashToRemove = "";
+    for (NobleComponent noble : grid) {
+      if (noble != null && nobleMap.containsKey(noble.getNobleHash())) {
+        hashToRemove = noble.getNobleHash();
+        noble.removeFromMat();
+      }
+    }
+    nobleMap.remove(hashToRemove);
+    //add nobles
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
         nobles.put(entry.getKey(), entry.getValue());
@@ -273,11 +325,35 @@ public class GameScreen {
   }
 
   /**
+   * Updates on board cities.
+   */
+  private static void updateCities() {
+    if (citiesJson == null || citiesJson.getValue() == null) {
+      return;
+    }
+    Map<String, City> citiesMap = citiesJson.getValue().getCities();
+    for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
+      if (!cities.containsKey(entry.getKey())) {
+        cities.put(entry.getKey(), entry.getValue());
+        City city = entry.getValue();
+        PriceInterface pm = city.getCardInfo().price();
+        FXGL.spawn("City",
+            new SpawnData().put("id", city.getCardInfo().id())
+                .put("texture", city.getCardInfo().texturePath())
+                .put("price", pm).put("MD5", entry.getKey()));
+      }
+    }
+  }
+
+  /**
    * Updates on board decks.
    *
    * @param level level of the deck
    */
   private static void updateLevelDeck(Level level) {
+    if (levelDecks.get(level) == null || levelDecks.get(level).getValue() == null) {
+      return;
+    }
     Map<String, LevelCard> cardHashList = levelDecks.get(level).getValue().getCards();
     Map<String, LevelCard> cardMap = levelCards.get(level);
     CardComponent[] grid = CardComponent.getGrid(level);
@@ -304,7 +380,6 @@ public class GameScreen {
           }
           default -> throw new IllegalStateException("Unexpected value: " + level);
         }
-
         break;
       }
     }
@@ -325,21 +400,37 @@ public class GameScreen {
   }
 
   /**
+   * Saves this game in Lobby Service.
+   */
+  public static void saveGame() {
+    CreateSavegameRequest.execute(gameServer, usernamesMap.entrySet().stream().sorted(
+        Comparator.comparingInt(Map.Entry::getKey)).map(e -> e.getValue().getUsername()).toArray(
+        String[]::new), sessionId);
+  }
+
+  /**
    * Resets every component and clears the game board when exit the game.
    */
   public static void exitGame() {
+    shouldFetch.set(false);
     for (Level level : Level.values()) {
       levelCards.get(level).clear();
-      levelThreads.get(level).interrupt();
+      levelThreads.get(level).cancel();
     }
     levelDecks.clear();
     levelThreads.clear();
     nobleJson = null;
+    citiesJson = null;
     playersJson = null;
     currentPlayer = null;
     updateNobles = null;
+    updateCities = null;
     updateCurrentPlayer = null;
+    updateTradingPosts.clear();
+    tradingPosts.clear();
+    usernamesMap.clear();
     nobles.clear();
+    cities.clear();
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
@@ -392,5 +483,29 @@ public class GameScreen {
       }
     }
     return null;
+  }
+
+  /**
+   * Whether the player has the sapphire route. Used by BuyCardPrompt.
+   *
+   * @return if the current player has the sapphire route.
+   */
+  public static boolean hasSapphireRoute() {
+    for (TradePostJson tradePost : tradingPosts.get(0)) {
+      if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * returns true if it is the client's turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  public static boolean isClientsTurn() {
+    return currentPlayer.equals(
+        AuthUtils.getPlayer().getName());
   }
 }

@@ -2,7 +2,7 @@ package com.hexanome16.server.services.longpolling;
 
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
@@ -48,6 +48,12 @@ public class LongPollingService implements LongPollingServiceInterface {
   public DeferredResult<ResponseEntity<String>> getNobles(long sessionId, String accessToken,
                                                           String hash) {
     return validRequestLongPolling(sessionId, accessToken, BroadcastMapKey.NOBLES, hash);
+  }
+
+  @Override
+  public DeferredResult<ResponseEntity<String>> getCities(long sessionId, String accessToken,
+                                                          String hash) {
+    return validRequestLongPolling(sessionId, accessToken, BroadcastMapKey.CITIES, hash);
   }
 
   @Override

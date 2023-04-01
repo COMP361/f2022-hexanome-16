@@ -11,6 +11,7 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.components.CityComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
@@ -175,7 +176,7 @@ public class GameFactory implements EntityFactory {
   public Entity newYellowMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("yellow_marker.png")
-        .at(matCoordsX - 162, matCoordsY + 116)
+        .at(matCoordsX - 162, matCoordsY + 116 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -191,7 +192,7 @@ public class GameFactory implements EntityFactory {
   public Entity newBlackMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("black_marker.png")
-        .at(matCoordsX - 162, matCoordsY + 64)
+        .at(matCoordsX - 162, matCoordsY + 64 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -207,7 +208,7 @@ public class GameFactory implements EntityFactory {
   public Entity newRedMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("red_marker.png")
-        .at(matCoordsX - 102, matCoordsY + 116)
+        .at(matCoordsX - 102, matCoordsY + 116 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -223,7 +224,7 @@ public class GameFactory implements EntityFactory {
   public Entity newBlueMarker(SpawnData data) {
     return FXGL.entityBuilder()
         .view("blue_marker.png")
-        .at(matCoordsX - 102, matCoordsY + 64)
+        .at(matCoordsX - 102, matCoordsY + 64 + 146 * (int) data.get("index"))
         .scale(0.18, 0.18)
         .rotate(270)
         .build();
@@ -512,8 +513,23 @@ public class GameFactory implements EntityFactory {
   public Entity newNoble(SpawnData data) {
     return FXGL.entityBuilder()
         .view(data.getData().get("texture") + ".png")
-        .with(new NobleComponent())
+        .with(new NobleComponent(data.get("MD5")))
         .scale(0.15, 0.15)
+        .build();
+  }
+
+  /**
+   * Adds a new city to the game board.
+   *
+   * @param data spawn data
+   * @return city entity
+   */
+  @Spawns("City")
+  public Entity newCity(SpawnData data) {
+    return FXGL.entityBuilder()
+        .view(data.getData().get("texture") + ".png")
+        .with(new CityComponent())
+        .scale(0.12, 0.12)
         .build();
   }
 
@@ -528,7 +544,7 @@ public class GameFactory implements EntityFactory {
     return FXGL.entityBuilder()
         .at(matCoordsX, matCoordsY)
         .view("mat.png")
-        .scale(0.6, 0.6)
+        .scale(0.375, 0.375)
         .build();
   }
 

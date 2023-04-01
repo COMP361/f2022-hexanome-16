@@ -2,13 +2,20 @@ package com.hexanome16.client.screens.mainmenu;
 
 import static com.almasb.fxgl.dsl.FXGL.getAssetLoader;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.ui.UI;
+import com.hexanome16.client.MainApp;
 import com.hexanome16.client.requests.lobbyservice.oauth.LogoutRequest;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
+import com.hexanome16.client.screens.register.RegisterScreen;
 import com.hexanome16.client.screens.rulebook.RulebookScreen;
 import com.hexanome16.client.screens.settings.SettingsScreen;
 import com.hexanome16.client.screens.startup.StartupScreen;
+import com.hexanome16.client.utils.AuthUtils;
 
 /**
  * UI Screen Main Menu Screen after logging in.
@@ -29,7 +36,6 @@ public class MainMenuScreen {
 
   private static void setupUi() {
     uiControllerSingleton.settingsSection.setOnMouseClicked(event -> {
-      //MainMenuScreen.clearUI();
       SettingsScreen.initUi(true);
     });
     uiControllerSingleton.lobbySection.setOnMouseClicked(event -> {
@@ -44,6 +50,18 @@ public class MainMenuScreen {
       LogoutRequest.execute();
       MainMenuScreen.clearUi();
       StartupScreen.backToStartupScreen();
+    });
+    uiControllerSingleton.registerButton.setOnMouseClicked(event -> {
+      if (AuthUtils.getPlayer().getRole().equals("ROLE_ADMIN")) {
+        MainMenuScreen.clearUi();
+        RegisterScreen.initRegisterScreen();
+      } else {
+        MainMenuScreen.clearUi();
+        MainApp.errorMessage = "Sorry, only admin accounts are able to register new players.";
+        FXGL.spawn("PromptBox", new SpawnData().put("promptType",
+            PromptTypeInterface.PromptType.ERROR)
+            .put("handleConfirm", (Runnable) MainMenuScreen::initUi));
+      }
     });
   }
 

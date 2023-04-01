@@ -8,14 +8,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.token.TokenService;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,9 +45,7 @@ public class TokensControllerTests {
     tokenService = Mockito.mock(TokenService.class);
     tokensController =
         new TokensController(tokenService);
-    payload.setPlayers(new ServerPlayer[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
+    payload.setPlayers(DummyAuths.validPlayerList.toArray(ServerPlayer[]::new));
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setGame(WinCondition.BASE.getGameServiceJson().getName());
@@ -112,6 +110,19 @@ public class TokensControllerTests {
         .thenReturn(new ResponseEntity<>(HttpStatus.OK));
     var response =
         tokensController.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
+  /**
+   * Test Delete on /games/{sessionId}/tokens;.
+   */
+  @Test
+  public void testDeleteToken() {
+    long validSessionId = DummyAuths.validSessionIds.get(0);
+    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    when(tokenService.discardToken(validSessionId, validAccessToken, "RED"))
+        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    var response = tokensController.discardToken(validSessionId, validAccessToken, "RED");
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 

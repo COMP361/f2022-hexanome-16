@@ -2,16 +2,18 @@ package com.hexanome16.server.services.token;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.services.game.GameServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import java.util.ArrayList;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +76,39 @@ public class TokenService implements TokenServiceInterface {
   }
 
   @Override
+  public ResponseEntity<String> takeOneToken(long sessionId, String accessToken,
+                                             String tokenType) {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> validity = request.getLeft();
+    if (!validity.getStatusCode().is2xxSuccessful()) {
+      return validity;
+    }
+    Game currentGame = request.getRight().getLeft();
+    ServerPlayer requestingPlayer = request.getRight().getRight();
+
+    Gem desiredGem = Gem.getGem(tokenType);
+
+    if (!currentGame.allowedTakeOneOf(desiredGem)) {
+      return new ResponseEntity<>("Can't take 1 of desired token type", HttpStatus.BAD_REQUEST);
+    }
+
+    currentGame.giveOneOf(desiredGem, requestingPlayer);
+
+    requestingPlayer.removeTopAction();
+
+    actionUponTokenInteraction(currentGame, requestingPlayer);
+
+    var nextAction = requestingPlayer.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(currentGame);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
   public ResponseEntity<String> takeTwoTokens(long sessionId, String accessToken,
                                               String tokenType) {
 
@@ -92,10 +127,23 @@ public class TokenService implements TokenServiceInterface {
     }
 
     currentGame.giveTwoOf(desiredGem, requestingPlayer);
-    serviceUtils.endCurrentPlayersTurn(currentGame);
 
-    return new ResponseEntity<>(HttpStatus.OK);
+    actionUponTokenInteraction(currentGame, requestingPlayer);
+
+    if (currentGame.getWinCondition() == WinCondition.TRADEROUTES
+        && requestingPlayer.getInventory().getTradePosts().containsKey(RouteType.DIAMOND_ROUTE)) {
+      requestingPlayer.addTakeTokenAction(Optional.ofNullable(desiredGem));
+    }
+
+    var nextAction = requestingPlayer.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(currentGame);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
+
 
   @Override
   public ResponseEntity<String> takeThreeTokens(long sessionId, String accessToken,
@@ -119,15 +167,61 @@ public class TokenService implements TokenServiceInterface {
     }
 
     currentGame.giveThreeOf(desiredGemOne, desiredGemTwo, desiredGemThree, requestingPlayer);
-    serviceUtils.endCurrentPlayersTurn(currentGame);
 
-    return new ResponseEntity<>(HttpStatus.OK);
+    actionUponTokenInteraction(currentGame, requestingPlayer);
+
+    var nextAction = requestingPlayer.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(currentGame);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
-  // TODO : Not Implemented
   @Override
-  public ResponseEntity<String> giveBackToken(long sessionId, String accessToken,
-                                              String tokenType) {
-    return null;
+  public ResponseEntity<String> discardToken(long sessionId, String accessToken,
+                                             String tokenType) {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> validity = request.getLeft();
+    if (!validity.getStatusCode().is2xxSuccessful()) {
+      return validity;
+    }
+    final Game currentGame = request.getRight().getLeft();
+    final ServerPlayer requestingPlayer = request.getRight().getRight();
+
+    final Gem desiredGem = Gem.getGem(tokenType);
+
+    var currentAction = requestingPlayer.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.DISCARD) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    currentGame.takeBackToken(desiredGem, requestingPlayer);
+
+    requestingPlayer.removeTopAction();
+
+    actionUponTokenInteraction(currentGame, requestingPlayer);
+
+    var nextAction = requestingPlayer.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(currentGame);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+
+  // HELPERS //////////////////////////////////////////////////////////////
+
+  private void actionUponTokenInteraction(Game game, ServerPlayer player) {
+    if (player.needToDiscardTokens()) {
+      player.addDiscardTokenToPerform();
+    }
   }
 }

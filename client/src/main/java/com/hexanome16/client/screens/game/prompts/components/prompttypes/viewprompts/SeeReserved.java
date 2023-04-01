@@ -106,6 +106,11 @@ public class SeeReserved implements PromptTypeInterface {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");

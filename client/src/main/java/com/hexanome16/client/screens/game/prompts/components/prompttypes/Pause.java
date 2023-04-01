@@ -66,6 +66,11 @@ public class Pause implements PromptTypeInterface {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     // initiate and set up the buttons' layout
@@ -95,7 +100,7 @@ public class Pause implements PromptTypeInterface {
     button.setMaxSize(atButtonWidth, atButtonHeight * 0.2);
 
     // initialize and set up button Text
-    Text buttonText = new Text(buttonType.toString());
+    Text buttonText = new Text(buttonType.text);
     buttonText.setFont(GAME_FONT.newFont(atButtonHeight * 0.7));
     buttonText.setFill(Config.PRIMARY_COLOR);
     buttonText.setWrappingWidth(atButtonWidth * 0.9);
@@ -124,26 +129,43 @@ public class Pause implements PromptTypeInterface {
    * An enum for the possible buttons in the quick menu.
    */
   public enum ButtonType {
+
     /**
      * Settings button type.
      */
-    SETTINGS,
+    SETTINGS(() -> SettingsScreen.initUi(false), "Settings"),
+    /**
+     * Save game button type.
+     */
+    SAVE_GAME_AND_EXIT(() -> {
+      GameScreen.saveGame();
+      GameScreen.exitGame();
+      LobbyScreen.initLobby();
+    }, "Save Game"),
     /**
      * Exit button type.
      */
-    EXIT;
+    EXIT(() -> {
+      GameScreen.exitGame();
+      LobbyScreen.initLobby();
+    }, "Exit");
+
+
+    private Runnable runnable;
+    private String text;
+
+    ButtonType(Runnable runnable, String text) {
+      this.runnable = runnable;
+      this.text = text;
+    }
+
 
     /**
      * Method responsible for handling what happens when someone clicks a button with
      * the type of the implicit argument.
      */
     public void handleClick() {
-      if (this == EXIT) {
-        GameScreen.exitGame();
-        LobbyScreen.initLobby();
-      } else if (this == SETTINGS) {
-        SettingsScreen.initUi(false);
-      }
+      this.runnable.run();
     }
   }
 

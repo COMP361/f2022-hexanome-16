@@ -109,6 +109,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     FXGL.getEventBus().addEventHandler(SplendorEvents.CLOSING, e -> cardsChosen = 0);
