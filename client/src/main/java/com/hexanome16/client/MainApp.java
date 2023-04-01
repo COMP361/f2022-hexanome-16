@@ -27,6 +27,9 @@ import com.hexanome16.client.screens.startup.StartupScreenFactory;
  * FXGL Game Application, Game's entry point.
  */
 public class MainApp extends GameApplication {
+  /**
+   * The error message.
+   */
   public static String errorMessage;
 
   /**
