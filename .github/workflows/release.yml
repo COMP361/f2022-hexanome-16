@@ -8,7 +8,7 @@ on:
 
 # job to run
 jobs:
-  build:
+  build-and-release:
     name: Build Client
     runs-on: ubuntu-latest
     steps:
@@ -23,17 +23,18 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build project with Maven
+      - name: Build JAR with Maven
         run: |
           mvn install --file common/pom.xml
-          mvn -B package --file client/pom.xml
-
-  # https://github.com/actions/create-release
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    steps:
+          mvn -B package --file client/pom.xml -DskipTests
+          mkdir executable && cp client/target/*jar-with-dependencies.jar executable
+      # https://github.com/actions/upload-artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: executable
+      # https://github.com/actions/create-release
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
@@ -75,17 +76,6 @@ jobs:
         uses: scottbrenner/generate-changelog-action@master
         env:
           REPO: ${{ github.repository }}
-      # https://github.com/actions/upload-artifact
-      - name: Create JAR
-        run: |
-          mvn install --file common/pom.xml
-          mvn -B package --file client/pom.xml -DskipTests
-          mkdir executable && cp client/target/*jar-with-dependencies.jar executable
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact
-          path: executable
       # https://github.com/softprops/action-gh-release
       - name: Create Release
         id: create_release
