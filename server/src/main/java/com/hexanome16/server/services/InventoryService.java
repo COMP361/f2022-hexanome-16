@@ -107,7 +107,8 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     // Get card price as a priceMap
-    PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
+    PriceInterface originalPrice = cardToBuy.getCardInfo().price();
+    PriceInterface cardPriceMap = player.discountPrice(originalPrice);
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (game.getWinCondition() == WinCondition.TRADEROUTES
@@ -161,7 +162,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
-      player.addTakeTokenAction(Optional.empty());
+      player.addTakeTokenToPerform(Optional.empty());
     }
 
 
