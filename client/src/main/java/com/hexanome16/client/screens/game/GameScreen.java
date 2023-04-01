@@ -332,6 +332,17 @@ public class GameScreen {
     if (citiesJson == null || citiesJson.getValue() == null) {
       return;
     }
+    Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
+    CityComponent[] grid = CityComponent.getGrid();
+    //remove nobles
+    String hashToRemove = "";
+    for (CityComponent city : grid) {
+      if (city != null && nobleMap.containsKey(city.getCityHash())) {
+        hashToRemove = city.getCityHash();
+        city.removeFromMat();
+      }
+    }
+    nobleMap.remove(hashToRemove);
     Map<String, City> citiesMap = citiesJson.getValue().getCities();
     for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
       if (!cities.containsKey(entry.getKey())) {
