@@ -5,7 +5,9 @@ import static java.util.Objects.hash;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.PurchaseMapDeserializer;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
@@ -41,7 +43,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
    *                    Integer.
    */
   public PurchaseMap(Map<Gem, Integer> purchaseMap) {
-    super();
+    this();
     if (purchaseMap == null) {
       throw new IllegalArgumentException("Price map cannot be null");
     }
@@ -63,6 +65,14 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
   public PurchaseMap(PriceMap priceMap, int goldAmount) {
     this(priceMap.priceMap);
     this.priceMap.put(Gem.GOLD, goldAmount);
+  }
+
+  /**
+   * Instantiates a new empty Purchase map.
+   */
+  public PurchaseMap() {
+    super();
+    this.priceMap.put(Gem.GOLD, 0);
   }
 
   /**
@@ -181,7 +191,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
           }
           costRemaining += remaining[i];
         }
-        return costRemaining == 0;
+        return goldAmount == 0 && costRemaining == 0;
       }
     }
     return false;
@@ -212,5 +222,25 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     return hash(this.getGemCost(Gem.RUBY), this.getGemCost(Gem.EMERALD),
         this.getGemCost(Gem.SAPPHIRE), this.getGemCost(Gem.DIAMOND),
         this.getGemCost(Gem.ONYX), this.getGemCost(Gem.GOLD));
+  }
+
+  @Override
+  public PriceInterface subtract(PriceInterface priceInterface) {
+    Set<Gem> paramTypes = priceInterface.getTypesOfGems();
+    Set<Gem> thisTypes = this.getTypesOfGems();
+    if (!(thisTypes.containsAll(paramTypes) && paramTypes.containsAll(thisTypes))) {
+      throw new IllegalArgumentException("Maps must contains same set of gems");
+    }
+    var mapToRemoveFrom = this.priceMap;
+    PurchaseMap newPriceMap = new PurchaseMap();
+    for (var entry : mapToRemoveFrom.entrySet()) {
+      Gem key = entry.getKey();
+      int newValue = entry.getValue() - priceInterface.getGemCost(key);
+      if (newValue < 0) {
+        newValue = 0;
+      }
+      newPriceMap.addGems(key, newValue);
+    }
+    return newPriceMap;
   }
 }

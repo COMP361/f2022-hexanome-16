@@ -158,7 +158,7 @@ public class GameInitHelpers {
       ServerLevelCard gold = new ServerLevelCard(goldJson.getId(), goldJson.getPrestigePoint(),
           "gold" + goldJson.getId(),
           goldJson.getPrice(),
-          Level.REDONE, gemBonus);
+          Level.REDONE, LevelCard.BonusType.TWO_GOLD_TOKENS, gemBonus);
       deck.addCard(gold);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(gold)), gold);
     }

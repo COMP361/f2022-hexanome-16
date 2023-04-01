@@ -1,6 +1,7 @@
 package com.hexanome16.server.models.inventory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
@@ -166,5 +167,48 @@ public class Inventory {
   @JsonIgnore
   public Gem[] getOwnedTokenTypes() {
     return playerBank.getOwnedTokenTypes();
+  }
+
+  /**
+   * Returns true if you have at least golden cards amount of golden token bonus orient cards.
+   *
+   * @param goldenCardsAmount amount of golden cards.
+   * @return true or false.
+   */
+  public boolean hasAtLeastGoldenBonus(int goldenCardsAmount) {
+    int counter = 0;
+    for (ServerLevelCard card : ownedCards) {
+      if (card.getBonusType() == LevelCard.BonusType.TWO_GOLD_TOKENS) {
+        counter++;
+      }
+    }
+    return counter >= goldenCardsAmount;
+  }
+
+  /**
+   * Gets the top most gold card.
+   *
+   * @return top most gold card, null if no such card.
+   */
+  public ServerLevelCard topGoldCard() {
+    for (ServerLevelCard card : ownedCards) {
+      if (card.getBonusType() == LevelCard.BonusType.TWO_GOLD_TOKENS) {
+        return card;
+      }
+    }
+    return null;
+  }
+
+
+
+  /**
+   * Removes the card from the player inventory.
+   *
+   * @param card card we want to remove from the inventory.
+   */
+  public void removeCard(ServerLevelCard card) {
+    gemBonuses.removeGems(card.getGemBonus().getPriceMap());
+    prestigePoints -= card.getCardInfo().prestigePoint();
+    ownedCards.remove(card);
   }
 }

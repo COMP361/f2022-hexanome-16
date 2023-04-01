@@ -4,6 +4,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.MainApp;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -69,5 +70,14 @@ public class ErrorPrompt extends ChoicePromptAbstract {
     super.populatePrompt(entity);
     atConfirmButton.setOpacity(1);
     atConfirmCircle.setOpacity(1);
+    if (entity.getProperties().getValueOptional("handleConfirm").isPresent()
+        && entity.getObject("handleConfirm") instanceof Runnable) {
+      atConfirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+        if (canConfirm()) {
+          handleConfirmation();
+          ((Runnable) entity.getObject("handleConfirm")).run();
+        }
+      });
+    }
   }
 }

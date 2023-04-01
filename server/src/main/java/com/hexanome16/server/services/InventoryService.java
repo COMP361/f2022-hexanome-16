@@ -11,6 +11,7 @@ import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -85,7 +86,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
-                                        PurchaseMap proposedDeal) {
+                                        OrientPurchaseMap proposedDeal) {
 
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
@@ -131,8 +132,8 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.SAPPHIRE),
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
-        proposedDeal.getGemCost(Gem.GOLD)
-    )) {
+        proposedDeal.getGemCost(Gem.GOLD))
+            || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_FUNDS);
     }
 
@@ -146,6 +147,13 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD));
 
+    // Remove the golden cards from the player banks
+    int goldBonusAmount = proposedDeal.getGoldenCardsAmount();
+    while (goldBonusAmount > 0) {
+      ServerLevelCard goldCard = player.topGoldCard();
+      player.removeCardFromInventory(goldCard);
+      goldBonusAmount--;
+    }
 
     // Add that card to the player's Inventory
     player.addCardToInventory(cardToBuy);
@@ -161,13 +169,13 @@ public class InventoryService implements InventoryServiceInterface {
     //choose noble
     ResponseEntity<String> error =
         addNobleAction(game, player);
+
     if (error != null) {
       return error;
     }
 
     //choose city
     if (game.getWinCondition() == WinCondition.CITIES) {
-      System.out.println("check city");
       error =
           addCityAction(game, player);
       if (error != null) {
@@ -206,23 +214,6 @@ public class InventoryService implements InventoryServiceInterface {
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
-  }
-
-  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
-    var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getOnBoardNobles().getCardList()) {
-      if (player.canBeVisitedBy(noble)) {
-        noblesList.add(noble);
-      }
-    }
-    if (!noblesList.isEmpty()) {
-      try {
-        player.addNobleListToPerform(noblesList);
-      } catch (JsonProcessingException e) {
-        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-      }
-    }
-    return null;
   }
 
   private static ResponseEntity<String> addCityAction(Game game, ServerPlayer player) {
@@ -294,6 +285,14 @@ public class InventoryService implements InventoryServiceInterface {
         new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
     );
 
+
+    actionUponCardReservation(game, player, card);
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
@@ -347,6 +346,14 @@ public class InventoryService implements InventoryServiceInterface {
         BroadcastMapKey.fromLevel(atLevel),
         new DeckJson(game.getOnBoardDeck(atLevel).getCardList(), atLevel)
     );
+
+    actionUponCardReservation(game, player, card);
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
@@ -611,6 +618,50 @@ public class InventoryService implements InventoryServiceInterface {
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, json, null);
   }
 
+  @Override
+  public ResponseEntity<String> getCards(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
+        HttpStatus.OK
+    );
+  }
+
+  @Override
+  public ResponseEntity<String> getNobles(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(
+        objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
+        HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> getReservedCards(long sessionId, String username,
+                                                 String accessToken)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the reserved level cards in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> getReservedNobles(long sessionId, String username)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+    // return the reserved nobles in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(
+        player.getInventory().getReservedNobles()), HttpStatus.OK);
+  }
+
 
   // ACTION RELATED SHENANIGANS
 
@@ -630,5 +681,31 @@ public class InventoryService implements InventoryServiceInterface {
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_TWO) {
       player.addTakeTwoToPerform();
     }
+  }
+
+  // Because you gain one gold that you may need to discard a token given you're over
+  // 10 tokens total in your inventory.
+  private void actionUponCardReservation(Game game, ServerPlayer player,
+                                         ServerLevelCard reservedCard) {
+    if (player.hasToDiscardTokens()) {
+      player.addDiscardTokenToPerform();
+    }
+  }
+
+  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
+    var noblesList = new ArrayList<Noble>();
+    for (ServerNoble noble : game.getRemainingNobles().values()) {
+      if (player.canBeVisitedBy(noble)) {
+        noblesList.add(noble);
+      }
+    }
+    if (!noblesList.isEmpty()) {
+      try {
+        player.addNobleListToPerform(noblesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
   }
 }
