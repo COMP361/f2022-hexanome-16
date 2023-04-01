@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -237,5 +239,73 @@ class PriceMapTest {
     // Assert
     Throwable exception = assertThrows(IllegalArgumentException.class, executable);
     assertEquals("Cannot remove null gems", exception.getMessage());
+  }
+
+  /**
+   * Test get types of gems.
+   * Should return a key set with everything but GOLD (purchasemaps contain gold, not pricemaps)
+   */
+  @Test
+  void testGetTypesOfGems() {
+    // Arrange
+
+    // Act
+    var types = underTest.getTypesOfGems();
+
+    // Assert
+    for (Gem gem : Gem.values()) {
+      if (gem != Gem.GOLD) {
+        assertTrue(types.contains(gem));
+      }
+    }
+  }
+
+  @Test
+  void testSubtractSuccess() {
+    // Arrange
+    PriceMap map1 = new PriceMap(1, 0, 0, 0, 0);
+    underTest = new PriceMap(2, 1, 3, 0, 1);
+
+    // Act
+    PriceInterface newMap = underTest.subtract(map1);
+
+    // Assert
+    assertEquals(1, newMap.getGemCost(Gem.RUBY));
+    assertEquals(1, newMap.getGemCost(Gem.EMERALD));
+    assertEquals(3, newMap.getGemCost(Gem.SAPPHIRE));
+    assertEquals(0, newMap.getGemCost(Gem.DIAMOND));
+    assertEquals(1, newMap.getGemCost(Gem.ONYX));
+  }
+
+  @Test
+  void testSubtractBelowZero() {
+    // Arrange
+    PriceMap map1 = new PriceMap(4, 0, 1, 0, 0);
+    underTest = new PriceMap(2, 1, 3, 0, 1);
+
+    // Act
+    PriceInterface newMap = underTest.subtract(map1);
+
+    // Assert
+    assertEquals(0, newMap.getGemCost(Gem.RUBY));
+    assertEquals(1, newMap.getGemCost(Gem.EMERALD));
+    assertEquals(2, newMap.getGemCost(Gem.SAPPHIRE));
+    assertEquals(0, newMap.getGemCost(Gem.DIAMOND));
+    assertEquals(1, newMap.getGemCost(Gem.ONYX));
+  }
+
+  @Test
+  void testSubtractIncompatible() {
+    // Arrange
+    // will contain gold tokens
+    PurchaseMap purchaseMap = new PurchaseMap();
+    underTest = new PriceMap(2, 1, 3, 0, 1);
+
+    // Act
+    Executable executable = () -> underTest.subtract(purchaseMap);
+
+    // Assert
+    Throwable throwable = assertThrows(IllegalArgumentException.class, executable);
+    assertEquals("Maps must contains same set of gems", throwable.getMessage());
   }
 }
