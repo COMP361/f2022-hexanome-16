@@ -2,7 +2,7 @@ name: Java CI with Maven
 # triggered every time a push is made to master or a pull request is made to the master or staging
 on:
   push:
-    branches: [ master ]
+    branches: [ master, staging ]
   pull_request:
     branches: [ master, staging ]
 
@@ -12,15 +12,16 @@ jobs:
     name: Build Client
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
+          distribution: temurin
           java-version: 17
       - name: Cache the Maven packages to speed up build
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -70,11 +71,6 @@ jobs:
             echo "::set-output name=tag_name::$(echo ${{ steps.next_tags.outputs.v_patch }} | cut -c 2-)"
             echo "::set-output name=name::Release ${{ steps.next_tags.outputs.patch }}"
           fi
-      - name: Create Changelog
-        id: build_changelog
-        uses: scottbrenner/generate-changelog-action@master
-        env:
-          REPO: ${{ github.repository }}
       # https://github.com/softprops/action-gh-release
       - name: Create Release
         id: create_release
@@ -82,9 +78,10 @@ jobs:
         with:
           tag_name: ${{ steps.determine_version.outputs.tag_name }}
           name: ${{ steps.determine_version.outputs.name }}
-          body: ${{ steps.build_changelog.outputs.changelog }}
           draft: false
           prerelease: ${{ github.base_ref == 'staging' }}
+          fail_on_unmatched_files: true
           files: client/target/*jar-with-dependencies.jar
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
