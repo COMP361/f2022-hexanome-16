@@ -7,9 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.InventoryServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.ServiceUtils;
@@ -118,6 +119,20 @@ public class InventoryController {
   }
 
   /**
+   * Get owned bonuses for player with token in game.
+   *
+   * @param sessionId session id of game.
+   * @param accessToken access token of player.
+   * @return Response entity with a Json string representation of
+   *          a String[gem.getBonusTypeEquivalent]
+   */
+  @GetMapping(value = "/games/{sessionId}/cards/bonuses")
+  public ResponseEntity<String> getOwnedBonuses(@PathVariable long sessionId,
+                                                @RequestParam String accessToken) {
+    return inventoryService.getOwnedBonuses(sessionId, accessToken);
+  }
+
+  /**
    * get Nobles.
    *
    * @param sessionId session id.
@@ -207,7 +222,7 @@ public class InventoryController {
   @PutMapping(value = "/games/{sessionId}/cards/{cardMd5}")
   public ResponseEntity<String> buyCard(@PathVariable long sessionId, @PathVariable String cardMd5,
                                         @RequestParam String accessToken,
-                                        @RequestBody PurchaseMap purchaseMap)
+                                        @RequestBody OrientPurchaseMap purchaseMap)
       throws JsonProcessingException {
     return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
@@ -280,5 +295,38 @@ public class InventoryController {
       throws JsonProcessingException {
     return inventoryService.takeLevelTwoCard(sessionId, accessToken, chosenCard);
   }
+
+  /**
+   * Takes a level one card.
+   *
+   * @param sessionId session Id.
+   * @param accessToken auth token.
+   * @param chosenCard chosen card's md5.
+   * @return information on next action or invalid request message.
+   * @throws JsonProcessingException exception if json processing fails.
+   */
+  @PutMapping(value = {"/games/{sessionId}/board/cards/levelOne"})
+  public ResponseEntity<String> takeLevelOneCard(@PathVariable long sessionId,
+                                                 @RequestParam String accessToken,
+                                                 @RequestParam String chosenCard)
+      throws JsonProcessingException {
+    return inventoryService.takeLevelOneCard(sessionId, accessToken, chosenCard);
+  }
+
+  /**
+   * Associates a bag card to a token type.
+   *
+   * @param sessionId session id.
+   * @param accessToken access token.
+   * @param tokenType chosen token type.
+   * @return information on next action or invalid request message
+   */
+  @PutMapping(value = "/games/{sessionId}/cards/bagcards")
+  public ResponseEntity<String> associateBagCard(@PathVariable long sessionId,
+                                                 @RequestParam String accessToken,
+                                                 @RequestParam String tokenType) {
+    return inventoryService.associateBagCard(sessionId, accessToken, tokenType);
+  }
+
 
 }

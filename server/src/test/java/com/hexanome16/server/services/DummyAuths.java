@@ -1,10 +1,10 @@
 package com.hexanome16.server.services;
 
 import com.hexanome16.common.models.auth.TokensInfo;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +76,7 @@ public class DummyAuths {
    * </pre>
    */
   public static final List<ServerPlayer> invalidPlayerList =
-      List.of(new ServerPlayer("imad", "#FFFFFF"), new ServerPlayer("el", "#FFFFFF"));
+      List.of(new ServerPlayer("imad", "#FFFFFF", 0), new ServerPlayer("el", "#FFFFFF", 1));
 
   /**
    * Immutable static list of players in json format.
@@ -120,7 +120,7 @@ public class DummyAuths {
   public static final Map<Long, Game> validGames = Map.of(
       validSessionIds.get(0), Game.create(validSessionIds.get(0),
           validPlayerList.toArray(new ServerPlayer[2]), validPlayerList.get(0).getName(),
-          "", new WinCondition[] {WinCondition.BASE}, false, false)
+          "", WinCondition.BASE)
   );
 
   /**

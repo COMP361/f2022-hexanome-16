@@ -5,18 +5,20 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.ErrorPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyReserveNobleCard;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringThree;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringTwo;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeReserved;
 import java.util.function.Predicate;
@@ -52,6 +54,11 @@ public interface PromptTypeInterface {
     @Override
     public boolean isCancelable() {
       return true;
+    }
+
+    @Override
+    public boolean canBeOpenedOutOfTurn() {
+      return false;
     }
 
     @Override
@@ -122,6 +129,14 @@ public interface PromptTypeInterface {
    */
   boolean isCancelable();
 
+
+  /**
+   * returns true if we want prompt to be openable out of turn, false otherwise.
+   *
+   * @return true or false.
+   */
+  boolean canBeOpenedOutOfTurn();
+
   /**
    * Method which populates the prompt with elements specific to the prompt type.
    *
@@ -144,6 +159,16 @@ public interface PromptTypeInterface {
      * <p><i>Helper</i></p>
      */
     TOKEN_ACQUIRING_TWO(new TokenAcquiringTwo()),
+    /**
+     * Token acquiring one prompt type.
+     * <p><i>Helper</i></p>
+     */
+    TOKEN_ACQUIRING_ONE(new TokenAcquiringOne()),
+    /**
+     * Token discarding prompt, only one at a time.
+     * <p><i>Main</i></p>
+     */
+    TOKEN_DISCARD(new TokenDiscard()),
     /**
      * Token acquiring three prompt type.
      * <p><i>Helper</i></p>
@@ -191,16 +216,6 @@ public interface PromptTypeInterface {
      */
     BUY_CARD_WITH_CARDS(new BuyCardWithCards()),
     /**
-     * Buy bag card prompt type.
-     * <p><i>Main</i></p>
-     */
-    BUY_BAG_CARD(new BuyingBagCard()),
-    /**
-     * Buy reserve noble card prompt type.
-     * <p><i>Main</i></p>
-     */
-    BUY_RESERVE_NOBLE_CARD(new BuyReserveNobleCard()),
-    /**
      * Pause prompt type.
      * <p><i>Main</i></p>
      */
@@ -224,6 +239,14 @@ public interface PromptTypeInterface {
      * Choose level two prompt type.
      */
     CHOOSE_LEVEL_TWO(new ChooseLevelTwo()),
+    /**
+     * Choose level one prompt type.
+     */
+    CHOOSE_LEVEL_ONE(new ChooseLevelOne()),
+    /**
+     * Error prompt type.
+     */
+    ERROR(new ErrorPrompt()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

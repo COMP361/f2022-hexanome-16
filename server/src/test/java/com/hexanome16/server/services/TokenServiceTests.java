@@ -12,18 +12,18 @@ import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.models.actions.Action;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.token.TokenService;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.ServiceUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +55,7 @@ public class TokenServiceTests {
         DummyGameManagerService.getDummyGameManagerService();
     tokensService = new TokenService(dummyAuthService, gameManagerMock, serviceUtils);
 
-    payload.setPlayers(new ServerPlayer[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
+    payload.setPlayers(DummyAuths.validPlayerList.toArray(ServerPlayer[]::new));
     payload.setCreator("tristan");
     payload.setSavegame("");
     payload.setGame(WinCondition.BASE.getGameServiceJson().getName());
@@ -181,4 +179,95 @@ public class TokenServiceTests {
     assertTrue(response.getStatusCode().is2xxSuccessful());
 
   }
+
+  /**
+   * Testing takeOne.
+   */
+  @Test
+  public void testTakeOne() {
+    Game validGame = GameDummies.getInstance().get(0);
+    ServerPlayer validPlayer = PlayerDummies.validDummies[0];
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKEN MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer)));
+    when(validGame.allowedTakeOneOf(Gem.ONYX)).thenReturn(false);
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKEN MOCK
+    when(validGame.allowedTakeOneOf(Gem.RUBY)).thenReturn(true);
+
+    // INVALID REQUEST
+    var response = tokensService.takeOneToken(DummyAuths.invalidSessionIds.get(0),
+        DummyAuths.invalidTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST BUT CANT TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "BLACK");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    // VALID REQUEST + CAN TAKE ONE OF TOKENS
+    response = tokensService.takeOneToken(DummyAuths.validSessionIds.get(0),
+        DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+
+  }
+
+  /**
+   * Testing discard token.
+   */
+  @Test
+  public void testDiscardToken() {
+    final Game validGame = GameDummies.getInstance().get(0);
+    final ServerPlayer validPlayer1 = Mockito.mock(ServerPlayer.class);
+    final ServerPlayer validPlayer2 = Mockito.mock(ServerPlayer.class);
+    final long badSessionId = DummyAuths.invalidSessionIds.get(0);
+    final long goodSessionId = DummyAuths.validSessionIds.get(0);
+    final String badTokenInfo = DummyAuths.invalidTokensInfos.get(0).getAccessToken();
+    final String goodTokenInfo1 = DummyAuths.validTokensInfos.get(0).getAccessToken();
+    final String goodTokenInfo2 = DummyAuths.validTokensInfos.get(1).getAccessToken();
+    final Action returnedAction = Mockito.mock(Action.class);
+    final Action badReturnedAction = Mockito.mock(Action.class);
+
+    // INVALID REQUEST MOCK
+    when(serviceUtils.validRequestAndCurrentTurn(badSessionId, badTokenInfo))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+
+    // VALID REQUEST BUT NOT VALID PLAYER DOESNT HAVE DISCARD AS TOP ACTION
+    when(serviceUtils.validRequestAndCurrentTurn(goodSessionId, goodTokenInfo1))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer1)));
+    when(validPlayer1.peekTopAction()).thenReturn(null);
+
+    // VALID REQUEST + GOOD ACTION QUEUE
+    when(serviceUtils.validRequestAndCurrentTurn(goodSessionId, goodTokenInfo2))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(validGame, validPlayer2)));
+    when(validPlayer2.peekTopAction()).thenReturn(returnedAction, null);
+    when(returnedAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.DISCARD);
+
+    var response = tokensService.discardToken(badSessionId, badTokenInfo, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo1, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    when(validPlayer1.peekTopAction()).thenReturn(badReturnedAction);
+    when(badReturnedAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.END_TURN);
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo1, "RED");
+    assertFalse(response.getStatusCode().is2xxSuccessful());
+
+    response = tokensService.discardToken(goodSessionId, goodTokenInfo2, "RED");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+
 }

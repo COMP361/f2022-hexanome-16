@@ -8,21 +8,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
 import com.hexanome16.server.models.PlayerDummies;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerService;
+import com.hexanome16.server.services.game.SavegameService;
+import com.hexanome16.server.services.game.SavegameServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import java.lang.reflect.Field;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class GameManagerServiceTest {
   private GameManagerService gameManagerService;
+  private SavegameServiceInterface savegameServiceInterface;
 
   @BeforeEach
   void setUp() {
-    gameManagerService = new GameManagerService();
+    savegameServiceInterface = Mockito.mock(SavegameService.class);
+    gameManagerService = new GameManagerService(savegameServiceInterface);
   }
 
   /**
