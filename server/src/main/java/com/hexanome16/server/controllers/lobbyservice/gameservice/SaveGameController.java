@@ -1,62 +1,41 @@
 package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
-import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.sessions.SaveGameJson;
-import com.hexanome16.common.util.CustomHttpResponses;
-import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
-import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.SavegameServiceInterface;
-import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.server.util.ServiceUtils;
-import com.hexanome16.server.util.UrlUtils;
-import java.io.File;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Objects;
-import javax.annotation.PreDestroy;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * This controller provides methods for working with savegames in LS.
  */
 @RestController
-public class SavegameController {
+public class SaveGameController {
   private final GameManagerServiceInterface gameManagerService;
-  private final SavegameServiceInterface savegameService;
+  private final SavegameServiceInterface saveGameService;
 
   /**
    * Constructor.
    *
    * @param gameManagerService  The GameManagerService.
-   * @param savegameService     The SavegameService.
+   * @param saveGameService     The SavegameService.
    */
-  public SavegameController(@Autowired GameManagerServiceInterface gameManagerService,
-                            @Autowired SavegameServiceInterface savegameService) {
-    this.savegameService = savegameService;
+  public SaveGameController(@Autowired GameManagerServiceInterface gameManagerService,
+                            @Autowired SavegameServiceInterface saveGameService) {
+    this.saveGameService = saveGameService;
     this.gameManagerService = gameManagerService;
   }
 
@@ -80,7 +59,7 @@ public class SavegameController {
                                                @RequestBody SaveGameJson saveGameJson) {
     System.out.println("createSavegame: " + gamename + " " + savegameId + " " + accessToken + " "
         + sessionId + " " + saveGameJson);
-    return savegameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)),
+    return saveGameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)),
         savegameId, saveGameJson);
   }
 
@@ -91,15 +70,15 @@ public class SavegameController {
   @Order(15000)
   @SneakyThrows
   public void initSaveGames() {
-    DirectoryStream<Path> savegameFiles = savegameService.getSavegameFiles();
+    DirectoryStream<Path> savegameFiles = saveGameService.getSavegameFiles();
     if (savegameFiles == null) {
       return;
     }
     for (Path savegameFile : savegameFiles) {
       if (savegameFile.toFile().canRead()) {
-        SaveGame saveGame = savegameService.loadGame(
+        SaveGame saveGame = saveGameService.loadGame(
             savegameFile.toFile().getName().replace(".json", ""));
-        savegameService.createSavegameHelper(saveGame.getGamename(), saveGame.getId(),
+        saveGameService.createSavegameHelper(saveGame.getGamename(), saveGame.getId(),
             new SaveGameJson(saveGame.getId(), saveGame.getGamename(), saveGame.getUsernames()));
       }
     }
@@ -115,7 +94,7 @@ public class SavegameController {
   @DeleteMapping("/gameservices/{gamename}/savegames/{savegameId}")
   public ResponseEntity<String> deleteSavegame(@PathVariable String gamename,
                                                @PathVariable String savegameId) {
-    return savegameService.deleteSavegame(gamename, savegameId);
+    return saveGameService.deleteSavegame(gamename, savegameId);
   }
 
   /**
@@ -126,6 +105,6 @@ public class SavegameController {
    */
   @DeleteMapping("/gameservices/{gamename}/savegames")
   public ResponseEntity<String> deleteAllSavegames(@PathVariable String gamename) {
-    return savegameService.deleteAllSavegames(gamename);
+    return saveGameService.deleteAllSavegames(gamename);
   }
 }
