@@ -31,12 +31,12 @@ jobs:
           mvn install --file common/pom.xml
           mvn -B package --file client/pom.xml -DskipTests
           mkdir executable && cp client/target/*jar-with-dependencies.jar executable
-      # https://github.com/actions/upload-artifact
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact
-          path: executable
+#      # https://github.com/actions/upload-artifact
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: my-artifact
+#          path: executable
       # https://github.com/actions/create-release
       - name: Get Existing tag
         id: existing_tag
