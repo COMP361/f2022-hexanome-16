@@ -2,11 +2,11 @@
 
 ## Branch Nomenclature and Releases
 Release versions and tags are updated every time a push is made to the ``master`` branch or a pull-request is made to 
-either ``master`` or ``staging``. Every dev branch must start with a suffix following this nomenclature:
+either ``master`` or ``staging``. Every dev branch must start with a prefix following this nomenclature:
 
 * ``perf/`` indicates a major update (e.g. a new extension)
 * ``feat/`` indicates a minor update, i.e. a new feature
-* ``fix/``  indicates a bug fix, i.e. a new patch
+* ``fix/``, ``test/``, ``refac/`` or ``hotfix/``  indicates a new patch
 
 The release tags/versions have the format ``v<major>.<minor>.<patch>`` and are updated according to the 
 **base** branch of PRs. Staging releases are labeled as "Pre-release", while master
