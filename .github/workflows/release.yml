@@ -77,7 +77,7 @@ jobs:
       - name: Create JAR
         run: |
           mvn -B package --file client/pom.xml -DskipTests
-          mkdir executable && cp client/target/Splendor-*.jar executable
+          mkdir executable && cp client/target/*jar-with-dependencies.jar executable
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -93,6 +93,6 @@ jobs:
           body: ${{ steps.build_changelog.outputs.changelog }}
           draft: false
           prerelease: ${{ github.base_ref == 'staging' }}
-          files: client/target/Splendor-*.jar
+          files: client/target/*jar-with-dependencies.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
