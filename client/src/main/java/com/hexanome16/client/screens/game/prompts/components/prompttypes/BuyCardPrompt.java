@@ -18,6 +18,7 @@ import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
@@ -113,15 +114,16 @@ public class BuyCardPrompt implements PromptTypeInterface {
   /**
    * The proposed offer.
    */
-  PurchaseMap atProposedOffer;
+  OrientPurchaseMap atProposedOffer;
 
-  private static PurchaseMap getPurchaseMapOfCurrentInput() {
+  private static OrientPurchaseMap getOrientPurchaseMapOfCurrentInput() {
     int rubyAmount = 0;
     int emeraldAmount = 0;
     int sapphireAmount = 0;
     int diamondAmount = 0;
     int onyxAmount = 0;
     int goldAmount = 0;
+    int goldCardAmount = 0;
     int amountInBank;
     // go through every currently supported currency and modify the value of the
     // variable associated to it
@@ -135,12 +137,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
         case WHITE_TOKENS -> diamondAmount = amountInBank;
         case BLACK_TOKENS -> onyxAmount = amountInBank;
         case GOLD_TOKENS -> goldAmount = amountInBank;
+        case BONUS_GOLD_CARDS -> goldCardAmount = amountInBank;
         default -> { /* do nothing */ }
       }
     }
     // Creates a Purchase map of the current amounts in the Transaction bank
-    return new PurchaseMap(rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+    return new OrientPurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount, goldCardAmount);
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -479,7 +482,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
     // allows to check if card can be bought with current amount of tokens in trade bank
     private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
-      PurchaseMap amountInBankMap = getPurchaseMapOfCurrentInput();
+      OrientPurchaseMap amountInBankMap = getOrientPurchaseMapOfCurrentInput();
       // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
       // check if we can buy card with the gems we put down.
@@ -518,7 +521,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
         t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
           if (t.getOpacity() == 1) {
-            buyCardPrompt.atProposedOffer = getPurchaseMapOfCurrentInput();
+            buyCardPrompt.atProposedOffer = getOrientPurchaseMapOfCurrentInput();
             closeBuyPrompt();
             buyCardPrompt.cardBought();
             buyCardPrompt.notifyServer();
