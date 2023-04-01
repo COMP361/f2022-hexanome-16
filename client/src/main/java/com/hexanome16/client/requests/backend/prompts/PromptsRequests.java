@@ -130,11 +130,13 @@ public class PromptsRequests {
    * @param sessionId game session id
    * @param cardMd5   card hash
    * @param authToken user authentication token
+   * @return Server Response.
    */
-  public static void reserveCard(long sessionId,
-                                 String cardMd5,
-                                 String authToken) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+  public static Pair<Headers, String> reserveCard(long sessionId,
+                                                  String cardMd5,
+                                                  String authToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
         "/api/games/" + sessionId + "/cards/" + cardMd5 + "/reservation",
         Map.of("access_token", authToken), Void.class));
   }
@@ -145,11 +147,13 @@ public class PromptsRequests {
    * @param sessionId game session id
    * @param level     level of the face down card
    * @param authToken user authentication token
+   * @return Server Response
    */
-  public static void reserveCard(long sessionId,
-                                 Level level,
-                                 String authToken) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+  public static Pair<Headers, String> reserveCard(long sessionId,
+                                                  Level level,
+                                                  String authToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
         "/api/games/" + sessionId + "/deck/reservation",
         Map.of("access_token", authToken, "level", level.name()), Void.class));
   }
