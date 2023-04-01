@@ -37,6 +37,16 @@ public class PurchaseMapDeserializer extends StdDeserializer<PurchaseMap> {
   public PurchaseMap deserialize(JsonParser jp, DeserializationContext ctxt)
       throws IOException {
     JsonNode node = jp.getCodec().readTree(jp);
+    return parse(node);
+  }
+
+  /**
+   * Parses the json node to a PurchaseMap.
+   *
+   * @param node json node
+   * @return PurchaseMap
+   */
+  public PurchaseMap parse(JsonNode node) {
     PriceMap priceMap = priceMapDeserializer.parse(node);
     if (node.get("price") != null) {
       node = node.get("price");

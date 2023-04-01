@@ -42,6 +42,11 @@ public class DummyAuthService implements AuthServiceInterface {
           return new ResponseEntity<>(DummyAuths.validTokensInfos.get(1), HttpStatus.OK);
         }
       }
+      case "xox" -> {
+        if (Objects.equals(password, "laaPhie*aiN0")) {
+          return new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK);
+        }
+      }
       default -> {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }

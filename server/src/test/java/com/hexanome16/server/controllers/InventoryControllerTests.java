@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.InventoryService;
@@ -108,7 +109,7 @@ class InventoryControllerTests {
 
     try {
       when(this.inventoryServiceMock.buyCard(123L, "md5", "abc",
-          new PurchaseMap(1, 1, 1, 1, 1, 1))).thenReturn(
+          new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1))).thenReturn(
           buyCardResponseStub);
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
@@ -120,7 +121,8 @@ class InventoryControllerTests {
 
     try {
       assertEquals(buyCardResponseStub,
-          this.inventoryController.buyCard(123L, "md5", "abc", new PurchaseMap(1, 1, 1, 1, 1, 1)));
+          this.inventoryController.buyCard(123L, "md5", "abc",
+              new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1)));
     } catch (JsonProcessingException e) {
       fail("Mock threw a JsonProcessingException");
     }

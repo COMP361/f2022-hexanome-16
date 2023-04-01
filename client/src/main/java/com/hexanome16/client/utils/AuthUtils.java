@@ -5,18 +5,21 @@ import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.sessions.User;
 import java.util.Base64;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import lombok.SneakyThrows;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 
 /**
  * This class provides methods to create authorization headers for requests.
  */
 public class AuthUtils {
-  private static final Timer refreshTimer = new Timer();
   private static final AtomicReference<TokensInfo> auth = new AtomicReference<>();
   private static final AtomicReference<User> player = new AtomicReference<>();
+  private static final AtomicReference<Thread> refreshThread = new AtomicReference<>();
 
   private AuthUtils() {
     super();
@@ -48,17 +51,21 @@ public class AuthUtils {
    * @param auth The player authentication information.
    */
   public static void setAuth(TokensInfo auth) {
-    if (auth == null) {
-      AuthUtils.auth.set(null);
-      refreshTimer.cancel();
-    } else {
-      AuthUtils.auth.set(auth);
-      refreshTimer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          TokenRequest.execute(auth.getRefreshToken());
+    if (refreshThread.get() != null) {
+      refreshThread.get().interrupt();
+    }
+    AuthUtils.auth.set(auth);
+    if (auth != null) {
+      Thread thread = new Thread(() -> {
+        try {
+          Thread.sleep(Math.max(0, auth.getExpiresIn() - 30) * 1000L);
+        } catch (InterruptedException e) {
+          return;
         }
-      }, Math.max(auth.getExpiresIn() - 30, 0) * 1000L);
+        TokenRequest.execute(auth.getRefreshToken());
+      });
+      thread.setDaemon(true);
+      refreshThread.set(thread);
     }
   }
 
