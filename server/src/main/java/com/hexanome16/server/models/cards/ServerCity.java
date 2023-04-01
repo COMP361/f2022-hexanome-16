@@ -33,15 +33,14 @@ public class ServerCity extends City implements Visitable {
    */
   @Override
   public boolean addToInventory(Inventory inventory) {
-    return false;
+    if (!inventory.hasAtLeastGivenBonuses(cardInfo.price())) {
+      return false;
+    }
+    return inventory.acquireCity(this);
   }
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
-    System.out.println("player prestige point: " + inventory.getPrestigePoints());
-    System.out.println("city prestige point: " + cardInfo.prestigePoint());
-    System.out.println(inventory.getGemBonuses());
-    System.out.println(cardInfo.price());
     return inventory.getPrestigePoints() >= cardInfo.prestigePoint()
         && inventory.getGemBonuses().getGemCost(Gem.RUBY) >= cardInfo.price().getGemCost(Gem.RUBY)
         && inventory.getGemBonuses().getGemCost(Gem.EMERALD)
