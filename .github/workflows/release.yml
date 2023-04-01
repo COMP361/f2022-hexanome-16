@@ -24,7 +24,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build project with Maven
-        run: mvn -B package --file client/pom.xml
+        run: |
+          mvn install --file common/pom.xml
+          mvn -B package --file client/pom.xml
 
   # https://github.com/actions/create-release
   release:
@@ -76,6 +78,7 @@ jobs:
       # https://github.com/actions/upload-artifact
       - name: Create JAR
         run: |
+          mvn install --file common/pom.xml
           mvn -B package --file client/pom.xml -DskipTests
           mkdir executable && cp client/target/*jar-with-dependencies.jar executable
       - name: Upload Artifact
