@@ -66,6 +66,17 @@ public class Inventory {
   }
 
   /**
+   * Removes the card from the player inventory.
+   *
+   * @param card card we want to remove from the inventory.
+   */
+  public void removeCard(ServerLevelCard card) {
+    gemBonuses.removeGems(card.getGemBonus().getPriceMap());
+    prestigePoints -= card.getCardInfo().prestigePoint();
+    ownedCards.remove(card);
+  }
+
+  /**
    * Reserve the given card.
    *
    * @param card card to reserve
@@ -187,15 +198,4 @@ public class Inventory {
   }
 
 
-
-  /**
-   * Removes the card from the player inventory.
-   *
-   * @param card card we want to remove from the inventory.
-   */
-  public void removeCard(ServerLevelCard card) {
-    gemBonuses.removeGems(card.getGemBonus().getPriceMap());
-    prestigePoints -= card.getCardInfo().prestigePoint();
-    ownedCards.remove(card);
-  }
 }
