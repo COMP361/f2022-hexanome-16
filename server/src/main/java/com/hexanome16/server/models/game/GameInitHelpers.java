@@ -384,7 +384,7 @@ public class GameInitHelpers {
       game.getRemainingCities().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(city)),
           city);
     }
-    deck.shuffle();
+    //deck.shuffle();
     citiesDeck = deck;
   }
 }

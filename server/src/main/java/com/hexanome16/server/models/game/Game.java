@@ -277,6 +277,16 @@ public class Game {
   }
 
   /**
+   * Gets city by hash.
+   *
+   * @param hash hash of the city
+   * @return the city
+   */
+  public ServerCity getCityByHash(String hash) {
+    return remainingCities.get(hash);
+  }
+
+  /**
    * Gets deck.
    *
    * @param level deck level
