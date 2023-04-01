@@ -3,6 +3,7 @@ package com.hexanome16.server.models.actions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.util.CustomResponseFactory;
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 @JsonDeserialize(as = ChooseCityAction.class)
 public class ChooseCityAction implements Action {
   @Getter
-  private ServerCity[] cities;
+  private City[] cities;
   private String citiesJson;
   @Getter
   private CustomHttpResponses.ActionType actionType = CustomHttpResponses.ActionType.CITY;
@@ -30,7 +31,7 @@ public class ChooseCityAction implements Action {
    * @param cities the cities
    * @throws JsonProcessingException thrown if cities cannot be parsed
    */
-  public ChooseCityAction(ServerCity[] cities) throws JsonProcessingException {
+  public ChooseCityAction(City[] cities) throws JsonProcessingException {
     this.cities = cities;
     ObjectMapper ob = new ObjectMapper();
     this.citiesJson = ob.writeValueAsString(cities);

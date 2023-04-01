@@ -8,6 +8,7 @@ import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class Inventory {
   private final List<ServerLevelCard> reservedCards;
   private final PurchaseMap gemBonuses;
   private final Map<RouteType, TradePost> tradePosts;
+  private final List<ServerCity> ownedCities;
   private int prestigePoints;
 
   /* Constructor *********************************************************************************/
@@ -47,6 +49,7 @@ public class Inventory {
     reservedCards = new ArrayList<>();
     gemBonuses = new PurchaseMap(0, 0, 0, 0, 0, 0);
     tradePosts = new HashMap<>();
+    ownedCities = new ArrayList<>();
     prestigePoints = 0;
   }
 
@@ -87,6 +90,16 @@ public class Inventory {
   public boolean acquireNoble(Noble noble) {
     prestigePoints += noble.getCardInfo().prestigePoint();
     return ownedNobles.add(noble);
+  }
+
+  /**
+   * Acquire a city.
+   *
+   * @param city the city
+   * @return if added successfully
+   */
+  public boolean acquireCity(ServerCity city) {
+    return ownedCities.add(city);
   }
 
   /**

@@ -279,6 +279,23 @@ public class InventoryController {
   }
 
   /**
+   * Let the player claim a city.
+   *
+   * @param sessionId    the session id
+   * @param cityMd5     the city hash
+   * @param accessToken  player's authentication token
+   * @return HttpStatus.ok if the request completed, an error response otherwise.
+   * @throws JsonProcessingException the json processing exception
+   */
+  @PutMapping(value = "/games/{sessionId}/cities/{cityMd5}")
+  public ResponseEntity<String> claimCity(@PathVariable long sessionId,
+                                           @PathVariable String cityMd5,
+                                           @RequestParam String accessToken)
+      throws JsonProcessingException {
+    return inventoryService.acquireCity(sessionId, cityMd5, accessToken);
+  }
+
+  /**
    * Takes a level two card.
    *
    * @param sessionId session Id.

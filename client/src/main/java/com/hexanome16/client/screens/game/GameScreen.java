@@ -11,6 +11,7 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.requests.lobbyservice.savegames.CreateSavegameRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.components.CityComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
@@ -433,6 +434,7 @@ public class GameScreen {
     cities.clear();
     CardComponent.reset();
     NobleComponent.reset();
+    CityComponent.reset();
     FXGL.getGameWorld()
         .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
     FXGL.getGameWorld()
@@ -479,6 +481,23 @@ public class GameScreen {
     for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
       n = entry.getValue();
       if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
+        return entry.getKey();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns Hash of a given City. (ON BOARD)
+   *
+   * @param cityToFind city whose hash we want.
+   * @return Hash of city, null of no such city.
+   */
+  public static String getCityHash(City cityToFind) {
+    City city;
+    for (Map.Entry<String, City> entry : cities.entrySet()) {
+      city = entry.getValue();
+      if (city.getCardInfo().texturePath().equals(cityToFind.getCardInfo().texturePath())) {
         return entry.getKey();
       }
     }

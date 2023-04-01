@@ -24,7 +24,9 @@ public enum WinCondition {
   /**
    * Win condition for Cities (15 prestige points + 4 cities).
    */
-  CITIES(null, new GameServiceJson("SplendorCities", "Orient + Cities"));
+  CITIES(player -> player.getInventory().getPrestigePoints() >= 15
+      || !player.getInventory().getOwnedCities().isEmpty(),
+      new GameServiceJson("SplendorCities", "Orient + Cities"));
 
   private final Predicate<ServerPlayer> winCondition;
   @Getter
@@ -64,7 +66,7 @@ public enum WinCondition {
    * Check if a game is won.
    *
    * @param winCondition The win conditions to check.
-   * @param players       The players to check.
+   * @param players      The players to check.
    * @return The player(s) who won the game, or empty array if no player has won.
    */
   public static ServerPlayer[] getWinners(WinCondition winCondition, ServerPlayer[] players) {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -16,6 +17,7 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.actions.AssociateCardAction;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
@@ -156,10 +158,21 @@ public class InventoryService implements InventoryServiceInterface {
       player.addTakeTokenAction(Optional.empty());
     }
 
+    //choose noble
     ResponseEntity<String> error =
         addNobleAction(game, player);
     if (error != null) {
       return error;
+    }
+
+    //choose city
+    if (game.getWinCondition() == WinCondition.CITIES) {
+      System.out.println("check city");
+      error =
+          addCityAction(game, player);
+      if (error != null) {
+        return error;
+      }
     }
 
     Level level = (cardToBuy).getLevel();
@@ -197,7 +210,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
     var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getRemainingNobles().values()) {
+    for (ServerNoble noble : game.getOnBoardNobles().getCardList()) {
       if (player.canBeVisitedBy(noble)) {
         noblesList.add(noble);
       }
@@ -212,6 +225,23 @@ public class InventoryService implements InventoryServiceInterface {
     return null;
   }
 
+  private static ResponseEntity<String> addCityAction(Game game, ServerPlayer player) {
+    var citiesList = new ArrayList<City>();
+    for (ServerCity city : game.getOnBoardCities().getCardList()) {
+      if (player.canBeVisitedBy(city)) {
+        System.out.println("can be visited by");
+        citiesList.add(city);
+      }
+    }
+    if (!citiesList.isEmpty()) {
+      try {
+        player.addCitiesToPerform(citiesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
+  }
 
   /**
    * Let the player reserve a face up card.
@@ -462,6 +492,50 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     if (!player.addCardToInventory(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    player.removeTopAction();
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
+  public ResponseEntity<String> acquireCity(long sessionId, String cityHash,
+                                             String accessToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.CITY) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    var city = game.getCityByHash(cityHash);
+
+    if (cityHash == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    if (!player.canBeVisitedBy(city)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+
+    if (!player.addCardToInventory(city)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
     player.removeTopAction();
