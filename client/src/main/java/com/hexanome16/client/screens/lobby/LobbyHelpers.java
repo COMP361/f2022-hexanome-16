@@ -363,12 +363,12 @@ class LobbyHelpers {
 
     TableColumn<SaveGameJson, String> idColumn = new TableColumn<>("ID");
     idColumn.setCellValueFactory(
-        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSavegameid()));
+        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSaveGameId()));
     idColumn.setStyle(columnStyle);
 
     TableColumn<SaveGameJson, String> gameServerColumn = new TableColumn<>("Game Server");
     gameServerColumn.setCellValueFactory(
-        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getGamename()));
+        cellData -> new ReadOnlyStringWrapper(cellData.getValue().getGameName()));
     gameServerColumn.setStyle(columnStyle);
 
     TableColumn<SaveGameJson, String> playersColumn = new TableColumn<>("Players");
@@ -401,8 +401,8 @@ class LobbyHelpers {
                     CreateSessionRequest.execute(
                         AuthUtils.getAuth().getAccessToken(),
                         AuthUtils.getPlayer().getName(),
-                        saveGame.getGamename(),
-                        saveGame.getSavegameid()
+                        saveGame.getGameName(),
+                        saveGame.getSaveGameId()
                     );
                   });
                   String commonButtonStyle = "-fx-background-color: #282C34; -fx-font-size: 16px;"
@@ -411,7 +411,7 @@ class LobbyHelpers {
                       "-fx-text-fill: white; -fx-border-color: white;" + commonButtonStyle
                   );
                   delete.setOnAction(event -> DeleteSavegameRequest.execute(
-                      saveGame.getGamename(), saveGame.getSavegameid()));
+                      saveGame.getGameName(), saveGame.getSaveGameId()));
                   delete.setStyle(
                       "-fx-text-fill: red; -fx-border-color: red; " + commonButtonStyle
                   );

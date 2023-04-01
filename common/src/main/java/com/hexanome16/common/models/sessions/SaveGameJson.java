@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveGameJson {
-  private String savegameid;
-  private String gamename;
+  private String saveGameId;
+  private String gameName;
   private String[] players;
 }
