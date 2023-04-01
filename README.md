@@ -1,5 +1,23 @@
 # COMP 361 Project
 
+## Branch Nomenclature and Releases
+Release versions and tags are updated every time a push is made to the ``master`` branch or a pull-request is made to 
+either ``master`` or ``staging``. Every dev branch must start with a suffix following this nomenclature:
+
+* ``perf/`` indicates a major update (e.g. a new extension)
+* ``feat/`` indicates a minor update, i.e. a new feature
+* ``fix/``  indicates a bug fix, i.e. a new patch
+
+The release tags/versions have the format ``v<major>.<minor>.<patch>`` and are updated according to the 
+**base** branch of PRs. Staging releases are labeled as "Pre-release", while master
+releases are labeled as "Release".
+
+For example, suppose the latest release version is ``v1.2.3``. Then, if there is a PR :
+* to merge ``staging`` into ``master``, the version is kept but the release becomes ``latest``.
+* from any ``perf`` branch, then version is updated to ``v2.0.0``.
+* from any ``feat`` branch, then version is updated to ``v1.3.0``.
+* from any ``fix`` branch, or if there is a push to ``master`` directly, then version is updated to ``v1.2.4``.
+
 ## Notes for TAs/Teacher (as of Milestone 7)
  * We have multiple test suites for intelliJ.
    * Server Unit Tests
