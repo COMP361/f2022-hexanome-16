@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.PriceMapDeserializer;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -146,5 +147,30 @@ public class PriceMap implements PriceInterface {
       }
     }
     return true;
+  }
+
+  @Override
+  public Set<Gem> getTypesOfGems() {
+    return this.priceMap.keySet();
+  }
+
+  @Override
+  public PriceInterface subtract(PriceInterface priceInterface) {
+    Set<Gem> paramTypes = priceInterface.getTypesOfGems();
+    Set<Gem> thisTypes = this.getTypesOfGems();
+    if (!(thisTypes.containsAll(paramTypes) && paramTypes.containsAll(thisTypes))) {
+      throw new IllegalArgumentException("Maps must contains same set of gems");
+    }
+    var mapToRemoveFrom = this.priceMap;
+    PriceMap newPriceMap = new PriceMap();
+    for (var entry : mapToRemoveFrom.entrySet()) {
+      Gem key = entry.getKey();
+      int newValue = entry.getValue() - priceInterface.getGemCost(key);
+      if (newValue < 0) {
+        newValue = 0;
+      }
+      newPriceMap.addGems(key, newValue);
+    }
+    return newPriceMap;
   }
 }
