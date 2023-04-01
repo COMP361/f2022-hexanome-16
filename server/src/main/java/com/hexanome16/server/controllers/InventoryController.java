@@ -54,24 +54,13 @@ public class InventoryController {
     objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
 
-  private ServerPlayer getValidPlayerByName(long sessionId, String username) {
-    Game game = gameManager.getGame(sessionId);
 
-    ServerPlayer myPlayer = serviceUtils.findPlayerByName(
-        game, username
-    );
-    if (myPlayer == null) {
-      throw new IllegalArgumentException("Invalid Player.");
-    }
-    // get the player from the session id and access token
-    return myPlayer;
-  }
 
-  private JsonNode getInventoryNode(ServerPlayer player) throws JsonProcessingException {
-    // convert the inventory to string and return it as a String
-    String inventoryString = objectMapper.writeValueAsString(player.getInventory());
-    return objectMapper.readTree(inventoryString);
-  }
+  //  private JsonNode getInventoryNode(ServerPlayer player) throws JsonProcessingException {
+  //    // convert the inventory to string and return it as a String
+  //    String inventoryString = objectMapper.writeValueAsString(player.getInventory());
+  //    return objectMapper.readTree(inventoryString);
+  //  }
 
   //  /* POST methods *****************************************************************************/
   //
@@ -109,13 +98,8 @@ public class InventoryController {
   public ResponseEntity<String> getCards(@PathVariable long sessionId,
                                          @RequestParam String username)
       throws JsonProcessingException {
-    // get the player (if valid) from the session id and access token
-    ServerPlayer player = getValidPlayerByName(sessionId, username);
-    // return the cards in the inventory as a response entity
-    return new ResponseEntity<>(
-        objectMapper.writeValueAsString(player.getInventory().getOwnedCards()),
-        HttpStatus.OK
-    );
+
+    return inventoryService.getCards(sessionId, username);
   }
 
   /**
@@ -144,12 +128,9 @@ public class InventoryController {
   public ResponseEntity<String> getNobles(@PathVariable long sessionId,
                                           @RequestParam String username)
       throws JsonProcessingException {
-    // get the player (if valid) from the session id and access token
-    ServerPlayer player = getValidPlayerByName(sessionId, username);
-    // return the cards in the inventory as a response entity
-    return new ResponseEntity<>(
-        objectMapper.writeValueAsString(player.getInventory().getOwnedNobles()),
-        HttpStatus.OK);
+
+
+    return inventoryService.getNobles(sessionId, username);
   }
 
   /**
@@ -167,11 +148,8 @@ public class InventoryController {
                                                  @RequestParam String accessToken)
       throws JsonProcessingException {
 
-    // get the player (if valid) from the session id and access token
-    ServerPlayer player = getValidPlayerByName(sessionId, username);
-    // return the reserved level cards in the inventory as a response entity
-    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
-        player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
+
+    return inventoryService.getReservedCards(sessionId, username, accessToken);
   }
 
   /**
@@ -186,11 +164,8 @@ public class InventoryController {
   public ResponseEntity<String> getReservedNobles(@PathVariable long sessionId,
                                                   @RequestParam String username)
       throws JsonProcessingException {
-    // get the player (if valid) from the session id and access token
-    ServerPlayer player = getValidPlayerByName(sessionId, username);
-    // return the reserved nobles in the inventory as a response entity
-    return new ResponseEntity<>(objectMapper.writeValueAsString(
-        player.getInventory().getReservedNobles()), HttpStatus.OK);
+
+    return inventoryService.getReservedNobles(sessionId, username);
   }
 
   /**
