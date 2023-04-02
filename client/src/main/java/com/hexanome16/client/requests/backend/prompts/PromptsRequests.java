@@ -11,6 +11,8 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +122,7 @@ public class PromptsRequests {
   public static Pair<Headers, String> buyCard(long sessionId,
                              String cardMd5,
                              String authToken,
-                             PurchaseMap proposedDeal) {
+                             OrientPurchaseMap proposedDeal) {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
         RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5,
         Map.of("access_token", authToken), proposedDeal, String.class));
@@ -415,5 +417,19 @@ public class PromptsRequests {
         RequestDest.SERVER,
         "/api/games/" + sessionId + "/winners",
         Map.of("access_token", accessToken, "hash", hash), WinJson.class));
+  }
+
+  /**
+   * Retrieves the discounted price for the card with hash cardHash.
+   *
+   * @param sessionId session identifier.
+   * @param accessToken access token of requesting player.
+   * @param cardHash hash of card we desire the discounted price of.
+   * @return Price map of the discounted price.
+   */
+  public static PriceMap getDiscountedPrice(long sessionId, String accessToken, String cardHash) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cards/" + cardHash + "/discountedPrice",
+        Map.of("access_token", accessToken), PriceMap.class));
   }
 }
