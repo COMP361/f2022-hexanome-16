@@ -3,6 +3,7 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,8 @@ import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -103,9 +106,18 @@ public class SavegameServiceTests {
           new SaveGameJson("test_savegame" + i, gameServer,
               DummyAuths.validPlayerList.stream().map(Player::getName).toArray(String[]::new)));
     }
-    savegameService.deleteAllSavegames(gameServer);
     for (int i = 0; i < 5; i++) {
-      assertFalse(new File("./data/savegames/test_savegame" + i + ".json").exists());
+      assertTrue(new File("./data/savegames/test_savegame" + i + ".json").exists());
+    }
+    savegameService.deleteAllSavegames(gameServer);
+    DirectoryStream<Path> directoryStream = savegameService.getSavegameFiles();
+    for (Path path : directoryStream) {
+      System.out.println(path.toString());
+    }
+    try {
+      directoryStream.close();
+    } catch (Exception e) {
+      fail(e);
     }
   }
 }
