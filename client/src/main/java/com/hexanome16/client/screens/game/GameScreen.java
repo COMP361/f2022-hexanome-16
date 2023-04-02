@@ -15,6 +15,7 @@ import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.WinnerPrompt;
 import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
@@ -139,8 +140,7 @@ public class GameScreen {
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(() -> {
-              PlayerListJson playerListJson = playersJson.getValue();
-              if (playerListJson == null) {
+              if (playersJson == null || playersJson.getValue() == null) {
                 return;
               }
               PlayerJson[] players = playersJson.getValue().getPlayers();
@@ -214,20 +214,22 @@ public class GameScreen {
   }
 
   private static void fetchWinnersThread() {
-    BackgroundService fetchWinnersService = new BackgroundService(
+    updateWinners = new BackgroundService(
         () -> winners.set(PromptsRequests.getWinners(sessionId,
             AuthUtils.getAuth().getAccessToken(), winners.get().getKey())),
         () -> {
+          System.out.println("winners: " + winners.get());
           if (winners.get() != null && winners.get().getValue() != null
               && winners.get().getValue().getWinners() != null
-              && winners.get().getValue().getWinners().length > 0) {
-            Platform.runLater(() -> {
-              FXGL.spawn("PromptBox", new SpawnData()
-                  .put("promptType", PromptTypeInterface.PromptType.WINNERS)
-                  .put("winnersJson", winners.get().getValue())
-                  .put("handleConfirm", ((Runnable) LobbyScreen::initLobby)));
-              GameScreen.exitGame();
-            });
+              && winners.get().getValue().getWinners().length > 0
+              && winners.get().getValue().getWinners()[0] != null) {
+            WinnerPrompt.winners = winners.get().getValue().getWinners();
+            Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData()
+                .put("promptType", PromptTypeInterface.PromptType.WINNERS)
+                .put("handleConfirm", ((Runnable) () -> {
+                  GameScreen.exitGame();
+                  LobbyScreen.initLobby();
+                }))));
           }
         },
         () -> {
@@ -236,8 +238,7 @@ public class GameScreen {
           }
         }
     );
-    fetchWinnersService.start();
-    updateWinners = fetchWinnersService;
+    updateWinners.start();
   }
 
   /**

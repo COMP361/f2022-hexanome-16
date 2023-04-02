@@ -6,6 +6,7 @@ import com.hexanome16.client.MainApp;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ChoicePromptAbstract;
 import com.hexanome16.common.dto.WinJson;
+import java.util.Arrays;
 import java.util.StringJoiner;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -16,7 +17,7 @@ import javafx.scene.text.TextAlignment;
  * This prompt displays an error message.
  */
 public class WinnerPrompt extends ChoicePromptAbstract {
-  private String[] winners;
+  public static String[] winners;
 
   @Override
   protected String promptText() {
@@ -68,19 +69,10 @@ public class WinnerPrompt extends ChoicePromptAbstract {
   }
 
   @Override
-  protected void promptOpens() {
-    winners = new String[0];
-  }
-
-  @Override
   public void populatePrompt(Entity entity) {
     super.populatePrompt(entity);
     atConfirmButton.setOpacity(1);
     atConfirmCircle.setOpacity(1);
-    if (entity.getProperties().getValueOptional("winnersJson").isPresent()
-        && entity.getObject("winnersJson") instanceof WinJson) {
-      winners = ((WinJson) entity.getObject("winnersJson")).getWinners();
-    }
     if (entity.getProperties().getValueOptional("handleConfirm").isPresent()
         && entity.getObject("handleConfirm") instanceof Runnable) {
       atConfirmButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
