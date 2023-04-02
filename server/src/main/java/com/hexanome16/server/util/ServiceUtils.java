@@ -12,6 +12,7 @@ import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.Arrays;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +145,7 @@ public class ServiceUtils {
    *
    * @param game the game the player is in
    */
+  @SneakyThrows
   public void endCurrentPlayersTurn(Game game) {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
@@ -154,6 +156,7 @@ public class ServiceUtils {
             BroadcastMapKey.WINNERS,
             new WinJson(Arrays.stream(winners).map(ServerPlayer::getName).toArray(String[]::new))
         );
+        gameManagerService.deleteGame(game.getSessionId());
       }
     }
     game.getBroadcastContentManagerMap().updateValue(

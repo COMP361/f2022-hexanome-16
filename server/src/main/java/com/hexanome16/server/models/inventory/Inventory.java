@@ -9,6 +9,7 @@ import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Inventory {
   private final List<ServerLevelCard> reservedCards;
   private PurchaseMap gemBonuses;
   private final Map<RouteType, TradePost> tradePosts;
+  private final List<ServerCity> ownedCities;
   private int prestigePoints;
 
   /* Constructor *********************************************************************************/
@@ -49,6 +51,7 @@ public class Inventory {
     reservedCards = new ArrayList<>();
     gemBonuses = new PurchaseMap(0, 0, 0, 0, 0, 0);
     tradePosts = new HashMap<>();
+    ownedCities = new ArrayList<>();
     prestigePoints = 0;
   }
 
@@ -154,6 +157,7 @@ public class Inventory {
    *
    * @return true or false.
    */
+  @JsonIgnore
   public boolean hasMoreThanTenTokens() {
     return playerBank.hasMoreThanKtokens(10);
   }

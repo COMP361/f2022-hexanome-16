@@ -59,7 +59,8 @@ public class TokensController {
   }
 
   /**
-   * Allows to take 2 tokens of a given type, This function checks if the action is valid.
+   * Allows to take 1 token of a given type (given by the trade route),
+   * This function checks if the action is valid.
    *
    * @param sessionId     the session's Identification number.
    * @param accessToken   authentication token of the player who wants to take the tokens.

@@ -1,12 +1,13 @@
 package com.hexanome16.client.utils;
 
+import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 /**
  * This class allows to run a task in a separate background thread using JavaFX's mechanism.
  */
-public class BackgroundService extends Service<Void> {
+public class BackgroundService extends ScheduledService<Void> {
   private final Runnable toRun;
   private final Runnable onSuccess;
   private final Runnable onFailure;
@@ -26,6 +27,7 @@ public class BackgroundService extends Service<Void> {
     this.onSuccess = onSuccess;
     this.onFailure = onFailure;
     this.onInterrupted = onInterrupted;
+    this.setRestartOnFailure(false);
   }
 
   /**
@@ -77,7 +79,10 @@ public class BackgroundService extends Service<Void> {
         onFailure.run();
       }
     });
-    task.setOnCancelled(event -> onInterrupted.run());
+    task.setOnCancelled(event -> {
+      onInterrupted.run();
+      task.cancel(true);
+    });
     return task;
   }
 }
