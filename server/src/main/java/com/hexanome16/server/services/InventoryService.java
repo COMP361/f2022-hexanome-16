@@ -696,7 +696,7 @@ public class InventoryService implements InventoryServiceInterface {
 
   private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
     var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getRemainingNobles().values()) {
+    for (ServerNoble noble : game.getOnBoardNobles().getCardList()) {
       if (player.canBeVisitedBy(noble)) {
         noblesList.add(noble);
       }
