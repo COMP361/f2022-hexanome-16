@@ -16,7 +16,6 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.common.util.CustomSerializerModifier;
 import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.net.URI;
