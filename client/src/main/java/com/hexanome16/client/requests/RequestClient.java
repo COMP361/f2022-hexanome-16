@@ -17,6 +17,7 @@ import com.hexanome16.client.MainApp;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -44,9 +45,7 @@ public class RequestClient {
   /**
    * ObjectMapper instance with custom settings for serialization.
    */
-  public static final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
-          JsonInclude.Include.NON_NULL)
-      .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+  public static final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   /**
    * Response timeout for regular requests.
    */
