@@ -29,7 +29,6 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.common.util.CustomSerializerModifier;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
