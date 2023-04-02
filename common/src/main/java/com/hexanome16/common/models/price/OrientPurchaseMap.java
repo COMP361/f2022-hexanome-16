@@ -2,7 +2,11 @@ package com.hexanome16.common.models.price;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.OrientPurchaseMapDeserializer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import lombok.Getter;
@@ -142,7 +146,20 @@ public class OrientPurchaseMap extends PurchaseMap {
         || halfUsedGoldenCard.canBeUsedToBuyAlt(otherPriceMap);
   }
 
+  // FOR SUBTRACTING PRICE MAPS ONLY
+  @Override
+  public PriceInterface subtract(PriceInterface priceInterface) {
+    assert priceInterface instanceof PriceMap;
+    Map<Gem, Integer> map = new HashMap<>();
+    Gem[] gems = Gem.values();
+    List<Gem> gemList = Arrays.asList(gems);
+    ArrayList<Gem> gemsMinusGold = new ArrayList<>(gemList);
+    gemsMinusGold.remove(Gem.GOLD);
 
-
-
+    for (Gem gem : gemsMinusGold) {
+      map.put(gem, this.getGemCost(gem) - priceInterface.getGemCost(gem));
+    }
+    return new OrientPurchaseMap(new PriceMap(map), this.getGemCost(Gem.GOLD),
+        this.goldenCardsAmount);
+  }
 }

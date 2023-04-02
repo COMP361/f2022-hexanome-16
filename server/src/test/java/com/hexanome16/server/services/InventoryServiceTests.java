@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
@@ -160,6 +163,28 @@ public class InventoryServiceTests {
   }
 
   /**
+   * Tests getDiscountedPrice().
+   *
+   * @throws JsonProcessingException if stringification fails.
+   */
+  @Test
+  public void testGetDiscountedPrice() throws JsonProcessingException {
+    Game game = Mockito.mock(Game.class);
+    ServerPlayer player = Mockito.mock(ServerPlayer.class);
+    ServerLevelCard card = Mockito.mock(ServerLevelCard.class);
+    CardInfo cardInfo = new CardInfo(123, 123, "gi", new PriceMap());
+    when(serviceUtils.validRequestAndCurrentTurn(anyLong(), anyString()))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+            new ImmutablePair<>(game, player)));
+    when(game.getCardByHash(anyString())).thenReturn(card);
+    when(card.getCardInfo()).thenReturn(cardInfo);
+    when(player.discountPrice(any())).thenReturn(new PriceMap());
+    ResponseEntity<String> response = inventoryService.getDiscountedPrice(123, "123", "123");
+    String body = objectMapper.writeValueAsString(new PriceMap());
+    assertEquals(body, response.getBody());
+  }
+
+  /**
    * Test buy card.
    *
    * @throws JsonProcessingException the json processing exception
@@ -175,6 +200,8 @@ public class InventoryServiceTests {
     Game gameMock = request.getValue().getLeft();
     ServerPlayer playerMock = mock(ServerPlayer.class);
     Action mockAction = mock(Action.class);
+    when(playerMock.discountPrice(myCard.getCardInfo().price()))
+        .thenReturn(myCard.getCardInfo().price());
     when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
@@ -184,6 +211,7 @@ public class InventoryServiceTests {
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
         Pair.of(CustomResponseFactory.getResponse(CustomHttpResponses.OK),
             Pair.of(gameMock, playerMock)));
+
 
     String cardHash = "";
 
@@ -222,6 +250,8 @@ public class InventoryServiceTests {
     Game gameMock = request.getValue().getLeft();
     ServerPlayer playerMock = mock(ServerPlayer.class);
     Action mockAction = mock(Action.class);
+    when(playerMock.discountPrice(myCard.getCardInfo().price()))
+        .thenReturn(myCard.getCardInfo().price());
     when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
@@ -285,6 +315,8 @@ public class InventoryServiceTests {
 
     when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
     Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+    when(playerMock.discountPrice(myCard.getCardInfo().price()))
+        .thenReturn(myCard.getCardInfo().price());
     when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
     when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
     ServerNoble mockNoble = mock(ServerNoble.class);
