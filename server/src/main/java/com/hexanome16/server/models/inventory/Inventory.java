@@ -31,7 +31,7 @@ public class Inventory {
   private final List<Noble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
-  private final PurchaseMap gemBonuses;
+  private PurchaseMap gemBonuses;
   private final Map<RouteType, TradePost> tradePosts;
   private int prestigePoints;
 
@@ -198,4 +198,13 @@ public class Inventory {
   }
 
 
+  /**
+   * Updates the bonus gems field.
+   */
+  public void updateBonusGems() {
+    gemBonuses = new PurchaseMap();
+    for (ServerLevelCard card : ownedCards) {
+      gemBonuses.addGems(card.getGemBonus().getPriceMap());
+    }
+  }
 }
