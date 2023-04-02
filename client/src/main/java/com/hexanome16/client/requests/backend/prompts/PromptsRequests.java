@@ -5,6 +5,8 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
@@ -400,5 +402,18 @@ public class PromptsRequests {
             chosenBonus.name()), Void.class));
   }
 
-
+  /**
+   * Gets winners of the game.
+   *
+   * @param sessionId session id
+   * @param accessToken auth token of player
+   * @param hash hash of the response (used for long polling)
+   * @return server response.
+   */
+  public static Pair<String, WinJson> getWinners(long sessionId, String accessToken, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/winners",
+        Map.of("access_token", accessToken, "hash", hash), WinJson.class));
+  }
 }
