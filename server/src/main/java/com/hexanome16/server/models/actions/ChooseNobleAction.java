@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.util.CustomResponseFactory;
 import lombok.Data;
 import lombok.Getter;
@@ -33,8 +34,7 @@ public class ChooseNobleAction implements Action {
    */
   public ChooseNobleAction(Noble[] nobles) throws JsonProcessingException {
     this.nobles = nobles;
-    ObjectMapper objectMapper = new ObjectMapper();
-    this.nobleJson = objectMapper.writeValueAsString(nobles);
+    this.nobleJson = ObjectMapperUtils.getObjectMapper().writeValueAsString(nobles);
   }
 
   @Override

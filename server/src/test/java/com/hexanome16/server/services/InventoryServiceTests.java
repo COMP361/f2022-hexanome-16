@@ -25,6 +25,7 @@ import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
@@ -59,8 +60,7 @@ import org.springframework.util.MultiValueMap;
  * The type Game service tests.
  */
 public class InventoryServiceTests {
-  private final ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private Game validMockGame;
   private InventoryService inventoryService;
   private ServiceUtils serviceUtils;

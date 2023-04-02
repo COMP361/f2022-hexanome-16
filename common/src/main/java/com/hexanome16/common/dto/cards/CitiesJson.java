@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class CitiesJson implements BroadcastContent {
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   public CitiesJson(List<? extends City> citiesList) throws JsonProcessingException {
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
     for (City city : citiesList) {
       cities.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(city)), city);
     }

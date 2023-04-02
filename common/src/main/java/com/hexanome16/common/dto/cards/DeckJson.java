@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class DeckJson implements BroadcastContent {
   private Map<String, LevelCard> cards;
   private Level deckLevel;
   @JsonIgnore
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
 
   /**
    * Default constructor.

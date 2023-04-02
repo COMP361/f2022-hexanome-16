@@ -1,4 +1,4 @@
-package com.hexanome16.server.util;
+package com.hexanome16.common.util;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.SerializationConfig;
