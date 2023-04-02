@@ -132,7 +132,7 @@ public class TokenService implements TokenServiceInterface {
 
     if (currentGame.getWinCondition() == WinCondition.TRADEROUTES
         && requestingPlayer.getInventory().getTradePosts().containsKey(RouteType.DIAMOND_ROUTE)) {
-      requestingPlayer.addTakeTokenAction(Optional.ofNullable(desiredGem));
+      requestingPlayer.addTakeTokenToPerform(Optional.ofNullable(desiredGem));
     }
 
     var nextAction = requestingPlayer.peekTopAction();

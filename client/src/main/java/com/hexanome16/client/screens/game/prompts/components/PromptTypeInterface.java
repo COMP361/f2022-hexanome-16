@@ -9,6 +9,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.ErrorPr
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.Pause;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAcquiring;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.WinnerPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseCity;
@@ -253,6 +254,10 @@ public interface PromptTypeInterface {
      * Error prompt type.
      */
     ERROR(new ErrorPrompt()),
+    /**
+     * Winners prompt type.
+     */
+    WINNERS(new WinnerPrompt()),
     /**
      * Null prompt type.
      * <p><i>NullObject</i></p>

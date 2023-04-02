@@ -1,5 +1,7 @@
 package com.hexanome16.server.models.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
@@ -13,6 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ServerCity extends City implements Visitable {
+  private CardInfo cardInfo;
+
   /**
    * Instantiates a new ServerCity.
    *
@@ -32,6 +36,7 @@ public class ServerCity extends City implements Visitable {
    * @return true on success
    */
   @Override
+  @JsonIgnore
   public boolean addToInventory(Inventory inventory) {
     if (!inventory.hasAtLeastGivenBonuses(cardInfo.price())) {
       return false;

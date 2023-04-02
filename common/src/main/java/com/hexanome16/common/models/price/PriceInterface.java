@@ -68,6 +68,7 @@ public interface PriceInterface {
    * @param priceInterface the price interface
    * @return true if the given priceInterface has at least the same amount
    */
+  @JsonIgnore
   boolean hasAtLeastAmountOfGems(PriceInterface priceInterface);
 
   /**
@@ -75,6 +76,7 @@ public interface PriceInterface {
    *
    * @return the types of gems contained inside the price
    */
+  @JsonIgnore
   Set<Gem> getTypesOfGems();
 
   /**

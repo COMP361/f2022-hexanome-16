@@ -182,4 +182,17 @@ public interface InventoryServiceInterface {
    */
   ResponseEntity<String> getReservedNobles(long sessionId, String username)
       throws JsonProcessingException;
+
+  /**
+   * Gets the discounted price of the card with hash cardMd5  if it was to be bought by
+   * player with accessToken inside game with sessionId.
+   *
+   * @param sessionId session identifier.
+   * @param cardMd5 hash of card.
+   * @param accessToken access token of player.
+   * @return PriceMap of the discounted price.
+   * @throws JsonProcessingException if the fails to write as a string.
+   */
+  ResponseEntity<String> getDiscountedPrice(long sessionId, String cardMd5, String accessToken)
+      throws JsonProcessingException;
 }

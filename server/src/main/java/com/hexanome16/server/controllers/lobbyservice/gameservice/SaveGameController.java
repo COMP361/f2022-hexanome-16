@@ -70,6 +70,7 @@ public class SaveGameController {
   @Order(15000)
   @SneakyThrows
   public void initSaveGames() {
+    Thread.sleep(3000);
     DirectoryStream<Path> savegameFiles = saveGameService.getSavegameFiles();
     if (savegameFiles == null) {
       return;
@@ -82,6 +83,7 @@ public class SaveGameController {
             new SaveGameJson(saveGame.getId(), saveGame.getGamename(), saveGame.getUsernames()));
       }
     }
+    savegameFiles.close();
   }
 
   /**

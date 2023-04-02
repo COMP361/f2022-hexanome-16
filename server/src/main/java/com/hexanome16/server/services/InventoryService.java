@@ -84,6 +84,29 @@ public class InventoryService implements InventoryServiceInterface {
         HttpStatus.OK);
   }
 
+
+  @Override
+  public ResponseEntity<String> getDiscountedPrice(long sessionId, String cardMd5,
+                                                   String accessToken)
+      throws JsonProcessingException {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerLevelCard card = game.getCardByHash(cardMd5);
+    if (card == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    String priceMap = objectMapper
+        .writeValueAsString(player.discountPrice(card.getCardInfo().price()));
+    return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, priceMap, null);
+  }
+
+
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
                                         OrientPurchaseMap proposedDeal) {
@@ -109,7 +132,8 @@ public class InventoryService implements InventoryServiceInterface {
     }
 
     // Get card price as a priceMap
-    PriceInterface cardPriceMap = cardToBuy.getCardInfo().price();
+    PriceInterface originalPrice = cardToBuy.getCardInfo().price();
+    PriceInterface cardPriceMap = player.discountPrice(originalPrice);
 
     // Makes sure player is in game && proposed deal is acceptable && player has enough tokens
     if (game.getWinCondition() == WinCondition.TRADEROUTES
@@ -163,7 +187,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
-      player.addTakeTokenAction(Optional.empty());
+      player.addTakeTokenToPerform(Optional.empty());
     }
 
     //choose noble
@@ -589,6 +613,7 @@ public class InventoryService implements InventoryServiceInterface {
     AssociateCardAction associateBagAction = (AssociateCardAction) currentAction;
     ServerLevelCard bagCard = associateBagAction.getCard();
     bagCard.associateBagToGem(gem);
+    player.updateBonusGems();
 
     player.removeTopAction();
     var nextAction = player.peekTopAction();
