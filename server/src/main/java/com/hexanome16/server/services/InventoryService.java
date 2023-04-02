@@ -1,8 +1,13 @@
 package com.hexanome16.server.services;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
@@ -14,6 +19,7 @@ import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.actions.AssociateCardAction;
@@ -23,6 +29,7 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.common.util.CustomSerializerModifier;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
@@ -43,7 +50,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class InventoryService implements InventoryServiceInterface {
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.Optional;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class TakeTokenAction implements Action {
   @SneakyThrows
   public TakeTokenAction(Optional<Gem> gem) {
     if (gem.isPresent()) {
-      ObjectMapper objectMapper = new ObjectMapper();
+      ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
       this.gemJson = objectMapper.writeValueAsString(gem.get().getBonusType());
     } else {
       this.gemJson = "";
