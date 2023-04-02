@@ -2,10 +2,11 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.actions.AssociateCardAction;
@@ -23,6 +24,7 @@ import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -213,6 +215,68 @@ public class ServerPlayer extends Player {
     return visitor.playerMeetsRequirements(inventory);
   }
 
+  /**
+   * true if player needs to discard tokens before ending their turn.
+   *
+   * @return true or false.
+   */
+  public boolean hasToDiscardTokens() {
+    return inventory.hasMoreThanTenTokens();
+  }
+
+  /**
+   * decreases player bank by purchaseMap.
+   *
+   * @param purchaseMap purchase map.
+   */
+  public void decPlayerBank(PurchaseMap purchaseMap) {
+    inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
+  }
+
+  /**
+   * returns a set of all the gem bonuses the player owns.
+   *
+   * @return set of owned Gems.
+   */
+  public Set<Gem> ownedGemBonuses() {
+    Set<Gem> gems = new HashSet<>();
+    for (ServerLevelCard card : inventory.getOwnedCards()) {
+      for (Gem gem : Gem.values()) {
+        if (card.getGemBonus().getGemCost(gem) > 0) {
+          gems.add(gem);
+        }
+      }
+    }
+    return gems;
+  }
+
+  /**
+   * Updates the owned bonus type of the player.
+   */
+  public void updateBonusGems() {
+    inventory.updateBonusGems();
+  }
+
+  /**
+   * Takes in a price and returns another price with the discounted funds.
+   *
+   * @param originalPrice the original price we want to discount.
+   * @return Price Interface of the discounted price.
+   */
+  public PriceInterface discountPrice(PriceInterface originalPrice) {
+    PriceMap pm = new PriceMap();
+    Gem[] gems = Gem.values();
+    ArrayList<Gem> gemList = new ArrayList<>(Arrays.asList(gems));
+    gemList.remove(Gem.GOLD);
+    PurchaseMap ownedBonuses = inventory.getGemBonuses();
+    for (Gem gem : gemList) {
+      int difference = originalPrice.getGemCost(gem) - ownedBonuses.getGemCost(gem);
+      pm.addGems(gem, Math.max(difference, 0));
+    }
+    return pm;
+  }
+
+
   // ACTION QUEUE RELATED SHENANIGANS ////////////////////////////////////////////////////////////
 
   /**
@@ -303,45 +367,10 @@ public class ServerPlayer extends Player {
    *
    * @param gem (optional) gem that cannot be taken
    */
-  public void addTakeTokenAction(Optional<Gem> gem) {
+  public void addTakeTokenToPerform(Optional<Gem> gem) {
     addActionToQueue(new TakeTokenAction(gem));
   }
 
-
-  /**
-   * true if player needs to discard tokens before ending their turn.
-   *
-   * @return true or false.
-   */
-  public boolean hasToDiscardTokens() {
-    return inventory.hasMoreThanTenTokens();
-  }
-
-  /**
-   * decreases player bank by purchaseMap.
-   *
-   * @param purchaseMap purchase map.
-   */
-  public void decPlayerBank(PurchaseMap purchaseMap) {
-    inventory.getPlayerBank().removeGemsFromBank(purchaseMap);
-  }
-
-  /**
-   * returns a set of all the gem bonuses the player owns.
-   *
-   * @return set of owned Gems.
-   */
-  public Set<Gem> ownedGemBonuses() {
-    Set<Gem> gems = new HashSet<>();
-    for (ServerLevelCard card : inventory.getOwnedCards()) {
-      for (Gem gem : Gem.values()) {
-        if (card.getGemBonus().getGemCost(gem) > 0) {
-          gems.add(gem);
-        }
-      }
-    }
-    return gems;
-  }
 
 
 
