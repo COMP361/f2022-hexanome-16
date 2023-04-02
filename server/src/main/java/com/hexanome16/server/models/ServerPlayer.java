@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -252,6 +251,13 @@ public class ServerPlayer extends Player {
   }
 
   /**
+   * Updates the owned bonus type of the player.
+   */
+  public void updateBonusGems() {
+    inventory.updateBonusGems();
+  }
+
+  /**
    * Takes in a price and returns another price with the discounted funds.
    *
    * @param originalPrice the original price we want to discount.
@@ -364,7 +370,6 @@ public class ServerPlayer extends Player {
   public void addTakeTokenToPerform(Optional<Gem> gem) {
     addActionToQueue(new TakeTokenAction(gem));
   }
-
 
 
 

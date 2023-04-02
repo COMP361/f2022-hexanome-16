@@ -82,6 +82,29 @@ public class InventoryService implements InventoryServiceInterface {
         HttpStatus.OK);
   }
 
+
+  @Override
+  public ResponseEntity<String> getDiscountedPrice(long sessionId, String cardMd5,
+                                                   String accessToken)
+      throws JsonProcessingException {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerLevelCard card = game.getCardByHash(cardMd5);
+    if (card == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    String priceMap = objectMapper
+        .writeValueAsString(player.discountPrice(card.getCardInfo().price()));
+    return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, priceMap, null);
+  }
+
+
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
                                         OrientPurchaseMap proposedDeal) {
@@ -518,6 +541,7 @@ public class InventoryService implements InventoryServiceInterface {
     AssociateCardAction associateBagAction = (AssociateCardAction) currentAction;
     ServerLevelCard bagCard = associateBagAction.getCard();
     bagCard.associateBagToGem(gem);
+    player.updateBonusGems();
 
     player.removeTopAction();
     var nextAction = player.peekTopAction();

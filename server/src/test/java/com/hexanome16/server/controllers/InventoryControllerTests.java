@@ -1,7 +1,11 @@
 package com.hexanome16.server.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -275,5 +279,14 @@ class InventoryControllerTests {
     } catch (Exception e) {
       fail("Mock threw an exception");
     }
+  }
+
+
+  @Test
+  public void testDiscountedPrice() throws JsonProcessingException {
+    when(inventoryServiceMock.getDiscountedPrice(anyLong(), anyString(), anyString())).thenReturn(
+        new ResponseEntity<>(HttpStatus.OK));
+    ResponseEntity<String> response = inventoryController.getDiscountedPrice(123, "123", "123");
+    assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 }
