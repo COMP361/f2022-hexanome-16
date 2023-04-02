@@ -14,11 +14,15 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.WinnerPrompt;
+import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
+import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
@@ -37,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
@@ -70,11 +75,17 @@ public class GameScreen {
   private static long sessionId = -1;
   private static String gameServer;
   private static final AtomicBoolean shouldFetch = new AtomicBoolean(false);
+  private static final AtomicReference<Pair<String, WinJson>> winners = new AtomicReference<>();
+  private static BackgroundService updateWinners;
 
   private static BackgroundService createFetchLevelThread(Level level) {
     BackgroundService fetchService = new BackgroundService(
-        () -> levelDecks.put(level, GameRequest.updateDeck(
-            sessionId, level, levelDecks.get(level).getKey())),
+        () -> {
+          if (shouldFetch.get()) {
+            levelDecks.put(level, GameRequest.updateDeck(
+                sessionId, level, levelDecks.get(level).getKey()));
+          }
+        },
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(() -> GameScreen.updateLevelDeck(level));
@@ -93,7 +104,11 @@ public class GameScreen {
 
   private static void fetchNoblesThread() {
     updateNobles = new BackgroundService(
-        () -> nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey());
+          }
+        },
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(GameScreen::updateNobles);
@@ -111,7 +126,11 @@ public class GameScreen {
 
   private static void fetchCitiesThread() {
     updateCities = new BackgroundService(
-        () -> citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey());
+          }
+        },
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(GameScreen::updateCities);
@@ -129,12 +148,15 @@ public class GameScreen {
 
   private static void fetchPlayersThread() {
     updateCurrentPlayer = new BackgroundService(
-        () -> playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey()),
+        () -> {
+          if (shouldFetch.get()) {
+            playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey());
+          }
+        },
         () -> {
           if (shouldFetch.get()) {
             Platform.runLater(() -> {
-              PlayerListJson playerListJson = playersJson.getValue();
-              if (playerListJson == null) {
+              if (playersJson == null || playersJson.getValue() == null) {
                 return;
               }
               PlayerJson[] players = playersJson.getValue().getPlayers();
@@ -177,9 +199,9 @@ public class GameScreen {
 
   private static void fetchTradePostsThread(int index) {
     String[] colors = {"Yellow", "Black", "Red", "Blue"};
-    tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
-        usernamesMap.get(index).getUsername()));
     if (shouldFetch.get()) {
+      tradingPosts.put(index, TradePostRequest.getTradePosts(sessionId,
+          usernamesMap.get(index).getUsername()));
       Platform.runLater(() -> {
         for (TradePostJson tradePost :
             tradingPosts.getOrDefault(index, new TradePostJson[0])) {
@@ -205,6 +227,40 @@ public class GameScreen {
         }
       });
     }
+  }
+
+  private static void fetchWinnersThread() {
+    updateWinners = new BackgroundService(
+        () -> {
+          if (shouldFetch.get()) {
+            winners.set(PromptsRequests.getWinners(sessionId,
+                AuthUtils.getAuth().getAccessToken(), winners.get().getKey()));
+          }
+        },
+        () -> {
+          System.out.println("winners: " + winners.get());
+          if (winners.get() != null && winners.get().getValue() != null
+              && winners.get().getValue().getWinners() != null
+              && winners.get().getValue().getWinners().length > 0
+              && winners.get().getValue().getWinners()[0] != null) {
+            WinnerPrompt.winners = winners.get().getValue().getWinners();
+            GameScreen.exitGame();
+            LobbyScreen.initLobby();
+            Platform.runLater(() -> {
+              FXGL.spawn("PromptBox", new SpawnData()
+                  .put("promptType", PromptTypeInterface.PromptType.WINNERS));
+            });
+          } else if (shouldFetch.get()) {
+            updateWinners.restart();
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateWinners.restart();
+          }
+        }
+    );
+    updateWinners.start();
   }
 
   /**
@@ -255,6 +311,10 @@ public class GameScreen {
       citiesJson = new Pair<>("", new CitiesJson());
       fetchCitiesThread();
     }
+
+    winners.set(new Pair<>("", new WinJson()));
+    fetchWinnersThread();
+
     UpdateGameInfo.initPlayerTurn();
 
     String[] usernames = FXGL.getWorldProperties().getValue("players");
@@ -414,23 +474,37 @@ public class GameScreen {
   public static void exitGame() {
     shouldFetch.set(false);
     for (Level level : Level.values()) {
-      levelCards.get(level).clear();
       levelThreads.get(level).cancel();
+      levelCards.get(level).clear();
     }
+    levelCards.clear();
     levelDecks.clear();
     levelThreads.clear();
+    if (gameServer.contains("TradeRoutes")) {
+      for (BackgroundService service : updateTradingPosts.values()) {
+        service.cancel();
+      }
+      updateTradingPosts.clear();
+      tradingPosts.clear();
+    }
+    if (gameServer.contains("Cities")) {
+      updateCities.cancel();
+      updateCities = null;
+      cities.clear();
+      citiesJson = null;
+    }
     nobleJson = null;
-    citiesJson = null;
     playersJson = null;
     currentPlayer = null;
+    updateNobles.cancel();
     updateNobles = null;
-    updateCities = null;
+    updateCurrentPlayer.cancel();
     updateCurrentPlayer = null;
-    updateTradingPosts.clear();
-    tradingPosts.clear();
     usernamesMap.clear();
     nobles.clear();
-    cities.clear();
+    winners.set(null);
+    updateWinners.cancel();
+    updateWinners = null;
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
@@ -455,12 +529,14 @@ public class GameScreen {
    * @return Hash of card, null of no such card.
    */
   public static String getCardHash(LevelCard levelCard) {
-    LevelCard card;
-    for (Level level : Level.values()) {
-      for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
-        card = entry.getValue();
-        if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
-          return entry.getKey();
+    if (levelCard != null) {
+      LevelCard card;
+      for (Level level : Level.values()) {
+        for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
+          card = entry.getValue();
+          if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
+            return entry.getKey();
+          }
         }
       }
     }
@@ -475,11 +551,13 @@ public class GameScreen {
    * @return Hash of noble, null of no such noble.
    */
   public static String getNobleHash(Noble noble) {
-    Noble n;
-    for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
-      n = entry.getValue();
-      if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
-        return entry.getKey();
+    if (noble != null) {
+      Noble n;
+      for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
+        n = entry.getValue();
+        if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
+          return entry.getKey();
+        }
       }
     }
     return null;
@@ -491,9 +569,11 @@ public class GameScreen {
    * @return if the current player has the sapphire route.
    */
   public static boolean hasSapphireRoute() {
-    for (TradePostJson tradePost : tradingPosts.get(0)) {
-      if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
-        return true;
+    if (!tradingPosts.isEmpty()) {
+      for (TradePostJson tradePost : tradingPosts.get(0)) {
+        if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
+          return true;
+        }
       }
     }
     return false;
@@ -505,7 +585,6 @@ public class GameScreen {
    * @return true or false.
    */
   public static boolean isClientsTurn() {
-    return currentPlayer.equals(
-        AuthUtils.getPlayer().getName());
+    return currentPlayer != null && currentPlayer.equals(AuthUtils.getPlayer().getName());
   }
 }

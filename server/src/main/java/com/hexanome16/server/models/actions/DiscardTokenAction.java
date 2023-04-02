@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.Arrays;
 import lombok.Data;
@@ -33,8 +34,8 @@ public class DiscardTokenAction implements Action {
   @SneakyThrows
   public DiscardTokenAction(Gem[] gems) {
     gemsToChooseFrom = Arrays.stream(gems).map(Gem::getBonusType).toArray(String[]::new);
-    ObjectMapper objectMapper = new ObjectMapper();
-    gemsToChooseFromAsString = objectMapper.writeValueAsString(gemsToChooseFrom);
+    gemsToChooseFromAsString = ObjectMapperUtils.getObjectMapper()
+        .writeValueAsString(gemsToChooseFrom);
   }
 
   @Override
