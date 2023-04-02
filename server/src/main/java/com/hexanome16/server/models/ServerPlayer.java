@@ -13,6 +13,7 @@ import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
+import com.hexanome16.server.models.actions.ReserveNobleAction;
 import com.hexanome16.server.models.actions.TakeOneAction;
 import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
@@ -197,12 +198,6 @@ public class ServerPlayer extends Player {
     return reservable.reserveCard(this.inventory);
   }
 
-  /**
-   * Delete inventory.
-   */
-  public void deleteInventory() {
-    this.inventory = null;
-  }
 
   /**
    * Verifies that the player meets the requirements to be visited by said visitable.
@@ -319,6 +314,18 @@ public class ServerPlayer extends Player {
   }
 
   /**
+   * Adds Reserve Noble as an action that needs to be performed.
+   *
+   * @param nobles List of nobles to choose from.
+   * @throws JsonProcessingException if nobles cannot be parsed.
+   */
+  public void addReserveNobleToPerform(ArrayList<Noble> nobles)
+          throws JsonProcessingException {
+    addActionToQueue(new ReserveNobleAction(nobles.toArray(Noble[]::new)));
+  }
+
+
+  /**
    * Adds Cities Choice as an action that needs to be performed.
    *
    * @param citiesList list of cities to choose from. Not empty please.
@@ -370,7 +377,6 @@ public class ServerPlayer extends Player {
   public void addTakeTokenToPerform(Optional<Gem> gem) {
     addActionToQueue(new TakeTokenAction(gem));
   }
-
 
 
 

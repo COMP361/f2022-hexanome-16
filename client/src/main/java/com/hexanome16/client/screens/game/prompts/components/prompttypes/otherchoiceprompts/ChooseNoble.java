@@ -20,7 +20,10 @@ import kong.unirest.core.Headers;
  */
 public class ChooseNoble extends NobleChoiceAbstract {
 
-  private static Noble[] nobleList;
+  /**
+   * List of nobles to choose from.
+   */
+  protected static Noble[] nobleList;
 
   /**
    * Sets the list of nobles.

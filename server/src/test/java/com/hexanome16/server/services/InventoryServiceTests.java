@@ -33,11 +33,13 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +224,9 @@ public class InventoryServiceTests {
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
@@ -271,6 +276,9 @@ public class InventoryServiceTests {
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
@@ -315,16 +323,22 @@ public class InventoryServiceTests {
 
     when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
     Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+
     when(playerMock.discountPrice(myCard.getCardInfo().price()))
         .thenReturn(myCard.getCardInfo().price());
     when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
     when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
     ServerNoble mockNoble = mock(ServerNoble.class);
     when(gameMock.getRemainingNobles()).thenReturn(Map.of("noble1", mockNoble));
+    when(gameMock.getOnBoardNobles())
+        .thenReturn(new Deck<ServerNoble>(new ServerNoble[]{mockNoble}));
     when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
@@ -747,6 +761,11 @@ public class InventoryServiceTests {
     when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
+
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new LinkedList<>());
+
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
@@ -781,6 +800,10 @@ public class InventoryServiceTests {
     when(mockActionNext.getActionDetails()).thenReturn(
         CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(mockActionNext);
+
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new LinkedList<>());
 
     // Act
     var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);

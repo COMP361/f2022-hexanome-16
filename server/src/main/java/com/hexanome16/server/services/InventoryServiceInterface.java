@@ -183,4 +183,16 @@ public interface InventoryServiceInterface {
    */
   ResponseEntity<String> getDiscountedPrice(long sessionId, String cardMd5, String accessToken)
       throws JsonProcessingException;
+
+  /**
+   * Lets the player reserve a noble.
+   *
+   * @param sessionId session identifier.
+   * @param nobleMd5 noble hash.
+   * @param accessToken access token of requesting player.
+   * @return next action that needs to be performed.
+   * @throws JsonProcessingException if json processing fails.
+   */
+  ResponseEntity<String> reserveNoble(long sessionId, String nobleMd5, String accessToken)
+          throws JsonProcessingException;
 }
