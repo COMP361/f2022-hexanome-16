@@ -529,12 +529,14 @@ public class GameScreen {
    * @return Hash of card, null of no such card.
    */
   public static String getCardHash(LevelCard levelCard) {
-    LevelCard card;
-    for (Level level : Level.values()) {
-      for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
-        card = entry.getValue();
-        if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
-          return entry.getKey();
+    if (levelCard != null) {
+      LevelCard card;
+      for (Level level : Level.values()) {
+        for (Map.Entry<String, LevelCard> entry : levelCards.get(level).entrySet()) {
+          card = entry.getValue();
+          if (levelCard.getCardInfo().texturePath().equals(card.getCardInfo().texturePath())) {
+            return entry.getKey();
+          }
         }
       }
     }
@@ -549,11 +551,13 @@ public class GameScreen {
    * @return Hash of noble, null of no such noble.
    */
   public static String getNobleHash(Noble noble) {
-    Noble n;
-    for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
-      n = entry.getValue();
-      if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
-        return entry.getKey();
+    if (noble != null) {
+      Noble n;
+      for (Map.Entry<String, Noble> entry : nobles.entrySet()) {
+        n = entry.getValue();
+        if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
+          return entry.getKey();
+        }
       }
     }
     return null;
@@ -565,9 +569,11 @@ public class GameScreen {
    * @return if the current player has the sapphire route.
    */
   public static boolean hasSapphireRoute() {
-    for (TradePostJson tradePost : tradingPosts.get(0)) {
-      if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
-        return true;
+    if (!tradingPosts.isEmpty()) {
+      for (TradePostJson tradePost : tradingPosts.get(0)) {
+        if (tradePost.getRouteType() == RouteType.SAPPHIRE_ROUTE) {
+          return true;
+        }
       }
     }
     return false;
@@ -579,7 +585,6 @@ public class GameScreen {
    * @return true or false.
    */
   public static boolean isClientsTurn() {
-    return currentPlayer.equals(
-        AuthUtils.getPlayer().getName());
+    return currentPlayer != null && currentPlayer.equals(AuthUtils.getPlayer().getName());
   }
 }
