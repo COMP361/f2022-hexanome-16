@@ -37,7 +37,7 @@ public class InventoryTests {
 
   /* fields we are using */
   private ServerLevelCard levelCard;
-  private Noble noble;
+  private ServerNoble noble;
 
   /**
    * Setting up before each test is done.

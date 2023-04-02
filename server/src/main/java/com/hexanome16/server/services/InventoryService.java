@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -17,6 +18,7 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.actions.AssociateCardAction;
+import com.hexanome16.server.models.cards.Reservable;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
@@ -27,6 +29,7 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -103,6 +106,8 @@ public class InventoryService implements InventoryServiceInterface {
         .writeValueAsString(player.discountPrice(card.getCardInfo().price()));
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, priceMap, null);
   }
+
+
 
 
   @Override
@@ -466,6 +471,7 @@ public class InventoryService implements InventoryServiceInterface {
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
+  @SneakyThrows
   @Override
   public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
                                              String accessToken) {
@@ -499,6 +505,20 @@ public class InventoryService implements InventoryServiceInterface {
     if (!player.addCardToInventory(noble)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
+
+    if (game.getOnBoardNobles().getCardList().contains(noble)) {
+      game.getOnBoardNobles().removeCard(noble);
+      game.getBroadcastContentManagerMap().updateValue(
+          BroadcastMapKey.NOBLES, new NobleDeckJson(
+              new ArrayList<>(List.of(noble)))
+
+      );
+    } else if (player.getInventory().getReservedNobles().contains(noble)) {
+      player.getInventory().getReservedCards().remove(noble);
+    }
+
+
+
     player.removeTopAction();
 
     var nextAction = player.peekTopAction();
@@ -508,6 +528,56 @@ public class InventoryService implements InventoryServiceInterface {
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  @Override
+  public ResponseEntity<String> reserveNoble(long sessionId, String nobleMd5, String accessToken)
+          throws JsonProcessingException {
+    var request =
+            serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerNoble noble = game.getNobleByHash(nobleMd5);
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.NOBLE_RESERVE) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+    // I am assuming Remaining nobles is the field with the nobles still up for the taking.
+    if (noble == null || !game.getRemainingNobles().containsValue(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    if (!player.reserveCard(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    // THis doesnt do what its supposed to for some reason
+    game.getOnBoardNobles().removeCard(noble);
+
+    game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.NOBLES, new NobleDeckJson(
+                    new ArrayList<>(List.of(noble)))
+
+    );
+
+
+    player.removeTopAction();
+    var nextAction = player.peekTopAction();
+
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+
+
   }
 
   @Override
@@ -630,6 +700,10 @@ public class InventoryService implements InventoryServiceInterface {
     if (acquiredCard.isBag()) {
       player.addAcquireCardToPerform(acquiredCard);
     }
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.RESERVE_NOBLE) {
+      ArrayList<Noble> nobles = new ArrayList<>(game.getOnBoardNobles().getCardList());
+      player.addReserveNobleToPerform(nobles);
+    }
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
       player.addTakeOneToPerform();
     }
@@ -649,7 +723,14 @@ public class InventoryService implements InventoryServiceInterface {
 
   private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
     var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getRemainingNobles().values()) {
+    // check in game nobles
+    for (ServerNoble noble : game.getOnBoardNobles().getCardList()) {
+      if (player.canBeVisitedBy(noble)) {
+        noblesList.add(noble);
+      }
+    }
+    // check reserved nobles
+    for (ServerNoble noble : player.getInventory().getReservedNobles()) {
       if (player.canBeVisitedBy(noble)) {
         noblesList.add(noble);
       }

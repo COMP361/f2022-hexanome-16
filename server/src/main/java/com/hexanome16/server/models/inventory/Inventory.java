@@ -10,6 +10,7 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.cards.ServerNoble;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +28,8 @@ import lombok.Getter;
 public class Inventory {
   /* fields *************************************************************************************/
   private final PlayerBank playerBank;
-  private final List<Noble> ownedNobles;
-  private final List<Noble> reservedNobles;
+  private final List<ServerNoble> ownedNobles;
+  private final List<ServerNoble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
   private PurchaseMap gemBonuses;
@@ -96,7 +97,7 @@ public class Inventory {
    * @param noble the noble
    * @return the boolean
    */
-  public boolean acquireNoble(Noble noble) {
+  public boolean acquireNoble(ServerNoble noble) {
     prestigePoints += noble.getCardInfo().prestigePoint();
     return ownedNobles.add(noble);
   }
@@ -107,7 +108,7 @@ public class Inventory {
    * @param noble the noble
    * @return the boolean
    */
-  public boolean reserveNoble(Noble noble) {
+  public boolean reserveNoble(ServerNoble noble) {
     return reservedNobles.add(noble);
   }
 
