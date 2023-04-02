@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -197,7 +198,7 @@ public class ServerPlayerTest {
    */
   @Test
   public void testAddTakeTokenAction() {
-    costa.addTakeTokenAction(Optional.empty());
+    costa.addTakeTokenToPerform(Optional.empty());
     ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
     var headers = actions.getHeaders();
     assertEquals(
@@ -205,7 +206,7 @@ public class ServerPlayerTest {
         Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
     assertEquals(HttpStatus.OK, actions.getStatusCode());
 
-    costa.addTakeTokenAction(Optional.ofNullable(Gem.DIAMOND));
+    costa.addTakeTokenToPerform(Optional.ofNullable(Gem.DIAMOND));
     actions = costa.peekTopAction().getActionDetails();
     headers = actions.getHeaders();
     assertEquals(
@@ -284,6 +285,36 @@ public class ServerPlayerTest {
     card.setGemBonus(new PurchaseMap());
     costa.getInventory().getOwnedCards().add(card);
     costa.removeCardFromInventory(card);
+  }
+
+  /**
+   * Test discountPrice(PriceInterface).
+   */
+  @Test
+  public void testDiscountPrice() {
+    PriceInterface originalPrice = new PriceMap(1, 1, 2, 1, 1);
+    PriceInterface discountedPrice = costa.discountPrice(originalPrice);
+    assertEquals(originalPrice, discountedPrice);
+
+    PurchaseMap ownedGems = costa.getInventory().getGemBonuses();
+    ownedGems.addGems(Gem.RUBY, 1);
+    discountedPrice = costa.discountPrice(originalPrice);
+    PriceInterface targetPrice = new PriceMap(0, 1, 2, 1, 1);
+    assertEquals(targetPrice, discountedPrice);
+
+    ownedGems = costa.getInventory().getGemBonuses();
+    ownedGems.addGems(Gem.RUBY, 2);
+    discountedPrice = costa.discountPrice(originalPrice);
+    targetPrice = new PriceMap(0, 1, 2, 1, 1);
+    assertEquals(targetPrice, discountedPrice);
+
+    ownedGems = costa.getInventory().getGemBonuses();
+    ownedGems.addGems(Gem.RUBY, 2);
+    ownedGems.addGems(Gem.SAPPHIRE, 1);
+    discountedPrice = costa.discountPrice(originalPrice);
+    targetPrice = new PriceMap(0, 1, 1, 1, 1);
+    assertEquals(targetPrice, discountedPrice);
+
   }
 
 }
