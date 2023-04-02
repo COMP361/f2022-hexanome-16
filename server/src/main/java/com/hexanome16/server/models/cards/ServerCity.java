@@ -1,19 +1,25 @@
 package com.hexanome16.server.models.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
 
 /**
  * ServerCity class for the Cities expansion.
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServerCity extends City implements Visitable {
-  @Getter
-  private final CardInfo cardInfo;
+  private CardInfo cardInfo;
 
 
   /**
@@ -35,6 +41,7 @@ public class ServerCity extends City implements Visitable {
    * @return true on success
    */
   @Override
+  @JsonIgnore
   public boolean addToInventory(Inventory inventory) {
     return false;
   }

@@ -147,8 +147,10 @@ public class ServiceUtils {
   public void endCurrentPlayersTurn(Game game) {
     game.goToNextPlayer();
     int nextPlayerIndex = game.getCurrentPlayerIndex();
+    System.out.println("Next player index: " + nextPlayerIndex);
     if (nextPlayerIndex == 0) {
       ServerPlayer[] winners = game.getWinCondition().getWinners(game.getPlayers());
+      System.out.println("Winners: " + Arrays.toString(winners));
       if (winners.length > 0) {
         game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.WINNERS,

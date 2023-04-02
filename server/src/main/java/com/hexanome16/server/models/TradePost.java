@@ -9,14 +9,15 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Class for each trade post.
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TradePost {
-  @Getter
   private RouteType routeType;
 
   /**

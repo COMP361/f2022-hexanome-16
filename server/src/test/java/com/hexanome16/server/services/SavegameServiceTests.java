@@ -114,6 +114,10 @@ public class SavegameServiceTests {
     for (Path path : directoryStream) {
       System.out.println(path.toString());
     }
-    fail();
+    try {
+      directoryStream.close();
+    } catch (Exception e) {
+      fail(e);
+    }
   }
 }

@@ -146,7 +146,6 @@ public class SavegameService implements SavegameServiceInterface {
       restTemplate.delete(url);
       DirectoryStream<Path> savegames = getSavegameFiles();
       for (Path savegame : savegames) {
-        System.out.println(savegame.toFile().getName());
         SaveGame saveGame = loadGame(savegame.toFile().getName().replace(".json", ""));
         if (saveGame.getGamename().equals(gamename) && !savegame.toFile().delete()) {
           return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
