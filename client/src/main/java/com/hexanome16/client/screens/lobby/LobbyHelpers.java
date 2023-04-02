@@ -21,6 +21,7 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.GameServiceJson;
+import com.hexanome16.common.models.sessions.Role;
 import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
@@ -246,6 +247,8 @@ class LobbyHelpers {
                       = getTableView().getItems().get(getIndex());
                   final Session session = sessionEntry.getValue();
                   boolean isOwn = session.getCreator().equals(AuthUtils.getPlayer().getName());
+                  boolean isService = AuthUtils.getPlayer().getRole().equals(
+                      Role.ROLE_SERVICE.name());
                   join.setOnAction(event -> {
                     if (session.isLaunched()) {
                       LobbyScreen.exitLobby();
@@ -297,14 +300,22 @@ class LobbyHelpers {
                           >= session.getGameParameters().getMinSessionPlayers()) {
                         buttons.add(launch);
                       }
-                      buttons.add(isOwn ? delete : leave);
+                      buttons.add((isOwn || isService) ? delete : leave);
                     } else {
                       buttons.add(join);
                       buttons.add(save);
+                      if (isService) {
+                        buttons.add(delete);
+                      }
                     }
-                  } else if (!session.isLaunched() && session.getPlayers().length
-                      < session.getGameParameters().getMaxSessionPlayers()) {
-                    buttons.add(join);
+                  } else {
+                    if (!session.isLaunched() && session.getPlayers().length
+                        < session.getGameParameters().getMaxSessionPlayers()) {
+                      buttons.add(join);
+                    }
+                    if (isOwn || isService) {
+                      buttons.add(delete);
+                    }
                   }
                   HBox buttonBox = new HBox(buttons.toArray(new Button[0]));
                   buttonBox.setStyle("-fx-alignment: CENTER; -fx-spacing: 5px; -fx-padding: 5px;");
