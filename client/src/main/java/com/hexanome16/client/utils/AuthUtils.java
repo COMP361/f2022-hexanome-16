@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
+import javafx.util.Duration;
 
 /**
  * This class provides methods to create authorization headers for requests.
@@ -19,10 +20,28 @@ import javafx.concurrent.Task;
 public class AuthUtils {
   private static final AtomicReference<TokensInfo> auth = new AtomicReference<>();
   private static final AtomicReference<User> player = new AtomicReference<>();
-  private static final AtomicReference<Thread> refreshThread = new AtomicReference<>();
+  private static final AtomicReference<ScheduledService<Void>> refreshService
+      = new AtomicReference<>(createRefreshService());
 
   private AuthUtils() {
     super();
+  }
+
+  private static ScheduledService<Void> createRefreshService() {
+    ScheduledService<Void> service = new ScheduledService<>() {
+      @Override
+      protected Task<Void> createTask() {
+        return new Task<>() {
+          @Override
+          protected Void call() throws Exception {
+            TokenRequest.execute(auth.get().getRefreshToken());
+            return null;
+          }
+        };
+      }
+    };
+    service.setRestartOnFailure(false);
+    return service;
   }
 
   /**
@@ -51,21 +70,12 @@ public class AuthUtils {
    * @param auth The player authentication information.
    */
   public static void setAuth(TokensInfo auth) {
-    if (refreshThread.get() != null) {
-      refreshThread.get().interrupt();
-    }
     AuthUtils.auth.set(auth);
     if (auth != null) {
-      Thread thread = new Thread(() -> {
-        try {
-          Thread.sleep(Math.max(0, auth.getExpiresIn() - 30) * 1000L);
-        } catch (InterruptedException e) {
-          return;
-        }
-        TokenRequest.execute(auth.getRefreshToken());
-      });
-      thread.setDaemon(true);
-      refreshThread.set(thread);
+      refreshService.get().setDelay(Duration.seconds(Math.max(0, auth.getExpiresIn() - 30)));
+      refreshService.get().restart();
+    } else {
+      refreshService.get().cancel();
     }
   }
 

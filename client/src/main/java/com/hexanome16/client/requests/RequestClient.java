@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
 import javafx.util.Pair;
@@ -94,13 +95,19 @@ public class RequestClient {
   }
 
   private static Pair<String, String> longPollStringWithHash(Request<?> request) {
-    String response = longPollString(request);
+    String response = longPollString(request, 0);
     String hash = DigestUtils.md5Hex(response);
     return new Pair<>(hash, response);
   }
 
-  private static String longPollString(Request<?> req) {
-    AtomicReference<String> res = new AtomicReference<>(null);
+  private static String retryLongPollingRequest(Request<?> request, int retries) {
+    return retries > 3 ? null : longPollString(request, retries);
+  }
+
+
+
+  private static String longPollString(Request<?> req, int retries) {
+    AtomicReference<String> res = new AtomicReference<>("");
     final AtomicBoolean gotResponse = new AtomicBoolean(false);
     if (req.getMethod() != RequestMethod.GET) {
       throw new RuntimeException("Long polling only supports GET requests.");
@@ -128,13 +135,16 @@ public class RequestClient {
                         new HashMap<>(Map.copyOf(req.getQueryParams()));
                     queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
                     req.setQueryParams(queryParams);
-                    res.set(longPollString(req));
+                    res.set(retryLongPollingRequest(req, retries + 1));
                   } else {
                     MainApp.errorMessage = e.getBody();
                     Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
                         "promptType", PromptTypeInterface.PromptType.ERROR)));
                     res.set(e.getBody());
                   }
+                  gotResponse.set(true);
+                }
+                case HTTP_NOT_FOUND -> {
                   gotResponse.set(true);
                 }
                 case HTTP_CLIENT_TIMEOUT, 542 -> {
@@ -169,6 +179,10 @@ public class RequestClient {
         mapObject(response, request.getResponseClass());
   }
 
+  private static Pair<Headers, String> retryHeadersRequest(Request<?> request, int retries) {
+    return retries > 3 ? null : sendRequestHeadersString(request, 0);
+  }
+
   /**
    * Sends a request and returns the response as a string.
    *
@@ -176,7 +190,19 @@ public class RequestClient {
    * @return The response body as String.
    */
   public static Pair<Headers, String> sendRequestHeadersString(Request<?> request) {
-    AtomicReference<Pair<Headers, String>> res = new AtomicReference<>(null);
+    return sendRequestHeadersString(request, 0);
+  }
+
+  /**
+   * Sends a request and returns the response as a string.
+   *
+   * @param request The request to send.
+   * @param retries The number of retries.
+   * @return The response body as String.
+   */
+  public static Pair<Headers, String> sendRequestHeadersString(Request<?> request, int retries) {
+    AtomicReference<Pair<Headers, String>> res = new AtomicReference<>(
+        new Pair<>(new Headers(), ""));
     HttpRequestWithBody req = Unirest.request(request.getMethod().name(),
         request.getDest().getUrl() + request.getPath());
     if (request.getQueryParams() != null) {
@@ -208,7 +234,7 @@ public class RequestClient {
                       new HashMap<>(Map.copyOf(request.getQueryParams()));
                   queryParams.put("access_token", AuthUtils.getAuth().getAccessToken());
                   request.setQueryParams(queryParams);
-                  res.set(sendRequestHeadersString(request));
+                  res.set(retryHeadersRequest(request, retries + 1));
                 } else {
                   MainApp.errorMessage = e.getBody();
                   Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
@@ -217,11 +243,7 @@ public class RequestClient {
                 }
               }
               case HTTP_NOT_FOUND -> {
-                res.set(new Pair<>(e.getHeaders(),
-                    CustomHttpResponses.INVALID_SESSION_ID.getBody()));
-                MainApp.errorMessage = CustomHttpResponses.INVALID_SESSION_ID.getBody();
-                Platform.runLater(() -> FXGL.spawn("PromptBox", new SpawnData().put(
-                    "promptType", PromptTypeInterface.PromptType.ERROR)));
+                // Do nothing, just return the empty pair.
               }
               default -> {
                 MainApp.errorMessage = e.getBody();
