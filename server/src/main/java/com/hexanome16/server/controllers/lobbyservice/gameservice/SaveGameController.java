@@ -82,6 +82,7 @@ public class SaveGameController {
             new SaveGameJson(saveGame.getId(), saveGame.getGamename(), saveGame.getUsernames()));
       }
     }
+    savegameFiles.close();
   }
 
   /**

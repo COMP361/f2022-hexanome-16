@@ -14,11 +14,14 @@ import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.lobby.LobbyScreen;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.client.utils.BackgroundService;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.TradePostJson;
+import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
@@ -37,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.util.Pair;
@@ -70,6 +74,8 @@ public class GameScreen {
   private static long sessionId = -1;
   private static String gameServer;
   private static final AtomicBoolean shouldFetch = new AtomicBoolean(false);
+  private static final AtomicReference<Pair<String, WinJson>> winners = new AtomicReference<>();
+  private static BackgroundService updateWinners;
 
   private static BackgroundService createFetchLevelThread(Level level) {
     BackgroundService fetchService = new BackgroundService(
@@ -207,6 +213,33 @@ public class GameScreen {
     }
   }
 
+  private static void fetchWinnersThread() {
+    BackgroundService fetchWinnersService = new BackgroundService(
+        () -> winners.set(PromptsRequests.getWinners(sessionId,
+            AuthUtils.getAuth().getAccessToken(), winners.get().getKey())),
+        () -> {
+          if (winners.get() != null && winners.get().getValue() != null
+              && winners.get().getValue().getWinners() != null
+              && winners.get().getValue().getWinners().length > 0) {
+            Platform.runLater(() -> {
+              FXGL.spawn("PromptBox", new SpawnData()
+                  .put("promptType", PromptTypeInterface.PromptType.WINNERS)
+                  .put("winnersJson", winners.get().getValue())
+                  .put("handleConfirm", ((Runnable) LobbyScreen::initLobby)));
+              GameScreen.exitGame();
+            });
+          }
+        },
+        () -> {
+          if (shouldFetch.get()) {
+            updateWinners.restart();
+          }
+        }
+    );
+    fetchWinnersService.start();
+    updateWinners = fetchWinnersService;
+  }
+
   /**
    * Adds background, mat, cards, nobles, game bank,
    * player inventory and settings button to the game screen.
@@ -255,6 +288,10 @@ public class GameScreen {
       citiesJson = new Pair<>("", new CitiesJson());
       fetchCitiesThread();
     }
+
+    winners.set(new Pair<>("", new WinJson()));
+    fetchWinnersThread();
+
     UpdateGameInfo.initPlayerTurn();
 
     String[] usernames = FXGL.getWorldProperties().getValue("players");
@@ -431,6 +468,8 @@ public class GameScreen {
     usernamesMap.clear();
     nobles.clear();
     cities.clear();
+    winners.set(null);
+    updateWinners = null;
     CardComponent.reset();
     NobleComponent.reset();
     FXGL.getGameWorld()
