@@ -14,6 +14,7 @@ import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
@@ -35,8 +36,7 @@ import org.springframework.http.ResponseEntity;
  */
 class GameServiceTests {
 
-  private final ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private Game validMockGame;
   private GameService gameService;
   private ServiceUtils serviceUtils;

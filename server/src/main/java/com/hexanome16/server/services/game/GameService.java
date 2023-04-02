@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
 import com.hexanome16.server.models.cards.Deck;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GameService implements GameServiceInterface {
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private final AuthServiceInterface authService;
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;

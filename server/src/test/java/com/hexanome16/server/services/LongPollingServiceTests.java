@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.game.Game;
@@ -32,8 +33,7 @@ import org.springframework.web.context.request.async.DeferredResult;
  * Unit tests for {@link LongPollingService}.
  */
 public class LongPollingServiceTests {
-  private final ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private LongPollingServiceInterface longPollingService;
 
   /**
