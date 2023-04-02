@@ -202,6 +202,25 @@ public class InventoryController {
     return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
 
+
+  /**
+   * Gets the discounted price of the card with hash cardMd5  if it was to be bought by
+   * player with accessToken inside game with sessionId.
+   *
+   * @param sessionId session identifier.
+   * @param cardMd5 hash of card.
+   * @param accessToken access token of player.
+   * @return PriceMap of the discounted price.
+   * @throws JsonProcessingException if the fails to write as a string.
+   */
+  @GetMapping(value = "/games/{sessionId}/cards/{cardMd5}/discountedPrice")
+  public ResponseEntity<String> getDiscountedPrice(@PathVariable long sessionId,
+                                                   @PathVariable String cardMd5,
+                                                   @RequestParam String accessToken)
+      throws JsonProcessingException {
+    return inventoryService.getDiscountedPrice(sessionId, cardMd5, accessToken);
+  }
+
   /**
    * Let the player reserve a face up card.
    *

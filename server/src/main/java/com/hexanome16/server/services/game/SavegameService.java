@@ -151,6 +151,7 @@ public class SavegameService implements SavegameServiceInterface {
           return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
         }
       }
+      savegames.close();
       return CustomResponseFactory.getResponse(CustomHttpResponses.OK);
     } catch (Exception e) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);

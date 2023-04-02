@@ -6,28 +6,44 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.dto.SessionJson;
+import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerService;
 import com.hexanome16.server.services.game.SavegameService;
 import com.hexanome16.server.services.game.SavegameServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
+import com.hexanome16.server.util.UrlUtils;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.web.client.RestTemplate;
 
 class GameManagerServiceTest {
   private GameManagerService gameManagerService;
-  private SavegameServiceInterface savegameServiceInterface;
 
   @BeforeEach
   void setUp() {
-    savegameServiceInterface = Mockito.mock(SavegameService.class);
-    gameManagerService = new GameManagerService(savegameServiceInterface);
+    UrlUtils urlUtilsMock = Mockito.mock(UrlUtils.class);
+    when(urlUtilsMock.createLobbyServiceUri(anyString(), anyString())).thenAnswer(invocation -> {
+      String path = invocation.getArgument(0);
+      String params = invocation.getArgument(1);
+      return URI.create("http://localhost:4242" + path + "?" + params);
+    });
+    RestTemplateBuilder restTemplateBuilderMock = Mockito.mock(RestTemplateBuilder.class);
+    RestTemplate restTemplateMock = Mockito.mock(RestTemplate.class);
+    when(restTemplateBuilderMock.build()).thenReturn(restTemplateMock);
+    SavegameServiceInterface savegameServiceInterface = Mockito.mock(SavegameService.class);
+    gameManagerService = new GameManagerService(savegameServiceInterface, restTemplateBuilderMock,
+        urlUtilsMock, new DummyAuthService());
   }
 
   /**

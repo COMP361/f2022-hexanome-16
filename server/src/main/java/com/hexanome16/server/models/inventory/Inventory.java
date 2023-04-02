@@ -32,7 +32,7 @@ public class Inventory {
   private final List<Noble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
-  private final PurchaseMap gemBonuses;
+  private PurchaseMap gemBonuses;
   private final Map<RouteType, TradePost> tradePosts;
   private final List<ServerCity> ownedCities;
   private int prestigePoints;
@@ -66,6 +66,17 @@ public class Inventory {
     gemBonuses.addGems(card.getGemBonus().getPriceMap());
     prestigePoints += card.getCardInfo().prestigePoint();
     return ownedCards.add(card);
+  }
+
+  /**
+   * Removes the card from the player inventory.
+   *
+   * @param card card we want to remove from the inventory.
+   */
+  public void removeCard(ServerLevelCard card) {
+    gemBonuses.removeGems(card.getGemBonus().getPriceMap());
+    prestigePoints -= card.getCardInfo().prestigePoint();
+    ownedCards.remove(card);
   }
 
   /**
@@ -155,6 +166,7 @@ public class Inventory {
    *
    * @return true or false.
    */
+  @JsonIgnore
   public boolean hasMoreThanTenTokens() {
     return playerBank.hasMoreThanKtokens(10);
   }
@@ -200,15 +212,13 @@ public class Inventory {
   }
 
 
-
   /**
-   * Removes the card from the player inventory.
-   *
-   * @param card card we want to remove from the inventory.
+   * Updates the bonus gems field.
    */
-  public void removeCard(ServerLevelCard card) {
-    gemBonuses.removeGems(card.getGemBonus().getPriceMap());
-    prestigePoints -= card.getCardInfo().prestigePoint();
-    ownedCards.remove(card);
+  public void updateBonusGems() {
+    gemBonuses = new PurchaseMap();
+    for (ServerLevelCard card : ownedCards) {
+      gemBonuses.addGems(card.getGemBonus().getPriceMap());
+    }
   }
 }
