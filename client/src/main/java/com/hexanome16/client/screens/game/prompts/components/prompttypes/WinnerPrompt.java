@@ -17,6 +17,9 @@ import javafx.scene.text.TextAlignment;
  * This prompt displays an error message.
  */
 public class WinnerPrompt extends ChoicePromptAbstract {
+  /**
+   * The winners' usernames.
+   */
   public static String[] winners;
 
   @Override
