@@ -1,6 +1,7 @@
 package com.hexanome16.server.models.cards;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.models.inventory.InventoryAddable;
 
@@ -14,5 +15,6 @@ public interface Visitable extends InventoryAddable {
    * @param inventory inventory that need to contain bonuses
    * @return true if the inventory contains enough bonuses to be visited by visitable
    */
+  @JsonIgnore
   boolean playerMeetsRequirements(Inventory inventory);
 }

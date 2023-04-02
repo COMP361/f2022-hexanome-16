@@ -61,12 +61,17 @@ public class GameServiceController {
     createGameService(new ServerGameParams(4, 2,
         WinCondition.BASE.getGameServiceJson().getName(),
         WinCondition.BASE.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.BASE.getGameServiceJson().getName());
     createGameService(new ServerGameParams(4, 2,
         WinCondition.TRADEROUTES.getGameServiceJson().getName(),
         WinCondition.TRADEROUTES.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.TRADEROUTES.getGameServiceJson()
+        .getName());
     createGameService(new ServerGameParams(4, 2,
         WinCondition.CITIES.getGameServiceJson().getName(),
         WinCondition.CITIES.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.CITIES.getGameServiceJson()
+        .getName());
   }
 
   /**
