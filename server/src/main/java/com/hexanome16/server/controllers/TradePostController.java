@@ -31,12 +31,10 @@ public class TradePostController {
    * @param sessionId sessionId of the game.
    * @param username  username of the player.
    * @return the trade posts the player has.
-   * @throws JsonProcessingException json exception
    */
   @GetMapping(value = {"/games/{sessionId}/tradePost"})
   public ResponseEntity<String> getPlayerTradePosts(@PathVariable long sessionId,
-                                                    @RequestParam String username)
-      throws JsonProcessingException {
+                                                    @RequestParam String username) {
     return tradePostService.getPlayerTradePosts(sessionId, username);
   }
 }
