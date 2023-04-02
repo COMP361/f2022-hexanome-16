@@ -197,7 +197,7 @@ public class ServiceUtilsTests {
     // Arrange
     Game game = Mockito.mock(Game.class);
     when(game.getCurrentPlayerIndex()).thenReturn(0);
-    BroadcastMap broadcastMap = Mockito.mock(BroadcastMap.class);
+    final BroadcastMap broadcastMap = Mockito.mock(BroadcastMap.class);
     when(game.getWinCondition()).thenReturn(WinCondition.BASE);
     for (ServerPlayer player : PlayerDummies.validDummies) {
       player.getInventory().setPrestigePoints(20);
