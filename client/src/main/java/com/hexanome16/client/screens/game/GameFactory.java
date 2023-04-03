@@ -528,7 +528,7 @@ public class GameFactory implements EntityFactory {
   public Entity newCity(SpawnData data) {
     return FXGL.entityBuilder()
         .view(data.getData().get("texture") + ".png")
-        .with(new CityComponent())
+        .with(new CityComponent(data.get("MD5")))
         .scale(0.12, 0.12)
         .build();
   }
