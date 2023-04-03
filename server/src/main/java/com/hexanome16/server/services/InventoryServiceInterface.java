@@ -106,6 +106,18 @@ public interface InventoryServiceInterface {
       throws JsonProcessingException;
 
   /**
+   * Acquire noble response entity.
+   *
+   * @param sessionId           game session id
+   * @param cityHash           md5 hash of noble
+   * @param accessToken player's authentication token
+   * @return HttpStatus.ok if the request is valid, one of our CustomHttp responses otherwise.
+   * @throws JsonProcessingException the json processing exception
+   */
+  ResponseEntity<String> acquireCity(long sessionId, String cityHash, String accessToken)
+      throws JsonProcessingException;
+
+  /**
    * Associates a bag card to a token type.
    *
    * @param sessionId session id.
