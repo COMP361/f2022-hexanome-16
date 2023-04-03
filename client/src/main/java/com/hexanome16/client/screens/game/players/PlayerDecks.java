@@ -106,8 +106,10 @@ public class PlayerDecks {
     FXGL.spawn("PlayerTokens", new SpawnData(horizontal - (2 * PlayerDecks.horizontal + 20) * scale,
         vertical).put("player", name)).setScaleUniform(1.2 * scale);
     // spawn the reserved nobles and cards
-    FXGL.spawn("ReservedNobles", horizontal + (i * PlayerDecks.horizontal + 10) * scale,
+    FXGL.spawn("ReservedNobles",
+            new SpawnData(horizontal + (i * PlayerDecks.horizontal + 10) * scale,
             vertical + 95 * scale)
+            .put("player", name))
         .setScaleUniform(0.1 * scale);
     for (int j = 10; j <= 130; j += 60) {
       FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
