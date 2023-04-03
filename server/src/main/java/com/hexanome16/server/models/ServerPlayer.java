@@ -45,6 +45,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ServerPlayer extends Player {
   private Queue<Action> queueOfCascadingActionTypes;
+  private ChooseNobleAction needsToChooseNoble = null;
   private Inventory inventory; // the player has an inventory, not a bank
 
   /**
@@ -59,8 +60,6 @@ public class ServerPlayer extends Player {
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
   }
-
-
 
 
   /**
@@ -279,19 +278,38 @@ public class ServerPlayer extends Player {
    *
    * @param action action.
    */
-  public void addActionToQueue(Action action) {
+  private void addActionToQueue(Action action) {
     queueOfCascadingActionTypes.add(action);
+  }
+
+  /**
+   * Notify player that they need to pick a noble.
+   *
+   * @param action the action of nobles
+   */
+  public void addChooseNoble(ChooseNobleAction action) {
+    this.needsToChooseNoble = action;
+  }
+
+  /**
+   * Notify player that they've chosen the noble.
+   */
+  public void completeChooseNoble() {
+    this.needsToChooseNoble = null;
   }
 
   /**
    * Gets but doesn't remove top most action in the action queue of the player.
    *
    * @return action that needs to performed by player or null if empty.
-   * @throws NullPointerException if queue is empty.
    */
   public Action peekTopAction() {
     System.out.println(queueOfCascadingActionTypes);
-    return queueOfCascadingActionTypes.peek();
+    Action topAction = queueOfCascadingActionTypes.peek();
+    if (topAction == null) {
+      topAction = this.needsToChooseNoble;
+    }
+    return topAction;
   }
 
   /**
@@ -310,7 +328,7 @@ public class ServerPlayer extends Player {
    * @throws JsonProcessingException thrown if nobles cannot be parsed
    */
   public void addNobleListToPerform(ArrayList<Noble> nobleList) throws JsonProcessingException {
-    addActionToQueue(new ChooseNobleAction(nobleList.toArray(new Noble[0])));
+    addChooseNoble(new ChooseNobleAction(nobleList.toArray(new Noble[0])));
   }
 
   /**
@@ -377,10 +395,4 @@ public class ServerPlayer extends Player {
   public void addTakeTokenToPerform(Optional<Gem> gem) {
     addActionToQueue(new TakeTokenAction(gem));
   }
-
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 }
