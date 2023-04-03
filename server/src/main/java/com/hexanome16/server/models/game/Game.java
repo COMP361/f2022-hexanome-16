@@ -10,6 +10,7 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
@@ -121,13 +122,25 @@ public class Game {
         WinCondition.fromServerName(payload.getGame()));
   }
 
-  Game(long sessionId, SaveGame saveGame) {
+  Game(long sessionId, SaveGame saveGame, SessionJson payload) {
     this.sessionId = sessionId;
-    this.creator = saveGame.getCreator();
-    this.players = saveGame.getPlayers();
-    this.currentPlayerIndex = Arrays.stream(saveGame.getPlayers())
-        .filter(player -> player.getName().equals(saveGame.getCurrentPlayer()))
-        .findFirst().orElseThrow().getPlayerOrder();
+    this.creator = payload.getCreator();
+    for (int i = 0; i < payload.getPlayers().length; i++) {
+      for (int j = 0; j < saveGame.getPlayers().length; j++) {
+        if (Objects.equals(saveGame.getPlayers()[j].getName(), payload.getPlayers()[i].getName())) {
+          String temp = saveGame.getPlayers()[j].getName();
+          saveGame.getPlayers()[j].setName(payload.getPlayers()[i].getName());
+          payload.getPlayers()[i].setName(temp);
+        }
+      }
+    }
+    this.players = IntStream.range(0, payload.getPlayers().length)
+        .mapToObj(i -> {
+          ServerPlayer player = saveGame.getPlayers()[i];
+          player.setName(payload.getPlayers()[i].getName());
+          return player;
+        }).toArray(ServerPlayer[]::new);
+    this.currentPlayerIndex = saveGame.getCurrentPlayerIndex();
     this.savegame = saveGame.getId();
     this.winCondition = WinCondition.fromServerName(saveGame.getGamename());
     this.gameBank = new GameBank(saveGame.getBank());
@@ -195,10 +208,11 @@ public class Game {
    *
    * @param sessionId session id
    * @param saveGame  the savegame
+   * @param payload the session json
    * @return the game
    */
-  public static Game create(long sessionId, SaveGame saveGame) {
-    Game game = new Game(sessionId, saveGame);
+  public static Game create(long sessionId, SaveGame saveGame, SessionJson payload) {
+    Game game = new Game(sessionId, saveGame, payload);
     game.initBroadcast();
     return game;
   }

@@ -1,7 +1,7 @@
 {
   "gamename" : "SplendorTradeRoutes",
   "id" : "Nobles",
-  "currentPlayer" : "tristan",
+  "currentPlayerIndex" : 0,
   "usernames" : [ "tristan", "elea" ],
   "creator" : "tristan",
   "onBoardDecks" : {

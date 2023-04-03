@@ -1,7 +1,7 @@
 {
   "gamename" : "SplendorTradeRoutes",
   "id" : "cec15f61-6740-4b1e-9d18-6e79a3c7d757",
-  "currentPlayer" : "peini",
+  "currentPlayerIndex" : 0,
   "usernames" : [ "peini", "elea" ],
   "creator" : "peini",
   "onBoardDecks" : {
