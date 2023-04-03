@@ -4,15 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -189,6 +194,96 @@ public class InventoryTests {
     assertFalse(response);
   }
 
+  @Test
+  void testAddTradePost() {
+    // Arrange
+    TradePost tradePost = new TradePost(RouteType.ONYX_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost);
+
+    // Assert
+    assertEquals(1, underTest.getPrestigePoints());
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.ONYX_ROUTE));
+  }
+
+  @Test
+  void testAddSecondTradePost() {
+    // Arrange
+    TradePost tradePost1 = new TradePost(RouteType.ONYX_ROUTE);
+    TradePost tradePost2 = new TradePost(RouteType.DIAMOND_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost1);
+    underTest.addTradePost(tradePost2);
+
+    // Assert
+    assertEquals(2, underTest.getPrestigePoints());
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.DIAMOND_ROUTE));
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.ONYX_ROUTE));
+  }
+
+  @Test
+  void testCannotAddSamePostTwice() {
+    // Arrange
+    TradePost tradePost1 = new TradePost(RouteType.ONYX_ROUTE);
+    TradePost tradePost2 = mock(TradePost.class);
+    when(tradePost2.getRouteType()).thenReturn(RouteType.ONYX_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost1);
+    underTest.addTradePost(tradePost2);
+
+    // Assert
+    verify(tradePost2, never()).getBonusPrestigePoints(underTest.getTradePosts());
+  }
+
+  @Test
+  void testAcquireCity() {
+    // Arrange
+    ServerCity toAdd = new ServerCity();
+
+    // Act
+    underTest.acquireCity(toAdd);
+
+    // Assert
+    assertTrue(underTest.getOwnedCities().contains(toAdd));
+  }
+
+  @Test
+  void testReserveTooManyCards() {
+    // Arrange
+    int numberOfCards = 4;
+    ServerLevelCard[] cards = new ServerLevelCard[numberOfCards];
+    for (int i = 0; i < numberOfCards - 1; i++) {
+      cards[i] = new ServerLevelCard();
+    }
+
+    // Act
+    boolean result = true;
+    for (var card : cards) {
+      result = underTest.reserveCard(card);
+    }
+
+    // Assert
+    assertFalse(result);
+    assertEquals(3, underTest.getReservedCards().size());
+  }
+
+  @Test
+  void testUpdateBonusGems() {
+    // Arrange
+    underTest.acquireCard(createValidCard());
+    underTest.setGemBonuses(new PurchaseMap());
+    assertEquals(0, underTest.getGemBonuses().getGemCost(Gem.RUBY));
+
+    // Act
+    underTest.updateBonusGems();
+
+    // Assert
+    assertEquals(1, underTest.getGemBonuses().getGemCost(Gem.RUBY));
+  }
+
   private ServerLevelCard createValidCard() {
     PriceMap priceMap = new PriceMap(3, 0, 0, 0, 0);
     return new ServerLevelCard(0, 0, "level_one0.png", priceMap, Level.ONE, new PurchaseMap(Map.of(
@@ -205,7 +300,7 @@ public class InventoryTests {
     underTest.acquireCard(new ServerLevelCard(123,
         12, "card", new PriceMap(), Level.REDONE,
         LevelCard.BonusType.TWO_GOLD_TOKENS, new PurchaseMap()
-        ));
+    ));
     assertTrue(underTest.hasAtLeastGoldenBonus(1));
     assertFalse(underTest.hasAtLeastGoldenBonus(2));
   }
