@@ -82,6 +82,29 @@ public class SeeCards implements PromptTypeInterface {
     // make a call to the server
     long sessionId = GameScreen.getSessionId();
     Noble[] response = PromptsRequests.getNobles(sessionId, player);
+    if (response == null) {
+      return;
+    }
+    // add the paths to our list
+    cardTexturePaths = new ArrayList<>();
+    for (Noble card : response) {
+      cardTexturePaths.add(card.getCardInfo().texturePath() + ".png");
+    }
+  }
+
+  /**
+   * Fetches the reserved nobles.
+   *
+   * @param player player.
+   */
+  public static void fetchReservedNobles(String player) {
+    // make a call to the server
+    long sessionId = GameScreen.getSessionId();
+    Noble[] response = PromptsRequests.getReservedNobles(sessionId, player);
+
+    if (response == null) {
+      return;
+    }
     // add the paths to our list
     cardTexturePaths = new ArrayList<>();
     for (Noble card : response) {

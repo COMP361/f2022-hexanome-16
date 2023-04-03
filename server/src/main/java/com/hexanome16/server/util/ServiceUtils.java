@@ -252,7 +252,8 @@ public class ServiceUtils {
         game, username
     );
     if (myPlayer == null) {
-      throw new IllegalArgumentException("Invalid Player.");
+      throw new IllegalArgumentException("Invalid Player : " + username + " !!!!");
+
     }
     // get the player from the session id and access token
     return myPlayer;

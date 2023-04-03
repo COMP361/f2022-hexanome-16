@@ -9,6 +9,7 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
@@ -20,6 +21,7 @@ import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
@@ -181,6 +183,8 @@ public class InventoryService implements InventoryServiceInterface {
 
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
+
+
 
     if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
@@ -526,6 +530,56 @@ public class InventoryService implements InventoryServiceInterface {
   }
 
   @Override
+  public ResponseEntity<String> reserveNoble(long sessionId, String nobleMd5, String accessToken)
+          throws JsonProcessingException {
+    var request =
+            serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerNoble noble = game.getNobleByHash(nobleMd5);
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.NOBLE_RESERVE) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+    // I am assuming Remaining nobles is the field with the nobles still up for the taking.
+    if (noble == null || !game.getRemainingNobles().containsValue(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    if (!player.reserveCard(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    // THis doesnt do what its supposed to for some reason
+    game.getOnBoardNobles().removeCard(noble);
+
+    game.getBroadcastContentManagerMap().updateValue(
+            BroadcastMapKey.NOBLES, new NobleDeckJson(
+                    new ArrayList<>(game.getOnBoardNobles().getCardList()))
+
+    );
+
+
+    player.removeTopAction();
+    var nextAction = player.peekTopAction();
+
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+
+
+  }
+
+  @Override
   public ResponseEntity<String> associateBagCard(long sessionId, String accessToken,
                                                  String tokenType) {
     var request =
@@ -637,6 +691,10 @@ public class InventoryService implements InventoryServiceInterface {
     // ACTION RELATED SHENANIGANS
     if (acquiredCard.isBag()) {
       player.addAcquireCardToPerform(acquiredCard);
+    }
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.RESERVE_NOBLE) {
+      ArrayList<Noble> nobles = new ArrayList<>(game.getOnBoardNobles().getCardList());
+      player.addReserveNobleToPerform(nobles);
     }
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
       player.addTakeOneToPerform();

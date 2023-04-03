@@ -108,6 +108,31 @@ public class ServerPlayerTest {
     assertFalse(response.getBody().isBlank());
   }
 
+
+  /**
+   * Testing addReserveNobleToPerform(ArrayList).
+   */
+  @Test
+  public void testAddReserveNobleToPerform() throws JsonProcessingException {
+    costa.addReserveNobleToPerform(
+        new ArrayList<>(
+            List.of(
+                new ServerNoble(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1)),
+                new ServerNoble(123, 3, "idk",
+                    new PurchaseMap(1, 1, 1, 1, 1, 1))
+            )
+        ));
+
+    ResponseEntity<String> response = costa.peekTopAction().getActionDetails();
+    var headers = response.getHeaders();
+    assertEquals(CustomHttpResponses.ActionType.NOBLE_RESERVE.getMessage(),
+        Objects.requireNonNull(headers.get(CustomHttpResponses.ActionType.ACTION_TYPE)).get(0));
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertFalse(response.getBody().isBlank());
+  }
+
   /**
    * Testing addCitiesToPerform(ArrayList).
    */
@@ -316,5 +341,7 @@ public class ServerPlayerTest {
     assertEquals(targetPrice, discountedPrice);
 
   }
+
+
 
 }

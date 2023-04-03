@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -222,7 +223,24 @@ public class InventoryController {
   }
 
   /**
-   * Let the player claim a city.
+   * Lets the player reserve a noble.
+   *
+   * @param sessionId session identifier.
+   * @param nobleMd5 noble hash.
+   * @param accessToken access token of requesting player.
+   * @return next action that needs to be performed.
+   * @throws JsonProcessingException if json processing fails.
+   */
+  @PostMapping(value = "/games/{sessionId}/nobles/{nobleMd5}")
+  public ResponseEntity<String> reserveNoble(@PathVariable long sessionId,
+                                             @PathVariable String nobleMd5,
+                                             @RequestParam String accessToken)
+      throws JsonProcessingException {
+    return inventoryService.reserveNoble(sessionId, nobleMd5, accessToken);
+  }
+
+  /**
+   * Lets the player claim a city.
    *
    * @param sessionId    the session id
    * @param cityMd5     the city hash
