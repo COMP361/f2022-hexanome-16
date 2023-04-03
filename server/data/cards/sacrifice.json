@@ -6,7 +6,7 @@
     "prestigePoint": 3,
     "price": {
       "ONYX": 0,
-      "SAPPHIRE": 0,
+      "SAPPHIRE": 2,
       "EMERALD": 0,
       "RUBY": 0,
       "DIAMOND": 0
@@ -21,7 +21,7 @@
       "ONYX": 0,
       "SAPPHIRE": 0,
       "EMERALD": 0,
-      "RUBY": 0,
+      "RUBY": 2,
       "DIAMOND": 0
     }
   },
@@ -33,7 +33,7 @@
     "price": {
       "ONYX": 0,
       "SAPPHIRE": 0,
-      "EMERALD": 0,
+      "EMERALD": 2,
       "RUBY": 0,
       "DIAMOND": 0
     }
@@ -44,7 +44,7 @@
     "bonus": "DIAMOND",
     "prestigePoint": 3,
     "price": {
-      "ONYX": 0,
+      "ONYX": 2,
       "SAPPHIRE": 0,
       "EMERALD": 0,
       "RUBY": 0,
@@ -61,7 +61,7 @@
       "SAPPHIRE": 0,
       "EMERALD": 0,
       "RUBY": 0,
-      "DIAMOND": 0
+      "DIAMOND": 2
     }
   }
 ]

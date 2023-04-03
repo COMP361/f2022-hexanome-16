@@ -7,10 +7,18 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PriceMap;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,7 +41,18 @@ import javafx.scene.text.TextAlignment;
  * A class responsible for populating Buy sacrifice card prompt.
  */
 public class BuyCardWithCards implements PromptTypeInterface {
-
+  /**
+   * The card entity.
+   */
+  protected static Entity atCardEntity;
+  /**
+   * The card price map.
+   */
+  PriceMap atCardPriceMap;
+  /**
+   * The Card is reserved.
+   */
+  protected boolean cardIsReserved = false;
   /**
    * The width.
    */
@@ -92,6 +111,9 @@ public class BuyCardWithCards implements PromptTypeInterface {
    */
   int cardsChosen = 0;
 
+  static Map<String, LevelCard> bagCardHashList = new HashMap<String, LevelCard>();
+
+  static Map<String, LevelCard> cardHashList = new HashMap<String, LevelCard>();
 
   @Override
   public double getWidth() {
@@ -113,6 +135,19 @@ public class BuyCardWithCards implements PromptTypeInterface {
     return false;
   }
 
+  /**
+   * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
+   *
+   * @param entity     Prompt entity.
+   * @param cardEntity card entity.
+   */
+  public void populatePrompt(Entity entity, Entity cardEntity) {
+    atCardEntity = cardEntity;
+    atCardPriceMap = cardEntity.getComponent(CardComponent.class).getPriceMap();
+    cardIsReserved = !cardEntity.getComponent(CardComponent.class).getOnBoard();
+    populatePrompt(entity);
+  }
+
   @Override
   public void populatePrompt(Entity entity) {
 
@@ -126,7 +161,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
 
     // initiate elements
-    Texture myCard = FXGL.texture("sacrificecard.png");
+    Texture myCard = FXGL.texture(atCardEntity.getComponent(CardComponent.class).texture);
     myCard.setFitWidth(atMainCardWidth);
     myCard.setFitHeight(atMainCardHeight);
 
@@ -177,17 +212,24 @@ public class BuyCardWithCards implements PromptTypeInterface {
     VBox myBags = new VBox();
     myBags.setAlignment(Pos.TOP_CENTER);
     bagCardsScroll.setContent(myBags);
-    addBagCard(myBags, otherWhole, disablingRectangleOthers);
 
 
     VBox myOthers = new VBox();
     myOthers.setAlignment(Pos.TOP_CENTER);
     otherCardsScroll.setContent(myOthers);
     StackPane buy = new StackPane();
-    addOtherCard(myOthers, 2, buy);
-    addOtherCard(myOthers, 2, buy);
-    addOtherCard(myOthers, 0, buy);
 
+    for (Map.Entry<String, LevelCard> card :
+        cardHashList.entrySet()) {
+      addOtherCard(myOthers, card.getValue().getCardInfo().prestigePoint(), buy);
+    }
+
+    for (Map.Entry<String, LevelCard> card :
+        bagCardHashList.entrySet()) {
+      addBagCard(myOthers, otherWhole, disablingRectangleOthers);
+    }
+
+    System.out.println(cardHashList.size());
 
     // initiate ReserveBuy
     VBox reserveBuy = new VBox();
@@ -322,6 +364,24 @@ public class BuyCardWithCards implements PromptTypeInterface {
     buy.getChildren().addAll(buttonBox, reserve);
   }
 
+  /**
+   * Fetch cards from player's inventory.
+   *
+   * @param player the current player.
+   * @param gem the gem type.
+   */
+  public static void fetchCards(String player, Gem gem) {
+    long sessionId = GameScreen.getSessionId();
+    cardHashList = PromptsRequests.getCardPrice(sessionId, player, gem).getCards();
+    System.out.println("init: " + cardHashList.size());
+    for (Map.Entry<String, LevelCard> card : cardHashList.entrySet()) {
+      if (card.getValue().isBag()) {
+        bagCardHashList.put(card.getKey(), card.getValue());
+        cardHashList.remove(card.getKey());
+      }
+    }
+  }
+
   private void initiatePane(Pane myPrompt) {
     myPrompt.setTranslateX(atTopLeftX);
     myPrompt.setTranslateY(atTopLeftY);
@@ -335,4 +395,5 @@ public class BuyCardWithCards implements PromptTypeInterface {
     cardsChosen = 0;
     PromptComponent.closePrompts();
   }
+
 }

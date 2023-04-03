@@ -1,13 +1,8 @@
 package com.hexanome16.server.services;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
@@ -37,6 +32,7 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -165,7 +161,7 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD))
-            || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
+        || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_FUNDS);
     }
 
@@ -554,7 +550,7 @@ public class InventoryService implements InventoryServiceInterface {
   @Override
   @SneakyThrows
   public ResponseEntity<String> acquireCity(long sessionId, String cityHash,
-                                             String accessToken) {
+                                            String accessToken) {
     var request =
         serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     ResponseEntity<String> response = request.getLeft();
@@ -698,6 +694,24 @@ public class InventoryService implements InventoryServiceInterface {
     // return the reserved level cards in the inventory as a response entity
     return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
         player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> getCardPrice(long sessionId, String username, Gem gem)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+
+    List<LevelCard> cards = new ArrayList<>();
+    for (LevelCard levelCard : player.getInventory().getOwnedCards()) {
+      if (levelCard.getGemBonus().getGemCost(gem) > 0) {
+        cards.add(levelCard);
+      }
+    }
+
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        cards, Level.ONE)), HttpStatus.OK);
   }
 
   @Override
