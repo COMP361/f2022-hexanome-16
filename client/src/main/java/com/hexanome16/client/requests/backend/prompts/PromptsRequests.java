@@ -355,6 +355,23 @@ public class PromptsRequests {
   }
 
   /**
+   * Sends a request to claim a city.
+   *
+   * @param sessionId session id
+   * @param accessToken access token
+   * @param cityId city id
+   * @return server response.
+   */
+  public static Pair<Headers, String> claimCity(long sessionId, String accessToken,
+                                                 String cityId) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cities/" + cityId,
+        Map.of("access_token", accessToken),
+        String.class));
+  }
+
+  /**
    * Retrieves the action that needs to be performed.
    *
    * @param sessionId session Id.

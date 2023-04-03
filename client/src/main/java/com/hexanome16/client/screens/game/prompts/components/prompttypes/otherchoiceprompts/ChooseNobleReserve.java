@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Class responsible for populating Reserving Noble prompt.
  */
-public class ChooseNobleReserve extends NobleChoiceAbstract {
+public class ChooseNobleReserve extends VisitableChoiceAbstract {
 
   @Override
   public boolean isCancelable() {
@@ -42,7 +42,7 @@ public class ChooseNobleReserve extends NobleChoiceAbstract {
   }
 
   @Override
-  protected ArrayList<Texture> getChoiceNobles() {
+  protected ArrayList<Texture> getChoiceVisitables() {
     // Hard Coded for now
     ArrayList<Texture> myList = new ArrayList<>();
     myList.add(FXGL.texture("noble1.png"));

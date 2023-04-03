@@ -3073,24 +3073,7 @@
           "ONYX" : 3
         }
       },
-      "ownedNobles" : [
-        {
-        "cardInfo" : {
-          "id" : 3,
-          "prestigePoint" : 3,
-          "texturePath" : "noble3",
-          "price" : {
-            "priceMap" : {
-              "SAPPHIRE" : 0,
-              "EMERALD" : 0,
-              "ONYX" : 4,
-              "RUBY" : 4,
-              "DIAMOND" : 0
-            }
-          }
-        }
-  }
-      ],
+      "ownedNobles" : [ ],
       "reservedNobles" : [ ],
       "ownedCards" : [
         {

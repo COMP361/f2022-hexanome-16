@@ -55,6 +55,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * The type Game service tests.
@@ -325,7 +326,8 @@ public class InventoryServiceTests {
     when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
     when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
     ServerNoble mockNoble = mock(ServerNoble.class);
-    when(gameMock.getRemainingNobles()).thenReturn(Map.of("noble1", mockNoble));
+    Deck<ServerNoble> nobleDeck = new Deck<>(new ServerNoble[]{mockNoble});
+    when(gameMock.getOnBoardNobles()).thenReturn(nobleDeck);
     when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
