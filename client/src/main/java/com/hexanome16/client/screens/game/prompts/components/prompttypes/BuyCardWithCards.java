@@ -17,7 +17,9 @@ import com.hexanome16.client.screens.game.prompts.components.events.SplendorEven
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
@@ -111,9 +113,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
    */
   int cardsChosen = 0;
 
-  static Map<String, LevelCard> bagCardHashList = new HashMap<String, LevelCard>();
+  static Map<LevelCard, String> bagCardHashList = new HashMap<LevelCard, String>();
 
-  static Map<String, LevelCard> cardHashList = new HashMap<String, LevelCard>();
+  static Map<LevelCard, String> cardHashList = new HashMap<LevelCard, String>();
+
+  List<String> prices = new ArrayList<>();
 
   @Override
   public double getWidth() {
@@ -205,7 +209,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
     otherBorderPane.setCenter(otherCardsScroll);
 
     StackPane otherWhole = new StackPane();
-    otherWhole.getChildren().addAll(otherBorderPane, disablingRectangleOthers);
+    if (bagCardHashList.size() > 0) {
+      otherWhole.getChildren().addAll(otherBorderPane, disablingRectangleOthers);
+    } else {
+      otherWhole.getChildren().addAll(otherBorderPane);
+    }
 
 
     // Fix BagCards
@@ -219,17 +227,15 @@ public class BuyCardWithCards implements PromptTypeInterface {
     otherCardsScroll.setContent(myOthers);
     StackPane buy = new StackPane();
 
-    for (Map.Entry<String, LevelCard> card :
+    for (Map.Entry<LevelCard, String> card :
         cardHashList.entrySet()) {
-      addOtherCard(myOthers, card.getValue().getCardInfo().prestigePoint(), buy);
+      addOtherCard(myOthers, card.getKey(), buy);
     }
 
-    for (Map.Entry<String, LevelCard> card :
+    for (Map.Entry<LevelCard, String> card :
         bagCardHashList.entrySet()) {
-      addBagCard(myOthers, otherWhole, disablingRectangleOthers);
+      addBagCard(myBags, card.getKey(), otherWhole, disablingRectangleOthers);
     }
-
-    System.out.println(cardHashList.size());
 
     // initiate ReserveBuy
     VBox reserveBuy = new VBox();
@@ -244,11 +250,8 @@ public class BuyCardWithCards implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void addOtherCard(VBox otherCards, int prestigeAmount, Node buy) {
+  private void addOtherCard(VBox otherCards, LevelCard levelCard, Node buy) {
     Text textPrestigeAmount = new Text();
-    if (prestigeAmount > 0) {
-      textPrestigeAmount = new Text(Integer.toString(prestigeAmount));
-    }
     textPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
     textPrestigeAmount.setFont(GAME_FONT.newFont(atScrollCardHeight * 0.75));
     textPrestigeAmount.setFill(Config.SECONDARY_COLOR);
@@ -265,6 +268,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
       if (x.getOpacity() == 1) {
         x.setOpacity(0);
         cardsChosen--;
+        prices.add(cardHashList.get(levelCard));
       } else {
         cardsChosen++;
         x.setOpacity(1);
@@ -276,13 +280,15 @@ public class BuyCardWithCards implements PromptTypeInterface {
       }
     });
 
-    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
-    myWholeCard.getChildren().addAll(bagCard, textPrestigeAmount, x);
+    Texture texture = FXGL.texture(levelCard.getCardInfo().texturePath() + ".png");
+    texture.setFitWidth(atScrollCardWidth);
+    texture.setFitHeight(atScrollCardHeight);
+    myWholeCard.getChildren().addAll(texture, x);
     otherCards.getChildren().add(myWholeCard);
 
   }
 
-  private void addBagCard(VBox bagCards, StackPane otherWhole,
+  private void addBagCard(VBox bagCards, LevelCard levelCard, StackPane otherWhole,
                           Rectangle disablingRectangleOthers) {
     Text x = new Text("X");
     x.setTextAlignment(TextAlignment.CENTER);
@@ -292,13 +298,25 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
     StackPane myWholeCard = new StackPane();
     myWholeCard.setOnMouseClicked(e -> {
-      x.setOpacity(1);
-      cardsChosen++;
-      otherWhole.getChildren().remove(disablingRectangleOthers);
+      if (x.getOpacity() == 1) {
+        x.setOpacity(0);
+        cardsChosen--;
+        if (cardsChosen < bagCardHashList.size()) {
+          otherWhole.getChildren().add(disablingRectangleOthers);
+        }
+      } else {
+        x.setOpacity(1);
+        cardsChosen++;
+        if (cardsChosen >= bagCardHashList.size() && 2 >= bagCardHashList.size()) {
+          otherWhole.getChildren().remove(disablingRectangleOthers);
+        }
+      }
     });
-    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
-    Circle bagIcon = new Circle(atScrollCardWidth / 4, Color.SADDLEBROWN.brighter());
-    myWholeCard.getChildren().addAll(bagCard, bagIcon, x);
+
+    Texture texture = FXGL.texture(levelCard.getCardInfo().texturePath() + ".png");
+    texture.setFitWidth(atScrollCardWidth);
+    texture.setFitHeight(atScrollCardHeight);
+    myWholeCard.getChildren().addAll(texture, x);
 
     bagCards.getChildren().add(myWholeCard);
 
@@ -368,16 +386,20 @@ public class BuyCardWithCards implements PromptTypeInterface {
    * Fetch cards from player's inventory.
    *
    * @param player the current player.
-   * @param gem the gem type.
+   * @param gem    the gem type.
    */
   public static void fetchCards(String player, Gem gem) {
+    cardHashList.clear();
+    bagCardHashList.clear();
     long sessionId = GameScreen.getSessionId();
-    cardHashList = PromptsRequests.getCardPrice(sessionId, player, gem).getCards();
-    System.out.println("init: " + cardHashList.size());
-    for (Map.Entry<String, LevelCard> card : cardHashList.entrySet()) {
+    Map<String, LevelCard> responseHashList =
+        PromptsRequests.getCardPrice(sessionId, player, gem).getCards();
+    System.out.println("init: " + responseHashList.size());
+    for (Map.Entry<String, LevelCard> card : responseHashList.entrySet()) {
       if (card.getValue().isBag()) {
-        bagCardHashList.put(card.getKey(), card.getValue());
-        cardHashList.remove(card.getKey());
+        bagCardHashList.put(card.getValue(), card.getKey());
+      } else {
+        cardHashList.put(card.getValue(), card.getKey());
       }
     }
   }

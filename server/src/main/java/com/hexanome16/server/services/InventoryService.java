@@ -244,6 +244,99 @@ public class InventoryService implements InventoryServiceInterface {
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
+  @Override
+  public ResponseEntity<String> buySacrificeCard(long sessionId, String cardMd5, String accessToken,
+                                                 String firstMd5, String secondMd5) {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+
+    // Fetch the card in question
+    ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
+
+    if (cardToBuy == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    // Get card price as a priceMap
+    PriceInterface originalPrice = cardToBuy.getCardInfo().price();
+
+    // Fetch the cards to discard
+    ServerLevelCard firstCard = game.getCardByHash(firstMd5);
+    ServerLevelCard secondCard = game.getCardByHash(secondMd5);
+
+    // proposed deal is acceptable
+    if (firstCard == null || secondCard == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+    }
+
+    // Add that card to the player's Inventory
+    player.addCardToInventory(cardToBuy);
+
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
+
+    if (game.getWinCondition() == WinCondition.TRADEROUTES
+        && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
+      player.addTakeTokenToPerform(Optional.empty());
+    }
+
+    //choose noble
+    ResponseEntity<String> error =
+        addNobleAction(game, player);
+
+    if (error != null) {
+      return error;
+    }
+
+    //choose city
+    if (game.getWinCondition() == WinCondition.CITIES) {
+      error =
+          addCityAction(game, player);
+      if (error != null) {
+        return error;
+      }
+    }
+
+    Level level = (cardToBuy).getLevel();
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
+
+    // Receive trade posts
+    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        player.getInventory().addTradePost(tradePost.getValue());
+      }
+    }
+
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
+    );
+
+
+    actionUponCardAcquiral(game, player, cardToBuy);
+
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
   private static ResponseEntity<String> addCityAction(Game game, ServerPlayer player) {
     var citiesList = new ArrayList<City>();
     for (ServerCity city : game.getOnBoardCities().getCardList()) {
