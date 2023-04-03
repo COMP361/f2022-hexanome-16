@@ -16,6 +16,7 @@ public interface Action {
    * Returns the response associated with the completion of an action.
    *
    * @return Information needed for action to perform.
+   * @throws JsonProcessingException the json processing exception
    */
   @JsonIgnore
   ResponseEntity<String> getActionDetails() throws JsonProcessingException;
