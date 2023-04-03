@@ -11,7 +11,6 @@ import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
@@ -277,7 +276,11 @@ public class ServiceUtils {
 
     var nextAction = player.peekTopAction();
     if (nextAction != null) {
-      return nextAction.getActionDetails();
+      try {
+        return nextAction.getActionDetails();
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     endCurrentPlayersTurn(game);

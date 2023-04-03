@@ -1,6 +1,6 @@
 package com.hexanome16.server.models.actions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 @NoArgsConstructor
 @JsonDeserialize(as = DiscardTokenAction.class)
 public class DiscardTokenAction implements Action {
-  @Getter
-  private String[] gemsToChooseFrom;
-  private String gemsToChooseFromAsString;
-  @Getter
+  private Gem[] gemsToChooseFrom;
   private CustomHttpResponses.ActionType actionType = CustomHttpResponses.ActionType.DISCARD;
 
   /**
@@ -31,15 +28,16 @@ public class DiscardTokenAction implements Action {
    *
    * @param gems gems to choose from.
    */
-  @SneakyThrows
   public DiscardTokenAction(Gem[] gems) {
-    gemsToChooseFrom = Arrays.stream(gems).map(Gem::getBonusType).toArray(String[]::new);
-    gemsToChooseFromAsString = ObjectMapperUtils.getObjectMapper()
-        .writeValueAsString(gemsToChooseFrom);
+    gemsToChooseFrom = gems;
+
   }
 
   @Override
-  public ResponseEntity<String> getActionDetails() {
+  public ResponseEntity<String> getActionDetails() throws JsonProcessingException {
+    String gemsToChooseFromAsString = ObjectMapperUtils.getObjectMapper()
+        .writeValueAsString(Arrays
+            .stream(gemsToChooseFrom).map(Gem::getBonusType).toArray(String[]::new));
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.DISCARD_TOKEN,
         gemsToChooseFromAsString, null);
   }

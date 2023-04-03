@@ -131,7 +131,11 @@ public class GameService implements GameServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
     }
 
-    return action.getActionDetails();
+    try {
+      return action.getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

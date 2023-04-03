@@ -96,7 +96,11 @@ public class ServiceUtilsTests {
     Action actionMock = mock(Action.class);
     ResponseEntity<String> expectedResponse =
         CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO);
-    when(actionMock.getActionDetails()).thenReturn(expectedResponse);
+    try {
+      when(actionMock.getActionDetails()).thenReturn(expectedResponse);
+    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     when(playerMock.peekTopAction()).thenReturn(actionMock);
 
     // Act

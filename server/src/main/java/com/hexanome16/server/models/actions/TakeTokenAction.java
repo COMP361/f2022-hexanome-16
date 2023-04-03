@@ -1,5 +1,6 @@
 package com.hexanome16.server.models.actions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.price.Gem;
@@ -8,7 +9,6 @@ import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.util.CustomResponseFactory;
 import java.util.Optional;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 public class TakeTokenAction implements Action {
   private CustomHttpResponses.ActionType actionType =
       CustomHttpResponses.ActionType.TAKE;
-
   private String gemJson;
 
   /**
@@ -41,7 +40,8 @@ public class TakeTokenAction implements Action {
   }
 
   @Override
-  public ResponseEntity<String> getActionDetails() {
+  public ResponseEntity<String> getActionDetails() throws JsonProcessingException {
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.TAKE_TOKEN, gemJson, null);
   }
+
 }

@@ -163,7 +163,12 @@ public class ServerPlayerTest {
   @Test
   public void testAddTakeTwoToPerform() {
     costa.addTakeTwoToPerform();
-    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    ResponseEntity<String> actions = null;
+    try {
+      actions = costa.peekTopAction().getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.LEVEL_TWO.getMessage(),
@@ -178,7 +183,12 @@ public class ServerPlayerTest {
   @Test
   public void testAddTakeOneToPerform() {
     costa.addTakeOneToPerform();
-    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    ResponseEntity<String> actions = null;
+    try {
+      actions = costa.peekTopAction().getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.LEVEL_ONE.getMessage(),
@@ -210,7 +220,12 @@ public class ServerPlayerTest {
   @Test
   public void testAddDiscardTokenAction() {
     costa.addDiscardTokenToPerform();
-    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    ResponseEntity<String> actions = null;
+    try {
+      actions = costa.peekTopAction().getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.DISCARD.getMessage(),
@@ -224,7 +239,12 @@ public class ServerPlayerTest {
   @Test
   public void testAddTakeTokenAction() {
     costa.addTakeTokenToPerform(Optional.empty());
-    ResponseEntity<String> actions = costa.peekTopAction().getActionDetails();
+    ResponseEntity<String> actions = null;
+    try {
+      actions = costa.peekTopAction().getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     var headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.TAKE.getMessage(),
@@ -232,7 +252,11 @@ public class ServerPlayerTest {
     assertEquals(HttpStatus.OK, actions.getStatusCode());
 
     costa.addTakeTokenToPerform(Optional.ofNullable(Gem.DIAMOND));
-    actions = costa.peekTopAction().getActionDetails();
+    try {
+      actions = costa.peekTopAction().getActionDetails();
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     headers = actions.getHeaders();
     assertEquals(
         CustomHttpResponses.ActionType.TAKE.getMessage(),

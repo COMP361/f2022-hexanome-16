@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -175,8 +173,12 @@ class GameServiceTests {
     when(serviceUtils.findPlayerByToken(game, accessToken))
         .thenReturn(serverPlayer);
     when(serverPlayer.peekTopAction()).thenReturn(Mockito.mock(Action.class));
-    when(serverPlayer.peekTopAction().getActionDetails())
-        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    try {
+      when(serverPlayer.peekTopAction().getActionDetails())
+          .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
 
 
     // Valid everything

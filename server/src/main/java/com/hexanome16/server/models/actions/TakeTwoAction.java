@@ -1,12 +1,12 @@
 package com.hexanome16.server.models.actions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.util.CustomResponseFactory;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -16,12 +16,11 @@ import org.springframework.http.ResponseEntity;
 @NoArgsConstructor
 @JsonDeserialize(as = TakeTwoAction.class)
 public class TakeTwoAction implements Action {
-  @Getter
   private CustomHttpResponses.ActionType actionType =
       CustomHttpResponses.ActionType.LEVEL_TWO;
 
   @Override
-  public ResponseEntity<String> getActionDetails() {
+  public ResponseEntity<String> getActionDetails() throws JsonProcessingException {
     return CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO);
   }
 }
