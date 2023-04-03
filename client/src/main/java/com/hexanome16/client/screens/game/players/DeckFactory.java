@@ -240,7 +240,6 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("ReservedNobles")
   public Entity reservedNobles(SpawnData data) {
-    String player = (String) data.getData().getOrDefault("player", "");
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
     pane.setOpacity(0.5);
@@ -253,10 +252,16 @@ public class DeckFactory implements EntityFactory {
       pane.setScaleX(1);
       pane.setScaleY(1);
     });
+
+    String player = (String) data.getData().getOrDefault("player", "");
     // build the entity
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.1, 0.1)
+        .onClick(e -> {
+          SeeCards.fetchReservedNobles(player);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+        })
         .build();
   }
 
