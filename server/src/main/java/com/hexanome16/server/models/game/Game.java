@@ -125,6 +125,15 @@ public class Game {
   Game(long sessionId, SaveGame saveGame, SessionJson payload) {
     this.sessionId = sessionId;
     this.creator = payload.getCreator();
+    for (int i = 0; i < payload.getPlayers().length; i++) {
+      for (int j = 0; j < saveGame.getPlayers().length; j++) {
+        if (Objects.equals(saveGame.getPlayers()[j].getName(), payload.getPlayers()[i].getName())) {
+          String temp = saveGame.getPlayers()[j].getName();
+          saveGame.getPlayers()[j].setName(payload.getPlayers()[i].getName());
+          payload.getPlayers()[i].setName(temp);
+        }
+      }
+    }
     this.players = IntStream.range(0, payload.getPlayers().length)
         .mapToObj(i -> {
           ServerPlayer player = saveGame.getPlayers()[i];
