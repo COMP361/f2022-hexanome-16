@@ -11,11 +11,11 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.models.savegame.SaveGame;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.server.util.CustomSerializerModifier;
 import com.hexanome16.server.util.UrlUtils;
 import java.io.File;
 import java.net.URI;
@@ -63,16 +63,7 @@ public class SavegameService implements SavegameServiceInterface {
   public SavegameService(@Autowired UrlUtils urlUtils,
                          @Autowired RestTemplateBuilder restTemplateBuilder,
                          @Autowired AuthServiceInterface authService) {
-    ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
-            JsonInclude.Include.NON_NULL)
-        .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE)
-        .registerModule(new SimpleModule() {
-          @Override
-          public void setupModule(Module.SetupContext context) {
-            super.setupModule(context);
-            context.addBeanSerializerModifier(new CustomSerializerModifier());
-          }
-        });
+    ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
     objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     objectReader = objectMapper.readerFor(SaveGame.class);
     this.urlUtils = urlUtils;

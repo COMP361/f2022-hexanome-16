@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import java.io.IOException;
 
 /**
@@ -15,7 +16,7 @@ public class ActionDeserializer extends JsonDeserializer<Action> {
   @Override
   public Action deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
       throws IOException, JacksonException {
-    ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
+    ObjectMapper mapper = ObjectMapperUtils.getObjectMapper();
     ObjectNode root = mapper.readTree(jsonParser);
     if (root.has("actionType")) {
       return switch (root.get("actionType").asText("")) {

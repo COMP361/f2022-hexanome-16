@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.TradePostJson;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.game.Game;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TradePostService implements TradePostServiceInterface {
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private final GameManagerServiceInterface gameManagerService;
   private final ServiceUtils serviceUtils;
 

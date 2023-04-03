@@ -7,6 +7,7 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
@@ -43,7 +44,7 @@ public class GameInitHelpers {
     this.nobleDeck = new Deck<>();
   }
 
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private static final int levelCardsTotal = 90;
 
   static Map<Level, Deck<ServerLevelCard>> createLevelMap() {

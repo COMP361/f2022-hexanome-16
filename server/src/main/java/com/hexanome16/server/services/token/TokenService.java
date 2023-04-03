@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
@@ -29,7 +30,7 @@ public class TokenService implements TokenServiceInterface {
   private final GameManagerServiceInterface gameManagerService;
   private final AuthServiceInterface authService;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private final ServiceUtils serviceUtils;
 
   /**

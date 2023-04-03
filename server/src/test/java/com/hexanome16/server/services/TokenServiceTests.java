@@ -11,6 +11,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.GameDummies;
 import com.hexanome16.server.models.PlayerDummies;
@@ -35,8 +36,7 @@ import org.springframework.http.ResponseEntity;
 public class TokenServiceTests {
 
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-      new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
-          JsonCreator.Mode.PROPERTIES));
+      ObjectMapperUtils.getObjectMapper();
   private final SessionJson payload = new SessionJson();
   private DummyAuthService dummyAuthService;
   private GameManagerServiceInterface gameManagerMock;

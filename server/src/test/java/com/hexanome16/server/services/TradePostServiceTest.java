@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.game.Game;
@@ -22,8 +23,7 @@ import org.springframework.http.HttpStatus;
  */
 public class TradePostServiceTest {
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-      new com.fasterxml.jackson.databind.ObjectMapper().registerModule(new ParameterNamesModule(
-          JsonCreator.Mode.PROPERTIES));
+      ObjectMapperUtils.getObjectMapper();
   private final SessionJson payload = new SessionJson();
   private DummyAuthService dummyAuthService;
   private GameManagerServiceInterface gameManagerMock;
