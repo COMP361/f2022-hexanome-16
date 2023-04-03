@@ -235,4 +235,14 @@ class InventoryControllerTests {
     // Assert
     verify(inventoryService).associateBagCard(sessionId, access, tokenType);
   }
+
+  @SneakyThrows
+  @Test
+  void testReserveNoble() {
+    long sessionId = 1;
+    String cardMd5 = "card";
+    String accessToken = "token";
+    underTest.reserveNoble(sessionId, cardMd5, accessToken);
+    verify(inventoryService).reserveNoble(sessionId, cardMd5, accessToken);
+  }
 }

@@ -100,13 +100,7 @@ public class TokenService implements TokenServiceInterface {
 
     actionUponTokenInteraction(currentGame, requestingPlayer);
 
-    var nextAction = requestingPlayer.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(currentGame);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(currentGame, requestingPlayer);
   }
 
   @Override
@@ -136,13 +130,7 @@ public class TokenService implements TokenServiceInterface {
       requestingPlayer.addTakeTokenToPerform(Optional.ofNullable(desiredGem));
     }
 
-    var nextAction = requestingPlayer.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(currentGame);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(currentGame, requestingPlayer);
   }
 
 
@@ -171,13 +159,7 @@ public class TokenService implements TokenServiceInterface {
 
     actionUponTokenInteraction(currentGame, requestingPlayer);
 
-    var nextAction = requestingPlayer.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(currentGame);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(currentGame, requestingPlayer);
   }
 
   @Override
@@ -208,13 +190,7 @@ public class TokenService implements TokenServiceInterface {
 
     actionUponTokenInteraction(currentGame, requestingPlayer);
 
-    var nextAction = requestingPlayer.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(currentGame);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(currentGame, requestingPlayer);
   }
 
 

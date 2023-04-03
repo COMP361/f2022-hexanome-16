@@ -3,11 +3,10 @@ package com.hexanome16.server.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
@@ -38,10 +37,10 @@ public class TokenServiceTests {
   private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
       ObjectMapperUtils.getObjectMapper();
   private final SessionJson payload = new SessionJson();
+  private final ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
   private DummyAuthService dummyAuthService;
   private GameManagerServiceInterface gameManagerMock;
   private TokenService tokensService;
-  private final ServiceUtils serviceUtils = Mockito.mock(ServiceUtils.class);
 
   /**
    * Sets .
@@ -50,6 +49,8 @@ public class TokenServiceTests {
    */
   @BeforeEach
   void setup() throws JsonProcessingException {
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        new ResponseEntity<>(HttpStatus.OK));
     dummyAuthService = new DummyAuthService();
     gameManagerMock =
         DummyGameManagerService.getDummyGameManagerService();
