@@ -51,7 +51,7 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
 
   @Override
   protected void addToLayout(HBox choicesLayout) {
-    nobleWidth = getWidth() / (noblesToSelect.size() * 4);
+    nobleWidth = getWidth() / (noblesToSelect.size() * 2);
     nobleSpacing = ((6 * getWidth() / 10.)
         - (nobleWidth * noblesToSelect.size()))
         / (noblesToSelect.size() + 1);
