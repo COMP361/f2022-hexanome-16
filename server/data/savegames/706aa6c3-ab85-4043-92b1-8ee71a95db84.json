@@ -1,7 +1,7 @@
 {
   "gamename" : "SplendorCities",
   "id" : "706aa6c3-ab85-4043-92b1-8ee71a95db84",
-  "currentPlayer" : "peini",
+  "currentPlayerIndex" : 0,
   "usernames" : [ "peini", "elea" ],
   "creator" : "peini",
   "onBoardDecks" : {
