@@ -252,7 +252,6 @@ public class InventoryService implements InventoryServiceInterface {
     var citiesList = new ArrayList<City>();
     for (ServerCity city : game.getOnBoardCities().getCardList()) {
       if (player.canBeVisitedBy(city)) {
-        System.out.println("can be visited by");
         citiesList.add(city);
       }
     }

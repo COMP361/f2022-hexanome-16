@@ -46,6 +46,10 @@ public class ServerCity extends City implements Visitable {
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
+    if (cardInfo.price().getTotalGems() == 0) {
+      return inventory.getPrestigePoints() >= cardInfo.prestigePoint()
+          - inventory.getOwnedCards().size();
+    }
     return inventory.getPrestigePoints() >= cardInfo.prestigePoint()
         && inventory.getGemBonuses().getGemCost(Gem.RUBY) >= cardInfo.price().getGemCost(Gem.RUBY)
         && inventory.getGemBonuses().getGemCost(Gem.EMERALD)

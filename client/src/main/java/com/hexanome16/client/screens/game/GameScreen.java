@@ -363,14 +363,12 @@ public class GameScreen {
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     NobleComponent[] grid = NobleComponent.getGrid();
     //remove nobles
-    String hashToRemove = "";
     for (NobleComponent noble : grid) {
       if (noble != null && !nobleMap.containsKey(noble.getNobleHash())) {
-        hashToRemove = noble.getNobleHash();
         noble.removeFromMat();
       }
     }
-    nobleMap.remove(hashToRemove);
+
     //add nobles
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
@@ -392,17 +390,15 @@ public class GameScreen {
     if (citiesJson == null || citiesJson.getValue() == null) {
       return;
     }
-    Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
+    Map<String, City> cityMap = citiesJson.getValue().getCities();
     CityComponent[] grid = CityComponent.getGrid();
-    //remove nobles
-    String hashToRemove = "";
+    //remove cities
     for (CityComponent city : grid) {
-      if (city != null && !nobleMap.containsKey(city.getCityHash())) {
-        hashToRemove = city.getCityHash();
+      if (city != null && !cityMap.containsKey(city.getCityHash())) {
         city.removeFromMat();
       }
     }
-    nobleMap.remove(hashToRemove);
+
     Map<String, City> citiesMap = citiesJson.getValue().getCities();
     for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
       if (!cities.containsKey(entry.getKey())) {
