@@ -194,6 +194,8 @@ public class InventoryService implements InventoryServiceInterface {
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
 
+
+
     if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
       player.addTakeTokenToPerform(Optional.empty());
@@ -516,9 +518,9 @@ public class InventoryService implements InventoryServiceInterface {
       game.getOnBoardNobles().removeCard(noble);
       game.getBroadcastContentManagerMap().updateValue(
           BroadcastMapKey.NOBLES, new NobleDeckJson(
-              new ArrayList<>(List.of(noble)))
+              new ArrayList<>(game.getOnBoardNobles().getCardList())
 
-      );
+      ));
     } else if (player.getInventory().getReservedNobles().contains(noble)) {
       player.getInventory().getReservedCards().remove(noble);
     }
@@ -568,7 +570,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     game.getBroadcastContentManagerMap().updateValue(
             BroadcastMapKey.NOBLES, new NobleDeckJson(
-                    new ArrayList<>(List.of(noble)))
+                    new ArrayList<>(game.getOnBoardNobles().getCardList()))
 
     );
 

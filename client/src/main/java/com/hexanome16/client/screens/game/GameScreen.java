@@ -364,7 +364,7 @@ public class GameScreen {
     //remove nobles
     String hashToRemove = "";
     for (NobleComponent noble : grid) {
-      if (noble != null && nobleMap.containsKey(noble.getNobleHash())) {
+      if (noble != null && !nobleMap.containsKey(noble.getNobleHash())) {
         hashToRemove = noble.getNobleHash();
         noble.removeFromMat();
       }

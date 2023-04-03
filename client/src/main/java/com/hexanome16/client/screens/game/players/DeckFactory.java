@@ -240,6 +240,7 @@ public class DeckFactory implements EntityFactory {
    */
   @Spawns("ReservedNobles")
   public Entity reservedNobles(SpawnData data) {
+    String player = (String) data.getData().getOrDefault("player", "");
     // get a pane for this card
     StackPane pane = getCard(0, "noblecard.png");
     pane.setOpacity(0.5);
