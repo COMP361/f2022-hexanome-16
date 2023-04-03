@@ -12,7 +12,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +39,7 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
+import com.hexanome16.server.util.CustomSerializerModifier;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
@@ -54,13 +58,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * The type Game service tests.
  */
 public class InventoryServiceTests {
-  private final ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+  private final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
+          JsonInclude.Include.NON_NULL)
+      .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE)
+      .registerModule(new SimpleModule() {
+        @Override
+        public void setupModule(Module.SetupContext context) {
+          super.setupModule(context);
+          context.addBeanSerializerModifier(new CustomSerializerModifier());
+        }
+      });
   private Game validMockGame;
   private InventoryService inventoryService;
   private ServiceUtils serviceUtils;

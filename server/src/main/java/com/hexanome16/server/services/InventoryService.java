@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
@@ -493,6 +495,7 @@ public class InventoryService implements InventoryServiceInterface {
   }
 
   @Override
+  @SneakyThrows
   public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
                                              String accessToken) {
     var request =
@@ -527,17 +530,24 @@ public class InventoryService implements InventoryServiceInterface {
     }
     player.removeTopAction();
 
+    game.getOnBoardNobles().removeCard(noble);
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.NOBLES,
+        new NobleDeckJson(game.getOnBoardNobles().getCardList())
+    );
+
     var nextAction = player.peekTopAction();
     if (nextAction != null) {
       return nextAction.getActionDetails();
     }
 
-    game.getOnBoardNobles().removeCard(noble);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @Override
+  @SneakyThrows
   public ResponseEntity<String> acquireCity(long sessionId, String cityHash,
                                              String accessToken) {
     var request =
@@ -572,12 +582,18 @@ public class InventoryService implements InventoryServiceInterface {
     }
     player.removeTopAction();
 
+    game.getOnBoardCities().removeCard(city);
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.CITIES,
+        new CitiesJson(game.getOnBoardCities().getCardList())
+    );
+
     var nextAction = player.peekTopAction();
     if (nextAction != null) {
       return nextAction.getActionDetails();
     }
 
-    game.getOnBoardCities().removeCard(city);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
