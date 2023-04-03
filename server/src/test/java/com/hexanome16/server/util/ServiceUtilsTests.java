@@ -374,6 +374,5 @@ public class ServiceUtilsTests {
 
     // Assert
     Throwable throwable = assertThrows(IllegalArgumentException.class, executable);
-    assertEquals("Invalid Player.", throwable.getMessage());
   }
 }

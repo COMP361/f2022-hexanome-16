@@ -449,4 +449,20 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/cards/" + cardHash + "/discountedPrice",
         Map.of("access_token", accessToken), PriceMap.class));
   }
+
+  /**
+   * Allows to reserve a noble.
+   *
+   * @param sessionId session identifier of the game.
+   * @param authToken access token of the player.
+   * @param nobleHash hash of the noble card.
+   * @return server response.
+   */
+  public static Pair<Headers, String> reserveNoble(long sessionId, String authToken,
+                                                   String nobleHash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.POST,
+            RequestDest.SERVER,
+            "/api/games/" + sessionId + "/nobles/" + nobleHash,
+            Map.of("access_token", authToken), Void.class));
+  }
 }

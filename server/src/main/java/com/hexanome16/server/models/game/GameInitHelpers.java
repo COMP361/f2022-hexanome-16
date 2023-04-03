@@ -206,7 +206,8 @@ public class GameInitHelpers {
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard nobleReserve = new ServerLevelCard(nobleReserveJson.getId(),
           nobleReserveJson.getPrestigePoint(), "noble_reserve" + nobleReserveJson.getId(),
-          nobleReserveJson.getPrice(), Level.REDTWO, gemBonus);
+          nobleReserveJson.getPrice(), Level.REDTWO, LevelCard.BonusType.RESERVE_NOBLE,
+          gemBonus);
       deck.addCard(nobleReserve);
       game.getHashToCardMap().put(
           DigestUtils.md5Hex(objectMapper.writeValueAsString(nobleReserve)),
