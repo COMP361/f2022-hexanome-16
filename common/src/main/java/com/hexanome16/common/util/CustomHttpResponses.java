@@ -135,9 +135,17 @@ public enum CustomHttpResponses implements BroadcastContent {
   DISCARD_TOKEN("Insert custom body with tokens to choose from", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.DISCARD.getMessage()))),
 
+  /**
+   * Used for indicating that a player must take a token.
+   */
   TAKE_TOKEN("Insert custom body containing a gem that cannot be chosen", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.TAKE.getMessage()))),
-
+  /**
+   * Used for indicating that a player must reserve a noble.
+   */
+  RESERVE_NOBLE("Insert custom body containing list of nobles",
+          HTTP_OK, Map.of(ActionType.ACTION_TYPE,
+          List.of(ActionType.NOBLE_RESERVE.getMessage()))),
   /**
    * Used for indicating that player must Associate a bag card.
    * <p>
@@ -180,7 +188,7 @@ public enum CustomHttpResponses implements BroadcastContent {
   public enum ActionType {
     NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
     DISCARD("discard-token"), TAKE("take-token"), ASSOCIATE_BAG("associate-bag"),
-    LEVEL_ONE("take-level-one"), END_TURN("done");
+    LEVEL_ONE("take-level-one"), NOBLE_RESERVE("reserve-noble"), END_TURN("done");
 
     /**
      * Action Type string.
