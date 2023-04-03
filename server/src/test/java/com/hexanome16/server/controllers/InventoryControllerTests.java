@@ -193,6 +193,21 @@ class InventoryControllerTests {
 
   @SneakyThrows
   @Test
+  void testClaimCity() {
+    // Arrange
+    long sessionId = 1L;
+    String cityMd5 = "cityMd5";
+    String access = "access";
+
+    // Act
+    underTest.claimCity(sessionId, cityMd5, access);
+
+    // Assert
+    verify(inventoryService).acquireCity(sessionId, cityMd5, access);
+  }
+
+  @SneakyThrows
+  @Test
   void testTakeLevelTwoCard() {
     // Arrange
     long sessionId = 1L;
