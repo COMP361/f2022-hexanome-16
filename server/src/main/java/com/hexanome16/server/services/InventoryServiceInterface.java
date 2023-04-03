@@ -42,6 +42,21 @@ public interface InventoryServiceInterface {
       throws JsonProcessingException;
 
   /**
+   * Allows client to buy sacrifice card, given that they send a valid way to buy that card.
+   *
+   * @param sessionId game session id.
+   * @param cardMd5 card hash.
+   * @param accessToken accessToken.
+   * @param firstMd5 first card to discard.
+   * @param secondMd5 second card to discard.
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *     HTTP BAD_REQUEST otherwise.</p>
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
+  public ResponseEntity<String> buySacrificeCard(long sessionId, String cardMd5, String accessToken,
+                                                 String firstMd5, String secondMd5)
+      throws JsonProcessingException;
+  /**
    * Let the player reserve a card.
    *
    * @param sessionId   game session id.
