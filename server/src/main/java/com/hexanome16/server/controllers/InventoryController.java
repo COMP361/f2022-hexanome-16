@@ -1,6 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.server.services.InventoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,25 @@ public class InventoryController {
 
 
     return inventoryService.getReservedCards(sessionId, username, accessToken);
+  }
+
+  /**
+   * Get cards with given bonus type.
+   *
+   * @param sessionId   session Id.
+   * @param username    username.
+   * @param gem gem type.
+   * @return get reserve nobles.
+   * @throws com.fasterxml.jackson.core.JsonProcessingException if json doesnt work.
+   */
+  @GetMapping(value = "/games/{sessionId}/inventory/cardPrice")
+  public ResponseEntity<String> getCardPrice(@PathVariable long sessionId,
+                                                 @RequestParam String username,
+                                                 @RequestParam Gem gem)
+      throws JsonProcessingException {
+
+
+    return inventoryService.getCardPrice(sessionId, username, gem);
   }
 
   /**

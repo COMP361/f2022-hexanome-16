@@ -11,6 +11,7 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -94,6 +95,21 @@ public class PromptsRequests {
     return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
         "/api/games/" + sessionId + "/inventory/reservedCards",
         Map.of("username", username, "access_token", accessToken), DeckJson.class));
+  }
+
+  /**
+   * Get reserved cards of the player with provided username and session id.
+   *
+   * @param sessionId   Session ID.
+   * @param username    username of player.
+   * @param gem gem type.
+   * @return PurchaseMap representation of the player's funds as a String
+   * @author Peini
+   */
+  public static DeckJson getCardPrice(long sessionId, String username, Gem gem) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/inventory/cardPrice",
+        Map.of("username", username, "gem", gem), DeckJson.class));
   }
 
   /**
