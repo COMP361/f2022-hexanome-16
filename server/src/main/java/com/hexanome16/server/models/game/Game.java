@@ -10,6 +10,7 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.GameBank;
@@ -40,7 +41,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 @ToString
 public class Game {
 
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
 
   private final long sessionId;
   private final String creator;

@@ -9,6 +9,7 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.InventoryServiceInterface;
@@ -34,7 +35,7 @@ public class InventoryController {
   /* fields and controllers ********************************************************/
   private final InventoryServiceInterface inventoryService;
   private final GameManagerServiceInterface gameManager;
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private final ServiceUtils serviceUtils;
 
 

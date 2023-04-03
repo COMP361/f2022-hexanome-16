@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.util.CustomResponseFactory;
 import lombok.Data;
@@ -33,8 +34,7 @@ public class ChooseCityAction implements Action {
    */
   public ChooseCityAction(City[] cities) throws JsonProcessingException {
     this.cities = cities;
-    ObjectMapper ob = new ObjectMapper();
-    this.citiesJson = ob.writeValueAsString(cities);
+    this.citiesJson = ObjectMapperUtils.getObjectMapper().writeValueAsString(cities);
   }
 
   @Override

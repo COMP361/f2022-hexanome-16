@@ -28,6 +28,7 @@ import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.common.util.CustomHttpResponses;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.actions.Action;
@@ -39,7 +40,6 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
-import com.hexanome16.server.util.CustomSerializerModifier;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import java.util.LinkedList;
@@ -64,16 +64,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.module.SimpleMod
  * The type Game service tests.
  */
 public class InventoryServiceTests {
-  private final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(
-          JsonInclude.Include.NON_NULL)
-      .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE)
-      .registerModule(new SimpleModule() {
-        @Override
-        public void setupModule(Module.SetupContext context) {
-          super.setupModule(context);
-          context.addBeanSerializerModifier(new CustomSerializerModifier());
-        }
-      });
+  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private Game validMockGame;
   private InventoryService inventoryService;
   private ServiceUtils serviceUtils;
