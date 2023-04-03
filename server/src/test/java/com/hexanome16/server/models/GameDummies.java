@@ -4,21 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 import com.hexanome16.common.models.Level;
-import com.hexanome16.common.models.price.Gem;
-import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.cards.Deck;
-import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.mockito.Mockito;
-import org.mockito.mock.SerializableMode;
 
 /**
  * Game Mockito mocks.
