@@ -1,201 +1,189 @@
 package com.hexanome16.server.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.game.GameManagerService;
-import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.game.GameService;
-import com.hexanome16.server.services.game.GameServiceInterface;
 import com.hexanome16.server.services.longpolling.LongPollingService;
-import com.hexanome16.server.services.longpolling.LongPollingServiceInterface;
-import org.junit.jupiter.api.DisplayName;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Unit tests for {@link GameController}.
  */
 class GameControllerTest {
+  @Mock
+  GameService gameService;
+  @Mock
+  GameManagerService gameManagerService;
+  @Mock
+  LongPollingService longPollingService;
+  AutoCloseable autoCloseable;
+  private GameController underTest;
 
-  /**
-   * The Game controller.
-   */
-  GameController gameController;
-
-  /**
-   * Create game service mock with Mockito.
-   *
-   * @return the game service mock
-   */
-  GameServiceInterface createGameServiceMock() {
-    return Mockito.mock(GameService.class);
+  @BeforeEach
+  void setUp() {
+    autoCloseable = MockitoAnnotations.openMocks(this);
+    underTest = new GameController(gameService, gameManagerService, longPollingService);
   }
 
-  /**
-   * Create game manager service mock with Mockito.
-   *
-   * @return the game manager service mock
-   */
-  GameManagerServiceInterface createGameManagerServiceMock() {
-    return Mockito.mock(GameManagerService.class);
+  @AfterEach
+  void tearDown() throws Exception {
+    autoCloseable.close();
   }
 
-  LongPollingServiceInterface createLongPollingServiceMock() {
-    return Mockito.mock(LongPollingService.class);
-  }
-
-  /**
-   * Test create game.
-   */
   @Test
   void testCreateGame() {
-    final String gameStub = "game test";
-    final String game2Stub = "game test 2";
-    final SessionJson testJson = new SessionJson();
+    // Arrange
+    long id = 1L;
+    SessionJson sessionJson = new SessionJson();
 
-    GameManagerServiceInterface gameManagerServiceMock = createGameManagerServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(gameManagerServiceMock.createGame(123L, testJson)).thenReturn(gameStub);
-    when(gameManagerServiceMock.createGame(124L, testJson)).thenReturn(game2Stub);
-    this.gameController = new GameController(null, gameManagerServiceMock, longPollingServiceMock);
+    // Act
+    underTest.createGame(id, sessionJson);
 
-    assertEquals(gameStub, gameController.createGame(123L, testJson));
-    assertEquals(game2Stub, gameController.createGame(124L, testJson));
+    // Assert
+    verify(gameManagerService).createGame(id, sessionJson);
   }
 
-  /**
-   * Test get deck.
-   */
+  @Test
+  void testDeleteGame() {
+    // Arrange
+    long id = 1L;
+
+    // Act
+    underTest.deleteGame(id);
+
+    // Assert
+    verify(gameManagerService).deleteGame(id);
+  }
+
   @Test
   void testGetDeck() {
-    final DeferredResult<ResponseEntity<String>> deckStub = new DeferredResult<>();
+    // Arrange
+    long id = 1L;
+    String level = "level";
+    String accessToken = "access";
+    String hash = "hash";
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(longPollingServiceMock.getDeck(123L, "ONE", "123", "123B")).thenReturn(deckStub);
-    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+    // Act
+    underTest.getDeck(id, level, accessToken, hash);
 
-    assertEquals(deckStub, gameController.getDeck(123L, "ONE", "123", "123B"));
+    // Assert
+    verify(longPollingService).getDeck(id, level, accessToken, hash);
   }
 
-  /**
-   * Test get nobles.
-   */
+  @SneakyThrows
+  @Test
+  void testGetLevelTwoOnBoard() {
+    // Arrange
+    long id = 1L;
+
+    // Act
+    underTest.getLevelTwoOnBoard(id);
+
+    // Assert
+    verify(gameService).getLevelTwoOnBoard(id);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetLevelOneOnBoard() {
+    // Arrange
+    long id = 1L;
+
+    // Act
+    underTest.getLevelOneOnBoard(id);
+
+    // Assert
+    verify(gameService).getLevelOneOnBoard(id);
+  }
+
   @Test
   void testGetNobles() {
-    final DeferredResult<ResponseEntity<String>> noblesStub = new DeferredResult<>();
+    // Arrange
+    long id = 1L;
+    String accessToken = "access";
+    String hash = "hash";
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(longPollingServiceMock.getNobles(123L, "123", "123B")).thenReturn(noblesStub);
-    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+    // Act
+    underTest.getNobles(id, accessToken, hash);
 
-    assertEquals(noblesStub, gameController.getNobles(123L, "123", "123B"));
+    // Assert
+    verify(longPollingService).getNobles(id, accessToken, hash);
   }
 
-  /**
-   * Test get current player.
-   */
   @Test
-  void testGetCurrentPlayer() {
-    final DeferredResult<ResponseEntity<String>> currentPlayerStub = new DeferredResult<>();
-    final DeferredResult<ResponseEntity<String>> currentPlayer2Stub = new DeferredResult<>();
+  void testGetCities() {
+    // Arrange
+    long id = 1L;
+    String accessToken = "access";
+    String hash = "hash";
 
+    // Act
+    underTest.getCities(id, accessToken, hash);
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(longPollingServiceMock.getPlayers(123L, "123", "123B"))
-        .thenReturn(currentPlayerStub);
-    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
-
-    assertEquals(currentPlayerStub, gameController.getPlayers(123L, "123", "123B"));
-    assertNotEquals(currentPlayer2Stub, gameController.getPlayers(123L, "123", "123B"));
+    // Assert
+    verify(longPollingService).getCities(id, accessToken, hash);
   }
 
-  /**
-   * Test get winners.
-   */
+  @Test
+  void testGetPlayers() {
+    // Arrange
+    long id = 1L;
+    String accessToken = "access";
+    String hash = "hash";
+
+    // Act
+    underTest.getPlayers(id, accessToken, hash);
+
+    // Assert
+    verify(longPollingService).getPlayers(id, accessToken, hash);
+  }
+
   @Test
   void testGetWinners() {
-    final DeferredResult<ResponseEntity<String>> winnersStub = new DeferredResult<>();
+    // Arrange
+    long id = 1L;
+    String accessToken = "access";
+    String hash = "hash";
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    when(longPollingServiceMock.getWinners(123L, "123", "123B")).thenReturn(winnersStub);
-    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+    // Act
+    underTest.getWinners(id, accessToken, hash);
 
-    assertEquals(winnersStub, gameController.getWinners(123L, "123", "123B"));
+    // Assert
+    verify(longPollingService).getWinners(id, accessToken, hash);
   }
 
-  /**
-   * Test get game bank info.
-   */
+  @SneakyThrows
   @Test
   void testGetGameBankInfo() {
-    final ResponseEntity<String> gameBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
+    // Arrange
+    long id = 1L;
 
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    LongPollingServiceInterface longPollingServiceMock = createLongPollingServiceMock();
-    try {
-      when(gameServiceMock.getGameBankInfo(123L)).thenReturn(gameBankInfoStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-    this.gameController = new GameController(gameServiceMock, null, longPollingServiceMock);
+    // Act
+    underTest.getGameBankInfo(id);
 
-    try {
-      assertEquals(gameBankInfoStub, gameController.getGameBankInfo(123L));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Assert
+    verify(gameService).getGameBankInfo(id);
   }
 
-  /**
-   * testing get level 2 cards.
-   */
   @Test
-  @DisplayName("get Level 2 cards on board")
-  void testGetLevelTwoOnBoard() {
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    gameController = new GameController(gameServiceMock,
-        createGameManagerServiceMock(), createLongPollingServiceMock());
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    try {
-      when(gameServiceMock.getLevelTwoOnBoard(DummyAuths.validSessionIds.get(0)))
-          .thenReturn(res);
-      assertEquals(res, gameController.getLevelTwoOnBoard(DummyAuths.validSessionIds.get(0)));
-    } catch (Exception e) {
-      fail("Mockito threw an exception.");
-    }
-  }
+  void testGetPlayerAction() {
+    // Arrange
+    long id = 1L;
+    String username = "username";
+    String access = "access";
 
-  /**
-   * testing get level 1 cards.
-   */
-  @Test
-  @DisplayName("get Level 1 cards on board")
-  void testGetLevelOneOnBoard() {
-    GameServiceInterface gameServiceMock = createGameServiceMock();
-    gameController = new GameController(gameServiceMock,
-        createGameManagerServiceMock(), createLongPollingServiceMock());
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    try {
-      when(gameServiceMock.getLevelOneOnBoard(DummyAuths.validSessionIds.get(0)))
-          .thenReturn(res);
-      assertEquals(res, gameController.getLevelOneOnBoard(DummyAuths.validSessionIds.get(0)));
-    } catch (Exception e) {
-      fail("Mockito threw an exception.");
-    }
+    // Act
+    underTest.getPlayerAction(id, username, access);
+
+    // Assert
+    verify(gameService).getPlayerAction(id, access);
   }
 }
 
