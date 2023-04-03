@@ -65,7 +65,7 @@ public class GameManagerService implements GameManagerServiceInterface {
       if (payload.getSavegame() == null || payload.getSavegame().isBlank()) {
         game = Game.create(sessionId, payload);
       } else {
-        game = Game.create(sessionId, savegameService.loadGame(payload.getSavegame()));
+        game = Game.create(sessionId, savegameService.loadGame(payload.getSavegame()), payload);
       }
       gameMap.put(sessionId, game);
     } catch (Exception e) {

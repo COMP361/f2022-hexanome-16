@@ -94,9 +94,7 @@ class LobbyHelpers {
     if (AuthUtils.getPlayer() != null) {
       SaveGameJson[] saveGames = GetSavegamesRequest.execute(gameServer);
       if (saveGames != null) {
-        LobbyFactory.saveGameList.getItems().addAll(Arrays.stream(saveGames)
-            .filter(saveGameJson -> Arrays.asList(saveGameJson.getPlayers())
-            .contains(AuthUtils.getPlayer().getName())).toList());
+        LobbyFactory.saveGameList.getItems().addAll(saveGames);
       }
     }
   }
@@ -356,9 +354,7 @@ class LobbyHelpers {
     TableView<SaveGameJson> savegameTableView = new TableView<>();
     LobbyFactory.saveGameList = savegameTableView;
     savegameTableView.setStyle("-fx-background-color: #000000; -fx-text-fill: #CFFBE7;");
-    final List<SaveGameJson> savegames = Arrays.stream(LobbyFactory.saveGames.get()).filter(
-        saveGame -> Arrays.asList(saveGame.getPlayers()).contains(AuthUtils.getPlayer().getName())
-    ).toList();
+    final SaveGameJson[] saveGames = LobbyFactory.saveGames.get();
 
     Label placeholder;
     if (LobbyFactory.selectedGameService.get() == null) {
@@ -449,7 +445,7 @@ class LobbyHelpers {
     savegameTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
     savegameTableView.setFixedCellSize(50);
 
-    savegameTableView.getItems().addAll(savegames);
+    savegameTableView.getItems().addAll(saveGames);
     savegameTableView.setPrefSize(getAppWidth() / 6.0 * 5.0, getAppHeight() / 4.0);
 
     return entityBuilder(spawnData)
