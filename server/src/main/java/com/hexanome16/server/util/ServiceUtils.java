@@ -1,15 +1,21 @@
 package com.hexanome16.server.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.models.City;
+import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.cards.ServerCity;
+import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
+import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -38,6 +44,54 @@ public class ServiceUtils {
                       @Autowired AuthServiceInterface authServiceInterface) {
     this.gameManagerService = gameManagerServiceInterface;
     this.authService = authServiceInterface;
+  }
+
+  /**
+   * Add city action to player if needed.
+   *
+   * @param game   the game
+   * @param player the player
+   * @return non null if an error occurred
+   */
+  public static ResponseEntity<String> addCityAction(Game game, ServerPlayer player) {
+    var citiesList = new ArrayList<City>();
+    for (ServerCity city : game.getOnBoardCities().getCardList()) {
+      if (player.canBeVisitedBy(city)) {
+        citiesList.add(city);
+      }
+    }
+    if (!citiesList.isEmpty()) {
+      try {
+        player.addCitiesToPerform(citiesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Add noble action to player if needed.
+   *
+   * @param game   the game
+   * @param player the player
+   * @return non null if an error occurred
+   */
+  public static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
+    var noblesList = new ArrayList<Noble>();
+    for (ServerNoble noble : game.getOnBoardNobles().getCardList()) {
+      if (player.canBeVisitedBy(noble)) {
+        noblesList.add(noble);
+      }
+    }
+    if (!noblesList.isEmpty()) {
+      try {
+        player.addNobleListToPerform(noblesList);
+      } catch (JsonProcessingException e) {
+        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+      }
+    }
+    return null;
   }
 
   /**
@@ -183,14 +237,13 @@ public class ServiceUtils {
     return null;
   }
 
-
   /**
-   * Returns a player with the username in the game with session Id.
+   * Returns a player with the username in the game with session id.
    *
    * @param sessionId session identifier.
-   * @param username username of player we want to get.
+   * @param username  username of player we want to get.
    * @return player.
-   * @throws IllegalArgumentException if the username is unvalid.
+   * @throws IllegalArgumentException if the username is invalid.
    */
   public ServerPlayer getValidPlayerByName(long sessionId, String username) {
     Game game = gameManagerService.getGame(sessionId);
@@ -203,5 +256,30 @@ public class ServiceUtils {
     }
     // get the player from the session id and access token
     return myPlayer;
+  }
+
+  /**
+   * Check for next actions for the player.
+   *
+   * @param game             the game
+   * @param player           the player
+   * @return A response containing either the next action, or END_OF_TURN
+   */
+  public ResponseEntity<String> checkForNextActions(Game game, ServerPlayer player) {
+    //choose noble
+    ResponseEntity<String> error =
+        addNobleAction(game, player);
+
+    if (error != null) {
+      return error;
+    }
+
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 }
