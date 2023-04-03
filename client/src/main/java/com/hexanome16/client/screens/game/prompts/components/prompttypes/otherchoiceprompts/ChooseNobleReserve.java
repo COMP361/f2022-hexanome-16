@@ -15,6 +15,7 @@ import kong.unirest.core.Headers;
  */
 public class ChooseNobleReserve extends ChooseNoble {
 
+
   @Override
   protected String promptText() {
     return "Choose Noble To Reserve";
@@ -22,8 +23,7 @@ public class ChooseNobleReserve extends ChooseNoble {
 
   @Override
   protected void handleConfirmation() {
-
-    int nobleIndex = chosenNobleIndex;
+    int nobleIndex = chosenVisitableIndex;
     long sessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     Noble nobleOfInterest = nobleList[nobleIndex];
@@ -33,5 +33,6 @@ public class ChooseNobleReserve extends ChooseNoble {
 
     PromptComponent.closePrompts();
     PromptUtils.actionResponseSpawner(serverResponse);
+
   }
 }

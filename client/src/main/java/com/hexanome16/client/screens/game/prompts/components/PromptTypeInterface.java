@@ -12,6 +12,7 @@ import com.hexanome16.client.screens.game.prompts.components.prompttypes.TokenAc
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.WinnerPrompt;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherbuyprompts.BuyingReserved;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseCity;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseLevelTwo;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
@@ -211,6 +212,11 @@ public interface PromptTypeInterface {
      * <p><i>Main</i></p>
      */
     CHOOSE_NOBLES(new ChooseNoble()),
+    /**
+     * Choose cities prompt type.
+     * <p><i>Main</i></p>
+     */
+    CHOOSE_CITY(new ChooseCity()),
     /**
      * Buy cards by cards prompt type.
      * <p><i>Main</i></p>

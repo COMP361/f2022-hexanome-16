@@ -106,6 +106,16 @@ public class Inventory {
   }
 
   /**
+   * Acquire a city.
+   *
+   * @param city the city
+   * @return if added successfully
+   */
+  public boolean acquireCity(ServerCity city) {
+    return ownedCities.add(city);
+  }
+
+  /**
    * Reserve noble boolean.
    *
    * @param noble the noble
