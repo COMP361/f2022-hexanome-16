@@ -1,7 +1,7 @@
 {
   "gamename" : "SplendorTradeRoutes",
   "id" : "cec15f61-6740-4b1e-9d18-6e79a3c7d757",
-  "currentPlayer" : "peini",
+  "currentPlayerIndex" : 0,
   "usernames" : [ "peini", "elea" ],
   "creator" : "peini",
   "onBoardDecks" : {
@@ -3073,24 +3073,7 @@
           "ONYX" : 3
         }
       },
-      "ownedNobles" : [
-        {
-        "cardInfo" : {
-          "id" : 3,
-          "prestigePoint" : 3,
-          "texturePath" : "noble3",
-          "price" : {
-            "priceMap" : {
-              "SAPPHIRE" : 0,
-              "EMERALD" : 0,
-              "ONYX" : 4,
-              "RUBY" : 4,
-              "DIAMOND" : 0
-            }
-          }
-        }
-  }
-      ],
+      "ownedNobles" : [ ],
       "reservedNobles" : [ ],
       "ownedCards" : [
         {

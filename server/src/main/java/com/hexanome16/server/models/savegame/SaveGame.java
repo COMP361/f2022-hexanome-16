@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class SaveGame {
   private String gamename;
   private String id;
-  private String currentPlayer;
+  private int currentPlayerIndex;
   private String[] usernames;
   private String creator;
   private Map<Level, ServerLevelCard[]> onBoardDecks;
@@ -45,7 +45,7 @@ public class SaveGame {
   public SaveGame(Game game, String id) {
     gamename = game.getWinCondition().getGameServiceJson().getName();
     this.id = id;
-    currentPlayer = game.getCurrentPlayer().getName();
+    currentPlayerIndex = game.getCurrentPlayerIndex();
     usernames = Arrays.stream(game.getPlayers()).sorted(Comparator.comparingInt(
         ServerPlayer::getPlayerOrder)).map(ServerPlayer::getName).toArray(String[]::new);
     creator = game.getCreator();

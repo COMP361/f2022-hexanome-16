@@ -1,7 +1,7 @@
 {
   "gamename" : "SplendorTradeRoutes",
   "id" : "b610254c-a341-4a07-afb9-fe1581c44f25",
-  "currentPlayer" : "imad",
+  "currentPlayerIndex" : 1,
   "usernames" : [ "costa", "imad" ],
   "creator" : "costa",
   "onBoardDecks" : {
