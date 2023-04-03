@@ -1,22 +1,9 @@
 package com.hexanome16.server.controllers;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.common.dto.cards.DeckJson;
-import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
-import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.util.ObjectMapperUtils;
-import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.InventoryServiceInterface;
-import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,56 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class InventoryController {
   /* fields and controllers ********************************************************/
   private final InventoryServiceInterface inventoryService;
-  private final GameManagerServiceInterface gameManager;
-  private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
-  private final ServiceUtils serviceUtils;
 
 
   /**
    * Controller for the Inventory.
    *
    * @param inventoryServiceInterface controller for the whole game (used for helper)
-   * @param gameManager               the game manager for fetching games
-   * @param serviceUtils              the utility used by services
    */
-  public InventoryController(@Autowired InventoryServiceInterface inventoryServiceInterface,
-                             @Autowired GameManagerServiceInterface gameManager,
-                             @Autowired ServiceUtils serviceUtils) {
-    this.gameManager = gameManager;
+  public InventoryController(@Autowired InventoryServiceInterface inventoryServiceInterface) {
     this.inventoryService = inventoryServiceInterface;
-    this.serviceUtils = serviceUtils;
-    objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
   }
-
-
-
-  //  private JsonNode getInventoryNode(ServerPlayer player) throws JsonProcessingException {
-  //    // convert the inventory to string and return it as a String
-  //    String inventoryString = objectMapper.writeValueAsString(player.getInventory());
-  //    return objectMapper.readTree(inventoryString);
-  //  }
-
-  //  /* POST methods *****************************************************************************/
-  //
-  //  /** Create a new inventory for the given player.
-  //   *
-  //   * @param sessionId ID of the current section
-  //   * @param accessToken access token for this request
-  //   * @return {@link ResponseEntity} the inventory as a response entity
-  //   * @throws JsonProcessingException com.fasterxml.jackson.core. json processing exception
-  //   * */
-  //  @PostMapping(value = {"/games/{sessionId}/inventory"})
-  //  public ResponseEntity<String> createInventory(@PathVariable long sessionId,
-  //                                                @RequestParam String accessToken)
-  //          throws JsonProcessingException {
-  //    // get the player (if valid) from the session id and access token
-  //    Player player = getValidPlayer(sessionId, accessToken);
-  //    // create a new inventory
-  //    player.setInventory(new Inventory());
-  //    // return the inventory as a response entity
-  //    return new ResponseEntity<>(objectMapper.writeValueAsString(player.getInventory()),
-  //        HttpStatus.CREATED);
-  //  }
 
   /* GET methods ******************************************************************************/
 
@@ -106,7 +53,7 @@ public class InventoryController {
   /**
    * Get owned bonuses for player with token in game.
    *
-   * @param sessionId session id of game.
+   * @param sessionId   session id of game.
    * @param accessToken access token of player.
    * @return Response entity with a Json string representation of
    *          a String[gem.getBonusTypeEquivalent]
@@ -208,8 +155,8 @@ public class InventoryController {
    * Gets the discounted price of the card with hash cardMd5  if it was to be bought by
    * player with accessToken inside game with sessionId.
    *
-   * @param sessionId session identifier.
-   * @param cardMd5 hash of card.
+   * @param sessionId   session identifier.
+   * @param cardMd5     hash of card.
    * @param accessToken access token of player.
    * @return PriceMap of the discounted price.
    * @throws JsonProcessingException if the fails to write as a string.
@@ -260,9 +207,9 @@ public class InventoryController {
   /**
    * Let the player claim a noble.
    *
-   * @param sessionId    the session id
-   * @param nobleMd5     the noble hash
-   * @param accessToken  player's authentication token
+   * @param sessionId   the session id
+   * @param nobleMd5    the noble hash
+   * @param accessToken player's authentication token
    * @return HttpStatus.ok if the request completed, an error response otherwise.
    * @throws JsonProcessingException the json processing exception
    */
@@ -277,9 +224,9 @@ public class InventoryController {
   /**
    * Takes a level two card.
    *
-   * @param sessionId session Id.
+   * @param sessionId   session Id.
    * @param accessToken auth token.
-   * @param chosenCard chosen card's md5.
+   * @param chosenCard  chosen card's md5.
    * @return information on next action or invalid request message.
    * @throws JsonProcessingException exception if json processing fails.
    */
@@ -294,9 +241,9 @@ public class InventoryController {
   /**
    * Takes a level one card.
    *
-   * @param sessionId session Id.
+   * @param sessionId   session Id.
    * @param accessToken auth token.
-   * @param chosenCard chosen card's md5.
+   * @param chosenCard  chosen card's md5.
    * @return information on next action or invalid request message.
    * @throws JsonProcessingException exception if json processing fails.
    */
@@ -311,9 +258,9 @@ public class InventoryController {
   /**
    * Associates a bag card to a token type.
    *
-   * @param sessionId session id.
+   * @param sessionId   session id.
    * @param accessToken access token.
-   * @param tokenType chosen token type.
+   * @param tokenType   chosen token type.
    * @return information on next action or invalid request message
    */
   @PutMapping(value = "/games/{sessionId}/cards/bagcards")
