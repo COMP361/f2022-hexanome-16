@@ -10,7 +10,6 @@ import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.models.sessions.SaveGameJson;
 import com.hexanome16.common.util.ObjectMapperUtils;
 import com.hexanome16.server.models.ServerPlayer;
 import com.hexanome16.server.models.TradePost;
@@ -29,11 +28,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Game class that holds all the information.
@@ -149,7 +150,22 @@ public class Game {
     this.onBoardDecks = saveGame.getOnBoardDecks().entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, e -> new Deck<>(e.getValue())));
     Map<Level, ServerLevelCard[]> remainingCards = saveGame.getRemainingDecks();
-    remainingCards.putAll(saveGame.getOnBoardDecks());
+    for (Level level : Level.values()) {
+      ServerLevelCard[] serverLevelCards = remainingCards.get(level);
+      ServerLevelCard[] both =
+          (ServerLevelCard[]) ArrayUtils.addAll(serverLevelCards,
+              saveGame.getOnBoardDecks().get(level));
+      remainingCards.put(level, both);
+    }
+    Map<Level, ServerLevelCard[]> playerCards = Arrays.stream(saveGame.getPlayers())
+        .flatMap(serverPlayer -> serverPlayer.getInventory().getOwnedCards().stream())
+        .collect(Collectors.groupingBy(ServerLevelCard::getLevel)).entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey,
+            e -> e.getValue().toArray(new ServerLevelCard[0])));
+    remainingCards.forEach((level, cards) -> {
+      remainingCards.put(level, Stream.of(cards, playerCards.get(level))
+          .filter(Objects::nonNull).flatMap(Arrays::stream).toArray(ServerLevelCard[]::new));
+    });
     this.hashToCardMap = remainingCards.values().stream().flatMap(Arrays::stream)
         .collect(Collectors.toMap(card -> {
           try {
@@ -208,7 +224,7 @@ public class Game {
    *
    * @param sessionId session id
    * @param saveGame  the savegame
-   * @param payload the session json
+   * @param payload   the session json
    * @return the game
    */
   public static Game create(long sessionId, SaveGame saveGame, SessionJson payload) {
@@ -554,8 +570,8 @@ public class Game {
   /**
    * Gives 3 tokens of 3 different types to player.
    *
-   * @param gem   First gem we want to take one of.
-   * @param player          player who will receive the gems.
+   * @param gem    First gem we want to take one of.
+   * @param player player who will receive the gems.
    */
   public void giveOneOf(Gem gem, ServerPlayer player) {
     // Remove from game bank
@@ -573,7 +589,7 @@ public class Game {
   /**
    * takes back a token from the player.
    *
-   * @param gem type of token game is taking back.
+   * @param gem    type of token game is taking back.
    * @param player player whose funds are being taken.
    */
   public void takeBackToken(Gem gem, ServerPlayer player) {
