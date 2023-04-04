@@ -104,52 +104,60 @@ class LobbyHelpers {
    * Service.
    */
   static void createFetchGameServicesThread() {
-    BackgroundService fetchService = new BackgroundService(() -> {
-      LobbyFactory.gameServices.set(ListGameServicesRequest.execute());
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }, () -> {
-      Platform.runLater(LobbyHelpers::updateGameServicesList);
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchGameServersService.get().restart();
-      }
-    }, () -> {
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchGameServersService.get().restart();
-      }
-    });
-    fetchService.start();
-    LobbyFactory.fetchGameServersService.set(fetchService);
+    if (LobbyFactory.fetchGameServersService.get() == null) {
+      BackgroundService fetchService = new BackgroundService(() -> {
+        LobbyFactory.gameServices.set(ListGameServicesRequest.execute());
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }, () -> {
+        Platform.runLater(LobbyHelpers::updateGameServicesList);
+        if (LobbyFactory.shouldFetch.get()) {
+          LobbyFactory.fetchGameServersService.get().restart();
+        }
+      }, () -> {
+        if (LobbyFactory.shouldFetch.get()) {
+          LobbyFactory.fetchGameServersService.get().restart();
+        }
+      });
+      fetchService.start();
+      LobbyFactory.fetchGameServersService.set(fetchService);
+    } else {
+      LobbyFactory.fetchGameServersService.get().restart();
+    }
   }
 
   /**
    * This method starts a separate thread that fetches the list of sessions from the Lobby Service.
    */
   static void createFetchSessionThread() {
-    BackgroundService fetchService = new BackgroundService(() -> {
-      Pair<String, Map<String, Session>> sessionList
-          = ListSessionsRequest.execute(LobbyFactory.hashCode.get());
-      LobbyFactory.hashCode.set(sessionList.getKey());
-      LobbyFactory.sessions.set(sessionList.getValue());
-      if (LobbyFactory.sessions.get() == null) {
-        LobbyFactory.hashCode.set("");
-        LobbyFactory.sessions.set(new HashMap<>());
-      }
-    }, () -> {
-      Platform.runLater(LobbyHelpers::updateSessionList);
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchSessionsService.get().restart();
-      }
-    }, () -> {
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchSessionsService.get().restart();
-      }
-    });
-    fetchService.start();
-    LobbyFactory.fetchSessionsService.set(fetchService);
+    if (LobbyFactory.fetchSessionsService.get() == null) {
+      BackgroundService fetchService = new BackgroundService(() -> {
+        Pair<String, Map<String, Session>> sessionList
+            = ListSessionsRequest.execute(LobbyFactory.hashCode.get());
+        LobbyFactory.hashCode.set(sessionList.getKey());
+        LobbyFactory.sessions.set(sessionList.getValue());
+        if (LobbyFactory.sessions.get() == null) {
+          LobbyFactory.hashCode.set("");
+          LobbyFactory.sessions.set(new HashMap<>());
+        }
+      }, () -> {
+        Platform.runLater(LobbyHelpers::updateSessionList);
+        if (LobbyFactory.shouldFetch.get()) {
+          LobbyFactory.fetchSessionsService.get().restart();
+        }
+      }, () -> {
+        if (LobbyFactory.shouldFetch.get()) {
+          LobbyFactory.fetchSessionsService.get().restart();
+        }
+      });
+      fetchService.start();
+      LobbyFactory.fetchSessionsService.set(fetchService);
+    } else {
+      LobbyFactory.fetchSessionsService.get().restart();
+    }
   }
 
   static Entity sessionList(SpawnData data, boolean isActive) {

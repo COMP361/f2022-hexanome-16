@@ -1,13 +1,12 @@
 package com.hexanome16.client.utils;
 
-import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 /**
  * This class allows to run a task in a separate background thread using JavaFX's mechanism.
  */
-public class BackgroundService extends ScheduledService<Void> {
+public class BackgroundService extends Service<Void> {
   private final Runnable toRun;
   private final Runnable onSuccess;
   private final Runnable onFailure;
@@ -27,7 +26,6 @@ public class BackgroundService extends ScheduledService<Void> {
     this.onSuccess = onSuccess;
     this.onFailure = onFailure;
     this.onInterrupted = onInterrupted;
-    this.setRestartOnFailure(false);
   }
 
   /**
@@ -39,25 +37,6 @@ public class BackgroundService extends ScheduledService<Void> {
    */
   public BackgroundService(Runnable toRun, Runnable onSuccess, Runnable onFailure) {
     this(toRun, onSuccess, onFailure, () -> {});
-  }
-
-  /**
-   * Alternative constructor.
-   *
-   * @param toRun the function (Runnable) to be executed in the background
-   * @param onSuccess the function (Runnable) to be executed when the execution is successful
-   */
-  public BackgroundService(Runnable toRun, Runnable onSuccess) {
-    this(toRun, onSuccess, () -> {});
-  }
-
-  /**
-   * Alternative constructor.
-   *
-   * @param toRun the function (Runnable) to be executed in the background
-   */
-  public BackgroundService(Runnable toRun) {
-    this(toRun, () -> {}, () -> {});
   }
 
   @Override
@@ -80,8 +59,8 @@ public class BackgroundService extends ScheduledService<Void> {
       }
     });
     task.setOnCancelled(event -> {
-      onInterrupted.run();
       task.cancel(true);
+      onInterrupted.run();
     });
     return task;
   }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.dto.SessionJson;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -149,7 +151,15 @@ public class Game {
     this.onBoardDecks = saveGame.getOnBoardDecks().entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, e -> new Deck<>(e.getValue())));
     Map<Level, ServerLevelCard[]> remainingCards = saveGame.getRemainingDecks();
-    remainingCards.putAll(saveGame.getOnBoardDecks());
+    Map<Level, ServerLevelCard[]> playerCards = Arrays.stream(saveGame.getPlayers())
+        .flatMap(serverPlayer -> serverPlayer.getInventory().getOwnedCards().stream())
+        .collect(Collectors.groupingBy(ServerLevelCard::getLevel)).entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey,
+            e -> e.getValue().toArray(new ServerLevelCard[0])));
+    remainingCards.forEach((level, cards) -> {
+      remainingCards.put(level, Stream.of(cards, playerCards.get(level))
+          .filter(Objects::nonNull).flatMap(Arrays::stream).toArray(ServerLevelCard[]::new));
+    });
     this.hashToCardMap = remainingCards.values().stream().flatMap(Arrays::stream)
         .collect(Collectors.toMap(card -> {
           try {
