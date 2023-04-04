@@ -108,5 +108,104 @@
       "RUBY": 0,
       "DIAMOND": 4
     }
+  },
+  {
+    "id": 10,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 0,
+      "RUBY": 4,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 11,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 3,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 12,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
+  },
+  {
+    "id": 13,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 4,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 14,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 3
+    }
+  },
+  {
+    "id": 15,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 3,
+      "SAPPHIRE": 3,
+      "EMERALD": 0,
+      "RUBY": 3,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 16,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 0,
+      "EMERALD": 0,
+      "RUBY": 4,
+      "DIAMOND": 4
+    }
+  },
+  {
+    "id": 17,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 4,
+      "SAPPHIRE": 0,
+      "EMERALD": 4,
+      "RUBY": 0,
+      "DIAMOND": 0
+    }
+  },
+  {
+    "id": 18,
+    "prestigePoint": 3,
+    "price": {
+      "ONYX": 0,
+      "SAPPHIRE": 4,
+      "EMERALD": 0,
+      "RUBY": 0,
+      "DIAMOND": 4
+    }
   }
 ]
