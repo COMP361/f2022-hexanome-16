@@ -13,51 +13,51 @@ import javafx.scene.shape.Rectangle;
 /**
  * Abstract class representing the basics of Noble choice.
  */
-public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
+public abstract class VisitableChoiceAbstract extends ChoicePromptAbstract {
   /**
    * The Nobles selection box.
    */
-  protected ArrayList<Node> noblesSelectionBox = new ArrayList<>();
+  protected ArrayList<Node> visitableSelectionBox = new ArrayList<>();
   /**
    * The Nobles to select.
    */
-  protected ArrayList<Texture> noblesToSelect = new ArrayList<>();
+  protected ArrayList<Texture> visitableToSelect = new ArrayList<>();
   /**
    * The Chosen noble index.
    */
-  protected int chosenNobleIndex;
+  protected int chosenVisitableIndex;
   /**
    * The Noble width.
    */
-  protected double nobleWidth;
+  protected double visitableWidth;
   /**
    * The Noble spacing.
    */
-  protected double nobleSpacing;
+  protected double visitableSpacing;
 
   @Override
   protected void promptOpens() {
-    noblesToSelect = getChoiceNobles();
+    visitableToSelect = getChoiceVisitables();
   }
 
 
   @Override
   protected void handlePromptForceQuit() {
-    noblesSelectionBox = new ArrayList<>();
-    noblesToSelect = new ArrayList<>();
-    chosenNobleIndex = -1;
+    visitableSelectionBox = new ArrayList<>();
+    visitableToSelect = new ArrayList<>();
+    chosenVisitableIndex = -1;
   }
 
 
   @Override
   protected void addToLayout(HBox choicesLayout) {
-    nobleWidth = getWidth() / (noblesToSelect.size() * 4);
-    nobleSpacing = ((6 * getWidth() / 10.)
-        - (nobleWidth * noblesToSelect.size()))
-        / (noblesToSelect.size() + 1);
-    choicesLayout.setSpacing(nobleSpacing);
+    visitableWidth = getWidth() / (visitableToSelect.size() * 4);
+    visitableSpacing = ((6 * getWidth() / 10.)
+        - (visitableWidth * visitableToSelect.size()))
+        / (visitableToSelect.size() + 1);
+    choicesLayout.setSpacing(visitableSpacing);
     // add choices to the layout
-    for (Texture t : noblesToSelect) {
+    for (Texture t : visitableToSelect) {
       Node nobleNodesList = makeNoble(t);
       choicesLayout.getChildren().add(nobleNodesList);
     }
@@ -65,13 +65,14 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
 
   private Node makeNoble(Texture texture) {
     // fix texture size
-    texture.setFitWidth(nobleWidth);
-    texture.setFitHeight(nobleWidth);
+    texture.setFitWidth(visitableWidth);
+    texture.setFitHeight(visitableWidth);
 
     // create selection rectangle and add it to array
-    Rectangle selectionRectangle = new Rectangle(nobleWidth * 1.1, nobleWidth * 1.1, Color.WHITE);
+    Rectangle selectionRectangle =
+        new Rectangle(visitableWidth * 1.1, visitableWidth * 1.1, Color.WHITE);
     selectionRectangle.setOpacity(0.5);
-    noblesSelectionBox.add(selectionRectangle);
+    visitableSelectionBox.add(selectionRectangle);
 
     // set up layout of noble and add behaviour
     StackPane myNoble = new StackPane();
@@ -80,11 +81,11 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
         e -> ((Rectangle) e).getOpacity() != 1, selectionRectangle);
 
     myNoble.setOnMouseClicked(e -> {
-      for (Node n : noblesSelectionBox) {
+      for (Node n : visitableSelectionBox) {
         n.setOpacity(0.5);
       }
       selectionRectangle.setOpacity(1);
-      chosenNobleIndex = noblesSelectionBox.indexOf(selectionRectangle);
+      chosenVisitableIndex = visitableSelectionBox.indexOf(selectionRectangle);
       atConfirmCircle.setOpacity(1);
     });
     return myNoble;
@@ -96,6 +97,6 @@ public abstract class NobleChoiceAbstract extends ChoicePromptAbstract {
    *
    * @return a List of all textures.
    */
-  protected abstract ArrayList<Texture> getChoiceNobles();
+  protected abstract ArrayList<Texture> getChoiceVisitables();
 
 }

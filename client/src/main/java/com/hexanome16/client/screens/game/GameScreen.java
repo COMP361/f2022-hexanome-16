@@ -11,6 +11,7 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.requests.lobbyservice.savegames.CreateSavegameRequest;
 import com.hexanome16.client.requests.lobbyservice.sessions.SessionDetailsRequest;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.components.CityComponent;
 import com.hexanome16.client.screens.game.components.NobleComponent;
 import com.hexanome16.client.screens.game.players.PlayerDecks;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
@@ -362,14 +363,12 @@ public class GameScreen {
     Map<String, Noble> nobleMap = nobleJson.getValue().getNobles();
     NobleComponent[] grid = NobleComponent.getGrid();
     //remove nobles
-    String hashToRemove = "";
     for (NobleComponent noble : grid) {
-      if (noble != null && nobleMap.containsKey(noble.getNobleHash())) {
-        hashToRemove = noble.getNobleHash();
+      if (noble != null && !nobleMap.containsKey(noble.getNobleHash())) {
         noble.removeFromMat();
       }
     }
-    nobleMap.remove(hashToRemove);
+
     //add nobles
     for (Map.Entry<String, Noble> entry : nobleMap.entrySet()) {
       if (!nobles.containsKey(entry.getKey())) {
@@ -391,6 +390,15 @@ public class GameScreen {
     if (citiesJson == null || citiesJson.getValue() == null) {
       return;
     }
+    Map<String, City> cityMap = citiesJson.getValue().getCities();
+    CityComponent[] grid = CityComponent.getGrid();
+    //remove cities
+    for (CityComponent city : grid) {
+      if (city != null && !cityMap.containsKey(city.getCityHash())) {
+        city.removeFromMat();
+      }
+    }
+
     Map<String, City> citiesMap = citiesJson.getValue().getCities();
     for (Map.Entry<String, City> entry : citiesMap.entrySet()) {
       if (!cities.containsKey(entry.getKey())) {
@@ -507,6 +515,7 @@ public class GameScreen {
     updateWinners = null;
     CardComponent.reset();
     NobleComponent.reset();
+    CityComponent.reset();
     FXGL.getGameWorld()
         .removeEntities(FXGL.getGameWorld().getEntitiesByComponent(CardComponent.class));
     FXGL.getGameWorld()
@@ -558,6 +567,23 @@ public class GameScreen {
         if (noble.getCardInfo().texturePath().equals(n.getCardInfo().texturePath())) {
           return entry.getKey();
         }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns Hash of a given City. (ON BOARD)
+   *
+   * @param cityToFind city whose hash we want.
+   * @return Hash of city, null of no such city.
+   */
+  public static String getCityHash(City cityToFind) {
+    City city;
+    for (Map.Entry<String, City> entry : cities.entrySet()) {
+      city = entry.getValue();
+      if (city.getCardInfo().texturePath().equals(cityToFind.getCardInfo().texturePath())) {
+        return entry.getKey();
       }
     }
     return null;

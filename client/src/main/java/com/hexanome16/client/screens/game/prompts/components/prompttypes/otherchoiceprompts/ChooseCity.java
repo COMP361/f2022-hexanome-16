@@ -1,6 +1,5 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
-
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
@@ -8,31 +7,21 @@ import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Noble;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import javafx.scene.layout.HBox;
 import javafx.util.Pair;
 import kong.unirest.core.Headers;
 
 /**
- * Class responsible for populating Noble Conflict prompt.
+ * Prompt for choose a city.
  */
-public class ChooseNoble extends VisitableChoiceAbstract {
+public class ChooseCity extends VisitableChoiceAbstract {
 
-  /**
-   * List of nobles to choose from.
-   */
-  protected static Noble[] nobleList;
-
-  /**
-   * Sets the list of nobles.
-   *
-   * @param nobleList list of nobles
-   */
-  public static void setNobleList(Noble[] nobleList) {
-    ChooseNoble.nobleList = nobleList;
-  }
+  private static City[] cityList;
 
   @Override
   public boolean isCancelable() {
@@ -46,7 +35,7 @@ public class ChooseNoble extends VisitableChoiceAbstract {
 
   @Override
   protected String promptText() {
-    return "Noble conflict";
+    return "Choose a City";
   }
 
   @Override
@@ -61,15 +50,13 @@ public class ChooseNoble extends VisitableChoiceAbstract {
 
   @Override
   protected void handleConfirmation() {
-    // to modify, use chosenNobleIndex to get index of the choice
-
-    int nobleIndex = chosenVisitableIndex;
+    int cityIndex = chosenVisitableIndex;
     long sessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
-    Noble nobleOfInterest = nobleList[nobleIndex];
-    String nobleHash = GameScreen.getNobleHash(nobleOfInterest);
-    Pair<Headers, String> serverResponse = PromptsRequests.claimNoble(sessionId,
-        authToken, nobleHash);
+    City cityOfInterest = cityList[cityIndex];
+    String cityHash = GameScreen.getCityHash(cityOfInterest);
+    Pair<Headers, String> serverResponse = PromptsRequests.claimCity(sessionId,
+        authToken, cityHash);
 
     PromptComponent.closePrompts();
     PromptUtils.actionResponseSpawner(serverResponse);
@@ -77,10 +64,18 @@ public class ChooseNoble extends VisitableChoiceAbstract {
 
   @Override
   protected ArrayList<Texture> getChoiceVisitables() {
-    // Hard Coded for now
-    ArrayList<Texture> myList = Arrays.stream(nobleList).map(noble ->
-        FXGL.texture(noble.getCardInfo().texturePath() + ".png"))
+    ArrayList<Texture> myList = Arrays.stream(cityList).map(city ->
+            FXGL.texture(city.getCardInfo().texturePath() + ".png"))
         .collect(Collectors.toCollection(ArrayList::new));
     return myList;
+  }
+
+  /**
+   * Set the static city list.
+   *
+   * @param cityList list of cities to show.
+   */
+  public static void setCityList(City[] cityList) {
+    ChooseCity.cityList = cityList;
   }
 }

@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.common.models.Level;
@@ -33,9 +34,14 @@ public class PromptFactory implements EntityFactory {
 
     // to be reworked.
     if (data.getData().containsKey("entity")) {
-      PromptTypeInterface.PromptType promptType = PromptTypeInterface.PromptType.BUY_CARD;
-      PromptTypeInterface myPromptType = promptType.getAssociatedClass();
       Entity entity = data.get("entity");
+      PromptTypeInterface.PromptType promptType;
+      if (entity.getComponent(CardComponent.class).getIsSacrifice()) {
+        promptType = PromptTypeInterface.PromptType.BUY_CARD_WITH_CARDS;
+      } else {
+        promptType = PromptTypeInterface.PromptType.BUY_CARD;
+      }
+      PromptTypeInterface myPromptType = promptType.getAssociatedClass();
 
       return entityBuilder(data)
           .with(new PromptComponent(myPromptType, entity))

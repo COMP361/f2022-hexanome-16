@@ -254,6 +254,7 @@ public class RequestClient {
           });
       return res.get();
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      e.printStackTrace();
       return null;
     }
   }

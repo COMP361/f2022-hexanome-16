@@ -1,292 +1,263 @@
 package com.hexanome16.server.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
-import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.InventoryService;
-import com.hexanome16.server.services.InventoryServiceInterface;
-import com.hexanome16.server.services.game.GameManagerService;
-import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.util.ServiceUtils;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Unit tests for {@link InventoryController}.
  */
 class InventoryControllerTests {
-  // field we are testing
-  InventoryController inventoryController;
+  private InventoryController underTest;
+  @Mock
+  private InventoryService inventoryService;
+  private AutoCloseable autoCloseable;
 
-  // fields we are using
-  InventoryServiceInterface inventoryServiceMock;
-  GameManagerServiceInterface gameManagerServiceMock;
-  ServiceUtils serviceUtils;
-
-  /**
-   * Create inventory service mock with Mockito.
-   *
-   * @return the game service mock
-   */
-  InventoryServiceInterface createInventoryServiceMock() {
-    return Mockito.mock(InventoryService.class);
-  }
-
-  /**
-   * Create game manager service mock with Mockito.
-   *
-   * @return the game manager service mock
-   */
-  GameManagerServiceInterface createGameManagerServiceMock() {
-    return Mockito.mock(GameManagerService.class);
-  }
-
-  /**
-   * Create service utils mock with Mockito.
-   *
-   * @return the game manager service mock
-   */
-  ServiceUtils createServiceUtilsMock() {
-    return Mockito.mock(ServiceUtils.class);
-  }
-
-  /**
-   * Setting up before each test is done.
-   */
   @BeforeEach
   void setUp() {
-    this.inventoryServiceMock = createInventoryServiceMock();
-    this.gameManagerServiceMock = createGameManagerServiceMock();
-    this.serviceUtils = createServiceUtilsMock();
-    inventoryController =
-        new InventoryController(inventoryServiceMock, gameManagerServiceMock, serviceUtils);
+    autoCloseable = MockitoAnnotations.openMocks(this);
+    underTest = new InventoryController(inventoryService);
   }
 
-  /**
-   * Test get player bank info.
-   */
+  @AfterEach
+  void tearDown() throws Exception {
+    autoCloseable.close();
+  }
+
+  @SneakyThrows
   @Test
-  @DisplayName("Get Player Bank info")
+  void testGetCards() {
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
+
+    // Act
+    underTest.getCards(sessionId, username);
+
+    // Assert
+    verify(inventoryService).getCards(sessionId, username);
+  }
+
+  @Test
+  void testGetOwnedBonuses() {
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
+
+    // Act
+    underTest.getOwnedBonuses(sessionId, username);
+
+    // Assert
+    verify(inventoryService).getOwnedBonuses(sessionId, username);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetNobles() {
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
+
+    // Act
+    underTest.getNobles(sessionId, username);
+
+    // Assert
+    verify(inventoryService).getNobles(sessionId, username);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetReservedCards() {
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
+    String accessToken = "access";
+
+    // Act
+    underTest.getReservedCards(sessionId, username, accessToken);
+
+    // Assert
+    verify(inventoryService).getReservedCards(sessionId, username, accessToken);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetReservedNobles() {
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
+
+    // Act
+    underTest.getReservedNobles(sessionId, username);
+
+    // Assert
+    verify(inventoryService).getReservedNobles(sessionId, username);
+  }
+
+  @SneakyThrows
+  @Test
   void testGetPlayerBankInfo() {
-    final ResponseEntity<String> playerBankInfoStub = new ResponseEntity<>(HttpStatus.OK);
+    // Arrange
+    long sessionId = 1L;
+    String username = "username";
 
-    try {
-      when(this.inventoryServiceMock.getPlayerBankInfo(123L, "tristan")).thenReturn(
-          playerBankInfoStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Act
+    underTest.getPlayerBankInfo(sessionId, username);
 
-    this.inventoryController =
-        new InventoryController(this.inventoryServiceMock, this.gameManagerServiceMock,
-            this.serviceUtils);
-
-    try {
-      assertEquals(playerBankInfoStub, this.inventoryController.getPlayerBankInfo(123L, "tristan"));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Assert
+    verify(inventoryService).getPlayerBankInfo(sessionId, username);
   }
 
-  /**
-   * Test buy card.
-   */
+  @SneakyThrows
   @Test
-  @DisplayName("Buy a card")
   void testBuyCard() {
-    final ResponseEntity<String> buyCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+    // Arrange
+    long sessionId = 1L;
+    String cardMd5 = "cardMd5";
+    String access = "access";
+    OrientPurchaseMap map = new OrientPurchaseMap(0, 0, 0, 0, 0, 0, 0);
 
-    try {
-      when(this.inventoryServiceMock.buyCard(123L, "md5", "abc",
-          new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1))).thenReturn(
-          buyCardResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Act
+    underTest.buyCard(sessionId, cardMd5, access, map);
 
-    this.inventoryController =
-        new InventoryController(this.inventoryServiceMock, this.gameManagerServiceMock,
-            this.serviceUtils);
-
-    try {
-      assertEquals(buyCardResponseStub,
-          this.inventoryController.buyCard(123L, "md5", "abc",
-              new OrientPurchaseMap(1, 1, 1, 1, 1, 1, 1)));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Assert
+    verify(inventoryService).buyCard(sessionId, cardMd5, access, map);
   }
 
-  /**
-   * Test reserve card.
-   */
+  @SneakyThrows
   @Test
-  @DisplayName("Reserve a face up Level Card successfully")
+  void testGetDiscountedPrice() {
+    // Arrange
+    long sessionId = 1L;
+    String cardMd5 = "cardMd5";
+    String access = "access";
+
+    // Act
+    underTest.getDiscountedPrice(sessionId, cardMd5, access);
+
+    // Assert
+    verify(inventoryService).getDiscountedPrice(sessionId, cardMd5, access);
+  }
+
+  @SneakyThrows
+  @Test
   void testReserveCard() {
-    final ResponseEntity<String> reserveCardResponseStub = new ResponseEntity<>(HttpStatus.OK);
+    // Arrange
+    long sessionId = 1L;
+    String cardMd5 = "cardMd5";
+    String access = "access";
 
-    try {
-      when(this.inventoryServiceMock.reserveCard(123L, "md5", "abc")).thenReturn(
-          reserveCardResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Act
+    underTest.reserveCard(sessionId, cardMd5, access);
 
-    this.inventoryController =
-        new InventoryController(this.inventoryServiceMock, this.gameManagerServiceMock,
-            this.serviceUtils);
-
-    try {
-      assertEquals(reserveCardResponseStub,
-          this.inventoryController.reserveCard(123L, "md5", "abc"));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Assert
+    verify(inventoryService).reserveCard(sessionId, cardMd5, access);
   }
 
-  /**
-   * Test reserve face down card.
-   */
+  @SneakyThrows
   @Test
-  @DisplayName("Reserve a face down Level Card successfully")
   void testReserveFaceDownCard() {
-    final ResponseEntity<String> reserveCardFaceDownResponseStub =
-        new ResponseEntity<>(HttpStatus.OK);
+    // Arrange
+    long sessionId = 1L;
+    String level = "level";
+    String access = "access";
 
-    try {
-      when(this.inventoryServiceMock.reserveFaceDownCard(123L, "md5", "abc")).thenReturn(
-          reserveCardFaceDownResponseStub);
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
+    // Act
+    underTest.reserveFaceDownCard(sessionId, level, access);
 
-    this.inventoryController =
-        new InventoryController(this.inventoryServiceMock, this.gameManagerServiceMock,
-            this.serviceUtils);
-
-    try {
-      assertEquals(reserveCardFaceDownResponseStub,
-          this.inventoryController.reserveFaceDownCard(123L, "md5", "abc"));
-    } catch (JsonProcessingException e) {
-      fail("Mock threw a JsonProcessingException");
-    }
-  }
-
-  /**
-   * testing take two card.
-   */
-  @Test
-  @DisplayName("testing take two Card.")
-  void testTakeLevelTwo() {
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    inventoryController = new InventoryController(inventoryServiceMock,
-        gameManagerServiceMock, serviceUtils);
-    try {
-      when(inventoryServiceMock.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"))
-          .thenReturn(res);
-      assertEquals(res,
-          inventoryController.takeLevelTwoCard(DummyAuths.validSessionIds.get(0),
-              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
-    } catch (Exception e) {
-      fail("Mock threw an exception");
-    }
+    // Assert
+    verify(inventoryService).reserveFaceDownCard(sessionId, level, access);
   }
 
   @SneakyThrows
   @Test
   void testClaimNoble() {
     // Arrange
+    long sessionId = 1L;
+    String nobleMd5 = "nobleMd5";
+    String access = "access";
 
     // Act
-    inventoryController.claimNoble(1L, "noble", "token");
+    underTest.claimNoble(sessionId, nobleMd5, access);
 
     // Assert
-    verify(inventoryServiceMock).acquireNoble(1L, "noble", "token");
+    verify(inventoryService).acquireNoble(sessionId, nobleMd5, access);
   }
 
-  /**
-   * testing take one card.
-   */
+  @SneakyThrows
   @Test
-  @DisplayName("testing take one Card.")
-  void testTakeLevelOne() {
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    inventoryController = new InventoryController(inventoryServiceMock,
-        gameManagerServiceMock, serviceUtils);
-    try {
-      when(inventoryServiceMock.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"))
-          .thenReturn(res);
-      assertEquals(res,
-          inventoryController.takeLevelOneCard(DummyAuths.validSessionIds.get(0),
-              DummyAuths.validTokensInfos.get(0).getAccessToken(), "Goofy card string"));
-    } catch (Exception e) {
-      fail("Mock threw an exception");
-    }
+  void testClaimCity() {
+    // Arrange
+    long sessionId = 1L;
+    String cityMd5 = "cityMd5";
+    String access = "access";
+
+    // Act
+    underTest.claimCity(sessionId, cityMd5, access);
+
+    // Assert
+    verify(inventoryService).acquireCity(sessionId, cityMd5, access);
   }
 
-  /**
-   * testing GET owned bonuses.
-   */
+  @SneakyThrows
   @Test
-  void testOwnedBonuses() {
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    inventoryController = new InventoryController(inventoryServiceMock,
-        gameManagerServiceMock, serviceUtils);
-    try {
-      when(inventoryServiceMock.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken()))
-          .thenReturn(res);
-      assertEquals(res,
-          inventoryController.getOwnedBonuses(DummyAuths.validSessionIds.get(0),
-              DummyAuths.validTokensInfos.get(0).getAccessToken()));
-    } catch (Exception e) {
-      fail("Mock threw an exception");
-    }
+  void testTakeLevelTwoCard() {
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String chosenCard = "chosenCard";
+
+    // Act
+    underTest.takeLevelTwoCard(sessionId, access, chosenCard);
+
+    // Assert
+    verify(inventoryService).takeLevelTwoCard(sessionId, access, chosenCard);
   }
 
-  /**
-   * testing put bag cards. (for associating bag to gem bonus.)
-   */
+  @SneakyThrows
   @Test
-  void testBagCard() {
-    ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
-    inventoryController = new InventoryController(inventoryServiceMock,
-        gameManagerServiceMock, serviceUtils);
-    try {
-      when(inventoryServiceMock.associateBagCard(DummyAuths.validSessionIds.get(0),
-          DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"))
-          .thenReturn(res);
-      assertEquals(res,
-          inventoryController.associateBagCard(DummyAuths.validSessionIds.get(0),
-              DummyAuths.validTokensInfos.get(0).getAccessToken(), "RED"));
-    } catch (Exception e) {
-      fail("Mock threw an exception");
-    }
+  void testTakeLevelOneCard() {
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String chosenCard = "chosenCard";
+
+    // Act
+    underTest.takeLevelOneCard(sessionId, access, chosenCard);
+
+    // Assert
+    verify(inventoryService).takeLevelOneCard(sessionId, access, chosenCard);
   }
 
-
+  @SneakyThrows
   @Test
-  public void testDiscountedPrice() throws JsonProcessingException {
-    when(inventoryServiceMock.getDiscountedPrice(anyLong(), anyString(), anyString())).thenReturn(
-        new ResponseEntity<>(HttpStatus.OK));
-    ResponseEntity<String> response = inventoryController.getDiscountedPrice(123, "123", "123");
-    assertTrue(response.getStatusCode().is2xxSuccessful());
+  void testAssociateBagCard() {
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String tokenType = "tokenType";
+
+    // Act
+    underTest.associateBagCard(sessionId, access, tokenType);
+
+    // Assert
+    verify(inventoryService).associateBagCard(sessionId, access, tokenType);
+  }
+
+  @SneakyThrows
+  @Test
+  void testReserveNoble() {
+    long sessionId = 1;
+    String cardMd5 = "card";
+    String accessToken = "token";
+    underTest.reserveNoble(sessionId, cardMd5, accessToken);
+    verify(inventoryService).reserveNoble(sessionId, cardMd5, accessToken);
   }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -18,6 +19,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @JsonDeserialize(using = OrientPurchaseMapDeserializer.class)
+@NoArgsConstructor
 public class OrientPurchaseMap extends PurchaseMap {
 
   @Getter
