@@ -1,6 +1,7 @@
 package com.hexanome16.server.models.bank;
 
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -18,6 +19,15 @@ public class GameBank extends Bank {
   }
 
   /**
+   * The game starts with the given amount of tokens (used by savegame).
+   *
+   * @param initMap the amount of tokens to start with
+   */
+  public GameBank(PurchaseMap initMap) {
+    super(initMap);
+  }
+
+  /**
    * Gets all the token types one can take 2 of.
    *
    * @return a list of all the token types you can take 2 of.
@@ -30,9 +40,9 @@ public class GameBank extends Bank {
   }
 
   /**
-   * Gets all the token types one can take 3 of.
+   * Gets all the token types one can take 1 of.
    *
-   * @return a list of all the token types you can take 3 of.
+   * @return a list of all the token types you can take 1 of.
    */
   public ArrayList<Gem> availableThreeTokensType() {
     ArrayList<Gem> myList = new ArrayList<>(List.of(Gem.values()));

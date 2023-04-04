@@ -56,6 +56,8 @@ services:
       - WAIT_HOST_CONNECT_TIMEOUT=5
     networks:
       - splendor
+    volumes:
+      - ./server/data:/data
 networks:
   splendor:
     driver: bridge

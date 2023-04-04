@@ -22,7 +22,7 @@
         <maven.shade.version>3.0.0</maven.shade.version>
         <jfx.maven.version>0.0.5</jfx.maven.version>
 
-        <javafx.version>17.0.2</javafx.version>
+        <javafx.version>19.0.2.1</javafx.version>
         <fxgl.version>17.2</fxgl.version>
         <kotlin.version>1.6.0</kotlin.version>
     </properties>
@@ -221,6 +221,31 @@
                     <mainClass>com.hexanome16.client.MainApp</mainClass>
                 </configuration>
             </plugin>
+
+            <!-- So we can run the JAR -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.hexanome16.client.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -11,6 +11,7 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.Noble;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.ScrollPane;
@@ -53,7 +54,6 @@ public class SeeCards implements PromptTypeInterface {
    * The top left y.
    */
   private final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
-  //List<String> cards = List.of("card1.png", "card2.png");
 
 
   /**
@@ -72,6 +72,45 @@ public class SeeCards implements PromptTypeInterface {
     }
   }
 
+  /**
+   * Fetches nobles in the provided player's inventory.
+   *
+   * @param player player
+   */
+  public static void fetchNobles(String player) {
+    // make a call to the server
+    long sessionId = GameScreen.getSessionId();
+    Noble[] response = PromptsRequests.getNobles(sessionId, player);
+    if (response == null) {
+      return;
+    }
+    // add the paths to our list
+    cardTexturePaths = new ArrayList<>();
+    for (Noble card : response) {
+      cardTexturePaths.add(card.getCardInfo().texturePath() + ".png");
+    }
+  }
+
+  /**
+   * Fetches the reserved nobles.
+   *
+   * @param player player.
+   */
+  public static void fetchReservedNobles(String player) {
+    // make a call to the server
+    long sessionId = GameScreen.getSessionId();
+    Noble[] response = PromptsRequests.getReservedNobles(sessionId, player);
+
+    if (response == null) {
+      return;
+    }
+    // add the paths to our list
+    cardTexturePaths = new ArrayList<>();
+    for (Noble card : response) {
+      cardTexturePaths.add(card.getCardInfo().texturePath() + ".png");
+    }
+  }
+
   @Override
   public double getWidth() {
     return atWidth;
@@ -84,6 +123,11 @@ public class SeeCards implements PromptTypeInterface {
 
   @Override
   public boolean isCancelable() {
+    return true;
+  }
+
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
     return true;
   }
 

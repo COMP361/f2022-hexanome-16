@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class NobleDeckJson implements BroadcastContent {
    * @throws com.fasterxml.jackson.core.JsonProcessingException exception
    */
   public NobleDeckJson(List<? extends Noble> nobleList) throws JsonProcessingException {
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
     for (Noble noble : nobleList) {
       nobles.put(DigestUtils.md5Hex(objectMapper.writeValueAsString(noble)), noble);
     }

@@ -13,7 +13,10 @@ import com.hexanome16.common.models.price.PurchaseMap;
 import com.hexanome16.server.ReflectionUtils;
 import com.hexanome16.server.models.bank.GameBank;
 import com.hexanome16.server.models.bank.PlayerBank;
-import com.hexanome16.server.models.winconditions.WinCondition;
+import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.io.IOException;
@@ -30,8 +33,8 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  ServerPlayer imad = new ServerPlayer("imad", "white");
-  ServerPlayer tristan = new ServerPlayer("tristan", "blue");
+  ServerPlayer imad = new ServerPlayer("imad", "white", 0);
+  ServerPlayer tristan = new ServerPlayer("tristan", "blue", 1);
   private Game game;
 
   /**
@@ -42,8 +45,7 @@ public class GameTest {
   @BeforeEach
   public void init() throws IOException {
     game = Game.create(12345,
-        new ServerPlayer[] {imad, tristan}, "imad", "", new WinCondition[] {WinCondition.BASE},
-        false, false);
+        new ServerPlayer[] {imad, tristan}, "imad", "", WinCondition.BASE);
   }
 
   /**
@@ -128,8 +130,7 @@ public class GameTest {
   @Test
   public void testPlayerArrayGetsCloned() throws IOException {
     ServerPlayer[] players = new ServerPlayer[] {imad, tristan};
-    game = Game.create(12345,
-        players, "imad", "", new WinCondition[] {WinCondition.BASE}, false, false);
+    game = Game.create(12345, players, "imad", "", WinCondition.BASE);
     var gamePlayers = game.getPlayers();
     assertNotEquals(players, gamePlayers);
     players[0] = null;
@@ -159,7 +160,7 @@ public class GameTest {
    */
   @Test
   public void testAddOnBoardCard() {
-    List<ServerNoble> cardList = game.getNobleDeck().getCardList();
+    List<ServerNoble> cardList = game.getOnBoardNobles().getCardList();
     game.addOnBoardCard(Level.ONE);
     assertNotEquals(cardList.size() + 1, game.getOnBoardDeck(Level.ONE).getCardList().size());
   }
@@ -169,7 +170,7 @@ public class GameTest {
    */
   @Test
   public void testRemoveOnBoardCard() {
-    List<ServerLevelCard> cardList = game.getLevelDeck(Level.ONE).getCardList();
+    List<ServerLevelCard> cardList = game.getOnBoardDeck(Level.ONE).getCardList();
     ServerLevelCard card = cardList.get(0);
     game.removeOnBoardCard(card);
     assertFalse(game.getOnBoardDeck(Level.ONE).getCardList().contains(card));
@@ -266,6 +267,23 @@ public class GameTest {
     game.giveThreeOf(Gem.RUBY, Gem.DIAMOND, Gem.EMERALD, imad);
     GameBank gameBank = new GameBank();
     gameBank.removeGemsFromBank(new PurchaseMap(1, 1, 0, 1, 0, 0));
+    assertEquals(imad.getBank(), myBank);
+    assertEquals(game.getGameBank(), gameBank);
+  }
+
+  /**
+   * Testing take Back Token.
+   */
+  @Test
+  public void testTakeBackToken() {
+    PlayerBank myBank = new PlayerBank();
+    assertEquals(imad.getBank(), myBank);
+    myBank.addGemsToBank(Gem.RUBY, 1);
+    imad.getBank().addGemsToBank(new PurchaseMap(1, 0, 0, 0, 0, 0));
+    myBank.removeGemsFromBank(Gem.RUBY, 1);
+    game.takeBackToken(Gem.RUBY, imad);
+    GameBank gameBank = new GameBank();
+    gameBank.addGemsToBank(Gem.RUBY, 1);
     assertEquals(imad.getBank(), myBank);
     assertEquals(game.getGameBank(), gameBank);
   }

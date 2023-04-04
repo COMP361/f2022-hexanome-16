@@ -2,8 +2,8 @@ package com.hexanome16.server.controllers.lobbyservice.gameservice;
 
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.server.models.sessions.ServerGameParams;
-import com.hexanome16.server.models.winconditions.WinCondition;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.UrlUtils;
 import java.net.URI;
 import java.util.Collections;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -55,16 +56,22 @@ public class GameServiceController {
    * This method creates the game services in Lobby Service when the application is ready.
    */
   @EventListener(ApplicationReadyEvent.class)
+  @Order(10000)
   public void createGameServices() {
     createGameService(new ServerGameParams(4, 2,
         WinCondition.BASE.getGameServiceJson().getName(),
         WinCondition.BASE.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.BASE.getGameServiceJson().getName());
     createGameService(new ServerGameParams(4, 2,
         WinCondition.TRADEROUTES.getGameServiceJson().getName(),
         WinCondition.TRADEROUTES.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.TRADEROUTES.getGameServiceJson()
+        .getName());
     createGameService(new ServerGameParams(4, 2,
         WinCondition.CITIES.getGameServiceJson().getName(),
         WinCondition.CITIES.getGameServiceJson().getDisplayName(), "true"));
+    System.out.println("Created game service: " + WinCondition.CITIES.getGameServiceJson()
+        .getName());
   }
 
   /**

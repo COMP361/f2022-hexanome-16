@@ -6,7 +6,11 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.TransformComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.viewprompts.SeeCards;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.Level;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import javafx.scene.input.MouseEvent;
 
@@ -63,7 +67,7 @@ public class CardComponent extends Component {
    * @param texture  card texture
    * @param priceMap the price of the card
    * @param cardHash MD5 hash of the card
-   * @param onBoard if the card is on board
+   * @param onBoard  if the card is on board
    */
   public CardComponent(long id, Level level, String texture, PriceMap priceMap, String cardHash,
                        boolean onBoard) {
@@ -115,7 +119,19 @@ public class CardComponent extends Component {
 
   @Override
   public void onAdded() {
-    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> PromptUtils.openPrompt(entity));
+    String player = AuthUtils.getPlayer().getName();
+    view.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      if (getIsSacrifice()) {
+        Gem gemPrice = Gem.RUBY;
+        for (Gem gem : Gem.values()) {
+          if (priceMap.getGemCost(gem) > 0) {
+            gemPrice = gem;
+          }
+        }
+        BuyCardWithCards.fetchCards(player, gemPrice);
+      }
+      PromptUtils.openPrompt(entity);
+    });
     view.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> pop());
     view.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, e -> restore());
     if (onBoard) {
@@ -214,4 +230,12 @@ public class CardComponent extends Component {
     return onBoard;
   }
 
+  /**
+   * If the card is sacrifice card.
+   *
+   * @return true if it is sacrifice card.
+   */
+  public boolean getIsSacrifice() {
+    return this.texture.contains("sacrifice");
+  }
 }

@@ -1,7 +1,7 @@
 package com.hexanome16.server.controllers;
 
 import com.hexanome16.common.models.auth.TokensInfo;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import java.util.List;
@@ -40,6 +40,11 @@ public class DummyAuthService implements AuthServiceInterface {
       case "elea" -> {
         if (Objects.equals(password, "1234")) {
           return new ResponseEntity<>(DummyAuths.validTokensInfos.get(1), HttpStatus.OK);
+        }
+      }
+      case "xox" -> {
+        if (Objects.equals(password, "laaPhie*aiN0")) {
+          return new ResponseEntity<>(DummyAuths.validTokensInfos.get(0), HttpStatus.OK);
         }
       }
       default -> {

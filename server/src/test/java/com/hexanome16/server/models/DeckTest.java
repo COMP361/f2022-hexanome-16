@@ -1,15 +1,22 @@
 package com.hexanome16.server.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
+import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.server.models.cards.Deck;
+import com.hexanome16.server.models.cards.ServerNoble;
+import com.hexanome16.server.models.inventory.InventoryAddable;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Tests for {@link Deck}.
@@ -129,5 +136,46 @@ public class DeckTest {
     deck.shuffle();
     List<InventoryAddable> shuffledList = deck.getCardList();
     assertTrue(shuffledList.contains(noble1) && shuffledList.contains(noble2));
+  }
+
+  @Test
+  public void testEqualsEmpty() {
+    Deck<ServerNoble> deck1 = new Deck<>();
+    Deck<ServerNoble> deck2 = new Deck<>();
+    assertEquals(deck1, deck2);
+  }
+
+  @Test
+  public void testEqualsNotEmpty() {
+    // Arrange
+    ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
+    when(mockNoble.getCardInfo()).thenReturn(new CardInfo(1, 2, "boo", null));
+    Deck<ServerNoble> deck1 = new Deck<>();
+    Deck<ServerNoble> deck2 = new Deck<>();
+    deck1.addCard(mockNoble);
+    deck2.addCard(mockNoble);
+
+    // Act
+
+    // Assert
+    assertEquals(deck1, deck2);
+  }
+
+  @Test
+  public void testNotEquals() {
+    // Arrange
+    ServerNoble mockNoble1 = Mockito.mock(ServerNoble.class);
+    when(mockNoble1.getCardInfo()).thenReturn(new CardInfo(1, 2, "boo", null));
+    ServerNoble mockNoble2 = Mockito.mock(ServerNoble.class);
+    when(mockNoble2.getCardInfo()).thenReturn(new CardInfo(2, 2, "boo", null));
+    Deck<ServerNoble> deck1 = new Deck<>();
+    Deck<ServerNoble> deck2 = new Deck<>();
+    deck1.addCard(mockNoble1);
+    deck2.addCard(mockNoble2);
+
+    // Act
+
+    // Assert
+    assertNotEquals(deck1, deck2);
   }
 }

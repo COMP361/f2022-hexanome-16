@@ -1,5 +1,7 @@
 package com.hexanome16.common.models.price;
 
+import java.util.Arrays;
+
 /**
  * All six splendor gems.
  */
@@ -27,7 +29,7 @@ public enum Gem {
   /**
    * Gold gem.
    */
-  GOLD("NULL");
+  GOLD("GOLD");
 
   private final String bonusTypeEquivalent;
 
@@ -53,14 +55,8 @@ public enum Gem {
    * @return The gem associated to the bonus type.
    */
   public static Gem getGem(String bonusTypeString) {
-    return switch (bonusTypeString) {
-      case "RED" -> Gem.RUBY;
-      case "GREEN" -> Gem.EMERALD;
-      case "BLUE" -> Gem.SAPPHIRE;
-      case "WHITE" -> Gem.DIAMOND;
-      case "BLACK" -> Gem.ONYX;
-      default -> null;
-    };
+    return Arrays.stream(Gem.values()).filter(gem -> gem.getBonusType().equals(bonusTypeString))
+        .findFirst().orElse(null);
   }
 
   /**

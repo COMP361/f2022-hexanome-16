@@ -3,10 +3,11 @@ package com.hexanome16.server.util.broadcastmap;
 import com.hexanome16.common.dto.PlayerJson;
 import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
-import com.hexanome16.server.models.Game;
+import com.hexanome16.server.models.game.Game;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.Arrays;
@@ -37,15 +38,18 @@ public class BroadcastMap {
       BroadcastContentManager<BroadcastContent> broadcastContentManagerPlayer =
           new BroadcastContentManager<>(new PlayerListJson(Arrays.stream(game.getPlayers()).map(
               player -> new PlayerJson(player.getName(), !game.isNotPlayersTurn(player),
-                  player.getInventory().getPrestigePoints())
+                  player.getInventory().getPrestigePoints(), player.getPlayerOrder())
           ).toArray(PlayerJson[]::new)));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerWinners =
           new BroadcastContentManager<>(new WinJson(new String[game.getPlayers().length]));
       BroadcastContentManager<BroadcastContent> broadcastContentManagerNoble =
-          new BroadcastContentManager<>(new NobleDeckJson(game.getNobleDeck().getCardList()));
+          new BroadcastContentManager<>(new NobleDeckJson(game.getOnBoardNobles().getCardList()));
+      BroadcastContentManager<BroadcastContent> broadcastContentManagerCities =
+          new BroadcastContentManager<>(new CitiesJson(game.getOnBoardCities().getCardList()));
       map.put(BroadcastMapKey.PLAYERS, broadcastContentManagerPlayer);
       map.put(BroadcastMapKey.WINNERS, broadcastContentManagerWinners);
       map.put(BroadcastMapKey.NOBLES, broadcastContentManagerNoble);
+      map.put(BroadcastMapKey.CITIES, broadcastContentManagerCities);
     } catch (Exception e) {
       e.printStackTrace();
     }

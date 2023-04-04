@@ -8,6 +8,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.price.Gem;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +22,8 @@ public class PlayerDecks {
   private static final double horizontal = 150; // horizontal distance between cards
   private static final double vertical = 180; // vertical distance between cards
   private static final List<String> cards =
-      List.of("red", "green", "blue", "white", "black", "gold");
+      Arrays.stream(Gem.values()).map(Gem::getBonusType)
+          .map(String::toLowerCase).toList();
   private static final String[] origColors = {"yellow", "black", "red", "blue"};
   private static String[] colors = origColors.clone();
 
@@ -85,7 +88,7 @@ public class PlayerDecks {
     int i = 0;
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
-        .put("name", name).put("color", colors[0]).put("prestigePoints", prestigePoints))
+            .put("name", name).put("color", colors[0]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.2 * scale);
     // spawn the playing cards deck
     while (i < 6) {
@@ -95,14 +98,18 @@ public class PlayerDecks {
           .setScaleUniform(0.25 * scale);
     }
     // spawn the nobles deck
-    FXGL.spawn("NobleCard", horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+    FXGL.spawn("NobleCard",
+            new SpawnData(horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+               .put("player", name))
         .setScaleUniform(0.2 * scale);
     // spawn the player's bank
     FXGL.spawn("PlayerTokens", new SpawnData(horizontal - (2 * PlayerDecks.horizontal + 20) * scale,
         vertical).put("player", name)).setScaleUniform(1.2 * scale);
     // spawn the reserved nobles and cards
-    FXGL.spawn("ReservedNobles", horizontal + (i * PlayerDecks.horizontal + 10) * scale,
+    FXGL.spawn("ReservedNobles",
+            new SpawnData(horizontal + (i * PlayerDecks.horizontal + 10) * scale,
             vertical + 95 * scale)
+            .put("player", name))
         .setScaleUniform(0.1 * scale);
     for (int j = 10; j <= 130; j += 60) {
       FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
@@ -117,7 +124,7 @@ public class PlayerDecks {
     int i = 0;
     // spawn the player icon
     FXGL.spawn("Player", new SpawnData(horizontal - PlayerDecks.horizontal * scale, vertical)
-        .put("name", name).put("color", colors[2]).put("prestigePoints", prestigePoints))
+            .put("name", name).put("color", colors[2]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.3 * scale);
     // spawn the playing cards deck
     while (i < 6) {
@@ -127,14 +134,17 @@ public class PlayerDecks {
           .setScaleUniform(0.25 * scale);
     }
     // spawn the nobles deck
-    FXGL.spawn("NobleCard", horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+    FXGL.spawn("NobleCard",
+            new SpawnData(horizontal + (i++ * PlayerDecks.horizontal) * scale, vertical + 15)
+                .put("player", name))
         .setScaleUniform(0.2 * scale);
     // spawn the player's bank
     FXGL.spawn("PlayerTokens", new SpawnData(horizontal - (2 * PlayerDecks.horizontal + 20) * scale,
         vertical).put("player", name)).setScaleUniform(1.2 * scale);
     // spawn the reserved nobles and cards
-    FXGL.spawn("ReservedNobles", horizontal + (i * PlayerDecks.horizontal + 10) * scale,
-            vertical + 95 * scale)
+    FXGL.spawn("ReservedNobles",
+            new SpawnData(horizontal + (i * PlayerDecks.horizontal + 10) * scale,
+            vertical + 95 * scale).put("player", name))
         .setScaleUniform(0.1 * scale);
     for (int j = 10; j <= 130; j += 60) {
       FXGL.spawn("ReservedCards", new SpawnData(horizontal + (i * PlayerDecks.horizontal + j)
@@ -148,11 +158,12 @@ public class PlayerDecks {
     int horizontal = 100;
     // spawn the player icon
     FXGL.spawn("Player",
-        new SpawnData(horizontal + 100, verticalShift + 110)
-            .put("name", name).put("color", colors[1]).put("prestigePoints", prestigePoints))
+            new SpawnData(horizontal + 100, verticalShift + 110)
+                .put("name", name).put("color", colors[1]).put("prestigePoints", prestigePoints))
         .setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
+
     FXGL.spawn("Card",
             new SpawnData(horizontal, verticalShift + 120 + vertical * scale)
                 .put("color", cards.get(i++)).put("player", name))
@@ -179,14 +190,23 @@ public class PlayerDecks {
                 verticalShift + 140 + 3 * vertical * scale)
                 .put("color", cards.get(i)).put("player", name))
         .setScaleUniform(0.25 * scale);
+
+
     // spawn the nobles, tokens, etc.
-    FXGL.spawn("NobleCard", horizontal + horizontal * scale / 2.0,
+    FXGL.spawn("NobleCard",
+        new SpawnData(horizontal + horizontal * scale / 2.0,
             verticalShift + 150 + 4 * vertical * scale)
+            .put("player", name))
         .setScaleUniform(0.2 * scale);
+
     FXGL.spawn("PlayerTokens", new SpawnData(horizontal, verticalShift + 100)
         .put("player", name)).setScaleUniform(1.2 * scale);
-    FXGL.spawn("ReservedNobles", horizontal - 60, verticalShift + 120 + vertical * scale)
+
+    FXGL.spawn("ReservedNobles",
+        new SpawnData(horizontal - 60, verticalShift + 120 + vertical * scale)
+            .put("player", name))
         .setScaleUniform(0.1 * scale);
+
     FXGL.spawn("ReservedCards",
         new SpawnData(horizontal - 50, verticalShift + 180 + vertical * scale)
             .put("player", name)).setScaleUniform(0.07 * scale);
@@ -202,9 +222,9 @@ public class PlayerDecks {
                                 double verticalShift, double scale) {
     // spawn the player icon
     FXGL.spawn("Player",
-            new SpawnData(horizontalShift + horizontal * scale,
-                verticalShift + 110).put("name", name).put("color", colors[3])
-                .put("prestigePoints", prestigePoints)).setScaleUniform(0.3 * scale);
+        new SpawnData(horizontalShift + horizontal * scale,
+            verticalShift + 110).put("name", name).put("color", colors[3])
+            .put("prestigePoints", prestigePoints)).setScaleUniform(0.3 * scale);
     // iterate through and spawn all the cards
     int i = 0;
     FXGL.spawn("Card",
@@ -235,13 +255,17 @@ public class PlayerDecks {
                 .put("color", cards.get(i)).put("player", name))
         .setScaleUniform(0.25 * scale);
     // spawn the nobles, tokens, etc.
-    FXGL.spawn("NobleCard", horizontalShift + horizontal * scale / 2.0,
+    FXGL.spawn("NobleCard",
+        new SpawnData(horizontalShift + horizontal * scale / 2.0,
             verticalShift + 150 + 4 * vertical * scale)
+            .put("player", name))
         .setScaleUniform(0.2 * scale);
     FXGL.spawn("PlayerTokens", new SpawnData(horizontalShift, verticalShift + 100
     ).put("player", name)).setScaleUniform(1.2 * scale);
-    FXGL.spawn("ReservedNobles", horizontalShift + horizontal * scale + 95,
+    FXGL.spawn("ReservedNobles",
+        new SpawnData(horizontalShift + horizontal * scale + 95,
             verticalShift + 120 + vertical * scale)
+            .put("player", name))
         .setScaleUniform(0.1 * scale);
     FXGL.spawn("ReservedCards", new SpawnData(horizontalShift + horizontal * scale + 95,
         verticalShift + 180 + vertical * scale)
