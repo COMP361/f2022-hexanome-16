@@ -86,23 +86,19 @@ public class GameScreen {
           if (shouldFetch.get()) {
             levelDecks.put(level, GameRequest.updateDeck(
                 sessionId, level, levelDecks.get(level).getKey()));
-          } else {
-            levelThreads.get(level).interrupt();
           }
         },
         () -> {
+          Platform.runLater(() -> GameScreen.updateLevelDeck(level));
+          levelThreads.get(level).interrupt();
           if (shouldFetch.get()) {
-            Platform.runLater(() -> GameScreen.updateLevelDeck(level));
-            levelThreads.get(level).start();
-          } else {
-            levelThreads.get(level).interrupt();
+            levelThreads.put(level, createFetchLevelThread(level));
           }
         },
         () -> {
+          levelThreads.get(level).interrupt();
           if (shouldFetch.get()) {
-            levelThreads.get(level).interrupt();
-          } else {
-            levelThreads.get(level).start();
+            levelThreads.put(level, createFetchLevelThread(level));
           }
         }
     );
@@ -110,117 +106,108 @@ public class GameScreen {
     return fetchService;
   }
 
-  private static void fetchNoblesThread() {
-    updateNobles = new BackgroundService(
+  private static BackgroundService fetchNoblesThread() {
+    BackgroundService fetchService = new BackgroundService(
         () -> {
           if (shouldFetch.get()) {
             nobleJson = GameRequest.updateNoble(sessionId, nobleJson.getKey());
-          } else {
-            updateNobles.interrupt();
           }
         },
         () -> {
+          Platform.runLater(GameScreen::updateNobles);
+          updateNobles.interrupt();
           if (shouldFetch.get()) {
-            Platform.runLater(GameScreen::updateNobles);
-            updateNobles.start();
-          } else {
-            updateNobles.interrupt();
+            updateNobles = fetchNoblesThread();
           }
         },
         () -> {
+          updateNobles.interrupt();
           if (shouldFetch.get()) {
-            updateNobles.start();
-          } else {
-            updateNobles.interrupt();
+            updateNobles = fetchNoblesThread();
           }
         }
     );
-    updateNobles.start();
+    fetchService.start();
+    return fetchService;
   }
 
-  private static void fetchCitiesThread() {
-    updateCities = new BackgroundService(
+  private static BackgroundService fetchCitiesThread() {
+    BackgroundService fetchService = new BackgroundService(
         () -> {
           if (shouldFetch.get()) {
             citiesJson = GameRequest.updateCities(sessionId, citiesJson.getKey());
-          } else {
-            updateCities.start();
           }
         },
         () -> {
+          Platform.runLater(GameScreen::updateCities);
+          updateCities.interrupt();
           if (shouldFetch.get()) {
-            Platform.runLater(GameScreen::updateCities);
-            updateCities.start();
-          } else {
-            updateCities.interrupt();
+            updateCities = fetchCitiesThread();
           }
         },
         () -> {
+          updateCities.interrupt();
           if (shouldFetch.get()) {
-            updateCities.start();
-          } else {
-            updateCities.interrupt();
+            updateCities = fetchCitiesThread();
           }
         }
     );
-    updateCities.start();
+    fetchService.start();
+    return fetchService;
   }
 
-  private static void fetchPlayersThread() {
-    updateCurrentPlayer = new BackgroundService(
+  private static BackgroundService fetchPlayersThread() {
+    BackgroundService fetchService = new BackgroundService(
         () -> {
           if (shouldFetch.get()) {
             playersJson = GameRequest.updatePlayers(sessionId, playersJson.getKey());
-          } else {
-            updateCurrentPlayer.interrupt();
           }
         },
         () -> {
-          if (shouldFetch.get()) {
-            Platform.runLater(() -> {
-              if (playersJson == null || playersJson.getValue() == null) {
-                return;
-              }
-              PlayerJson[] players = playersJson.getValue().getPlayers();
-              Optional<PlayerJson> current = Arrays.stream(players)
-                  .filter(PlayerJson::isCurrent).findFirst();
-              if (current.isPresent()) {
-                Arrays.stream(players).forEach(playerJson -> {
-                  usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
-                });
-                currentPlayer = current.get().getUsername();
-                UpdateGameInfo.fetchGameBank(getSessionId());
-                UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
-                UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
-                PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
-                    PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
-              }
-            });
-
-            // update trade routes
-            String[] usernames = FXGL.getWorldProperties().getValue("players");
-            PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
-                i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
-            ).toArray(PlayerJson[]::new);
-            for (int i = 0; i < usernames.length; i++) {
-              usernamesMap.put(i, players[i]);
-              tradingPosts.put(i, new TradePostJson[0]);
-              fetchTradePostsThread(i);
+          Platform.runLater(() -> {
+            if (playersJson == null || playersJson.getValue() == null) {
+              return;
             }
-            updateCurrentPlayer.start();
-          } else {
-            updateCurrentPlayer.interrupt();
+            PlayerJson[] players = playersJson.getValue().getPlayers();
+            Optional<PlayerJson> current = Arrays.stream(players)
+                .filter(PlayerJson::isCurrent).findFirst();
+            if (current.isPresent()) {
+              Arrays.stream(players).forEach(playerJson -> {
+                usernamesMap.put(playerJson.getPlayerOrder(), playerJson);
+              });
+              currentPlayer = current.get().getUsername();
+              UpdateGameInfo.fetchGameBank(getSessionId());
+              UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
+              UpdateGameInfo.setCurrentPlayer(getSessionId(), currentPlayer);
+              PlayerDecks.generateAll(Arrays.stream(players).sorted(Comparator.comparingInt(
+                  PlayerJson::getPlayerOrder)).toArray(PlayerJson[]::new));
+            }
+          });
+
+          // update trade routes
+          String[] usernames = FXGL.getWorldProperties().getValue("players");
+          PlayerJson[] players = IntStream.range(0, usernames.length).mapToObj(
+              i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
+          ).toArray(PlayerJson[]::new);
+          for (int i = 0; i < usernames.length; i++) {
+            usernamesMap.put(i, players[i]);
+            tradingPosts.put(i, new TradePostJson[0]);
+            fetchTradePostsThread(i);
+          }
+          updateCurrentPlayer.interrupt();
+          if (shouldFetch.get()) {
+            updateCurrentPlayer = fetchPlayersThread();
           }
         },
         () -> {
+          updateCurrentPlayer.interrupt();
           if (shouldFetch.get()) {
-            updateCurrentPlayer.start();
-          } else {
-            updateCurrentPlayer.interrupt();
+            updateCurrentPlayer = fetchPlayersThread();
           }
         }
     );
-    updateCurrentPlayer.start();
+    fetchService.start();
+    return fetchService;
   }
 
   private static void fetchTradePostsThread(int index) {
@@ -255,14 +242,12 @@ public class GameScreen {
     }
   }
 
-  private static void fetchWinnersThread() {
-    updateWinners = new BackgroundService(
+  private static BackgroundService fetchWinnersThread() {
+    BackgroundService fetchService = new BackgroundService(
         () -> {
           if (shouldFetch.get()) {
             winners.set(PromptsRequests.getWinners(sessionId,
                 AuthUtils.getAuth().getAccessToken(), winners.get().getKey()));
-          } else {
-            updateWinners.interrupt();
           }
         },
         () -> {
@@ -277,21 +262,21 @@ public class GameScreen {
               FXGL.spawn("PromptBox", new SpawnData()
                   .put("promptType", PromptTypeInterface.PromptType.WINNERS));
             });
-          } else if (shouldFetch.get()) {
-            updateWinners.start();
-          } else {
-            updateWinners.interrupt();
+          }
+          updateWinners.interrupt();
+          if (shouldFetch.get()) {
+            updateWinners = fetchWinnersThread();
           }
         },
         () -> {
+          updateWinners.interrupt();
           if (shouldFetch.get()) {
-            updateWinners.start();
-          } else {
-            updateWinners.interrupt();
+            updateWinners = fetchWinnersThread();
           }
         }
     );
-    updateWinners.start();
+    fetchService.start();
+    return fetchService;
   }
 
   /**
@@ -331,15 +316,15 @@ public class GameScreen {
     }
 
     nobleJson = new Pair<>("none", new NobleDeckJson());
-    fetchNoblesThread();
+    updateNobles = fetchNoblesThread();
 
     if (gameServer.contains("Cities")) {
       citiesJson = new Pair<>("none", new CitiesJson());
-      fetchCitiesThread();
+      updateCities = fetchCitiesThread();
     }
 
     winners.set(new Pair<>("none", new WinJson()));
-    fetchWinnersThread();
+    updateWinners = fetchWinnersThread();
 
     UpdateGameInfo.initPlayerTurn();
 
@@ -349,7 +334,7 @@ public class GameScreen {
         i -> new PlayerJson(usernames[i], Objects.equals(currentPlayer, usernames[i]), 0, i)
     ).toArray(PlayerJson[]::new);
     playersJson = new Pair<>("none", new PlayerListJson(players));
-    fetchPlayersThread();
+    updateCurrentPlayer = fetchPlayersThread();
 
     UpdateGameInfo.fetchAllPlayer(getSessionId(), players);
     // spawn the player's hands

@@ -27,7 +27,6 @@ import com.hexanome16.common.models.sessions.Session;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -113,16 +112,14 @@ class LobbyHelpers {
       LobbyFactory.gameServices.set(ListGameServicesRequest.execute());
     }, () -> {
       Platform.runLater(LobbyHelpers::updateGameServicesList);
-      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchGameServersService.get().isAlive()) {
-        LobbyFactory.fetchGameServersService.get().start();
-      } else {
-        LobbyFactory.fetchGameServersService.get().interrupt();
+      LobbyFactory.fetchGameServersService.get().interrupt();
+      if (LobbyFactory.shouldFetch.get()) {
+        createFetchGameServicesThread();
       }
     }, () -> {
-      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchGameServersService.get().isAlive()) {
-        LobbyFactory.fetchGameServersService.get().start();
-      } else {
-        LobbyFactory.fetchGameServersService.get().interrupt();
+      LobbyFactory.fetchGameServersService.get().interrupt();
+      if (LobbyFactory.shouldFetch.get()) {
+        createFetchGameServicesThread();
       }
     });
     fetchService.start();
@@ -144,18 +141,17 @@ class LobbyHelpers {
       }
     }, () -> {
       Platform.runLater(LobbyHelpers::updateSessionList);
-      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchSessionsService.get().isAlive()) {
-        LobbyFactory.fetchSessionsService.get().start();
-      } else {
-        LobbyFactory.fetchSessionsService.get().interrupt();
+      LobbyFactory.fetchSessionsService.get().interrupt();
+      if (LobbyFactory.shouldFetch.get()) {
+        createFetchSessionThread();
       }
     }, () -> {
-      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchSessionsService.get().isAlive()) {
-        LobbyFactory.fetchSessionsService.get().start();
-      } else {
-        LobbyFactory.fetchSessionsService.get().interrupt();
+      LobbyFactory.fetchSessionsService.get().interrupt();
+      if (LobbyFactory.shouldFetch.get()) {
+        createFetchSessionThread();
       }
     });
+    fetchService.setDaemon(true);
     fetchService.start();
     LobbyFactory.fetchSessionsService.set(fetchService);
   }

@@ -15,8 +15,6 @@ public class LobbyScreen {
    */
   public static void initLobby() {
     LobbyFactory.shouldFetch.set(true);
-    LobbyHelpers.createFetchSessionThread();
-    LobbyHelpers.createFetchGameServicesThread();
     spawn("background");
     spawn("ownSessionList");
     spawn("otherSessionList");
@@ -28,6 +26,8 @@ public class LobbyScreen {
     spawn("otherHeader");
     spawn("gameServiceList");
     spawn("savegameCheckbox");
+    LobbyHelpers.createFetchSessionThread();
+    LobbyHelpers.createFetchGameServicesThread();
   }
 
   /**

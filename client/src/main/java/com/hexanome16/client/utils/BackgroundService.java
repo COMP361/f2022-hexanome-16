@@ -4,7 +4,6 @@ package com.hexanome16.client.utils;
  * This class allows to run a task in a separate background thread using JavaFX's mechanism.
  */
 public class BackgroundService extends Thread {
-  private final Runnable toRun;
   private final Runnable onSuccess;
   private final Runnable onFailure;
 
@@ -16,11 +15,11 @@ public class BackgroundService extends Thread {
    * @param onFailure the function (Runnable) to be executed when the execution fails
    */
   public BackgroundService(Runnable toRun, Runnable onSuccess, Runnable onFailure) {
-    this.toRun = toRun;
+    super(toRun);
+    super.setDaemon(true);
+    this.setDaemon(true);
     this.onSuccess = onSuccess;
     this.onFailure = onFailure;
-    this.setDaemon(true);
-    this.setUncaughtExceptionHandler((t, e) -> e.printStackTrace());
   }
 
   /**
@@ -48,7 +47,7 @@ public class BackgroundService extends Thread {
   @Override
   public void run() {
     try {
-      toRun.run();
+      super.run();
       onSuccess.run();
     } catch (Exception e) {
       e.printStackTrace();
