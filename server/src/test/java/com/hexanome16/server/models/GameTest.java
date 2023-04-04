@@ -278,6 +278,8 @@ public class GameTest {
   public void testTakeBackToken() {
     PlayerBank myBank = new PlayerBank();
     assertEquals(imad.getBank(), myBank);
+    myBank.addGemsToBank(Gem.RUBY, 1);
+    imad.getBank().addGemsToBank(new PurchaseMap(1, 0, 0, 0, 0, 0));
     myBank.removeGemsFromBank(Gem.RUBY, 1);
     game.takeBackToken(Gem.RUBY, imad);
     GameBank gameBank = new GameBank();
