@@ -43,7 +43,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Pair;
 import kong.unirest.core.Headers;
-import org.springframework.beans.propertyeditors.CurrencyEditor;
 
 /**
  * A class responsible for populating Buy card prompt.

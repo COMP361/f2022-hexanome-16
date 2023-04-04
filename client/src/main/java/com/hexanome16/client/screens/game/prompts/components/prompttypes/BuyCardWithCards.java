@@ -7,10 +7,24 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.LevelCard;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
+import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -28,12 +42,26 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
+import lombok.SneakyThrows;
 
 /**
  * A class responsible for populating Buy sacrifice card prompt.
  */
 public class BuyCardWithCards implements PromptTypeInterface {
-
+  /**
+   * The card entity.
+   */
+  protected static Entity atCardEntity;
+  /**
+   * The card price map.
+   */
+  PriceMap atCardPriceMap;
+  /**
+   * The Card is reserved.
+   */
+  protected boolean cardIsReserved = false;
   /**
    * The width.
    */
@@ -92,6 +120,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
    */
   int cardsChosen = 0;
 
+  static Map<LevelCard, String> bagCardHashList = new HashMap<LevelCard, String>();
+
+  static Map<LevelCard, String> cardHashList = new HashMap<LevelCard, String>();
+
+  List<String> prices = new ArrayList<>();
 
   @Override
   public double getWidth() {
@@ -113,6 +146,19 @@ public class BuyCardWithCards implements PromptTypeInterface {
     return false;
   }
 
+  /**
+   * Alternative function to populatePrompt, used exclusively for prompts to work with Peini's part.
+   *
+   * @param entity     Prompt entity.
+   * @param cardEntity card entity.
+   */
+  public void populatePrompt(Entity entity, Entity cardEntity) {
+    atCardEntity = cardEntity;
+    atCardPriceMap = cardEntity.getComponent(CardComponent.class).getPriceMap();
+    cardIsReserved = !cardEntity.getComponent(CardComponent.class).getOnBoard();
+    populatePrompt(entity);
+  }
+
   @Override
   public void populatePrompt(Entity entity) {
 
@@ -126,7 +172,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
 
     // initiate elements
-    Texture myCard = FXGL.texture("sacrificecard.png");
+    Texture myCard = FXGL.texture(atCardEntity.getComponent(CardComponent.class).texture);
     myCard.setFitWidth(atMainCardWidth);
     myCard.setFitHeight(atMainCardHeight);
 
@@ -170,24 +216,33 @@ public class BuyCardWithCards implements PromptTypeInterface {
     otherBorderPane.setCenter(otherCardsScroll);
 
     StackPane otherWhole = new StackPane();
-    otherWhole.getChildren().addAll(otherBorderPane, disablingRectangleOthers);
+    if (bagCardHashList.size() > 0) {
+      otherWhole.getChildren().addAll(otherBorderPane, disablingRectangleOthers);
+    } else {
+      otherWhole.getChildren().addAll(otherBorderPane);
+    }
 
 
     // Fix BagCards
     VBox myBags = new VBox();
     myBags.setAlignment(Pos.TOP_CENTER);
     bagCardsScroll.setContent(myBags);
-    addBagCard(myBags, otherWhole, disablingRectangleOthers);
 
 
     VBox myOthers = new VBox();
     myOthers.setAlignment(Pos.TOP_CENTER);
     otherCardsScroll.setContent(myOthers);
     StackPane buy = new StackPane();
-    addOtherCard(myOthers, 2, buy);
-    addOtherCard(myOthers, 2, buy);
-    addOtherCard(myOthers, 0, buy);
 
+    for (Map.Entry<LevelCard, String> card :
+        cardHashList.entrySet()) {
+      addOtherCard(myOthers, card.getKey(), buy);
+    }
+
+    for (Map.Entry<LevelCard, String> card :
+        bagCardHashList.entrySet()) {
+      addBagCard(myBags, card.getKey(), otherWhole, disablingRectangleOthers);
+    }
 
     // initiate ReserveBuy
     VBox reserveBuy = new VBox();
@@ -202,11 +257,8 @@ public class BuyCardWithCards implements PromptTypeInterface {
     entity.getViewComponent().addChild(myPrompt);
   }
 
-  private void addOtherCard(VBox otherCards, int prestigeAmount, Node buy) {
+  private void addOtherCard(VBox otherCards, LevelCard levelCard, Node buy) {
     Text textPrestigeAmount = new Text();
-    if (prestigeAmount > 0) {
-      textPrestigeAmount = new Text(Integer.toString(prestigeAmount));
-    }
     textPrestigeAmount.setTextAlignment(TextAlignment.CENTER);
     textPrestigeAmount.setFont(GAME_FONT.newFont(atScrollCardHeight * 0.75));
     textPrestigeAmount.setFill(Config.SECONDARY_COLOR);
@@ -223,9 +275,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
       if (x.getOpacity() == 1) {
         x.setOpacity(0);
         cardsChosen--;
+        prices.remove(cardHashList.get(levelCard));
       } else {
         cardsChosen++;
         x.setOpacity(1);
+        prices.add(cardHashList.get(levelCard));
       }
       if (cardsChosen == 2) {
         buy.setOpacity(1);
@@ -234,13 +288,15 @@ public class BuyCardWithCards implements PromptTypeInterface {
       }
     });
 
-    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
-    myWholeCard.getChildren().addAll(bagCard, textPrestigeAmount, x);
+    Texture texture = FXGL.texture(levelCard.getCardInfo().texturePath() + ".png");
+    texture.setFitWidth(atScrollCardWidth);
+    texture.setFitHeight(atScrollCardHeight);
+    myWholeCard.getChildren().addAll(texture, x);
     otherCards.getChildren().add(myWholeCard);
 
   }
 
-  private void addBagCard(VBox bagCards, StackPane otherWhole,
+  private void addBagCard(VBox bagCards, LevelCard levelCard, StackPane otherWhole,
                           Rectangle disablingRectangleOthers) {
     Text x = new Text("X");
     x.setTextAlignment(TextAlignment.CENTER);
@@ -250,13 +306,27 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
     StackPane myWholeCard = new StackPane();
     myWholeCard.setOnMouseClicked(e -> {
-      x.setOpacity(1);
-      cardsChosen++;
-      otherWhole.getChildren().remove(disablingRectangleOthers);
+      if (x.getOpacity() == 1) {
+        x.setOpacity(0);
+        cardsChosen--;
+        prices.remove(bagCardHashList.get(levelCard));
+        if (cardsChosen < bagCardHashList.size()) {
+          otherWhole.getChildren().add(disablingRectangleOthers);
+        }
+      } else {
+        x.setOpacity(1);
+        cardsChosen++;
+        prices.add(bagCardHashList.get(levelCard));
+        if (cardsChosen >= bagCardHashList.size() && 2 >= bagCardHashList.size()) {
+          otherWhole.getChildren().remove(disablingRectangleOthers);
+        }
+      }
     });
-    Rectangle bagCard = new Rectangle(atScrollCardWidth, atScrollCardHeight, Color.GREEN.darker());
-    Circle bagIcon = new Circle(atScrollCardWidth / 4, Color.SADDLEBROWN.brighter());
-    myWholeCard.getChildren().addAll(bagCard, bagIcon, x);
+
+    Texture texture = FXGL.texture(levelCard.getCardInfo().texturePath() + ".png");
+    texture.setFitWidth(atScrollCardWidth);
+    texture.setFitHeight(atScrollCardHeight);
+    myWholeCard.getChildren().addAll(texture, x);
 
     bagCards.getChildren().add(myWholeCard);
 
@@ -282,7 +352,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
     reserveText.setFill(Config.PRIMARY_COLOR);
 
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-
+      cardReservation();
       closeBagPrompt();
       e.consume();
     });
@@ -314,12 +384,66 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if (buy.getOpacity() == 1) {
+        notifyServer();
         closeBagPrompt();
         e.consume();
       }
     });
 
     buy.getChildren().addAll(buttonBox, reserve);
+  }
+
+  /**
+   * Fetch cards from player's inventory.
+   *
+   * @param player the current player.
+   * @param gem    the gem type.
+   */
+  @SneakyThrows
+  public static void fetchCards(String player, Gem gem) {
+    cardHashList.clear();
+    bagCardHashList.clear();
+    long sessionId = GameScreen.getSessionId();
+    Map<String, LevelCard> responseHashList =
+        PromptsRequests.getCardPrice(sessionId, player, gem).getCards();
+    System.out.println("init: " + responseHashList.size());
+    for (Map.Entry<String, LevelCard> card : responseHashList.entrySet()) {
+      System.out.println(card.getValue());
+      System.out.println(ObjectMapperUtils.getObjectMapper().writeValueAsString(card.getValue()));
+      if (card.getValue().isBag()) {
+        bagCardHashList.put(card.getValue(), card.getKey());
+      } else {
+        cardHashList.put(card.getValue(), card.getKey());
+      }
+    }
+  }
+
+  private void notifyServer() {
+    long promptSessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    String firstHash = prices.get(0);
+    String secondHash = prices.get(1);
+    System.out.println(firstHash);
+    System.out.println(secondHash);
+    // sends a request to server telling it purchase information
+    Pair<Headers, String> serverResponse = PromptsRequests.buySacrificeCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        authToken,
+        firstHash, secondHash);
+    PromptUtils.actionResponseSpawner(serverResponse);
+  }
+
+  /**
+   * Do something if someone reserves a card.
+   */
+  protected void cardReservation() {
+    long promptSessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    // send request to server
+    Pair<Headers, String> serverResponse = PromptsRequests.reserveCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        authToken);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   private void initiatePane(Pane myPrompt) {
@@ -335,4 +459,5 @@ public class BuyCardWithCards implements PromptTypeInterface {
     cardsChosen = 0;
     PromptComponent.closePrompts();
   }
+
 }

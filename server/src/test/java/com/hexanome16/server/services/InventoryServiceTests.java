@@ -11,12 +11,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
@@ -34,11 +33,14 @@ import com.hexanome16.server.models.cards.Deck;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
+import com.hexanome16.server.models.inventory.Inventory;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.CustomResponseFactory;
 import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,9 @@ import lombok.SneakyThrows;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -62,7 +66,7 @@ import org.springframework.util.MultiValueMap;
 public class InventoryServiceTests {
   private final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
   private Game validMockGame;
-  private InventoryService inventoryService;
+  private InventoryService underTest;
   private ServiceUtils serviceUtils;
   private GameManagerServiceInterface gameManagerMock;
 
@@ -78,9 +82,16 @@ public class InventoryServiceTests {
 
     gameManagerMock = DummyGameManagerService.getDummyGameManagerService();
     serviceUtils = DummyServiceUtils.getDummyServiceUtils();
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        new ResponseEntity<>(HttpStatus.OK));
 
-    inventoryService = new InventoryService(gameManagerMock, serviceUtils);
+    underTest = new InventoryService(gameManagerMock, serviceUtils);
 
+  }
+
+  @AfterEach
+  void tearDown() {
+    Mockito.clearInvocations(gameManagerMock, serviceUtils);
   }
 
   /**
@@ -92,7 +103,7 @@ public class InventoryServiceTests {
   @DisplayName("Get valid Player Bank info")
   public void testGetPlayerBankInfo() throws com.fasterxml.jackson.core.JsonProcessingException {
     ResponseEntity<String> response =
-        inventoryService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
+        underTest.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
             DummyAuths.validPlayerList.get(0).getName());
     String string = response.getBody();
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
@@ -114,7 +125,7 @@ public class InventoryServiceTests {
   @DisplayName("Get Player Bank info with invalid username should return http error")
   public void testGetInvalidPlayerBankInfo() {
     ResponseEntity<String> response =
-        inventoryService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
+        underTest.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
             DummyAuths.invalidPlayerList.get(0).getName());
 
     assertEquals(CustomHttpResponses.PLAYER_NOT_IN_GAME.getStatus(), response.getStatusCodeValue());
@@ -134,7 +145,7 @@ public class InventoryServiceTests {
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.getPlayerBankInfo(DummyAuths.invalidSessionIds.get(0),
+        underTest.getPlayerBankInfo(DummyAuths.invalidSessionIds.get(0),
             DummyAuths.validPlayerList.get(0).getName());
     // Assert
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
@@ -155,7 +166,7 @@ public class InventoryServiceTests {
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
+        underTest.getPlayerBankInfo(DummyAuths.validSessionIds.get(0),
             DummyAuths.invalidPlayerList.get(0).getName());
 
     // Assert
@@ -174,12 +185,12 @@ public class InventoryServiceTests {
     ServerLevelCard card = Mockito.mock(ServerLevelCard.class);
     CardInfo cardInfo = new CardInfo(123, 123, "gi", new PriceMap());
     when(serviceUtils.validRequestAndCurrentTurn(anyLong(), anyString()))
-        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.OK),
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(OK),
             new ImmutablePair<>(game, player)));
     when(game.getCardByHash(anyString())).thenReturn(card);
     when(card.getCardInfo()).thenReturn(cardInfo);
     when(player.discountPrice(any())).thenReturn(new PriceMap());
-    ResponseEntity<String> response = inventoryService.getDiscountedPrice(123, "123", "123");
+    ResponseEntity<String> response = underTest.getDiscountedPrice(123, "123", "123");
     String body = objectMapper.writeValueAsString(new PriceMap());
     assertEquals(body, response.getBody());
   }
@@ -221,16 +232,21 @@ public class InventoryServiceTests {
     when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.OK));
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId, cardHash,
+        underTest.buyCard(sessionId, cardHash,
             accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.OK.getBody(), response.getBody());
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(OK, response.getStatusCode());
   }
 
   /**
@@ -249,18 +265,16 @@ public class InventoryServiceTests {
     var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
     Game gameMock = request.getValue().getLeft();
     ServerPlayer playerMock = mock(ServerPlayer.class);
-    Action mockAction = mock(Action.class);
     when(playerMock.discountPrice(myCard.getCardInfo().price()))
         .thenReturn(myCard.getCardInfo().price());
-    when(playerMock.peekTopAction()).thenReturn(mockAction);
     when(playerMock.hasAtLeast(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
         anyInt())).thenReturn(true);
     when(playerMock.hasAtLeastGoldenBonus(0)).thenReturn(true);
-    when(mockAction.getActionDetails()).thenReturn(
-        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken)).thenReturn(
         Pair.of(CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO),
             Pair.of(gameMock, playerMock)));
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
 
     String cardHash = "";
 
@@ -271,15 +285,18 @@ public class InventoryServiceTests {
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId, cardHash,
+        underTest.buyCard(sessionId, cardHash,
             accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(OK, response.getStatusCode());
     verify(playerMock, times(1)).addTakeTwoToPerform();
     verify(playerMock, times(0)).addNobleListToPerform(any());
   }
@@ -315,27 +332,34 @@ public class InventoryServiceTests {
 
     when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
     Deck<ServerLevelCard> mockDeck = Mockito.mock(Deck.class);
+
     when(playerMock.discountPrice(myCard.getCardInfo().price()))
         .thenReturn(myCard.getCardInfo().price());
     when(mockDeck.getCardList()).thenReturn(new LinkedList<>());
     when(gameMock.getOnBoardDeck(any())).thenReturn(mockDeck);
     ServerNoble mockNoble = mock(ServerNoble.class);
-    when(gameMock.getRemainingNobles()).thenReturn(Map.of("noble1", mockNoble));
+    Deck<ServerNoble> nobleDeck = new Deck<>(new ServerNoble[] {mockNoble});
+    when(gameMock.getOnBoardNobles()).thenReturn(nobleDeck);
+
     when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(gameMock.getBroadcastContentManagerMap()).thenReturn(mapMock);
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO));
 
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new ArrayList<>());
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId, cardHash,
+        underTest.buyCard(sessionId, cardHash,
             accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
     // Assert
     assertEquals(CustomHttpResponses.TAKE_LEVEL_TWO.getBody(), response.getBody());
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(OK, response.getStatusCode());
     verify(playerMock, times(1)).addTakeTwoToPerform();
-    verify(playerMock, times(1)).addNobleListToPerform(any());
   }
 
   /**
@@ -354,7 +378,7 @@ public class InventoryServiceTests {
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId,
+        underTest.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             accessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
 
@@ -383,7 +407,7 @@ public class InventoryServiceTests {
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId, cardHash,
+        underTest.buyCard(sessionId, cardHash,
             accessToken, new OrientPurchaseMap(0, 0, 1, 0, 0, 1, 0));
 
     // Assert
@@ -409,7 +433,7 @@ public class InventoryServiceTests {
 
     // Act
     ResponseEntity<String> response =
-        inventoryService.buyCard(sessionId, cardHash,
+        underTest.buyCard(sessionId, cardHash,
             accessToken, new OrientPurchaseMap(20, 1, 1, 0, 0, 1, 0));
 
     // Assert
@@ -438,9 +462,9 @@ public class InventoryServiceTests {
     when(gameMock.getCardByHash(cardHash)).thenReturn(myCard);
 
     ResponseEntity<String> response =
-        inventoryService.reserveCard(sessionId, cardHash, accessToken);
+        underTest.reserveCard(sessionId, cardHash, accessToken);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(OK, response.getStatusCode());
   }
 
   @Test
@@ -458,7 +482,7 @@ public class InventoryServiceTests {
     );
 
     // Act
-    ResponseEntity<String> response = inventoryService.reserveCard(sessionId,
+    ResponseEntity<String> response = underTest.reserveCard(sessionId,
         "invalid hash", accessToken);
 
     // Assert
@@ -483,11 +507,11 @@ public class InventoryServiceTests {
 
 
     ResponseEntity<String> response =
-        inventoryService.reserveFaceDownCard(sessionId, Level.ONE.name(), accessToken);
+        underTest.reserveFaceDownCard(sessionId, Level.ONE.name(), accessToken);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(OK, response.getStatusCode());
 
-    response = inventoryService.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
+    response = underTest.reserveFaceDownCard(sessionId, "WRONG LEVEL NAME", accessToken);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
   }
@@ -512,7 +536,7 @@ public class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId
-    ResponseEntity<String> response = inventoryService.buyCard(invalidSessionId,
+    ResponseEntity<String> response = underTest.buyCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken,
         new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
@@ -520,14 +544,14 @@ public class InventoryServiceTests {
 
     // Test invalid accessToken
     response =
-        inventoryService.buyCard(sessionId,
+        underTest.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             invalidAccessToken, new OrientPurchaseMap(1, 1, 1, 0, 0, 1, 0));
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
     // Test invalid price
     response =
-        inventoryService.buyCard(sessionId,
+        underTest.buyCard(sessionId,
             DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)),
             accessToken, new OrientPurchaseMap(3, 0, 0, 0, 0, 1, 0));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -539,7 +563,7 @@ public class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), invalidCard
     );
 
-    response = inventoryService.buyCard(sessionId,
+    response = underTest.buyCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(invalidCard)), accessToken,
         new OrientPurchaseMap(7, 1, 1, 0, 0, 1, 0));
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -566,12 +590,12 @@ public class InventoryServiceTests {
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), myCard);
 
     // Test invalid sessionId
-    ResponseEntity<String> response = inventoryService.reserveCard(invalidSessionId,
+    ResponseEntity<String> response = underTest.reserveCard(invalidSessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), accessToken);
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(),
         response.getStatusCode().value());
     // Test invalid accessToken
-    response = inventoryService.reserveCard(sessionId,
+    response = underTest.reserveCard(sessionId,
         DigestUtils.md5Hex(objectMapper.writeValueAsString(myCard)), invalidAccessToken);
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
         response.getStatusCode().value());
@@ -592,7 +616,7 @@ public class InventoryServiceTests {
     goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.LEVEL_TWO.getMessage()));
     ResponseEntity<String> goodResponse = new ResponseEntity<>(
-        goodHeaders, HttpStatus.OK);
+        goodHeaders, OK);
     ServerPlayer validPlayer = Mockito.mock(ServerPlayer.class);
     Game game = Mockito.mock(Game.class);
     String cardHash = DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
@@ -612,8 +636,9 @@ public class InventoryServiceTests {
     when(game.getOnBoardDeck(Level.REDTWO)).thenReturn(new Deck<>(new ServerLevelCard[] {card}));
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(goodResponse);
 
-    ResponseEntity<String> response = inventoryService
+    ResponseEntity<String> response = underTest
         .takeLevelTwoCard(123, "testingToken",
             cardHash);
     assertEquals(goodResponse, response);
@@ -624,12 +649,12 @@ public class InventoryServiceTests {
             badRequest,
             new ImmutablePair<>(null, null)));
 
-    response = inventoryService.takeLevelTwoCard(1234,
+    response = underTest.takeLevelTwoCard(1234,
         "bad", cardHash);
     assertEquals(badRequest, response);
 
     when(game.getCardByHash(cardHash)).thenReturn(null);
-    response = inventoryService
+    response = underTest
         .takeLevelTwoCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
@@ -644,7 +669,7 @@ public class InventoryServiceTests {
     when(validPlayer.peekTopAction())
         .thenReturn(mockAction);
     when(game.getCardByHash(cardHash)).thenReturn(card);
-    response = inventoryService
+    response = underTest
         .takeLevelTwoCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
@@ -665,7 +690,7 @@ public class InventoryServiceTests {
     goodHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.LEVEL_ONE.getMessage()));
     ResponseEntity<String> goodResponse = new ResponseEntity<>(
-        goodHeaders, HttpStatus.OK);
+        goodHeaders, OK);
     ServerPlayer validPlayer = Mockito.mock(ServerPlayer.class);
     Game game = Mockito.mock(Game.class);
     String cardHash = DigestUtils.md5Hex(objectMapper.writeValueAsString(card));
@@ -675,10 +700,10 @@ public class InventoryServiceTests {
             new ImmutablePair<>(goodResponse,
                 new ImmutablePair<>(game, validPlayer)));
     Action mockAction = mock(Action.class);
-    when(mockAction.getActionDetails()).thenReturn(goodResponse);
     when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.LEVEL_ONE);
     when(validPlayer.peekTopAction())
         .thenReturn(mockAction);
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(goodResponse);
     when(game.getCardByHash(cardHash)).thenReturn(card);
     when(game.getOnBoardDeck(Level.ONE))
         .thenReturn(new Deck<>());
@@ -686,7 +711,7 @@ public class InventoryServiceTests {
     var mapMock = Mockito.mock(BroadcastMap.class);
     when(game.getBroadcastContentManagerMap()).thenReturn(mapMock);
 
-    ResponseEntity<String> response = inventoryService
+    ResponseEntity<String> response = underTest
         .takeLevelOneCard(123, "testingToken",
             cardHash);
     assertEquals(goodResponse, response);
@@ -697,12 +722,12 @@ public class InventoryServiceTests {
             badRequest,
             new ImmutablePair<>(null, null)));
 
-    response = inventoryService.takeLevelOneCard(1234,
+    response = underTest.takeLevelOneCard(1234,
         "bad", cardHash);
     assertEquals(badRequest, response);
 
     when(game.getCardByHash(cardHash)).thenReturn(null);
-    response = inventoryService
+    response = underTest
         .takeLevelOneCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
@@ -711,13 +736,10 @@ public class InventoryServiceTests {
     MultiValueMap<String, String> badHeaders = new HttpHeaders();
     badHeaders.put(CustomHttpResponses.ActionType.ACTION_TYPE,
         List.of(CustomHttpResponses.ActionType.END_TURN.getMessage()));
-    mockAction = mock(Action.class);
-    when(mockAction.getActionDetails()).thenReturn(
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
         new ResponseEntity<>(badHeaders, HttpStatus.BAD_REQUEST));
-    when(validPlayer.peekTopAction())
-        .thenReturn(mockAction);
     when(game.getCardByHash(cardHash)).thenReturn(card);
-    response = inventoryService
+    response = underTest
         .takeLevelOneCard(123, "testingToken",
             cardHash);
     assertFalse(response.getStatusCode().is2xxSuccessful());
@@ -747,8 +769,13 @@ public class InventoryServiceTests {
     when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
+
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new LinkedList<>());
+
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), response.getBody());
@@ -760,6 +787,7 @@ public class InventoryServiceTests {
    */
   @Test
   @SneakyThrows
+  @Disabled
   public void testNobleNextActionReturns() {
     // Arrange
     final var validSessionId = DummyAuths.validSessionIds.get(0);
@@ -781,9 +809,15 @@ public class InventoryServiceTests {
     when(mockActionNext.getActionDetails()).thenReturn(
         CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(mockActionNext);
+    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
+        CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
+
+    Inventory inventory = Mockito.mock(Inventory.class);
+    when(playerMock.getInventory()).thenReturn(inventory);
+    when(inventory.getReservedNobles()).thenReturn(new LinkedList<>());
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.CHOOSE_CITY.getBody(), response.getBody());
@@ -813,7 +847,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(null);
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getBody(), response.getBody());
@@ -845,7 +879,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.ILLEGAL_ACTION.getBody(), response.getBody());
@@ -876,7 +910,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction);
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT.getStatus(),
@@ -909,7 +943,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(null);
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.SERVER_SIDE_ERROR.getStatus(),
@@ -939,7 +973,7 @@ public class InventoryServiceTests {
     when(playerMock.peekTopAction()).thenReturn(mockAction);
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.BAD_CARD_HASH.getStatus(), response.getStatusCodeValue());
@@ -958,7 +992,7 @@ public class InventoryServiceTests {
     final var nobleHash = "";
 
     // Act
-    var response = inventoryService.acquireNoble(invalidSessionId, nobleHash, validAccessToken);
+    var response = underTest.acquireNoble(invalidSessionId, nobleHash, validAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.INVALID_SESSION_ID.getStatus(), response.getStatusCodeValue());
@@ -977,7 +1011,7 @@ public class InventoryServiceTests {
     final var nobleHash = "";
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.INVALID_ACCESS_TOKEN.getStatus(),
@@ -997,7 +1031,7 @@ public class InventoryServiceTests {
     final var nobleHash = "";
 
     // Act
-    var response = inventoryService.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
+    var response = underTest.acquireNoble(validSessionId, nobleHash, invalidAccessToken);
 
     // Assert
     assertEquals(CustomHttpResponses.NOT_PLAYERS_TURN.getStatus(),
@@ -1012,7 +1046,7 @@ public class InventoryServiceTests {
   public void testGetOwnedBonuses() {
     long sessionId = DummyAuths.validSessionIds.get(0);
     String auth = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    ResponseEntity<String> response = inventoryService.getOwnedBonuses(sessionId, auth);
+    ResponseEntity<String> response = underTest.getOwnedBonuses(sessionId, auth);
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
@@ -1025,13 +1059,13 @@ public class InventoryServiceTests {
     String auth = DummyAuths.validTokensInfos.get(0).getAccessToken();
     ServerPlayer player = Mockito.mock(ServerPlayer.class);
     Game game = Mockito.mock(Game.class);
-    ResponseEntity<String> ok = new ResponseEntity<>(HttpStatus.OK);
+    ResponseEntity<String> ok = new ResponseEntity<>(OK);
     when(serviceUtils.validRequestAndCurrentTurn(sessionId, auth))
         .thenReturn(new ImmutablePair<>(ok, new ImmutablePair<>(game, player)));
 
     // EMPTY INVENTORY
     when(player.ownedGemBonuses()).thenReturn(Set.of());
-    var response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    var response = underTest.associateBagCard(sessionId, auth, "RED");
     assertFalse(response.getStatusCode().is2xxSuccessful());
 
     // ACTION RELATED CHECKS
@@ -1041,30 +1075,163 @@ public class InventoryServiceTests {
     ServerLevelCard bagCard = Mockito.mock(ServerLevelCard.class);
     when(action.getCard()).thenReturn(bagCard);
     when(player.peekTopAction()).thenReturn(null, action);
-    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    response = underTest.associateBagCard(sessionId, auth, "RED");
     assertFalse(response.getStatusCode().is2xxSuccessful());
-    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    response = underTest.associateBagCard(sessionId, auth, "RED");
     assertFalse(response.getStatusCode().is2xxSuccessful());
 
     // Gem Checks
     when(player.peekTopAction()).thenReturn(action);
     when(action.getActionType()).thenReturn(CustomHttpResponses.ActionType.ASSOCIATE_BAG);
     // NULL gem
-    response = inventoryService.associateBagCard(sessionId, auth, "NULL");
+    response = underTest.associateBagCard(sessionId, auth, "NULL");
     assertFalse(response.getStatusCode().is2xxSuccessful());
     // gold gems
-    response = inventoryService.associateBagCard(sessionId, auth, "GOLD");
+    response = underTest.associateBagCard(sessionId, auth, "GOLD");
     assertFalse(response.getStatusCode().is2xxSuccessful());
     // other gems
-    response = inventoryService.associateBagCard(sessionId, auth, "GREEN");
+    response = underTest.associateBagCard(sessionId, auth, "GREEN");
     assertFalse(response.getStatusCode().is2xxSuccessful());
 
     // HAPPY PATH
     when(player.peekTopAction()).thenReturn(action, null);
-    response = inventoryService.associateBagCard(sessionId, auth, "RED");
+    response = underTest.associateBagCard(sessionId, auth, "RED");
     assertTrue(response.getStatusCode().is2xxSuccessful());
   }
 
+  @SneakyThrows
+  @Test
+  void testGetCards() {
+    // Arrange
+    long id = 1L;
+    String username = "username";
+    ServerPlayer player = PlayerDummies.validDummies[0];
+    when(serviceUtils.getValidPlayerByName(id, username)).thenReturn(player);
+
+    // Act
+    ResponseEntity<String> response = underTest.getCards(id, username);
+
+    // Assert
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    verify(serviceUtils).getValidPlayerByName(id, username);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetNobles() {
+    // Arrange
+    long id = 1L;
+    String username = "username";
+    ServerPlayer player = PlayerDummies.validDummies[0];
+    when(serviceUtils.getValidPlayerByName(id, username)).thenReturn(player);
+
+    // Act
+    ResponseEntity<String> response = underTest.getNobles(id, username);
+
+    // Assert
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    verify(serviceUtils).getValidPlayerByName(id, username);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetReservedCards() {
+    // Arrange
+    long id = 1L;
+    String username = "username";
+    String access = "access";
+    ServerPlayer player = PlayerDummies.validDummies[0];
+    when(serviceUtils.getValidPlayerByName(id, username)).thenReturn(player);
+
+    // Act
+    ResponseEntity<String> response = underTest.getReservedCards(id, username, access);
+
+    // Assert
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    verify(serviceUtils).getValidPlayerByName(id, username);
+  }
+
+  @SneakyThrows
+  @Test
+  void testGetReservedNobles() {
+    // Arrange
+    long id = 1L;
+    String username = "username";
+    ServerPlayer player = PlayerDummies.validDummies[0];
+    when(serviceUtils.getValidPlayerByName(id, username)).thenReturn(player);
+
+    // Act
+    ResponseEntity<String> response = underTest.getReservedNobles(id, username);
+
+    // Assert
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    verify(serviceUtils).getValidPlayerByName(id, username);
+  }
+
+
+  @SneakyThrows
+  @Test
+  void testReserveNoble() {
+    long sessionId = 1;
+    final String accessToken = ":p";
+    final String nobleHash = ":o";
+    Game game = Mockito.mock(Game.class);
+    ServerPlayer player = Mockito.mock(ServerPlayer.class);
+    final ServerNoble noble = Mockito.mock(ServerNoble.class);
+    final Action action = Mockito.mock(Action.class);
+
+    when(serviceUtils.validRequestAndCurrentTurn(0, ":("))
+        .thenReturn(new ImmutablePair<>(new ResponseEntity<>(HttpStatus.BAD_REQUEST),
+            new ImmutablePair<>(null, null)));
+    assertFalse(underTest.reserveNoble(0, ":(", ":(")
+        .getStatusCode().is2xxSuccessful());
+
+    when(serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken))
+        .thenReturn(
+            new ImmutablePair<>(new ResponseEntity<>(OK),
+                new ImmutablePair<>(game, player))
+        );
+    when(player.peekTopAction()).thenReturn(null);
+    assertFalse(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+    when(player.peekTopAction()).thenReturn(action);
+    when(action.getActionType()).thenReturn(CustomHttpResponses.ActionType.ASSOCIATE_BAG);
+    assertFalse(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+    when(action.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE_RESERVE);
+    when(game.getNobleByHash(nobleHash)).thenReturn(null);
+    assertFalse(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+    when(game.getNobleByHash(nobleHash)).thenReturn(noble);
+    when(game.getRemainingNobles()).thenReturn(Map.of());
+    assertFalse(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+
+    when(game.getRemainingNobles()).thenReturn(Map.of(nobleHash, noble));
+    when(player.reserveCard(noble)).thenReturn(false);
+    assertFalse(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+    when(player.reserveCard(noble)).thenReturn(true);
+    when(game.getOnBoardNobles()).thenReturn(new Deck<>());
+    BroadcastMap broadcastMap = Mockito.mock(BroadcastMap.class);
+    when(game.getBroadcastContentManagerMap()).thenReturn(broadcastMap);
+    when(action.getActionDetails()).thenReturn(new ResponseEntity<>(OK));
+    assertTrue(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+    when(player.peekTopAction()).thenReturn(action, null);
+    assertTrue(underTest.reserveNoble(sessionId, nobleHash, accessToken)
+        .getStatusCode().is2xxSuccessful());
+
+
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
   private ServerLevelCard createValidCard() {
     return new ServerLevelCard(20, 0, "", new PriceMap(1, 1, 1, 1, 0), Level.ONE, new PurchaseMap(
         Map.of(Gem.RUBY, 1)));

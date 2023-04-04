@@ -11,6 +11,7 @@ import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
+import com.hexanome16.server.models.cards.ServerNoble;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,8 @@ import lombok.Getter;
 public class Inventory {
   /* fields *************************************************************************************/
   private final PlayerBank playerBank;
-  private final List<Noble> ownedNobles;
-  private final List<Noble> reservedNobles;
+  private final List<ServerNoble> ownedNobles;
+  private final List<ServerNoble> reservedNobles;
   private final List<ServerLevelCard> ownedCards;
   private final List<ServerLevelCard> reservedCards;
   private PurchaseMap gemBonuses;
@@ -99,9 +100,19 @@ public class Inventory {
    * @param noble the noble
    * @return the boolean
    */
-  public boolean acquireNoble(Noble noble) {
+  public boolean acquireNoble(ServerNoble noble) {
     prestigePoints += noble.getCardInfo().prestigePoint();
     return ownedNobles.add(noble);
+  }
+
+  /**
+   * Acquire a city.
+   *
+   * @param city the city
+   * @return if added successfully
+   */
+  public boolean acquireCity(ServerCity city) {
+    return ownedCities.add(city);
   }
 
   /**
@@ -110,7 +121,7 @@ public class Inventory {
    * @param noble the noble
    * @return the boolean
    */
-  public boolean reserveNoble(Noble noble) {
+  public boolean reserveNoble(ServerNoble noble) {
     return reservedNobles.add(noble);
   }
 
@@ -137,6 +148,22 @@ public class Inventory {
         prestigePoints += 1;
       }
       prestigePoints += tradePost.getBonusPrestigePoints(this.tradePosts);
+      tradePosts.put(tradePost.getRouteType(), tradePost);
+    }
+  }
+
+  /**
+   * Removes a trade post to the list.
+   *
+   * @param tradePost the trade post to be added.
+   */
+  public void removeTradePost(TradePost tradePost) {
+    if (tradePosts.containsKey(tradePost.getRouteType())) {
+      //add one for each new trade post if the player has onyx route
+      if (tradePosts.containsKey(RouteType.ONYX_ROUTE)) {
+        prestigePoints -= 1;
+      }
+      prestigePoints -= tradePost.getBonusPrestigePoints(this.tradePosts);
       tradePosts.put(tradePost.getRouteType(), tradePost);
     }
   }

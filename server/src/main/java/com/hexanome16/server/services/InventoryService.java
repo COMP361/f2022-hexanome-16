@@ -1,15 +1,12 @@
 package com.hexanome16.server.services;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.hexanome16.common.dto.cards.CitiesJson;
 import com.hexanome16.common.dto.cards.DeckJson;
+import com.hexanome16.common.dto.cards.NobleDeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
@@ -33,10 +30,12 @@ import com.hexanome16.server.util.ServiceUtils;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import lombok.SneakyThrows;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +87,6 @@ public class InventoryService implements InventoryServiceInterface {
         HttpStatus.OK);
   }
 
-
   @Override
   public ResponseEntity<String> getDiscountedPrice(long sessionId, String cardMd5,
                                                    String accessToken)
@@ -109,7 +107,6 @@ public class InventoryService implements InventoryServiceInterface {
         .writeValueAsString(player.discountPrice(card.getCardInfo().price()));
     return CustomResponseFactory.getCustomResponse(CustomHttpResponses.OK, priceMap, null);
   }
-
 
   @Override
   public ResponseEntity<String> buyCard(long sessionId, String cardMd5, String accessToken,
@@ -161,7 +158,7 @@ public class InventoryService implements InventoryServiceInterface {
         proposedDeal.getGemCost(Gem.DIAMOND),
         proposedDeal.getGemCost(Gem.ONYX),
         proposedDeal.getGemCost(Gem.GOLD))
-            || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
+        || !player.hasAtLeastGoldenBonus(proposedDeal.getGoldenCardsAmount())) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_FUNDS);
     }
 
@@ -189,31 +186,13 @@ public class InventoryService implements InventoryServiceInterface {
     // Remove the card from the player's reserved cards
     player.removeReservedCardFromInventory(cardToBuy);
 
-    if (game.getWinCondition() == WinCondition.TRADEROUTES
-        && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
-      player.addTakeTokenToPerform(Optional.empty());
-    }
-
-
-    ResponseEntity<String> error =
-        addNobleAction(game, player);
-
-    if (error != null) {
-      return error;
-    }
+    extensionActionUponPurchase(game, player);
 
     Level level = (cardToBuy).getLevel();
 
     // Remove card from the board and add new card
     if (game.removeOnBoardCard(cardToBuy)) {
       game.addOnBoardCard(level);
-    }
-
-    // Receive trade posts
-    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        player.getInventory().addTradePost(tradePost.getValue());
-      }
     }
 
     // Update long polling
@@ -225,18 +204,67 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, cardToBuy);
 
-
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(game, player);
   }
 
+  @Override
+  public ResponseEntity<String> buySacrificeCard(long sessionId, String cardMd5, String accessToken,
+                                                 String firstMd5, String secondMd5) {
+
+    var request = serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
 
 
+    // Fetch the card in question
+    ServerLevelCard cardToBuy = game.getCardByHash(cardMd5);
+
+    if (cardToBuy == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    // Fetch the cards to discard
+    ServerLevelCard firstCard = game.getCardByHash(firstMd5);
+    ServerLevelCard secondCard = game.getCardByHash(secondMd5);
+
+    // proposed deal is acceptable
+    if (firstCard == null || secondCard == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INVALID_PROPOSED_DEAL);
+    }
+
+    discardCard(game, player, firstCard);
+    discardCard(game, player, secondCard);
+
+    // Add that card to the player's Inventory
+    player.addCardToInventory(cardToBuy);
+
+    // Remove the card from the player's reserved cards
+    player.removeReservedCardFromInventory(cardToBuy);
+
+    extensionActionUponPurchase(game, player);
+
+    Level level = (cardToBuy).getLevel();
+
+    // Remove card from the board and add new card
+    if (game.removeOnBoardCard(cardToBuy)) {
+      game.addOnBoardCard(level);
+    }
+
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.fromLevel(level),
+        new DeckJson(game.getOnBoardDeck(level).getCardList(), level)
+    );
+
+
+    actionUponCardAcquiral(game, player, cardToBuy);
+
+    return serviceUtils.checkForNextActions(game, player);
+  }
 
   /**
    * Let the player reserve a face up card.
@@ -292,15 +320,8 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardReservation(game, player, card);
 
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(game, player);
   }
-
 
   /**
    * Let the player reserve a face down card.
@@ -323,13 +344,7 @@ public class InventoryService implements InventoryServiceInterface {
     final Game game = request.getRight().getLeft();
     final ServerPlayer player = request.getRight().getRight();
 
-    Level atLevel = switch (level) {
-      case "THREE" -> Level.THREE;
-      case "TWO" -> Level.TWO;
-      case "ONE" -> Level.ONE;
-      default -> null;
-    };
-
+    Level atLevel = Level.fromString(level);
     if (atLevel == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_LEVEL_INFO);
     }
@@ -353,14 +368,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardReservation(game, player, card);
 
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(game, player);
   }
 
   @SneakyThrows
@@ -410,12 +418,7 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, card);
 
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(game, player);
   }
 
   @Override
@@ -464,15 +467,11 @@ public class InventoryService implements InventoryServiceInterface {
 
     actionUponCardAcquiral(game, player, card);
 
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    return serviceUtils.checkForNextActions(game, player);
   }
 
   @Override
+  @SneakyThrows
   public ResponseEntity<String> acquireNoble(long sessionId, String nobleHash,
                                              String accessToken) {
     var request =
@@ -505,18 +504,117 @@ public class InventoryService implements InventoryServiceInterface {
     if (!player.addCardToInventory(noble)) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
-    player.removeTopAction();
+    player.completeChooseNoble();
 
-    var nextAction = player.peekTopAction();
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
+    game.getOnBoardNobles().removeCard(noble);
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.NOBLES,
+        new NobleDeckJson(game.getOnBoardNobles().getCardList())
+    );
 
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @Override
+  @SneakyThrows
+  public ResponseEntity<String> acquireCity(long sessionId, String cityHash,
+                                            String accessToken) {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.CITY) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+
+    var city = game.getCityByHash(cityHash);
+
+    if (cityHash == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+
+    if (!player.canBeVisitedBy(city)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.INSUFFICIENT_BONUSES_FOR_VISIT);
+    }
+
+    if (!player.addCardToInventory(city)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    player.removeTopAction();
+
+    game.getOnBoardCities().removeCard(city);
+    // Update long polling
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.CITIES,
+        new CitiesJson(game.getOnBoardCities().getCardList())
+    );
+
+    return serviceUtils.checkForNextActions(game, player);
+  }
+
+  @Override
+  public ResponseEntity<String> reserveNoble(long sessionId, String nobleMd5, String accessToken)
+      throws JsonProcessingException {
+    var request =
+        serviceUtils.validRequestAndCurrentTurn(sessionId, accessToken);
+    ResponseEntity<String> response = request.getLeft();
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    final Game game = request.getRight().getLeft();
+    final ServerPlayer player = request.getRight().getRight();
+    final ServerNoble noble = game.getNobleByHash(nobleMd5);
+
+    var currentAction = player.peekTopAction();
+    if (currentAction == null) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    if (currentAction.getActionType() != CustomHttpResponses.ActionType.NOBLE_RESERVE) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.ILLEGAL_ACTION);
+    }
+    // I am assuming Remaining nobles is the field with the nobles still up for the taking.
+    if (noble == null || !game.getRemainingNobles().containsValue(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
+    }
+    if (!player.reserveCard(noble)) {
+      return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
+    }
+    // THis doesnt do what its supposed to for some reason
+    game.getOnBoardNobles().removeCard(noble);
+
+    game.getBroadcastContentManagerMap().updateValue(
+        BroadcastMapKey.NOBLES, new NobleDeckJson(
+            new ArrayList<>(game.getOnBoardNobles().getCardList()))
+
+    );
+
+
+    player.removeTopAction();
+    var nextAction = player.peekTopAction();
+
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+
+
+  }
+
+  @Override
+  @SneakyThrows
   public ResponseEntity<String> associateBagCard(long sessionId, String accessToken,
                                                  String tokenType) {
     var request =
@@ -550,14 +648,10 @@ public class InventoryService implements InventoryServiceInterface {
     player.updateBonusGems();
 
     player.removeTopAction();
-    var nextAction = player.peekTopAction();
 
-    if (nextAction != null) {
-      return nextAction.getActionDetails();
-    }
-
-    serviceUtils.endCurrentPlayersTurn(game);
-    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+    game.getHashToCardMap()
+        .put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCard)), bagCard);
+    return serviceUtils.checkForNextActions(game, player);
   }
 
   @Override
@@ -613,6 +707,27 @@ public class InventoryService implements InventoryServiceInterface {
         player.getInventory().getReservedCards(), Level.ONE)), HttpStatus.OK);
   }
 
+
+  // ACTION RELATED SHENANIGANS
+
+  @Override
+  public ResponseEntity<String> getCardPrice(long sessionId, String username, Gem gem)
+      throws JsonProcessingException {
+    // get the player (if valid) from the session id and access token
+    ServerPlayer player = serviceUtils.getValidPlayerByName(sessionId, username);
+
+    List<LevelCard> cards = new ArrayList<>();
+    for (LevelCard levelCard : player.getInventory().getOwnedCards()) {
+      if (levelCard.getGemBonus().getGemCost(gem) > 0) {
+        cards.add(levelCard);
+      }
+    }
+
+    // return the cards in the inventory as a response entity
+    return new ResponseEntity<>(objectMapper.writeValueAsString(new DeckJson(
+        cards, Level.ONE)), HttpStatus.OK);
+  }
+
   @Override
   public ResponseEntity<String> getReservedNobles(long sessionId, String username)
       throws JsonProcessingException {
@@ -623,9 +738,21 @@ public class InventoryService implements InventoryServiceInterface {
         player.getInventory().getReservedNobles()), HttpStatus.OK);
   }
 
+  private void discardCard(Game game, ServerPlayer player, ServerLevelCard card) {
+    player.removeCardFromInventory(card);
+    // Lose trade posts
+    List<TradePost> tradePostsToRemove = new ArrayList<>();
+    for (Map.Entry<RouteType, TradePost> tradePost : player.getInventory().getTradePosts()
+        .entrySet()) {
+      if (!tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        tradePostsToRemove.add(tradePost.getValue());
+      }
+    }
 
-  // ACTION RELATED SHENANIGANS
-
+    for (TradePost tradePost : tradePostsToRemove) {
+      player.getInventory().removeTradePost(tradePost);
+    }
+  }
 
   // TODO :: Add this methode everywhere when a card is aquired, (like bought
   //  or by cascading, not upon reserving a card)
@@ -635,6 +762,10 @@ public class InventoryService implements InventoryServiceInterface {
     // ACTION RELATED SHENANIGANS
     if (acquiredCard.isBag()) {
       player.addAcquireCardToPerform(acquiredCard);
+    }
+    if (acquiredCard.getBonusType() == LevelCard.BonusType.RESERVE_NOBLE) {
+      ArrayList<Noble> nobles = new ArrayList<>(game.getOnBoardNobles().getCardList());
+      player.addReserveNobleToPerform(nobles);
     }
     if (acquiredCard.getBonusType() == LevelCard.BonusType.CASCADING_ONE_BAG) {
       player.addTakeOneToPerform();
@@ -653,20 +784,18 @@ public class InventoryService implements InventoryServiceInterface {
     }
   }
 
-  private static ResponseEntity<String> addNobleAction(Game game, ServerPlayer player) {
-    var noblesList = new ArrayList<Noble>();
-    for (ServerNoble noble : game.getRemainingNobles().values()) {
-      if (player.canBeVisitedBy(noble)) {
-        noblesList.add(noble);
+  private void extensionActionUponPurchase(Game game, ServerPlayer player) {
+    // Ruby route
+    if (game.getWinCondition() == WinCondition.TRADEROUTES
+        && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
+      player.addTakeTokenToPerform(Optional.empty());
+    }
+
+    // Receive trade posts
+    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        player.getInventory().addTradePost(tradePost.getValue());
       }
     }
-    if (!noblesList.isEmpty()) {
-      try {
-        player.addNobleListToPerform(noblesList);
-      } catch (JsonProcessingException e) {
-        return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
-      }
-    }
-    return null;
   }
 }

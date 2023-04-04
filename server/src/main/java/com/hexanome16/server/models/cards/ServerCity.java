@@ -3,25 +3,18 @@ package com.hexanome16.server.models.cards;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.City;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
-import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.NotImplementedException;
 
 /**
  * ServerCity class for the Cities expansion.
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ServerCity extends City implements Visitable {
-  private CardInfo cardInfo;
-
-
   /**
    * Instantiates a new ServerCity.
    *
@@ -31,7 +24,7 @@ public class ServerCity extends City implements Visitable {
    * @param price         the price
    */
   public ServerCity(int id, int prestigePoint, String texturePath, PriceMap price) {
-    cardInfo = new CardInfo(id, prestigePoint, texturePath, price);
+    super(id, prestigePoint, texturePath, price);
   }
 
   /**
@@ -43,12 +36,26 @@ public class ServerCity extends City implements Visitable {
   @Override
   @JsonIgnore
   public boolean addToInventory(Inventory inventory) {
-    return false;
+    if (!inventory.hasAtLeastGivenBonuses(cardInfo.price())) {
+      return false;
+    }
+    return inventory.acquireCity(this);
   }
 
   @Override
   public boolean playerMeetsRequirements(Inventory inventory) {
-    // TODO: add once gem bonuses are ready
-    throw new NotImplementedException();
+    if (cardInfo.price().getTotalGems() == 0) {
+      return inventory.getPrestigePoints() >= cardInfo.prestigePoint()
+          - inventory.getOwnedCards().size();
+    }
+    return inventory.getPrestigePoints() >= cardInfo.prestigePoint()
+        && inventory.getGemBonuses().getGemCost(Gem.RUBY) >= cardInfo.price().getGemCost(Gem.RUBY)
+        && inventory.getGemBonuses().getGemCost(Gem.EMERALD)
+        >= cardInfo.price().getGemCost(Gem.EMERALD)
+        && inventory.getGemBonuses().getGemCost(Gem.SAPPHIRE)
+        >= cardInfo.price().getGemCost(Gem.SAPPHIRE)
+        && inventory.getGemBonuses().getGemCost(Gem.DIAMOND)
+        >= cardInfo.price().getGemCost(Gem.DIAMOND)
+        && inventory.getGemBonuses().getGemCost(Gem.ONYX) >= cardInfo.price().getGemCost(Gem.ONYX);
   }
 }

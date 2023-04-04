@@ -5,16 +5,15 @@ import static com.hexanome16.client.requests.RequestClient.objectMapper;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
-import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.AssociateBagCard;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseCity;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringOne;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
-import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.List;
 import javafx.util.Pair;
@@ -92,6 +91,19 @@ public class PromptUtils {
         ChooseNoble.setNobleList(nobles);
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_NOBLES));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+              .equals(CustomHttpResponses.ActionType.NOBLE_RESERVE.getMessage())) {
+        Noble[] nobles = objectMapper.readValue(serverResponse.getValue(), Noble[].class);
+        ChooseNobleReserve.setNobleList(nobles);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType",
+                PromptTypeInterface.PromptType.CHOOSE_NOBLE_TO_RESERVE));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.CITY.getMessage())) {
+        City[] cities = objectMapper.readValue(serverResponse.getValue(), City[].class);
+        ChooseCity.setCityList(cities);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_CITY));
       } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
           .equals(CustomHttpResponses.ActionType.DISCARD.getMessage())) {
         String[] tokens = objectMapper.readValue(serverResponse.getValue(), String[].class);

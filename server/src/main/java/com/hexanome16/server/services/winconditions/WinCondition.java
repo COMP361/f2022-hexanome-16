@@ -24,7 +24,9 @@ public enum WinCondition {
   /**
    * Win condition for Cities (15 prestige points + 4 cities).
    */
-  CITIES(null, new GameServiceJson("SplendorCities", "Orient + Cities"));
+  CITIES(player -> player.getInventory().getPrestigePoints() >= 15
+      || !player.getInventory().getOwnedCities().isEmpty(),
+      new GameServiceJson("SplendorCities", "Orient + Cities"));
 
   private final Predicate<ServerPlayer> winCondition;
   @Getter

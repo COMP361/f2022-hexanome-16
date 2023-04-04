@@ -252,10 +252,16 @@ public class DeckFactory implements EntityFactory {
       pane.setScaleX(1);
       pane.setScaleY(1);
     });
+
+    String player = (String) data.getData().getOrDefault("player", "");
     // build the entity
     return FXGL.entityBuilder(data)
         .view(pane)
         .scale(0.1, 0.1)
+        .onClick(e -> {
+          SeeCards.fetchReservedNobles(player);
+          PromptUtils.openPrompt(PromptTypeInterface.PromptType.SEE_CARDS);
+        })
         .build();
   }
 

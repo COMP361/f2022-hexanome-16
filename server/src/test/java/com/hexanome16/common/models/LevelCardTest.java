@@ -45,7 +45,7 @@ class LevelCardTest {
     underTest.associateBagToGem(Gem.RUBY);
 
     // Assert
-    assertTrue(underTest.isAssociatedGem());
+    assertTrue(underTest.getAssociatedGem());
     assertEquals(1, underTest.gemBonus.getGemCost(Gem.RUBY));
   }
 
@@ -61,5 +61,15 @@ class LevelCardTest {
 
     // Assert
     assertThrows(AssertionError.class, executable);
+  }
+
+  @Test
+  void testCheckCardIsReserveCard() {
+    // Arrange
+    underTest =
+        new LevelCard(Level.ONE, 1, 1, "path", new PriceMap(1, 1, 1, 0, 0),
+            LevelCard.BonusType.RESERVE_NOBLE,
+            new PurchaseMap(0, 0, 0, 0, 0, 0));
+    assertEquals(LevelCard.BonusType.RESERVE_NOBLE, underTest.getBonusType());
   }
 }

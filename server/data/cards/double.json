@@ -37,8 +37,8 @@
       "bonus": "RUBY",
       "price": {
          "ONYX": 3,
-         "SAPPHIRE": 4,
-         "EMERALD": 0,
+         "SAPPHIRE": 0,
+         "EMERALD": 4,
          "RUBY": 0,
          "DIAMOND": 0
       }

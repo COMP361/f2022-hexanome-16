@@ -1,53 +1,38 @@
 package com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.texture.Texture;
+import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
-import java.util.ArrayList;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.Noble;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
+
 
 /**
  * Class responsible for populating Reserving Noble prompt.
  */
-public class ChooseNobleReserve extends NobleChoiceAbstract {
+public class ChooseNobleReserve extends ChooseNoble {
 
-  @Override
-  public boolean isCancelable() {
-    return false;
-  }
-
-  @Override
-  public boolean canBeOpenedOutOfTurn() {
-    return true;
-  }
 
   @Override
   protected String promptText() {
-    return "Reserve a noble";
-  }
-
-  @Override
-  protected double promptTextSize() {
-    return getHeight() / 6.;
-  }
-
-  @Override
-  protected boolean canConfirm() {
-    return atConfirmCircle.getOpacity() == 1.;
+    return "Choose Noble To Reserve";
   }
 
   @Override
   protected void handleConfirmation() {
-    // to modify, use chosenNobleIndex to get index of the choice
-    PromptComponent.closePrompts();
-  }
+    int nobleIndex = chosenVisitableIndex;
+    long sessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    Noble nobleOfInterest = nobleList[nobleIndex];
+    String nobleHash = GameScreen.getNobleHash(nobleOfInterest);
+    Pair<Headers, String> serverResponse = PromptsRequests.reserveNoble(sessionId,
+            authToken, nobleHash);
 
-  @Override
-  protected ArrayList<Texture> getChoiceNobles() {
-    // Hard Coded for now
-    ArrayList<Texture> myList = new ArrayList<>();
-    myList.add(FXGL.texture("noble1.png"));
-    myList.add(FXGL.texture("noble2.png"));
-    myList.add(FXGL.texture("noble2.png"));
-    return myList;
+    PromptComponent.closePrompts();
+    PromptUtils.actionResponseSpawner(serverResponse);
+
   }
 }

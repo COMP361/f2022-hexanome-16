@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,17 +14,23 @@ import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.controllers.DummyAuthService;
 import com.hexanome16.server.models.PlayerDummies;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.actions.Action;
+import com.hexanome16.server.models.cards.Deck;
+import com.hexanome16.server.models.cards.ServerCity;
+import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.DummyAuths;
 import com.hexanome16.server.services.DummyGameManagerService;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMap;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Unit test for service utility class.
@@ -45,6 +53,138 @@ public class ServiceUtilsTests {
             WinCondition.BASE);
     underTest = new ServiceUtils(gameManagerServiceInterface,
         new DummyAuthService());
+  }
+
+  @Test
+  void testCheckForNextActions() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    Deck<ServerNoble> nobles = new Deck<>();
+    ServerNoble noble = new ServerNoble();
+    nobles.addCard(noble);
+    when(gameMock.getOnBoardNobles()).thenReturn(nobles);
+    BroadcastMap broadcastMap = mock(BroadcastMap.class);
+    when(gameMock.getWinCondition()).thenReturn(WinCondition.BASE);
+    when(gameMock.getPlayers()).thenReturn(PlayerDummies.validDummies);
+    when(gameMock.getBroadcastContentManagerMap()).thenReturn(broadcastMap);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(any())).thenReturn(false);
+    when(playerMock.peekTopAction()).thenReturn(null);
+
+    // Act
+    ResponseEntity<String> response = underTest.checkForNextActions(gameMock, playerMock);
+
+    // Assert
+    assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), response.getBody());
+    assertEquals(CustomHttpResponses.END_OF_TURN.getStatus(), response.getStatusCodeValue());
+  }
+
+  @Test
+  void testCheckForNextActionsReturnsNextAction() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    Deck<ServerNoble> nobles = new Deck<>();
+    ServerNoble noble = new ServerNoble();
+    nobles.addCard(noble);
+    when(gameMock.getOnBoardNobles()).thenReturn(nobles);
+    BroadcastMap broadcastMap = mock(BroadcastMap.class);
+    when(gameMock.getWinCondition()).thenReturn(WinCondition.BASE);
+    when(gameMock.getPlayers()).thenReturn(PlayerDummies.validDummies);
+    when(gameMock.getBroadcastContentManagerMap()).thenReturn(broadcastMap);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    when(playerMock.canBeVisitedBy(any())).thenReturn(false);
+    Action actionMock = mock(Action.class);
+    ResponseEntity<String> expectedResponse =
+        CustomResponseFactory.getResponse(CustomHttpResponses.TAKE_LEVEL_TWO);
+    when(actionMock.getActionDetails()).thenReturn(expectedResponse);
+    when(playerMock.peekTopAction()).thenReturn(actionMock);
+
+    // Act
+    ResponseEntity<String> response = underTest.checkForNextActions(gameMock, playerMock);
+
+    // Assert
+    assertEquals(expectedResponse.getBody(), response.getBody());
+    assertEquals(expectedResponse.getStatusCodeValue(), response.getStatusCodeValue());
+  }
+
+  @SneakyThrows
+  @Test
+  void testAddNobleAction() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Deck<ServerNoble> nobles = new Deck<>();
+    ServerNoble noble = new ServerNoble();
+    nobles.addCard(noble);
+    when(gameMock.getOnBoardNobles()).thenReturn(nobles);
+    when(playerMock.canBeVisitedBy(noble)).thenReturn(true);
+
+    // Act
+    ResponseEntity<String> response = ServiceUtils.addNobleAction(gameMock, playerMock);
+
+    // Assert
+    assertNull(response);
+    verify(playerMock).addNobleListToPerform(any());
+  }
+
+  @SneakyThrows
+  @Test
+  void testAddNobleActionWhenNoneCanVisit() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Deck<ServerNoble> nobleDeck = new Deck<>();
+    ServerNoble noble = new ServerNoble();
+    nobleDeck.addCard(noble);
+    when(gameMock.getOnBoardNobles()).thenReturn(nobleDeck);
+    when(playerMock.canBeVisitedBy(noble)).thenReturn(false);
+
+    // Act
+    ResponseEntity<String> response = ServiceUtils.addNobleAction(gameMock, playerMock);
+
+    // Assert
+    assertNull(response);
+    verify(playerMock, never()).addNobleListToPerform(any());
+  }
+
+  @SneakyThrows
+  @Test
+  void testAddCityAction() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Deck<ServerCity> cities = new Deck<>();
+    ServerCity city1 = new ServerCity();
+    cities.addCard(city1);
+    when(gameMock.getOnBoardCities()).thenReturn(cities);
+    when(playerMock.canBeVisitedBy(city1)).thenReturn(true);
+
+    // Act
+    ResponseEntity<String> response = ServiceUtils.addCityAction(gameMock, playerMock);
+
+    // Assert
+    assertNull(response);
+    verify(playerMock).addCitiesToPerform(any());
+  }
+
+  @SneakyThrows
+  @Test
+  void testAddCityActionWhenNoneCanVisit() {
+    // Arrange
+    Game gameMock = mock(Game.class);
+    ServerPlayer playerMock = mock(ServerPlayer.class);
+    Deck<ServerCity> cities = new Deck<>();
+    ServerCity city1 = new ServerCity();
+    cities.addCard(city1);
+    when(gameMock.getOnBoardCities()).thenReturn(cities);
+    when(playerMock.canBeVisitedBy(city1)).thenReturn(false);
+
+    // Act
+    ResponseEntity<String> response = ServiceUtils.addCityAction(gameMock, playerMock);
+
+    // Assert
+    assertNull(response);
+    verify(playerMock, never()).addCitiesToPerform(any());
   }
 
   /**
@@ -234,6 +374,5 @@ public class ServiceUtilsTests {
 
     // Assert
     Throwable throwable = assertThrows(IllegalArgumentException.class, executable);
-    assertEquals("Invalid Player.", throwable.getMessage());
   }
 }

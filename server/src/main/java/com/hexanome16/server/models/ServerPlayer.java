@@ -2,6 +2,7 @@ package com.hexanome16.server.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.models.Player;
 import com.hexanome16.common.models.price.Gem;
@@ -13,12 +14,12 @@ import com.hexanome16.server.models.actions.AssociateCardAction;
 import com.hexanome16.server.models.actions.ChooseCityAction;
 import com.hexanome16.server.models.actions.ChooseNobleAction;
 import com.hexanome16.server.models.actions.DiscardTokenAction;
+import com.hexanome16.server.models.actions.ReserveNobleAction;
 import com.hexanome16.server.models.actions.TakeOneAction;
 import com.hexanome16.server.models.actions.TakeTokenAction;
 import com.hexanome16.server.models.actions.TakeTwoAction;
 import com.hexanome16.server.models.bank.PlayerBank;
 import com.hexanome16.server.models.cards.Reservable;
-import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.Visitable;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -44,6 +45,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ServerPlayer extends Player {
   private Queue<Action> queueOfCascadingActionTypes;
+  private ChooseNobleAction needsToChooseNoble = null;
   private Inventory inventory; // the player has an inventory, not a bank
 
   /**
@@ -58,8 +60,6 @@ public class ServerPlayer extends Player {
     this.inventory = new Inventory();
     this.queueOfCascadingActionTypes = new LinkedList<>();
   }
-
-
 
 
   /**
@@ -197,12 +197,6 @@ public class ServerPlayer extends Player {
     return reservable.reserveCard(this.inventory);
   }
 
-  /**
-   * Delete inventory.
-   */
-  public void deleteInventory() {
-    this.inventory = null;
-  }
 
   /**
    * Verifies that the player meets the requirements to be visited by said visitable.
@@ -284,19 +278,38 @@ public class ServerPlayer extends Player {
    *
    * @param action action.
    */
-  public void addActionToQueue(Action action) {
+  private void addActionToQueue(Action action) {
     queueOfCascadingActionTypes.add(action);
+  }
+
+  /**
+   * Notify player that they need to pick a noble.
+   *
+   * @param action the action of nobles
+   */
+  public void addChooseNoble(ChooseNobleAction action) {
+    this.needsToChooseNoble = action;
+  }
+
+  /**
+   * Notify player that they've chosen the noble.
+   */
+  public void completeChooseNoble() {
+    this.needsToChooseNoble = null;
   }
 
   /**
    * Gets but doesn't remove top most action in the action queue of the player.
    *
    * @return action that needs to performed by player or null if empty.
-   * @throws NullPointerException if queue is empty.
    */
   public Action peekTopAction() {
     System.out.println(queueOfCascadingActionTypes);
-    return queueOfCascadingActionTypes.peek();
+    Action topAction = queueOfCascadingActionTypes.peek();
+    if (topAction == null) {
+      topAction = this.needsToChooseNoble;
+    }
+    return topAction;
   }
 
   /**
@@ -315,8 +328,20 @@ public class ServerPlayer extends Player {
    * @throws JsonProcessingException thrown if nobles cannot be parsed
    */
   public void addNobleListToPerform(ArrayList<Noble> nobleList) throws JsonProcessingException {
-    addActionToQueue(new ChooseNobleAction(nobleList.toArray(new Noble[0])));
+    addChooseNoble(new ChooseNobleAction(nobleList.toArray(new Noble[0])));
   }
+
+  /**
+   * Adds Reserve Noble as an action that needs to be performed.
+   *
+   * @param nobles List of nobles to choose from.
+   * @throws JsonProcessingException if nobles cannot be parsed.
+   */
+  public void addReserveNobleToPerform(ArrayList<Noble> nobles)
+          throws JsonProcessingException {
+    addActionToQueue(new ReserveNobleAction(nobles.toArray(Noble[]::new)));
+  }
+
 
   /**
    * Adds Cities Choice as an action that needs to be performed.
@@ -324,8 +349,8 @@ public class ServerPlayer extends Player {
    * @param citiesList list of cities to choose from. Not empty please.
    * @throws JsonProcessingException thrown if cities cannot be parsed
    */
-  public void addCitiesToPerform(ArrayList<ServerCity> citiesList) throws JsonProcessingException {
-    addActionToQueue(new ChooseCityAction(citiesList.toArray(new ServerCity[0])));
+  public void addCitiesToPerform(ArrayList<City> citiesList) throws JsonProcessingException {
+    addActionToQueue(new ChooseCityAction(citiesList.toArray(new City[0])));
   }
 
   /**
@@ -370,11 +395,4 @@ public class ServerPlayer extends Player {
   public void addTakeTokenToPerform(Optional<Gem> gem) {
     addActionToQueue(new TakeTokenAction(gem));
   }
-
-
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 }
