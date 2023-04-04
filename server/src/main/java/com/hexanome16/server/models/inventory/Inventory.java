@@ -153,6 +153,22 @@ public class Inventory {
   }
 
   /**
+   * Removes a trade post to the list.
+   *
+   * @param tradePost the trade post to be added.
+   */
+  public void removeTradePost(TradePost tradePost) {
+    if (tradePosts.containsKey(tradePost.getRouteType())) {
+      //add one for each new trade post if the player has onyx route
+      if (tradePosts.containsKey(RouteType.ONYX_ROUTE)) {
+        prestigePoints -= 1;
+      }
+      prestigePoints -= tradePost.getBonusPrestigePoints(this.tradePosts);
+      tradePosts.put(tradePost.getRouteType(), tradePost);
+    }
+  }
+
+  /**
    * Gets prestige points.
    *
    * @return the prestige points

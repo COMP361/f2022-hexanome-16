@@ -11,9 +11,11 @@ import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.components.CardComponent;
 import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
 import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.Level;
@@ -148,6 +150,8 @@ public class PromptComponent extends Component {
       ((ReserveCardPrompt) atPromptType).populatePrompt(entity, level);
     } else if (atCardEntity == null) {
       atPromptType.populatePrompt(entity);
+    } else if (atCardEntity.getComponent(CardComponent.class).getIsSacrifice()) {
+      ((BuyCardWithCards) atPromptType).populatePrompt(entity, atCardEntity);
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);
     }

@@ -54,7 +54,6 @@ public class SeeCards implements PromptTypeInterface {
    * The top left y.
    */
   private final double atTopLeftY = (getAppHeight() / 2.) - (atHeight / 2);
-  //List<String> cards = List.of("card1.png", "card2.png");
 
 
   /**

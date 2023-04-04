@@ -21,21 +21,20 @@ import lombok.NoArgsConstructor;
 public class LevelCard {
   protected Level level;
   protected CardInfo cardInfo;
-  protected boolean faceDown;
+  protected Boolean faceDown;
   protected BonusType bonusType;
   @JsonProperty("bonus")
   protected PurchaseMap gemBonus;
   /**
    * For bag cards.
    */
-  protected boolean associatedGem;
+  protected Boolean associatedGem;
 
   /**
    * Bonus type class.
    */
   public enum BonusType {
-    NONE, CASCADING_TWO, CASCADING_ONE_BAG, BAG, TWO_GOLD_TOKENS,
-    RESERVE_NOBLE;
+    NONE, CASCADING_TWO, CASCADING_ONE_BAG, BAG, TWO_GOLD_TOKENS, SACRIFICE, RESERVE_NOBLE;
   }
 
   /**
@@ -72,7 +71,7 @@ public class LevelCard {
   public LevelCard(Level level, int id, int prestigePoint, String texturePath,
                    PriceMap price, BonusType bonusType, PurchaseMap gemBonus) {
     this(level, id, prestigePoint, texturePath, price, gemBonus);
-    // TODO: why does this not start face down?
+    this.faceDown = true;
     this.bonusType = bonusType;
     associatedGem = !isBag();
   }
