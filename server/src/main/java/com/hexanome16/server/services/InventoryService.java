@@ -541,8 +541,6 @@ public class InventoryService implements InventoryServiceInterface {
 
     var city = game.getCityByHash(cityHash);
 
-    System.out.println(city);
-
     if (cityHash == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
@@ -555,7 +553,6 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
     player.removeTopAction();
-
     game.getOnBoardCities().removeCard(city);
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(

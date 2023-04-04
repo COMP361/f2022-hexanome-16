@@ -1,22 +1,51 @@
 {
-  "gamename" : "SplendorCities",
-  "id" : "cities",
+  "gamename" : "Splendor",
+  "id" : "sacrifice",
   "currentPlayerIndex" : 0,
   "usernames" : [ "peini", "costa", "imad" ],
   "creator" : "peini",
   "onBoardDecks" : {
-    "THREE" : [ {
-      "level" : "THREE",
+    "ONE" : [ {
+      "level" : "ONE",
       "cardInfo" : {
-        "id" : 15,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three15",
+        "id" : 36,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one36",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 7,
-            "ONYX" : 0,
+            "DIAMOND" : 3,
+            "ONYX" : 1,
             "RUBY" : 0,
             "EMERALD" : 0,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : false,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 30,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one30",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 1,
+            "RUBY" : 1,
+            "EMERALD" : 1,
             "SAPPHIRE" : 0
           }
         }
@@ -35,74 +64,16 @@
         }
       }
     }, {
-      "level" : "THREE",
+      "level" : "ONE",
       "cardInfo" : {
-        "id" : 9,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three9",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 7,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 5,
-        "texturePath" : "level_three0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 7
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 8,
-        "prestigePoint" : 5,
-        "texturePath" : "level_three8",
+        "id" : 27,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one27",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 3,
-            "RUBY" : 7,
+            "RUBY" : 0,
             "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
@@ -114,188 +85,11 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ],
-    "REDONE" : [ {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 0,
-        "texturePath" : "bag1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 0,
-            "RUBY" : 2,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
           "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 0,
-        "texturePath" : "bag2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ],
-    "REDTWO" : [ {
-      "level" : "REDTWO",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 0,
-        "texturePath" : "bag_cascade1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 4,
-            "ONYX" : 1,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "CASCADING_ONE_BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTWO",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 0,
-        "texturePath" : "bag_cascade0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "RUBY" : 3,
-            "EMERALD" : 4,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "CASCADING_ONE_BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ],
-    "ONE" : [ {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 22,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one22",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
+          "SAPPHIRE" : 1
         }
       }
     }, {
@@ -327,166 +121,49 @@
           "SAPPHIRE" : 0
         }
       }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 36,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one36",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 1,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ],
-    "REDTHREE" : [ {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 0,
-        "texturePath" : "cascade_two0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 6
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "CASCADING_TWO",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 0,
-        "texturePath" : "cascade_two1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 6,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "CASCADING_TWO",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
     } ],
     "TWO" : [ {
       "level" : "TWO",
       "cardInfo" : {
-        "id" : 16,
+        "id" : 0,
         "prestigePoint" : 1,
-        "texturePath" : "level_two16",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 15,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two15",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 5,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 28,
-        "prestigePoint" : 1,
-        "texturePath" : "level_two28",
+        "texturePath" : "level_two0",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 2,
-            "ONYX" : 0,
-            "RUBY" : 3,
+            "ONYX" : 2,
+            "RUBY" : 0,
             "EMERALD" : 0,
             "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : false,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 25,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two25",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 5,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
           }
         }
       },
@@ -506,296 +183,26 @@
     }, {
       "level" : "TWO",
       "cardInfo" : {
-        "id" : 3,
+        "id" : 12,
         "prestigePoint" : 3,
-        "texturePath" : "level_two3",
+        "texturePath" : "level_two12",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 6,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ]
-  },
-  "onBoardNobles" : [ {
-    "cardInfo" : {
-      "id" : 5,
-      "prestigePoint" : 3,
-      "texturePath" : "noble5",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 3,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 3
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 7,
-      "prestigePoint" : 3,
-      "texturePath" : "noble7",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 3,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 3
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 1,
-      "prestigePoint" : 3,
-      "texturePath" : "noble1",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 4,
-          "EMERALD" : 4,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 4,
-      "prestigePoint" : 3,
-      "texturePath" : "noble4",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 3,
-          "RUBY" : 3,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 0,
-      "prestigePoint" : 3,
-      "texturePath" : "noble0",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 4,
-          "SAPPHIRE" : 4
-        }
-      }
-    }
-  } ],
-  "onBoardCities" : [ {
-    "cardInfo" : {
-      "id" : 10,
-      "prestigePoint" : 28,
-      "texturePath" : "city10",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 9,
-      "prestigePoint" : 11,
-      "texturePath" : "city9",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 3,
-          "RUBY" : 3,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 8,
-      "prestigePoint" : 13,
-      "texturePath" : "city8",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 2,
-          "ONYX" : 2,
-          "RUBY" : 2,
-          "EMERALD" : 2,
-          "SAPPHIRE" : 2
-        }
-      }
-    }
-  } ],
-  "remainingDecks" : {
-    "THREE" : [ {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 17,
-        "prestigePoint" : 5,
-        "texturePath" : "level_three17",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 7,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 14,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three14",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 6,
-            "ONYX" : 3,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 19,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three19",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
             "ONYX" : 6,
-            "RUBY" : 3,
+            "RUBY" : 0,
             "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 7
-          }
-        }
-      },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 16,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three16",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 7,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
+          "ONYX" : 1,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
@@ -803,22 +210,22 @@
         }
       }
     }, {
-      "level" : "THREE",
+      "level" : "TWO",
       "cardInfo" : {
-        "id" : 7,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three7",
+        "id" : 11,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two11",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 6,
+            "ONYX" : 3,
+            "RUBY" : 2,
+            "EMERALD" : 0,
             "SAPPHIRE" : 3
           }
         }
       },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
@@ -831,65 +238,67 @@
           "SAPPHIRE" : 0
         }
       }
-    }, {
-      "level" : "THREE",
+    } ],
+    "REDONE" : [ {
+      "level" : "REDONE",
       "cardInfo" : {
         "id" : 4,
-        "prestigePoint" : 5,
-        "texturePath" : "level_three4",
+        "prestigePoint" : 0,
+        "texturePath" : "bag4",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 7,
+            "DIAMOND" : 2,
+            "ONYX" : 3,
+            "RUBY" : 0,
+            "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 3,
-        "texturePath" : "level_three3",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 5,
-            "ONYX" : 3,
-            "RUBY" : 3,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
+      "faceDown" : false,
+      "bonusType" : "BAG",
+      "associatedGem" : false,
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
           "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
-          "EMERALD" : 1,
+          "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
       }
     }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 0,
+        "texturePath" : "gold0",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : false,
+      "bonusType" : "TWO_GOLD_TOKENS",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    } ],
+    "THREE" : [ {
       "level" : "THREE",
       "cardInfo" : {
         "id" : 2,
@@ -905,7 +314,7 @@
           }
         }
       },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
@@ -921,84 +330,26 @@
     }, {
       "level" : "THREE",
       "cardInfo" : {
-        "id" : 18,
-        "prestigePoint" : 3,
-        "texturePath" : "level_three18",
+        "id" : 17,
+        "prestigePoint" : 5,
+        "texturePath" : "level_three17",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 5,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 3
+            "DIAMOND" : 3,
+            "ONYX" : 7,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
           }
         }
       },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 1,
           "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 13,
-        "prestigePoint" : 5,
-        "texturePath" : "level_three13",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 7,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 11,
-        "prestigePoint" : 3,
-        "texturePath" : "level_three11",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 5,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
@@ -1021,7 +372,7 @@
           }
         }
       },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
@@ -1037,316 +388,25 @@
     }, {
       "level" : "THREE",
       "cardInfo" : {
-        "id" : 12,
+        "id" : 18,
         "prestigePoint" : 3,
-        "texturePath" : "level_three12",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 5,
-            "RUBY" : 3,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 10,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three10",
+        "texturePath" : "level_three18",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 3,
-            "RUBY" : 6,
+            "RUBY" : 5,
             "EMERALD" : 3,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "THREE",
-      "cardInfo" : {
-        "id" : 6,
-        "prestigePoint" : 4,
-        "texturePath" : "level_three6",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 7,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    } ],
-    "REDONE" : [ {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 0,
-        "texturePath" : "gold2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
             "SAPPHIRE" : 3
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "TWO_GOLD_TOKENS",
+      "faceDown" : false,
+      "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 2,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 0,
-        "texturePath" : "bag4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 3,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 0,
-        "texturePath" : "gold1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "TWO_GOLD_TOKENS",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 2,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 0,
-        "texturePath" : "gold3",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "TWO_GOLD_TOKENS",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 2,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 0,
-        "texturePath" : "gold4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "TWO_GOLD_TOKENS",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 2,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 0,
-        "texturePath" : "gold0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "TWO_GOLD_TOKENS",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 2,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 0,
-        "texturePath" : "bag0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDONE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 0,
-        "texturePath" : "bag3",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "BAG",
-      "associatedGem" : false,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
+          "DIAMOND" : 1,
           "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
@@ -1358,57 +418,28 @@
     "REDTWO" : [ {
       "level" : "REDTWO",
       "cardInfo" : {
-        "id" : 3,
+        "id" : 0,
         "prestigePoint" : 0,
-        "texturePath" : "double3",
+        "texturePath" : "bag_cascade0",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 0,
+            "ONYX" : 1,
+            "RUBY" : 3,
             "EMERALD" : 4,
             "SAPPHIRE" : 0
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
+      "faceDown" : false,
+      "bonusType" : "CASCADING_ONE_BAG",
+      "associatedGem" : false,
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
           "ONYX" : 0,
           "GOLD" : 0,
-          "RUBY" : 2,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTWO",
-      "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 1,
-        "texturePath" : "noble_reserve2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "RESERVE_NOBLE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
+          "RUBY" : 0,
           "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
@@ -1429,7 +460,7 @@
           }
         }
       },
-      "faceDown" : true,
+      "faceDown" : false,
       "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
@@ -1442,82 +473,25 @@
           "SAPPHIRE" : 0
         }
       }
-    }, {
-      "level" : "REDTWO",
+    } ],
+    "REDTHREE" : [ {
+      "level" : "REDTHREE",
       "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 1,
-        "texturePath" : "noble_reserve1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 2,
-            "RUBY" : 2,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "RESERVE_NOBLE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTWO",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 0,
-        "texturePath" : "double4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 4,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 2,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTWO",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 1,
-        "texturePath" : "noble_reserve0",
+        "id" : 3,
+        "prestigePoint" : 3,
+        "texturePath" : "sacrifice3",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 2,
-            "RUBY" : 2,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 2
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "RESERVE_NOBLE",
+      "faceDown" : false,
+      "bonusType" : "SACRIFICE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
@@ -1530,43 +504,123 @@
         }
       }
     }, {
-      "level" : "REDTWO",
+      "level" : "REDTHREE",
       "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 0,
-        "texturePath" : "double1",
+        "id" : 0,
+        "prestigePoint" : 3,
+        "texturePath" : "sacrifice0",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
             "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 4
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
           }
         }
       },
-      "faceDown" : true,
-      "bonusType" : "NONE",
+      "faceDown" : false,
+      "bonusType" : "SACRIFICE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
-          "DIAMOND" : 2,
+          "DIAMOND" : 0,
           "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    } ]
+  },
+  "onBoardNobles" : [ {
+    "cardInfo" : {
+      "id" : 3,
+      "prestigePoint" : 3,
+      "texturePath" : "noble3",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 4,
+          "RUBY" : 4,
           "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
       }
-    }, {
-      "level" : "REDTWO",
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 10,
+      "prestigePoint" : 3,
+      "texturePath" : "noble10",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "RUBY" : 4,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 4
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 6,
+      "prestigePoint" : 3,
+      "texturePath" : "noble6",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 3,
+          "ONYX" : 3,
+          "RUBY" : 3,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 12,
+      "prestigePoint" : 3,
+      "texturePath" : "noble12",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 4,
+          "ONYX" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 4,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 8,
+      "prestigePoint" : 3,
+      "texturePath" : "noble8",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 3,
+          "ONYX" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 3,
+          "SAPPHIRE" : 3
+        }
+      }
+    }
+  } ],
+  "onBoardCities" : [ ],
+  "remainingDecks" : {
+    "ONE" : [ {
+      "level" : "ONE",
       "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 0,
-        "texturePath" : "double0",
+        "id" : 3,
+        "prestigePoint" : 1,
+        "texturePath" : "level_one3",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 3,
+            "DIAMOND" : 0,
             "ONYX" : 4,
             "RUBY" : 0,
             "EMERALD" : 0,
@@ -1583,23 +637,109 @@
           "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 2
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
         }
       }
-    } ],
-    "ONE" : [ {
+    }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 27,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one27",
+        "id" : 19,
+        "prestigePoint" : 1,
+        "texturePath" : "level_one19",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 3,
+            "ONYX" : 0,
             "RUBY" : 0,
             "EMERALD" : 0,
+            "SAPPHIRE" : 4
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 34,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one34",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 38,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one38",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 1,
+            "RUBY" : 1,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 26,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one26",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 2,
             "SAPPHIRE" : 0
           }
         }
@@ -1620,16 +760,74 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 35,
+        "id" : 23,
         "prestigePoint" : 0,
-        "texturePath" : "level_one35",
+        "texturePath" : "level_one23",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 1,
+            "RUBY" : 3,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 28,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one28",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 1,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 32,
+        "prestigePoint" : 1,
+        "texturePath" : "level_one32",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
             "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
+            "EMERALD" : 4,
+            "SAPPHIRE" : 0
           }
         }
       },
@@ -1649,15 +847,15 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 0,
+        "id" : 16,
         "prestigePoint" : 0,
-        "texturePath" : "level_one0",
+        "texturePath" : "level_one16",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 3,
             "SAPPHIRE" : 0
           }
         }
@@ -1668,10 +866,10 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 0,
+          "ONYX" : 1,
           "GOLD" : 0,
           "RUBY" : 0,
-          "EMERALD" : 1,
+          "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
       }
@@ -1707,189 +905,15 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 14,
+        "id" : 22,
         "prestigePoint" : 0,
-        "texturePath" : "level_one14",
+        "texturePath" : "level_one22",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 2,
-            "ONYX" : 1,
-            "RUBY" : 0,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 17,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one17",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
             "ONYX" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 24,
-        "prestigePoint" : 1,
-        "texturePath" : "level_one24",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 4,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 6,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one6",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 1,
             "RUBY" : 1,
             "EMERALD" : 0,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 37,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one37",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "RUBY" : 0,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 30,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one30",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 1,
-            "RUBY" : 1,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 21,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one21",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 1,
             "SAPPHIRE" : 2
           }
         }
@@ -1910,16 +934,16 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 8,
+        "id" : 20,
         "prestigePoint" : 0,
-        "texturePath" : "level_one8",
+        "texturePath" : "level_one20",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 3,
+            "DIAMOND" : 1,
             "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
+            "RUBY" : 1,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 1
           }
         }
       },
@@ -1929,9 +953,9 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 0,
+          "ONYX" : 1,
           "GOLD" : 0,
-          "RUBY" : 1,
+          "RUBY" : 0,
           "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
@@ -1939,72 +963,14 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 29,
+        "id" : 0,
         "prestigePoint" : 0,
-        "texturePath" : "level_one29",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 1,
-            "RUBY" : 2,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 25,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one25",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 1,
-        "texturePath" : "level_one3",
+        "texturePath" : "level_one0",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 4,
-            "RUBY" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
             "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
@@ -2055,15 +1021,44 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 20,
+        "id" : 9,
+        "prestigePoint" : 1,
+        "texturePath" : "level_one9",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 4,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 6,
         "prestigePoint" : 0,
-        "texturePath" : "level_one20",
+        "texturePath" : "level_one6",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 1,
-            "ONYX" : 0,
+            "ONYX" : 1,
             "RUBY" : 1,
-            "EMERALD" : 1,
+            "EMERALD" : 0,
             "SAPPHIRE" : 1
           }
         }
@@ -2074,7 +1069,94 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 7,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one7",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 15,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one15",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 0,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 37,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one37",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 1,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
@@ -2084,14 +1166,14 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 23,
+        "id" : 29,
         "prestigePoint" : 0,
-        "texturePath" : "level_one23",
+        "texturePath" : "level_one29",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 0,
+            "DIAMOND" : 1,
             "ONYX" : 1,
-            "RUBY" : 3,
+            "RUBY" : 2,
             "EMERALD" : 1,
             "SAPPHIRE" : 0
           }
@@ -2103,10 +1185,97 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 1,
+          "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 8,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one8",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 35,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one35",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 5,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one5",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 2,
+            "RUBY" : 1,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
           "SAPPHIRE" : 0
         }
       }
@@ -2171,16 +1340,16 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 28,
+        "id" : 25,
         "prestigePoint" : 0,
-        "texturePath" : "level_one28",
+        "texturePath" : "level_one25",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 1
+            "DIAMOND" : 1,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
           }
         }
       },
@@ -2195,151 +1364,6 @@
           "RUBY" : 0,
           "EMERALD" : 0,
           "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 5,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one5",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 2,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 32,
-        "prestigePoint" : 1,
-        "texturePath" : "level_one32",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 4,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 7,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one7",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 2,
-            "RUBY" : 2,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 38,
-        "prestigePoint" : 0,
-        "texturePath" : "level_one38",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "RUBY" : 1,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "ONE",
-      "cardInfo" : {
-        "id" : 19,
-        "prestigePoint" : 1,
-        "texturePath" : "level_one19",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 4
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
         }
       }
     }, {
@@ -2374,15 +1398,189 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 26,
+        "id" : 21,
         "prestigePoint" : 0,
-        "texturePath" : "level_one26",
+        "texturePath" : "level_one21",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 0,
+            "RUBY" : 1,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 13,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one13",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 1,
+            "RUBY" : 0,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 18,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one18",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 17,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one17",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 2,
-            "RUBY" : 0,
+            "ONYX" : 0,
+            "RUBY" : 1,
             "EMERALD" : 2,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "ONE",
+      "cardInfo" : {
+        "id" : 24,
+        "prestigePoint" : 1,
+        "texturePath" : "level_one24",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 4,
+            "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
         }
@@ -2403,15 +1601,15 @@
     }, {
       "level" : "ONE",
       "cardInfo" : {
-        "id" : 9,
-        "prestigePoint" : 1,
-        "texturePath" : "level_one9",
+        "id" : 11,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one11",
         "price" : {
           "priceMap" : {
-            "DIAMOND" : 4,
-            "ONYX" : 0,
+            "DIAMOND" : 2,
+            "ONYX" : 2,
             "RUBY" : 0,
-            "EMERALD" : 0,
+            "EMERALD" : 1,
             "SAPPHIRE" : 0
           }
         }
@@ -2429,228 +1627,24 @@
           "SAPPHIRE" : 0
         }
       }
-    } ],
-    "REDTHREE" : [ {
-      "level" : "REDTHREE",
+    }, {
+      "level" : "ONE",
       "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 3,
-        "texturePath" : "sacrifice4",
+        "id" : 14,
+        "prestigePoint" : 0,
+        "texturePath" : "level_one14",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 2,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "SACRIFICE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 3,
-        "texturePath" : "sacrifice3",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "SACRIFICE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 3,
-        "texturePath" : "sacrifice0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "SACRIFICE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 1,
-        "prestigePoint" : 3,
-        "texturePath" : "sacrifice1",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 2,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "SACRIFICE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 0,
-        "texturePath" : "cascade_two2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 6,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "CASCADING_TWO",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 3,
-        "texturePath" : "sacrifice2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "SACRIFICE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 0,
-        "texturePath" : "cascade_two4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 6,
             "ONYX" : 1,
             "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
+            "EMERALD" : 1,
+            "SAPPHIRE" : 1
           }
         }
       },
       "faceDown" : true,
-      "bonusType" : "CASCADING_TWO",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "REDTHREE",
-      "cardInfo" : {
-        "id" : 3,
-        "prestigePoint" : 0,
-        "texturePath" : "cascade_two3",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 3,
-            "ONYX" : 6,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "CASCADING_TWO",
+      "bonusType" : "NONE",
       "associatedGem" : true,
       "bonus" : {
         "priceMap" : {
@@ -2690,6 +1684,499 @@
           "RUBY" : 0,
           "EMERALD" : 0,
           "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 8,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two8",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 3,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 18,
+        "prestigePoint" : 3,
+        "texturePath" : "level_two18",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 6
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 19,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two19",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 2,
+            "EMERALD" : 4,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 16,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two16",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 6,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two6",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 5,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 22,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two22",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 14,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two14",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 27,
+        "prestigePoint" : 3,
+        "texturePath" : "level_two27",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 6,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 26,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two26",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 4,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 28,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two28",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 4,
+            "ONYX" : 1,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 17,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two17",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 5
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 7,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two7",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 5
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 21,
+        "prestigePoint" : 1,
+        "texturePath" : "level_two21",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 5,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 3,
+        "texturePath" : "level_two3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 6,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 10,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two10",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 5,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
         }
       }
     }, {
@@ -2753,159 +2240,72 @@
     }, {
       "level" : "TWO",
       "cardInfo" : {
-        "id" : 2,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two2",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 4,
-            "ONYX" : 1,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 22,
+        "id" : 1,
         "prestigePoint" : 1,
-        "texturePath" : "level_two22",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 3,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 0,
-        "prestigePoint" : 1,
-        "texturePath" : "level_two0",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 2,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 3
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 21,
-        "prestigePoint" : 1,
-        "texturePath" : "level_two21",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 0,
-            "EMERALD" : 3,
-            "SAPPHIRE" : 2
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 18,
-        "prestigePoint" : 3,
-        "texturePath" : "level_two18",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 6
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 1
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 10,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two10",
+        "texturePath" : "level_two1",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 3,
-            "ONYX" : 5,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 13,
+        "prestigePoint" : 2,
+        "texturePath" : "level_two13",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 5,
+            "ONYX" : 0,
             "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "TWO",
+      "cardInfo" : {
+        "id" : 5,
+        "prestigePoint" : 3,
+        "texturePath" : "level_two5",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 6,
             "EMERALD" : 0,
             "SAPPHIRE" : 0
           }
@@ -2927,16 +2327,16 @@
     }, {
       "level" : "TWO",
       "cardInfo" : {
-        "id" : 17,
+        "id" : 15,
         "prestigePoint" : 2,
-        "texturePath" : "level_two17",
+        "texturePath" : "level_two15",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 5
+            "RUBY" : 3,
+            "EMERALD" : 5,
+            "SAPPHIRE" : 0
           }
         }
       },
@@ -2946,11 +2346,11 @@
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 0,
+          "ONYX" : 1,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
-          "SAPPHIRE" : 1
+          "SAPPHIRE" : 0
         }
       }
     }, {
@@ -2966,151 +2366,6 @@
             "RUBY" : 0,
             "EMERALD" : 2,
             "SAPPHIRE" : 4
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 1,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 25,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two25",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 3,
-            "RUBY" : 5,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 4,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two4",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 5,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 19,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two19",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "RUBY" : 2,
-            "EMERALD" : 4,
-            "SAPPHIRE" : 1
-          }
-        }
-      },
-      "faceDown" : false,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 12,
-        "prestigePoint" : 3,
-        "texturePath" : "level_two12",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 6,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      },
-      "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
-      "bonus" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 1,
-          "GOLD" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }, {
-      "level" : "TWO",
-      "cardInfo" : {
-        "id" : 8,
-        "prestigePoint" : 1,
-        "texturePath" : "level_two8",
-        "price" : {
-          "priceMap" : {
-            "DIAMOND" : 2,
-            "ONYX" : 3,
-            "RUBY" : 2,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
           }
         }
       },
@@ -3156,29 +2411,30 @@
           "SAPPHIRE" : 0
         }
       }
-    }, {
-      "level" : "TWO",
+    } ],
+    "REDONE" : [ {
+      "level" : "REDONE",
       "cardInfo" : {
-        "id" : 14,
-        "prestigePoint" : 1,
-        "texturePath" : "level_two14",
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "bag1",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 3,
             "ONYX" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 2,
-            "SAPPHIRE" : 2
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
           }
         }
       },
       "faceDown" : true,
-      "bonusType" : "NONE",
-      "associatedGem" : true,
+      "bonusType" : "BAG",
+      "associatedGem" : false,
       "bonus" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 1,
+          "ONYX" : 0,
           "GOLD" : 0,
           "RUBY" : 0,
           "EMERALD" : 0,
@@ -3186,18 +2442,222 @@
         }
       }
     }, {
-      "level" : "TWO",
+      "level" : "REDONE",
       "cardInfo" : {
-        "id" : 7,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two7",
+        "id" : 4,
+        "prestigePoint" : 0,
+        "texturePath" : "gold4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "TWO_GOLD_TOKENS",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "gold1",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
             "RUBY" : 0,
             "EMERALD" : 3,
-            "SAPPHIRE" : 5
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "TWO_GOLD_TOKENS",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 0,
+        "texturePath" : "bag2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "BAG",
+      "associatedGem" : false,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 0,
+        "texturePath" : "gold2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "TWO_GOLD_TOKENS",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 0,
+        "texturePath" : "bag0",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "BAG",
+      "associatedGem" : false,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 0,
+        "texturePath" : "gold3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "TWO_GOLD_TOKENS",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDONE",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 0,
+        "texturePath" : "bag3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "BAG",
+      "associatedGem" : false,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    } ],
+    "THREE" : [ {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 3,
+        "texturePath" : "level_three3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 5,
+            "ONYX" : 3,
+            "RUBY" : 3,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
           }
         }
       },
@@ -3215,17 +2675,75 @@
         }
       }
     }, {
-      "level" : "TWO",
+      "level" : "THREE",
       "cardInfo" : {
-        "id" : 5,
-        "prestigePoint" : 3,
-        "texturePath" : "level_two5",
+        "id" : 19,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three19",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 6,
+            "RUBY" : 3,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 10,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three10",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 6,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 6,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three6",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
             "ONYX" : 0,
-            "RUBY" : 6,
-            "EMERALD" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 7,
             "SAPPHIRE" : 0
           }
         }
@@ -3244,17 +2762,133 @@
         }
       }
     }, {
-      "level" : "TWO",
+      "level" : "THREE",
       "cardInfo" : {
-        "id" : 6,
-        "prestigePoint" : 2,
-        "texturePath" : "level_two6",
+        "id" : 14,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three14",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 6,
+            "ONYX" : 3,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 12,
+        "prestigePoint" : 3,
+        "texturePath" : "level_three12",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 5,
+            "RUBY" : 3,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 5,
+        "texturePath" : "level_three0",
         "price" : {
           "priceMap" : {
             "DIAMOND" : 0,
-            "ONYX" : 5,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 7
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 15,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three15",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 7,
+            "ONYX" : 0,
             "RUBY" : 0,
             "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 5,
+        "texturePath" : "level_three4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 7,
             "SAPPHIRE" : 0
           }
         }
@@ -3272,24 +2906,678 @@
           "SAPPHIRE" : 0
         }
       }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 16,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three16",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 7,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 8,
+        "prestigePoint" : 5,
+        "texturePath" : "level_three8",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 7,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 7
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 13,
+        "prestigePoint" : 5,
+        "texturePath" : "level_three13",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 7,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 7,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three7",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 6,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 11,
+        "prestigePoint" : 3,
+        "texturePath" : "level_three11",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 5,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "THREE",
+      "cardInfo" : {
+        "id" : 9,
+        "prestigePoint" : 4,
+        "texturePath" : "level_three9",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 7,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    } ],
+    "REDTWO" : [ {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 1,
+        "texturePath" : "noble_reserve0",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 2,
+            "RUBY" : 2,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "RESERVE_NOBLE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 0,
+        "texturePath" : "double0",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 4,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 2
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 0,
+        "texturePath" : "double4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 4,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 2,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "bag_cascade1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 4,
+            "ONYX" : 1,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_ONE_BAG",
+      "associatedGem" : false,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 0,
+        "texturePath" : "double3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 0,
+            "EMERALD" : 4,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 2,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 1,
+        "texturePath" : "noble_reserve1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 2,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "RESERVE_NOBLE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 1,
+        "texturePath" : "noble_reserve2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 2,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 2
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "RESERVE_NOBLE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTWO",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "double1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 4
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "NONE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 2,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    } ],
+    "REDTHREE" : [ {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 0,
+        "texturePath" : "cascade_two4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 6,
+            "ONYX" : 1,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 3
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_TWO",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 0,
+        "prestigePoint" : 0,
+        "texturePath" : "cascade_two0",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 1,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 3,
+            "SAPPHIRE" : 6
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_TWO",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 1,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 4,
+        "prestigePoint" : 3,
+        "texturePath" : "sacrifice4",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 2,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "SACRIFICE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 3,
+        "texturePath" : "sacrifice1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 2,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "SACRIFICE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 1,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 0,
+        "texturePath" : "cascade_two2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 3,
+            "RUBY" : 6,
+            "EMERALD" : 1,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_TWO",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 1,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 1,
+        "prestigePoint" : 0,
+        "texturePath" : "cascade_two1",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 3,
+            "EMERALD" : 6,
+            "SAPPHIRE" : 1
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_TWO",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 1
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 2,
+        "prestigePoint" : 3,
+        "texturePath" : "sacrifice2",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 0,
+            "ONYX" : 0,
+            "RUBY" : 0,
+            "EMERALD" : 2,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "SACRIFICE",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }, {
+      "level" : "REDTHREE",
+      "cardInfo" : {
+        "id" : 3,
+        "prestigePoint" : 0,
+        "texturePath" : "cascade_two3",
+        "price" : {
+          "priceMap" : {
+            "DIAMOND" : 3,
+            "ONYX" : 6,
+            "RUBY" : 1,
+            "EMERALD" : 0,
+            "SAPPHIRE" : 0
+          }
+        }
+      },
+      "faceDown" : true,
+      "bonusType" : "CASCADING_TWO",
+      "associatedGem" : true,
+      "bonus" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "GOLD" : 0,
+          "RUBY" : 1,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
     } ]
   },
   "remainingNobles" : [ {
-    "cardInfo" : {
-      "id" : 8,
-      "prestigePoint" : 3,
-      "texturePath" : "noble8",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 3
-        }
-      }
-    }
-  }, {
     "cardInfo" : {
       "id" : 2,
       "prestigePoint" : 3,
@@ -3306,14 +3594,59 @@
     }
   }, {
     "cardInfo" : {
-      "id" : 9,
+      "id" : 13,
       "prestigePoint" : 3,
-      "texturePath" : "noble9",
+      "texturePath" : "noble13",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 4,
+          "RUBY" : 0,
+          "EMERALD" : 4,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 12,
+      "prestigePoint" : 3,
+      "texturePath" : "noble12",
       "price" : {
         "priceMap" : {
           "DIAMOND" : 4,
           "ONYX" : 0,
           "RUBY" : 0,
+          "EMERALD" : 4,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 11,
+      "prestigePoint" : 3,
+      "texturePath" : "noble11",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 3,
+          "RUBY" : 0,
+          "EMERALD" : 3,
+          "SAPPHIRE" : 3
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 10,
+      "prestigePoint" : 3,
+      "texturePath" : "noble10",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 0,
+          "RUBY" : 4,
           "EMERALD" : 0,
           "SAPPHIRE" : 4
         }
@@ -3331,6 +3664,21 @@
           "RUBY" : 0,
           "EMERALD" : 0,
           "SAPPHIRE" : 3
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 18,
+      "prestigePoint" : 3,
+      "texturePath" : "noble18",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 4,
+          "ONYX" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 4
         }
       }
     }
@@ -3381,6 +3729,66 @@
     }
   }, {
     "cardInfo" : {
+      "id" : 17,
+      "prestigePoint" : 3,
+      "texturePath" : "noble17",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 0,
+          "ONYX" : 4,
+          "RUBY" : 0,
+          "EMERALD" : 4,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 8,
+      "prestigePoint" : 3,
+      "texturePath" : "noble8",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 3,
+          "ONYX" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 3,
+          "SAPPHIRE" : 3
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 9,
+      "prestigePoint" : 3,
+      "texturePath" : "noble9",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 4,
+          "ONYX" : 0,
+          "RUBY" : 0,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 4
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
+      "id" : 16,
+      "prestigePoint" : 3,
+      "texturePath" : "noble16",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 4,
+          "ONYX" : 0,
+          "RUBY" : 4,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 0
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
       "id" : 7,
       "prestigePoint" : 3,
       "texturePath" : "noble7",
@@ -3411,6 +3819,21 @@
     }
   }, {
     "cardInfo" : {
+      "id" : 14,
+      "prestigePoint" : 3,
+      "texturePath" : "noble14",
+      "price" : {
+        "priceMap" : {
+          "DIAMOND" : 3,
+          "ONYX" : 0,
+          "RUBY" : 3,
+          "EMERALD" : 0,
+          "SAPPHIRE" : 3
+        }
+      }
+    }
+  }, {
+    "cardInfo" : {
       "id" : 3,
       "prestigePoint" : 3,
       "texturePath" : "noble3",
@@ -3424,105 +3847,14 @@
         }
       }
     }
-  } ],
-  "remainingCities" : [ {
+  }, {
     "cardInfo" : {
-      "id" : 0,
-      "prestigePoint" : 13,
-      "texturePath" : "city0",
+      "id" : 15,
+      "prestigePoint" : 3,
+      "texturePath" : "noble15",
       "price" : {
         "priceMap" : {
           "DIAMOND" : 0,
-          "ONYX" : 3,
-          "RUBY" : 3,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 2,
-      "prestigePoint" : 13,
-      "texturePath" : "city2",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 4,
-          "RUBY" : 0,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 7,
-      "prestigePoint" : 13,
-      "texturePath" : "city7",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 4,
-          "SAPPHIRE" : 3
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 8,
-      "prestigePoint" : 13,
-      "texturePath" : "city8",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 2,
-          "ONYX" : 2,
-          "RUBY" : 2,
-          "EMERALD" : 2,
-          "SAPPHIRE" : 2
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 10,
-      "prestigePoint" : 28,
-      "texturePath" : "city10",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 0,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 1,
-      "prestigePoint" : 13,
-      "texturePath" : "city1",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 0,
-          "RUBY" : 0,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 4
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 6,
-      "prestigePoint" : 11,
-      "texturePath" : "city6",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
           "ONYX" : 3,
           "RUBY" : 3,
           "EMERALD" : 0,
@@ -3530,74 +3862,15 @@
         }
       }
     }
-  }, {
-    "cardInfo" : {
-      "id" : 9,
-      "prestigePoint" : 11,
-      "texturePath" : "city9",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 3,
-          "RUBY" : 3,
-          "EMERALD" : 3,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 5,
-      "prestigePoint" : 13,
-      "texturePath" : "city5",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 2,
-          "ONYX" : 2,
-          "RUBY" : 2,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 1
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 3,
-      "prestigePoint" : 13,
-      "texturePath" : "city3",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 4,
-          "ONYX" : 0,
-          "RUBY" : 3,
-          "EMERALD" : 0,
-          "SAPPHIRE" : 0
-        }
-      }
-    }
-  }, {
-    "cardInfo" : {
-      "id" : 4,
-      "prestigePoint" : 16,
-      "texturePath" : "city4",
-      "price" : {
-        "priceMap" : {
-          "DIAMOND" : 1,
-          "ONYX" : 1,
-          "RUBY" : 1,
-          "EMERALD" : 1,
-          "SAPPHIRE" : 1
-        }
-      }
-    }
   } ],
+  "remainingCities" : [ ],
   "bank" : {
     "priceMap" : {
-      "DIAMOND" : 7,
-      "ONYX" : 5,
+      "DIAMOND" : 5,
+      "ONYX" : 1,
       "GOLD" : 5,
       "RUBY" : 7,
-      "EMERALD" : 3,
+      "EMERALD" : 7,
       "SAPPHIRE" : 7
     }
   },
@@ -3611,349 +3884,29 @@
         "bank" : {
           "RUBY" : 0,
           "SAPPHIRE" : 0,
-          "DIAMOND" : 0,
+          "DIAMOND" : 2,
           "GOLD" : 0,
-          "ONYX" : 2,
-          "EMERALD" : 4
+          "ONYX" : 6,
+          "EMERALD" : 0
         }
       },
       "ownedNobles" : [ ],
       "reservedNobles" : [ ],
-      "ownedCards" : [ {
-        "level" : "TWO",
-        "cardInfo" : {
-          "id" : 13,
-          "prestigePoint" : 2,
-          "texturePath" : "level_two13",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 5,
-              "ONYX" : 0,
-              "RUBY" : 0,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "TWO",
-        "cardInfo" : {
-          "id" : 1,
-          "prestigePoint" : 1,
-          "texturePath" : "level_two1",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 3,
-              "ONYX" : 0,
-              "RUBY" : 3,
-              "EMERALD" : 2,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "TWO",
-        "cardInfo" : {
-          "id" : 26,
-          "prestigePoint" : 2,
-          "texturePath" : "level_two26",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 0,
-              "ONYX" : 2,
-              "RUBY" : 4,
-              "EMERALD" : 1,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "TWO",
-        "cardInfo" : {
-          "id" : 11,
-          "prestigePoint" : 1,
-          "texturePath" : "level_two11",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 0,
-              "ONYX" : 3,
-              "RUBY" : 2,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 3
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "TWO",
-        "cardInfo" : {
-          "id" : 27,
-          "prestigePoint" : 3,
-          "texturePath" : "level_two27",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 6,
-              "ONYX" : 0,
-              "RUBY" : 0,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 34,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one34",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 0,
-              "ONYX" : 2,
-              "RUBY" : 0,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 2
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 1,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 15,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one15",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 2,
-              "ONYX" : 0,
-              "RUBY" : 2,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 16,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one16",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 0,
-              "ONYX" : 0,
-              "RUBY" : 0,
-              "EMERALD" : 3,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 1,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one1",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 0,
-              "ONYX" : 0,
-              "RUBY" : 2,
-              "EMERALD" : 0,
-              "SAPPHIRE" : 2
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 1,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 18,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one18",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 2,
-              "ONYX" : 0,
-              "RUBY" : 0,
-              "EMERALD" : 2,
-              "SAPPHIRE" : 0
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 1,
-            "GOLD" : 0,
-            "RUBY" : 0,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }, {
-        "level" : "ONE",
-        "cardInfo" : {
-          "id" : 13,
-          "prestigePoint" : 0,
-          "texturePath" : "level_one13",
-          "price" : {
-            "priceMap" : {
-              "DIAMOND" : 1,
-              "ONYX" : 1,
-              "RUBY" : 0,
-              "EMERALD" : 1,
-              "SAPPHIRE" : 1
-            }
-          }
-        },
-        "faceDown" : true,
-        "bonusType" : "NONE",
-        "associatedGem" : true,
-        "bonus" : {
-          "priceMap" : {
-            "DIAMOND" : 0,
-            "ONYX" : 0,
-            "GOLD" : 0,
-            "RUBY" : 1,
-            "EMERALD" : 0,
-            "SAPPHIRE" : 0
-          }
-        }
-      }
-      ],
+      "ownedCards" : [ ],
       "reservedCards" : [ ],
       "gemBonuses" : {
         "priceMap" : {
-          "DIAMOND" : 3,
-          "ONYX" : 3,
+          "DIAMOND" : 0,
+          "ONYX" : 0,
           "GOLD" : 0,
-          "RUBY" : 3,
-          "EMERALD" : 2,
+          "RUBY" : 0,
+          "EMERALD" : 0,
           "SAPPHIRE" : 0
         }
       },
       "tradePosts" : { },
       "ownedCities" : [ ],
-      "prestigePoints" : 9
+      "prestigePoints" : 0
     }
   }, {
     "name" : "costa",
