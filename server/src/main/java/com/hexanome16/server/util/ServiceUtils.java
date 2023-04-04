@@ -14,6 +14,7 @@ import com.hexanome16.server.models.game.Game;
 import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
+import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -273,6 +274,15 @@ public class ServiceUtils {
 
     if (error != null) {
       return error;
+    }
+
+    //choose city
+    if (game.getWinCondition() == WinCondition.CITIES) {
+      error =
+          addCityAction(game, player);
+      if (error != null) {
+        return error;
+      }
     }
 
     var nextAction = player.peekTopAction();
