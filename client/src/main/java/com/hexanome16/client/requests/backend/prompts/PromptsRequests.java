@@ -145,6 +145,27 @@ public class PromptsRequests {
   }
 
   /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param cardMd5      Hash value of the card we're sending.
+   * @param authToken    username of player trying to buy card.
+   * @param firstMd5 first card to discard.
+   * @param secondMd5 second card to discard.
+   * @return Pair of the response from server, headers and string
+   */
+  public static Pair<Headers, String> buySacrificeCard(long sessionId,
+                                                      String cardMd5,
+                                                      String authToken,
+                                                      String firstMd5,
+                                                      String secondMd5) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5 + "/sacrifice",
+        Map.of("access_token", authToken, "firstMd5", firstMd5, "secondMd5", secondMd5),
+        String.class));
+  }
+
+  /**
    * Send a request to reserve the card.
    *
    * @param sessionId game session id

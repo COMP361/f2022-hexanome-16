@@ -56,6 +56,7 @@ public interface InventoryServiceInterface {
   public ResponseEntity<String> buySacrificeCard(long sessionId, String cardMd5, String accessToken,
                                                  String firstMd5, String secondMd5)
       throws JsonProcessingException;
+
   /**
    * Let the player reserve a card.
    *

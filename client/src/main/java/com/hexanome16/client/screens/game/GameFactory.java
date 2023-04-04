@@ -335,7 +335,7 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_one.png");
+    Texture level1deck = FXGL.texture("level_redone.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
     // animation
     myStackPane.setOnMouseEntered(e -> {
@@ -350,6 +350,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 565)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> PromptUtils.openPrompt(Level.REDONE))
         .build();
   }
 
@@ -365,7 +366,7 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_two.png");
+    Texture level1deck = FXGL.texture("level_redtwo.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
     // animation
     myStackPane.setOnMouseEntered(e -> {
@@ -380,6 +381,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 360)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> PromptUtils.openPrompt(Level.REDTWO))
         .build();
   }
 
@@ -395,7 +397,7 @@ public class GameFactory implements EntityFactory {
     myNumber.setFill(Color.WHITE);
     myNumber.setFont(Font.font(500));
     StackPane myStackPane = new StackPane();
-    Texture level1deck = FXGL.texture("red_level_three.png");
+    Texture level1deck = FXGL.texture("level_redthree.png");
     myStackPane.getChildren().addAll(level1deck, myNumber);
     // animation
     myStackPane.setOnMouseEntered(e -> {
@@ -410,6 +412,7 @@ public class GameFactory implements EntityFactory {
         .at(matCoordsX + 985, matCoordsY + 155)
         .view(myStackPane)
         .scale(0.15, 0.15)
+        .onClick(e -> PromptUtils.openPrompt(Level.REDTHREE))
         .build();
   }
 

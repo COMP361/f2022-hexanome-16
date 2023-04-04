@@ -11,12 +11,16 @@ import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.CurrencyType;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
+import com.hexanome16.common.util.ObjectMapperUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +42,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
+import lombok.SneakyThrows;
 
 /**
  * A class responsible for populating Buy sacrifice card prompt.
@@ -268,10 +275,11 @@ public class BuyCardWithCards implements PromptTypeInterface {
       if (x.getOpacity() == 1) {
         x.setOpacity(0);
         cardsChosen--;
-        prices.add(cardHashList.get(levelCard));
+        prices.remove(cardHashList.get(levelCard));
       } else {
         cardsChosen++;
         x.setOpacity(1);
+        prices.add(cardHashList.get(levelCard));
       }
       if (cardsChosen == 2) {
         buy.setOpacity(1);
@@ -301,12 +309,14 @@ public class BuyCardWithCards implements PromptTypeInterface {
       if (x.getOpacity() == 1) {
         x.setOpacity(0);
         cardsChosen--;
+        prices.remove(bagCardHashList.get(levelCard));
         if (cardsChosen < bagCardHashList.size()) {
           otherWhole.getChildren().add(disablingRectangleOthers);
         }
       } else {
         x.setOpacity(1);
         cardsChosen++;
+        prices.add(bagCardHashList.get(levelCard));
         if (cardsChosen >= bagCardHashList.size() && 2 >= bagCardHashList.size()) {
           otherWhole.getChildren().remove(disablingRectangleOthers);
         }
@@ -342,7 +352,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
     reserveText.setFill(Config.PRIMARY_COLOR);
 
     reserve.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-
+      cardReservation();
       closeBagPrompt();
       e.consume();
     });
@@ -374,6 +384,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
 
     buy.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
       if (buy.getOpacity() == 1) {
+        notifyServer();
         closeBagPrompt();
         e.consume();
       }
@@ -388,6 +399,7 @@ public class BuyCardWithCards implements PromptTypeInterface {
    * @param player the current player.
    * @param gem    the gem type.
    */
+  @SneakyThrows
   public static void fetchCards(String player, Gem gem) {
     cardHashList.clear();
     bagCardHashList.clear();
@@ -396,12 +408,42 @@ public class BuyCardWithCards implements PromptTypeInterface {
         PromptsRequests.getCardPrice(sessionId, player, gem).getCards();
     System.out.println("init: " + responseHashList.size());
     for (Map.Entry<String, LevelCard> card : responseHashList.entrySet()) {
+      System.out.println(card.getValue());
+      System.out.println(ObjectMapperUtils.getObjectMapper().writeValueAsString(card.getValue()));
       if (card.getValue().isBag()) {
         bagCardHashList.put(card.getValue(), card.getKey());
       } else {
         cardHashList.put(card.getValue(), card.getKey());
       }
     }
+  }
+
+  private void notifyServer() {
+    long promptSessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    String firstHash = prices.get(0);
+    String secondHash = prices.get(1);
+    System.out.println(firstHash);
+    System.out.println(secondHash);
+    // sends a request to server telling it purchase information
+    Pair<Headers, String> serverResponse = PromptsRequests.buySacrificeCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        authToken,
+        firstHash, secondHash);
+    PromptUtils.actionResponseSpawner(serverResponse);
+  }
+
+  /**
+   * Do something if someone reserves a card.
+   */
+  protected void cardReservation() {
+    long promptSessionId = GameScreen.getSessionId();
+    String authToken = AuthUtils.getAuth().getAccessToken();
+    // send request to server
+    Pair<Headers, String> serverResponse = PromptsRequests.reserveCard(promptSessionId,
+        atCardEntity.getComponent(CardComponent.class).getCardHash(),
+        authToken);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   private void initiatePane(Pane myPrompt) {

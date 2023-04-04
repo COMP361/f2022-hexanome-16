@@ -171,6 +171,27 @@ public class InventoryController {
     return inventoryService.buyCard(sessionId, cardMd5, accessToken, purchaseMap);
   }
 
+  /**
+   * Allows client to buy card, given that they send a valid way to buy that card.
+   *
+   * @param sessionId   sessionID.
+   * @param cardMd5     Card we want to purchase's md5.
+   * @param accessToken token of the player trying to buy the card.
+   * @param firstMd5 first card to discard.
+   * @param secondMd5 second card to discard.
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *      HTTP BAD_REQUEST otherwise.</p>
+   * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+   */
+  @PutMapping(value = "/games/{sessionId}/cards/{cardMd5}/sacrifice")
+  public ResponseEntity<String> buySacrificeCard(@PathVariable long sessionId,
+                                        @PathVariable String cardMd5,
+                                        @RequestParam String accessToken,
+                                        @RequestParam String firstMd5,
+                                        @RequestParam String secondMd5)
+      throws JsonProcessingException {
+    return inventoryService.buySacrificeCard(sessionId, cardMd5, accessToken, firstMd5, secondMd5);
+  }
 
   /**
    * Gets the discounted price of the card with hash cardMd5  if it was to be bought by
