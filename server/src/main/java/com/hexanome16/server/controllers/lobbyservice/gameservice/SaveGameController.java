@@ -57,8 +57,6 @@ public class SaveGameController {
                                                @RequestParam String accessToken,
                                                @RequestParam String sessionId,
                                                @RequestBody SaveGameJson saveGameJson) {
-    System.out.println("createSavegame: " + gamename + " " + savegameId + " " + accessToken + " "
-        + sessionId + " " + saveGameJson);
     return saveGameService.saveGame(gameManagerService.getGame(Long.parseLong(sessionId)),
         savegameId, saveGameJson);
   }

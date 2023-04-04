@@ -83,6 +83,11 @@ class LobbyHelpers {
       if (prevSelection != null && newItems.contains(prevSelection)) {
         LobbyFactory.gameServiceDropdown.getSelectionModel().select(prevSelection);
       }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -106,19 +111,18 @@ class LobbyHelpers {
   static void createFetchGameServicesThread() {
     BackgroundService fetchService = new BackgroundService(() -> {
       LobbyFactory.gameServices.set(ListGameServicesRequest.execute());
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
     }, () -> {
       Platform.runLater(LobbyHelpers::updateGameServicesList);
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchGameServersService.get().restart();
+      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchGameServersService.get().isAlive()) {
+        LobbyFactory.fetchGameServersService.get().start();
+      } else {
+        LobbyFactory.fetchGameServersService.get().interrupt();
       }
     }, () -> {
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchGameServersService.get().restart();
+      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchGameServersService.get().isAlive()) {
+        LobbyFactory.fetchGameServersService.get().start();
+      } else {
+        LobbyFactory.fetchGameServersService.get().interrupt();
       }
     });
     fetchService.start();
@@ -140,12 +144,16 @@ class LobbyHelpers {
       }
     }, () -> {
       Platform.runLater(LobbyHelpers::updateSessionList);
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchSessionsService.get().restart();
+      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchSessionsService.get().isAlive()) {
+        LobbyFactory.fetchSessionsService.get().start();
+      } else {
+        LobbyFactory.fetchSessionsService.get().interrupt();
       }
     }, () -> {
-      if (LobbyFactory.shouldFetch.get()) {
-        LobbyFactory.fetchSessionsService.get().restart();
+      if (LobbyFactory.shouldFetch.get() && LobbyFactory.fetchSessionsService.get().isAlive()) {
+        LobbyFactory.fetchSessionsService.get().start();
+      } else {
+        LobbyFactory.fetchSessionsService.get().interrupt();
       }
     });
     fetchService.start();

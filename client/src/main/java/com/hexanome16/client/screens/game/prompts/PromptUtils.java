@@ -65,8 +65,6 @@ public class PromptUtils {
   public static void actionResponseSpawner(Pair<Headers, String> serverResponse) {
     Headers headers = serverResponse.getKey();
 
-    System.out.println("Response headers: " + headers);
-    System.out.println("Body: " + serverResponse.getValue());
     // TODO :: FIND A FIX FOR THIS, once card is replaced, the card that comes
     // after doesnt seem to have a card bonus type. (check for null shouldnt be
     // necessary)

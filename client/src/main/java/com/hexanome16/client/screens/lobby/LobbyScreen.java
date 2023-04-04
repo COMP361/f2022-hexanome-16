@@ -35,8 +35,10 @@ public class LobbyScreen {
    */
   public static void exitLobby() {
     LobbyFactory.shouldFetch.set(false);
-    LobbyFactory.fetchGameServersService.get().cancel();
-    LobbyFactory.fetchSessionsService.get().cancel();
+    LobbyFactory.fetchGameServersService.get().interrupt();
+    LobbyFactory.fetchSessionsService.get().interrupt();
+    LobbyFactory.fetchGameServersService.set(null);
+    LobbyFactory.fetchSessionsService.set(null);
     getGameWorld().getEntitiesByType(EntityType.BACKGROUND).forEach(Entity::removeFromWorld);
     getGameWorld().getEntitiesByType(EntityType.OWN_SESSION_LIST)
         .forEach(Entity::removeFromWorld);

@@ -100,10 +100,8 @@ public class RequestClient {
   }
 
   private static String retryLongPollingRequest(Request<?> request, int retries) {
-    return retries > 3 ? null : longPollString(request, retries);
+    return retries > 1 ? null : longPollString(request, retries);
   }
-
-
 
   private static String longPollString(Request<?> req, int retries) {
     AtomicReference<String> res = new AtomicReference<>("");
@@ -147,6 +145,8 @@ public class RequestClient {
                   gotResponse.set(true);
                 }
                 case HTTP_CLIENT_TIMEOUT, 542 -> {
+                  System.out.println("Long polling timed out for " + request.getUrl()
+                      + ", retrying...");
                   // Do nothing, just try again.
                 }
                 default -> {

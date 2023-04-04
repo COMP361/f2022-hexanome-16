@@ -120,7 +120,6 @@ public class GameServiceController {
    */
   public ResponseEntity<Void> deleteGameService(String serviceName) {
     ResponseEntity<TokensInfo> tokensInfo = authService.login(gsUsername, gsPassword);
-    System.out.println(tokensInfo.getBody());
     URI url = urlUtils.createLobbyServiceUri("/api/gameservices/" + serviceName,
         "access_token=" + Objects.requireNonNull(tokensInfo.getBody()).getAccessToken());
     assert url != null;

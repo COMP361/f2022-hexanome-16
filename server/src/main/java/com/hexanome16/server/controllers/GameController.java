@@ -51,7 +51,6 @@ public class GameController {
    */
   @PutMapping(value = "/games/{sessionId}")
   public String createGame(@PathVariable long sessionId, @RequestBody SessionJson payload) {
-    System.out.println(payload);
     return gameManager.createGame(sessionId, payload);
   }
 

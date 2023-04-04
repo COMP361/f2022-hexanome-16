@@ -104,10 +104,13 @@ public class LongPollingService implements LongPollingServiceInterface {
       return CustomResponseFactory.getDeferredResponse(
           CustomHttpResponses.INVALID_ACCESS_TOKEN);
     }
-    return ResponseGenerator.getHashBasedUpdate(
+    DeferredResult<ResponseEntity<String>> result = ResponseGenerator.getHashBasedUpdate(
         10000,
         currentGame.getBroadcastContentManagerMap().getManager(key),
         hash
     );
+    result.onCompletion(() -> System.out.println("Completion for " + key.name()));
+    result.onTimeout(() -> System.out.println("Timeout for " + key.name()));
+    return result;
   }
 }

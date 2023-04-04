@@ -73,7 +73,7 @@ public class AuthUtils {
     AuthUtils.auth.set(auth);
     if (auth != null) {
       refreshService.get().setDelay(Duration.seconds(Math.max(0, auth.getExpiresIn() - 30)));
-      refreshService.get().restart();
+      refreshService.get().start();
     } else {
       refreshService.get().cancel();
     }

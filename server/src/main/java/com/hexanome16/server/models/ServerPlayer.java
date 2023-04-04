@@ -304,7 +304,6 @@ public class ServerPlayer extends Player {
    * @return action that needs to performed by player or null if empty.
    */
   public Action peekTopAction() {
-    System.out.println(queueOfCascadingActionTypes);
     Action topAction = queueOfCascadingActionTypes.peek();
     if (topAction == null) {
       topAction = this.needsToChooseNoble;
