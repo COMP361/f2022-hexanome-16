@@ -53,6 +53,10 @@ public class ServerPlayerTest {
   public void testIncPlayerBank() {
     PlayerBank playerBank = new PlayerBank();
     assertEquals(costa.getBank(), playerBank);
+    costa.incPlayerBank(3, 3,
+        3, 3, 3, 3);
+    playerBank.addGemsToBank(new PurchaseMap(3, 3,
+        3, 3, 3, 3));
     costa.incPlayerBank(-3, -2,
         0, 0, 0, 0);
     playerBank.removeGemsFromBank(new PurchaseMap(3, 2,
@@ -67,6 +71,10 @@ public class ServerPlayerTest {
   public void testIncPlayerBankAlt() {
     PlayerBank playerBank = new PlayerBank();
     assertEquals(costa.getBank(), playerBank);
+    costa.incPlayerBank(new PurchaseMap(3, 3,
+        3, 3, 3, 3));
+    playerBank.addGemsToBank(new PurchaseMap(3, 3,
+        3, 3, 3, 3));
     costa.incPlayerBank(new PurchaseMap(-3, -2,
         0, 0, 0, 0));
     playerBank.removeGemsFromBank(new PurchaseMap(3, 2,
