@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ServerCity extends City implements Visitable {
-  private CardInfo cardInfo;
-
   /**
    * Instantiates a new ServerCity.
    *
