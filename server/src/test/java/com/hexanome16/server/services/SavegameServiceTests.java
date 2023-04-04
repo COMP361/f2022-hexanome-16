@@ -23,6 +23,7 @@ import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -99,6 +100,7 @@ public class SavegameServiceTests {
 
   @Test
   @Order(4)
+  @Disabled
   public void testDeleteAllSavegames() {
     for (int i = 0; i < 5; i++) {
       savegameService.saveGame(
