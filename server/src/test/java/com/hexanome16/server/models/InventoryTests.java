@@ -4,16 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hexanome16.common.models.CardInfo;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
-import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceInterface;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
+import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerLevelCard;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.inventory.Inventory;
@@ -33,7 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class InventoryTests {
   /* field we are testing */
-  private Inventory inventory;
+  private Inventory underTest;
 
   /* fields we are using */
   private ServerLevelCard levelCard;
@@ -44,7 +48,7 @@ public class InventoryTests {
    */
   @BeforeEach
   void setup() {
-    inventory = new Inventory();
+    underTest = new Inventory();
   }
 
   /**
@@ -55,7 +59,7 @@ public class InventoryTests {
     // Arrange
 
     // Act
-    var response = inventory.getGemBonuses();
+    var response = underTest.getGemBonuses();
 
     // Assert
     assertEquals(new PurchaseMap(0, 0, 0, 0, 0, 0), response);
@@ -69,9 +73,9 @@ public class InventoryTests {
   @DisplayName("Acquire a Level Card successfully")
   void testAcquireCard() {
     levelCard = createValidCard();
-    inventory.acquireCard(levelCard);
-    assertTrue(inventory.getOwnedCards().contains(levelCard));
-    assertEquals(levelCard.getGemBonus(), PurchaseMap.toPurchaseMap(inventory.getGemBonuses()));
+    underTest.acquireCard(levelCard);
+    assertTrue(underTest.getOwnedCards().contains(levelCard));
+    assertEquals(levelCard.getGemBonus(), PurchaseMap.toPurchaseMap(underTest.getGemBonuses()));
   }
 
   /**
@@ -84,11 +88,11 @@ public class InventoryTests {
     // by default the card should be face down
     levelCard = createValidCard();
     // add the card to the inventory
-    inventory.reserveCard(levelCard);
+    underTest.reserveCard(levelCard);
     // assert it was reserved successfully
-    assertTrue(inventory.getReservedCards().contains(levelCard));
-    assertTrue(inventory.getReservedCards()
-        .get(inventory.getReservedCards().size() - 1)
+    assertTrue(underTest.getReservedCards().contains(levelCard));
+    assertTrue(underTest.getReservedCards()
+        .get(underTest.getReservedCards().size() - 1)
         .getFaceDown());
   }
 
@@ -103,11 +107,11 @@ public class InventoryTests {
     levelCard = createValidCard();
     levelCard.setFaceDown(false);
     // add the card to the inventory
-    inventory.reserveCard(levelCard);
+    underTest.reserveCard(levelCard);
     // assert it was reserved successfully
-    assertTrue(inventory.getReservedCards().contains(levelCard));
-    assertFalse(inventory.getReservedCards()
-        .get(inventory.getReservedCards().size() - 1)
+    assertTrue(underTest.getReservedCards().contains(levelCard));
+    assertFalse(underTest.getReservedCards()
+        .get(underTest.getReservedCards().size() - 1)
         .getFaceDown());
   }
 
@@ -120,8 +124,8 @@ public class InventoryTests {
   void testAcquireNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
     noble = new ServerNoble(0, 3, "noble0.png", priceMap);
-    inventory.acquireNoble(noble);
-    assertTrue(inventory.getOwnedNobles().contains(noble));
+    underTest.acquireNoble(noble);
+    assertTrue(underTest.getOwnedNobles().contains(noble));
   }
 
   @Test
@@ -132,13 +136,13 @@ public class InventoryTests {
     int pointsToAdd = 2;
     CardInfo info = new CardInfo(1, pointsToAdd, "boo", priceMap);
     when(mockNoble.getCardInfo()).thenReturn(info);
-    int current = inventory.getPrestigePoints();
+    int current = underTest.getPrestigePoints();
     // Act
-    inventory.acquireNoble(mockNoble);
+    underTest.acquireNoble(mockNoble);
 
 
     // Assert
-    assertEquals(current + pointsToAdd, inventory.getPrestigePoints());
+    assertEquals(current + pointsToAdd, underTest.getPrestigePoints());
   }
 
   /**
@@ -150,8 +154,8 @@ public class InventoryTests {
   void testReserveNoble() {
     PriceMap priceMap = new PriceMap(0, 4, 4, 0, 0);
     noble = new ServerNoble(0, 3, "noble0.png", priceMap);
-    inventory.reserveNoble(noble);
-    assertTrue(inventory.getReservedNobles().contains(noble));
+    underTest.reserveNoble(noble);
+    assertTrue(underTest.getReservedNobles().contains(noble));
   }
 
   /**
@@ -166,7 +170,7 @@ public class InventoryTests {
     when(mockPrice.getGemCost(any())).thenReturn(0);
 
     // Act
-    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+    boolean response = underTest.hasAtLeastGivenBonuses(mockPrice);
 
     // Assert
     assertTrue(response);
@@ -184,10 +188,100 @@ public class InventoryTests {
     when(mockPrice.getGemCost(any())).thenReturn(1);
 
     // Act
-    boolean response = inventory.hasAtLeastGivenBonuses(mockPrice);
+    boolean response = underTest.hasAtLeastGivenBonuses(mockPrice);
 
     // Assert
     assertFalse(response);
+  }
+
+  @Test
+  void testAddTradePost() {
+    // Arrange
+    TradePost tradePost = new TradePost(RouteType.ONYX_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost);
+
+    // Assert
+    assertEquals(1, underTest.getPrestigePoints());
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.ONYX_ROUTE));
+  }
+
+  @Test
+  void testAddSecondTradePost() {
+    // Arrange
+    TradePost tradePost1 = new TradePost(RouteType.ONYX_ROUTE);
+    TradePost tradePost2 = new TradePost(RouteType.DIAMOND_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost1);
+    underTest.addTradePost(tradePost2);
+
+    // Assert
+    assertEquals(2, underTest.getPrestigePoints());
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.DIAMOND_ROUTE));
+    assertTrue(underTest.getTradePosts().containsKey(RouteType.ONYX_ROUTE));
+  }
+
+  @Test
+  void testCannotAddSamePostTwice() {
+    // Arrange
+    TradePost tradePost1 = new TradePost(RouteType.ONYX_ROUTE);
+    TradePost tradePost2 = mock(TradePost.class);
+    when(tradePost2.getRouteType()).thenReturn(RouteType.ONYX_ROUTE);
+
+    // Act
+    underTest.addTradePost(tradePost1);
+    underTest.addTradePost(tradePost2);
+
+    // Assert
+    verify(tradePost2, never()).getBonusPrestigePoints(underTest.getTradePosts());
+  }
+
+  @Test
+  void testAcquireCity() {
+    // Arrange
+    ServerCity toAdd = new ServerCity();
+
+    // Act
+    underTest.acquireCity(toAdd);
+
+    // Assert
+    assertTrue(underTest.getOwnedCities().contains(toAdd));
+  }
+
+  @Test
+  void testReserveTooManyCards() {
+    // Arrange
+    int numberOfCards = 4;
+    ServerLevelCard[] cards = new ServerLevelCard[numberOfCards];
+    for (int i = 0; i < numberOfCards - 1; i++) {
+      cards[i] = new ServerLevelCard();
+    }
+
+    // Act
+    boolean result = true;
+    for (var card : cards) {
+      result = underTest.reserveCard(card);
+    }
+
+    // Assert
+    assertFalse(result);
+    assertEquals(3, underTest.getReservedCards().size());
+  }
+
+  @Test
+  void testUpdateBonusGems() {
+    // Arrange
+    underTest.acquireCard(createValidCard());
+    underTest.setGemBonuses(new PurchaseMap());
+    assertEquals(0, underTest.getGemBonuses().getGemCost(Gem.RUBY));
+
+    // Act
+    underTest.updateBonusGems();
+
+    // Assert
+    assertEquals(1, underTest.getGemBonuses().getGemCost(Gem.RUBY));
   }
 
   private ServerLevelCard createValidCard() {
@@ -201,14 +295,14 @@ public class InventoryTests {
    */
   @Test
   public void testHasAtLeastGoldenBonus() {
-    assertTrue(inventory.hasAtLeastGoldenBonus(0));
-    assertFalse(inventory.hasAtLeastGoldenBonus(1));
-    inventory.acquireCard(new ServerLevelCard(123,
+    assertTrue(underTest.hasAtLeastGoldenBonus(0));
+    assertFalse(underTest.hasAtLeastGoldenBonus(1));
+    underTest.acquireCard(new ServerLevelCard(123,
         12, "card", new PriceMap(), Level.REDONE,
         LevelCard.BonusType.TWO_GOLD_TOKENS, new PurchaseMap()
-        ));
-    assertTrue(inventory.hasAtLeastGoldenBonus(1));
-    assertFalse(inventory.hasAtLeastGoldenBonus(2));
+    ));
+    assertTrue(underTest.hasAtLeastGoldenBonus(1));
+    assertFalse(underTest.hasAtLeastGoldenBonus(2));
   }
 
   /**
@@ -220,8 +314,8 @@ public class InventoryTests {
         12, "card", new PriceMap(), Level.REDONE,
         LevelCard.BonusType.TWO_GOLD_TOKENS, new PurchaseMap()
     );
-    inventory.getOwnedCards().add(card);
-    assertEquals(card, inventory.topGoldCard());
+    underTest.getOwnedCards().add(card);
+    assertEquals(card, underTest.topGoldCard());
   }
 
   /**
@@ -233,9 +327,9 @@ public class InventoryTests {
         12, "card", new PriceMap(), Level.REDONE,
         LevelCard.BonusType.TWO_GOLD_TOKENS, new PurchaseMap()
     );
-    inventory.getOwnedCards().add(card);
-    assertFalse(inventory.getOwnedCards().isEmpty());
-    inventory.removeCard(card);
-    assertTrue(inventory.getOwnedCards().isEmpty());
+    underTest.getOwnedCards().add(card);
+    assertFalse(underTest.getOwnedCards().isEmpty());
+    underTest.removeCard(card);
+    assertTrue(underTest.getOwnedCards().isEmpty());
   }
 }
