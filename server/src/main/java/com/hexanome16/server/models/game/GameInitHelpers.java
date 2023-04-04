@@ -238,7 +238,7 @@ public class GameInitHelpers {
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(bagCascade)),
           bagCascade);
     }
-    //deck.shuffle();
+    deck.shuffle();
     game.getRemainingCards().put(Level.REDTWO, deck);
   }
 
