@@ -59,6 +59,8 @@ public class BankTest {
    */
   @Test
   public void testDecreasePlayerTokens() {
+    playerBank.addGemsToBank(new PurchaseMap(3, 3, 3,
+        3, 3, 3));
     playerBank.removeGemsFromBank(new PurchaseMap(1, 1, 1,
         1, 1, 1));
     assertFalse(playerBank.toPurchaseMap().canBeUsedToBuy(new PurchaseMap(3, 3, 3,
