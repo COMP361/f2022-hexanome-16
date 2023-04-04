@@ -13,7 +13,6 @@ import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
@@ -279,12 +278,7 @@ public class ServiceUtils {
       return error;
     }
 
-    // Receive trade posts
-    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        player.getInventory().addTradePost(tradePost.getValue());
-      }
-    }
+    acquireTradePost(game, player);
 
     //choose city
     if (game.getWinCondition() == WinCondition.CITIES) {
@@ -302,5 +296,20 @@ public class ServiceUtils {
 
     endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  /**
+   * Check for trade posts.
+   *
+   * @param game current game.
+   * @param player current player.
+   */
+  public static void acquireTradePost(Game game, ServerPlayer player) {
+    // Receive trade posts
+    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        player.getInventory().addTradePost(tradePost.getValue());
+      }
+    }
   }
 }

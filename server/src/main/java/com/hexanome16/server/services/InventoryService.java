@@ -513,6 +513,7 @@ public class InventoryService implements InventoryServiceInterface {
         new NobleDeckJson(game.getOnBoardNobles().getCardList())
     );
 
+    ServiceUtils.acquireTradePost(game, player);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
@@ -540,6 +541,8 @@ public class InventoryService implements InventoryServiceInterface {
 
     var city = game.getCityByHash(cityHash);
 
+    System.out.println(city);
+
     if (cityHash == null) {
       return CustomResponseFactory.getResponse(CustomHttpResponses.BAD_CARD_HASH);
     }
@@ -560,7 +563,13 @@ public class InventoryService implements InventoryServiceInterface {
         new CitiesJson(game.getOnBoardCities().getCardList())
     );
 
-    return serviceUtils.checkForNextActions(game, player);
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @Override
