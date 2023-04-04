@@ -6,18 +6,20 @@ import com.hexanome16.common.dto.PlayerListJson;
 import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.RouteType;
 import com.hexanome16.common.util.CustomHttpResponses;
 import com.hexanome16.server.models.ServerPlayer;
+import com.hexanome16.server.models.TradePost;
 import com.hexanome16.server.models.cards.ServerCity;
 import com.hexanome16.server.models.cards.ServerNoble;
 import com.hexanome16.server.models.game.Game;
-import com.hexanome16.server.services.InventoryService;
 import com.hexanome16.server.services.auth.AuthServiceInterface;
 import com.hexanome16.server.services.game.GameManagerServiceInterface;
 import com.hexanome16.server.services.winconditions.WinCondition;
 import com.hexanome16.server.util.broadcastmap.BroadcastMapKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -276,6 +278,8 @@ public class ServiceUtils {
       return error;
     }
 
+    acquireTradePost(game, player);
+
     //choose city
     if (game.getWinCondition() == WinCondition.CITIES) {
       error =
@@ -292,5 +296,20 @@ public class ServiceUtils {
 
     endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
+  }
+
+  /**
+   * Check for trade posts.
+   *
+   * @param game current game.
+   * @param player current player.
+   */
+  public static void acquireTradePost(Game game, ServerPlayer player) {
+    // Receive trade posts
+    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
+      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
+        player.getInventory().addTradePost(tradePost.getValue());
+      }
+    }
   }
 }

@@ -109,12 +109,12 @@ public class InventoryServiceTests {
     PurchaseMap myPm = objectMapper.readValue(string, new TypeReference<>() {
     });
 
-    assertEquals(myPm.getGemCost(Gem.RUBY), 3);
-    assertEquals(myPm.getGemCost(Gem.EMERALD), 3);
-    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 3);
-    assertEquals(myPm.getGemCost(Gem.DIAMOND), 3);
-    assertEquals(myPm.getGemCost(Gem.ONYX), 3);
-    assertEquals(myPm.getGemCost(Gem.GOLD), 3);
+    assertEquals(myPm.getGemCost(Gem.RUBY), 0);
+    assertEquals(myPm.getGemCost(Gem.EMERALD), 0);
+    assertEquals(myPm.getGemCost(Gem.SAPPHIRE), 0);
+    assertEquals(myPm.getGemCost(Gem.DIAMOND), 0);
+    assertEquals(myPm.getGemCost(Gem.ONYX), 0);
+    assertEquals(myPm.getGemCost(Gem.GOLD), 0);
   }
 
   /**
@@ -780,48 +780,6 @@ public class InventoryServiceTests {
     // Assert
     assertEquals(CustomHttpResponses.END_OF_TURN.getBody(), response.getBody());
     assertEquals(CustomHttpResponses.END_OF_TURN.getStatus(), response.getStatusCodeValue());
-  }
-
-  /**
-   * Test noble next action returns.
-   */
-  @Test
-  @SneakyThrows
-  @Disabled
-  public void testNobleNextActionReturns() {
-    // Arrange
-    final var validSessionId = DummyAuths.validSessionIds.get(0);
-    final var validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    final var nobleHash = "valid hash";
-    final ServerNoble mockNoble = Mockito.mock(ServerNoble.class);
-
-    var request = serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken);
-    Game gameMock = request.getValue().getLeft();
-    ServerPlayer playerMock = Mockito.mock(ServerPlayer.class);
-    when(playerMock.canBeVisitedBy(mockNoble)).thenReturn(true);
-    when(playerMock.addCardToInventory(mockNoble)).thenReturn(true);
-    when(serviceUtils.validRequestAndCurrentTurn(validSessionId, validAccessToken)).thenReturn(
-        Pair.of(ResponseEntity.ok().build(), Pair.of(gameMock, playerMock)));
-    when(gameMock.getNobleByHash(nobleHash)).thenReturn(mockNoble);
-    Action mockAction = mock(Action.class);
-    when(mockAction.getActionType()).thenReturn(CustomHttpResponses.ActionType.NOBLE);
-    Action mockActionNext = mock(Action.class);
-    when(mockActionNext.getActionDetails()).thenReturn(
-        CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
-    when(playerMock.peekTopAction()).thenReturn(mockAction).thenReturn(mockActionNext);
-    when(serviceUtils.checkForNextActions(any(), any())).thenReturn(
-        CustomResponseFactory.getResponse(CustomHttpResponses.CHOOSE_CITY));
-
-    Inventory inventory = Mockito.mock(Inventory.class);
-    when(playerMock.getInventory()).thenReturn(inventory);
-    when(inventory.getReservedNobles()).thenReturn(new LinkedList<>());
-
-    // Act
-    var response = underTest.acquireNoble(validSessionId, nobleHash, validAccessToken);
-
-    // Assert
-    assertEquals(CustomHttpResponses.CHOOSE_CITY.getBody(), response.getBody());
-    assertEquals(CustomHttpResponses.CHOOSE_CITY.getStatus(), response.getStatusCodeValue());
   }
 
   /**

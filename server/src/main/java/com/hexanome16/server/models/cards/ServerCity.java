@@ -7,13 +7,17 @@ import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.server.models.inventory.Inventory;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * ServerCity class for the Cities expansion.
  */
-@Data
+@Data()
+@ToString(callSuper = true)
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ServerCity extends City implements Visitable {
   /**
    * Instantiates a new ServerCity.

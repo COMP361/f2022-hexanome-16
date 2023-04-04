@@ -513,6 +513,7 @@ public class InventoryService implements InventoryServiceInterface {
         new NobleDeckJson(game.getOnBoardNobles().getCardList())
     );
 
+    ServiceUtils.acquireTradePost(game, player);
     serviceUtils.endCurrentPlayersTurn(game);
     return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
@@ -552,7 +553,6 @@ public class InventoryService implements InventoryServiceInterface {
       return CustomResponseFactory.getResponse(CustomHttpResponses.SERVER_SIDE_ERROR);
     }
     player.removeTopAction();
-
     game.getOnBoardCities().removeCard(city);
     // Update long polling
     game.getBroadcastContentManagerMap().updateValue(
@@ -560,7 +560,13 @@ public class InventoryService implements InventoryServiceInterface {
         new CitiesJson(game.getOnBoardCities().getCardList())
     );
 
-    return serviceUtils.checkForNextActions(game, player);
+    var nextAction = player.peekTopAction();
+    if (nextAction != null) {
+      return nextAction.getActionDetails();
+    }
+
+    serviceUtils.endCurrentPlayersTurn(game);
+    return CustomResponseFactory.getResponse(CustomHttpResponses.END_OF_TURN);
   }
 
   @Override
@@ -789,13 +795,6 @@ public class InventoryService implements InventoryServiceInterface {
     if (game.getWinCondition() == WinCondition.TRADEROUTES
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
       player.addTakeTokenToPerform(Optional.empty());
-    }
-
-    // Receive trade posts
-    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        player.getInventory().addTradePost(tradePost.getValue());
-      }
     }
   }
 }

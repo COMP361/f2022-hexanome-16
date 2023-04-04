@@ -13,7 +13,7 @@ public class PlayerBank extends Bank {
    * The constructor gives each player three tokens to start with.
    */
   public PlayerBank() {
-    super(3);
+    super(0);
   }
 
   /**

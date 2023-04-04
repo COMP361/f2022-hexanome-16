@@ -23,6 +23,7 @@ public class ActionDeserializer extends JsonDeserializer<Action> {
         case "LEVEL_ONE" -> mapper.readValue(root.toString(), TakeOneAction.class);
         case "LEVEL_TWO" -> mapper.readValue(root.toString(), TakeTwoAction.class);
         case "NOBLE" -> mapper.readValue(root.toString(), ChooseNobleAction.class);
+        case "NOBLE_RESERVE" -> mapper.readValue(root.toString(), ReserveNobleAction.class);
         case "CITY" -> mapper.readValue(root.toString(), ChooseCityAction.class);
         case "DISCARD_TOKEN" -> mapper.readValue(root.toString(), DiscardTokenAction.class);
         case "TAKE_TOKEN" -> mapper.readValue(root.toString(), TakeTokenAction.class);
