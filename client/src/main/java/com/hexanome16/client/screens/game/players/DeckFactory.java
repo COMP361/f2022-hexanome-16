@@ -35,21 +35,14 @@ public class DeckFactory implements EntityFactory {
   private static final FontFactory CURSIVE_FONT_FACTORY = Config.CURSIVE_FONT_FACTORY;
 
   // (helper) return a pane with a card and a label
-  private StackPane getCard(int multiplicity, String cardName) {
+  private StackPane getCard(String cardName) {
     // current multiplicity
-    Text number = new Text(Integer.toString(multiplicity));
-    number.setFont(CURSIVE_FONT_FACTORY.newFont(300));
-    number.setFill(Paint.valueOf("#FCD828"));
-    number.setStrokeWidth(2.);
-    number.setStroke(Paint.valueOf("#936D35"));
-    number.setStyle("-fx-background-color: ffffff00; ");
     // current card
     Texture card = FXGL.texture(cardName.toLowerCase());
     // pane
     StackPane pane = new StackPane();
     StackPane.setAlignment(card, Pos.CENTER);
-    StackPane.setAlignment(number, Pos.TOP_RIGHT);
-    pane.getChildren().addAll(card, number);
+    pane.getChildren().addAll(card);
     // return it
     return pane;
   }
@@ -106,7 +99,7 @@ public class DeckFactory implements EntityFactory {
     // get a pane for this card
     String color = (String) data.getData().getOrDefault("color", "red");
     String player = (String) data.getData().getOrDefault("player", "");
-    StackPane pane = getCard(0, color + "card.png");
+    StackPane pane = getCard(color + "card.png");
     // animation
     pane.setOnMouseEntered(e -> {
       pane.setScaleX(1.25);
@@ -137,7 +130,7 @@ public class DeckFactory implements EntityFactory {
   public Entity nobleCard(SpawnData data) {
     String player = (String) data.getData().getOrDefault("player", "");
     // get a pane for this card
-    StackPane pane = getCard(0, "noblecard.png");
+    StackPane pane = getCard("noblecard.png");
     // animation
     pane.setOnMouseEntered(e -> {
       pane.setScaleX(1.25);
@@ -241,7 +234,7 @@ public class DeckFactory implements EntityFactory {
   @Spawns("ReservedNobles")
   public Entity reservedNobles(SpawnData data) {
     // get a pane for this card
-    StackPane pane = getCard(0, "noblecard.png");
+    StackPane pane = getCard("noblecard.png");
     pane.setOpacity(0.5);
     // animation
     pane.setOnMouseEntered(e -> {
@@ -274,7 +267,7 @@ public class DeckFactory implements EntityFactory {
   @Spawns("ReservedCards")
   public Entity reservedCards(SpawnData data) {
     // get a pane for this card
-    StackPane pane = getCard(0, "card.png");
+    StackPane pane = getCard("card.png");
     pane.setOpacity(0.5);
     // animation
     pane.setOnMouseEntered(e -> {
