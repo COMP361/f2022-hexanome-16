@@ -790,12 +790,5 @@ public class InventoryService implements InventoryServiceInterface {
         && player.getInventory().getTradePosts().containsKey(RouteType.RUBY_ROUTE)) {
       player.addTakeTokenToPerform(Optional.empty());
     }
-
-    // Receive trade posts
-    for (Map.Entry<RouteType, TradePost> tradePost : game.getTradePosts().entrySet()) {
-      if (tradePost.getValue().canBeTakenByPlayerWith(player.getInventory())) {
-        player.getInventory().addTradePost(tradePost.getValue());
-      }
-    }
   }
 }
