@@ -45,7 +45,7 @@ class LevelCardTest {
     underTest.associateBagToGem(Gem.RUBY);
 
     // Assert
-    assertTrue(underTest.isAssociatedGem());
+    assertTrue(underTest.getAssociatedGem());
     assertEquals(1, underTest.gemBonus.getGemCost(Gem.RUBY));
   }
 

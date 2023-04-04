@@ -11,6 +11,7 @@ import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
@@ -97,6 +98,21 @@ public class PromptsRequests {
   }
 
   /**
+   * Get reserved cards of the player with provided username and session id.
+   *
+   * @param sessionId   Session ID.
+   * @param username    username of player.
+   * @param gem gem type.
+   * @return PurchaseMap representation of the player's funds as a String
+   * @author Peini
+   */
+  public static DeckJson getCardPrice(long sessionId, String username, Gem gem) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/inventory/cardPrice",
+        Map.of("username", username, "gem", gem), DeckJson.class));
+  }
+
+  /**
    * Get reserved nobles of the player with provided username and session id.
    *
    * @param sessionId Session ID.
@@ -126,6 +142,27 @@ public class PromptsRequests {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
         RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5,
         Map.of("access_token", authToken), proposedDeal, String.class));
+  }
+
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param cardMd5      Hash value of the card we're sending.
+   * @param authToken    username of player trying to buy card.
+   * @param firstMd5 first card to discard.
+   * @param secondMd5 second card to discard.
+   * @return Pair of the response from server, headers and string
+   */
+  public static Pair<Headers, String> buySacrificeCard(long sessionId,
+                                                      String cardMd5,
+                                                      String authToken,
+                                                      String firstMd5,
+                                                      String secondMd5) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5 + "/sacrifice",
+        Map.of("access_token", authToken, "firstMd5", firstMd5, "secondMd5", secondMd5),
+        String.class));
   }
 
   /**

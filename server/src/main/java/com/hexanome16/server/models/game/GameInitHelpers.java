@@ -251,13 +251,13 @@ public class GameInitHelpers {
     } catch (Exception e) {
       throw new RuntimeException("Could not load sacrifice.json", e);
     }
-    Deck<ServerLevelCard> deck = new Deck<>();
+    Deck<ServerLevelCard> deck = game.getRemainingCards().get(Level.REDTHREE);
     for (DevelopmentCardJson sacrificeJson : sacrificeList) {
       Gem gem = Gem.valueOf(sacrificeJson.getBonus());
       PurchaseMap gemBonus = new PurchaseMap(Map.of(gem, 1));
       ServerLevelCard sacrifice = new ServerLevelCard(sacrificeJson.getId(),
           sacrificeJson.getPrestigePoint(), "sacrifice" + sacrificeJson.getId(),
-          sacrificeJson.getPrice(), Level.REDTHREE, gemBonus);
+          sacrificeJson.getPrice(), Level.REDTHREE, LevelCard.BonusType.SACRIFICE, gemBonus);
       deck.addCard(sacrifice);
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(sacrifice)),
           sacrifice);
@@ -286,7 +286,7 @@ public class GameInitHelpers {
       game.getHashToCardMap().put(DigestUtils.md5Hex(objectMapper.writeValueAsString(cascadeTwo)),
           cascadeTwo);
     }
-    //deck.shuffle();
+    deck.shuffle();
     game.getRemainingCards().put(Level.REDTHREE, deck);
   }
 
