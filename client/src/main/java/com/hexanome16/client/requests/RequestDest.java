@@ -22,13 +22,17 @@ public enum RequestDest {
   private final String url;
 
   RequestDest(String kind) {
+    String env = System.getenv("PROFILE_ID");
+    if (env == null || env.isBlank()) {
+      env = "prod";
+    }
     PropertyMap lsProperties = FXGL.getAssetLoader().load(
         AssetType.PROPERTY_MAP,
-        "properties/lobby-service-" + System.getenv("PROFILE_ID") + ".properties"
+        "properties/lobby-service-" + env + ".properties"
     );
     PropertyMap serverProperties = FXGL.getAssetLoader().load(
         AssetType.PROPERTY_MAP,
-        "properties/server-" + System.getenv("PROFILE_ID") + ".properties"
+        "properties/server-" + env + ".properties"
     );
     switch (kind) {
       case "LS" -> this.url = lsProperties.getString("server.protocol") + "://"
