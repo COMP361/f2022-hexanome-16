@@ -2,6 +2,7 @@ package com.hexanome16.client.screens.game.prompts.components;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 
 import com.almasb.fxgl.core.collection.PropertyMap;
 import com.almasb.fxgl.dsl.FXGL;
@@ -9,9 +10,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.screens.game.CurrencyType;
+import com.hexanome16.client.screens.game.GameScreen;
+import com.hexanome16.client.screens.game.components.CardComponent;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardWithCards;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.ReserveCardPrompt;
+import com.hexanome16.client.utils.AuthUtils;
 import com.hexanome16.common.models.Level;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -134,12 +140,18 @@ public class PromptComponent extends Component {
    */
   @Override
   public void onAdded() {
+    if (!atPromptType.canBeOpenedOutOfTurn() && !GameScreen.isClientsTurn()) {
+      getGameWorld().removeEntities(entity);
+      return;
+    }
     initiateWorldProperties();
     buildBox();
     if (level != null) {
       ((ReserveCardPrompt) atPromptType).populatePrompt(entity, level);
     } else if (atCardEntity == null) {
       atPromptType.populatePrompt(entity);
+    } else if (atCardEntity.getComponent(CardComponent.class).getIsSacrifice()) {
+      ((BuyCardWithCards) atPromptType).populatePrompt(entity, atCardEntity);
     } else {
       ((BuyCardPrompt) atPromptType).populatePrompt(entity, atCardEntity);
     }

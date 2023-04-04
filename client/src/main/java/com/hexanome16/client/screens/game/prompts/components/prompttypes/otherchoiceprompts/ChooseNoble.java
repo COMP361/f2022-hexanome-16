@@ -18,9 +18,12 @@ import kong.unirest.core.Headers;
 /**
  * Class responsible for populating Noble Conflict prompt.
  */
-public class ChooseNoble extends NobleChoiceAbstract {
+public class ChooseNoble extends VisitableChoiceAbstract {
 
-  private static Noble[] nobleList;
+  /**
+   * List of nobles to choose from.
+   */
+  protected static Noble[] nobleList;
 
   /**
    * Sets the list of nobles.
@@ -34,6 +37,11 @@ public class ChooseNoble extends NobleChoiceAbstract {
   @Override
   public boolean isCancelable() {
     return false;
+  }
+
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
   }
 
   @Override
@@ -55,7 +63,7 @@ public class ChooseNoble extends NobleChoiceAbstract {
   protected void handleConfirmation() {
     // to modify, use chosenNobleIndex to get index of the choice
 
-    int nobleIndex = chosenNobleIndex;
+    int nobleIndex = chosenVisitableIndex;
     long sessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     Noble nobleOfInterest = nobleList[nobleIndex];
@@ -68,7 +76,7 @@ public class ChooseNoble extends NobleChoiceAbstract {
   }
 
   @Override
-  protected ArrayList<Texture> getChoiceNobles() {
+  protected ArrayList<Texture> getChoiceVisitables() {
     // Hard Coded for now
     ArrayList<Texture> myList = Arrays.stream(nobleList).map(noble ->
         FXGL.texture(noble.getCardInfo().texturePath() + ".png"))

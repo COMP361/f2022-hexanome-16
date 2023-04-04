@@ -77,7 +77,18 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   SERVER_SIDE_ERROR("There was an error on the server, please try again later",
       HTTP_INTERNAL_ERROR),
-
+  /**
+   * Used in associate bag, need to have bonuses already in
+   * inventory to associate a bag.
+   */
+  NO_BONUS_TO_ASSOCIATE("Player inventory is empty and so cannot associate bag card",
+      HTTP_BAD_REQUEST),
+  /**
+   * Used in associate Bag, Gem cannot be gold,
+   * or null and needs to be in inventory.
+   */
+  BAD_GEM_TO_ASSOCIATE_TO_BAG("Chosen Gem to associate to bag is bad",
+      HTTP_BAD_REQUEST),
   /**
    * Used when an action is requested but not at the top of the action queue.
    */
@@ -107,6 +118,43 @@ public enum CustomHttpResponses implements BroadcastContent {
    */
   TAKE_LEVEL_TWO("Player must take a level two card", HTTP_OK,
       Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_TWO.getMessage()))),
+  /**
+   * Used for indicating that player must take a level one card.
+   * <p>
+   * No need for a body so just use with getResponse
+   * </p>
+   */
+  TAKE_LEVEL_ONE("Player must take a level one card", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.LEVEL_ONE.getMessage()))),
+  /**
+   * Used for indicating that player must discard a token.
+   * <p>
+   * Only use with CustomResponse to pass in list of tokens in body.
+   * </p>
+   */
+  DISCARD_TOKEN("Insert custom body with tokens to choose from", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.DISCARD.getMessage()))),
+
+  /**
+   * Used for indicating that a player must take a token.
+   */
+  TAKE_TOKEN("Insert custom body containing a gem that cannot be chosen", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.TAKE.getMessage()))),
+  /**
+   * Used for indicating that a player must reserve a noble.
+   */
+  RESERVE_NOBLE("Insert custom body containing list of nobles",
+          HTTP_OK, Map.of(ActionType.ACTION_TYPE,
+          List.of(ActionType.NOBLE_RESERVE.getMessage()))),
+  /**
+   * Used for indicating that player must Associate a bag card.
+   * <p>
+   * Only use with CustomResponse to pass in list of Gem types in body.
+   * </p>
+   */
+  ASSOCIATE_BAG_CARD("Please associate your bag card to a bonus type"
+      + "(the ones for which we have a bonus card in our inventory)", HTTP_OK,
+      Map.of(ActionType.ACTION_TYPE, List.of(ActionType.ASSOCIATE_BAG.getMessage()))),
   /**
    * Used for indicating that player doesn't have to perform any additional actions.
    */
@@ -138,7 +186,9 @@ public enum CustomHttpResponses implements BroadcastContent {
    * Class for ActionTypes, holds strings used all over the code.
    */
   public enum ActionType {
-    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"), END_TURN("done");
+    NOBLE("choose-noble"), CITY("choose-city"), LEVEL_TWO("take-level-two"),
+    DISCARD("discard-token"), TAKE("take-token"), ASSOCIATE_BAG("associate-bag"),
+    LEVEL_ONE("take-level-one"), NOBLE_RESERVE("reserve-noble"), END_TURN("done");
 
     /**
      * Action Type string.

@@ -1,9 +1,7 @@
 package com.hexanome16.server.services.game;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.ServerPlayer;
-import lombok.NonNull;
+import com.hexanome16.server.models.game.Game;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 
@@ -47,4 +45,24 @@ public interface GameServiceInterface {
    * @throws JsonProcessingException throws an exception if fail to Json convert.
    */
   ResponseEntity<String> getLevelTwoOnBoard(long sessionId) throws JsonProcessingException;
+
+
+  /**
+   * Gets all the cards of level one on the board.
+   *
+   * @param sessionId session Id of the game of interest.
+   * @return Response entity with the list as an array.
+   * @throws JsonProcessingException throws an exception if fail to Json convert.
+   */
+  ResponseEntity<String> getLevelOneOnBoard(long sessionId) throws JsonProcessingException;
+
+  /**
+   * Gets the player's top action.
+   *
+   * @param sessionId session Identification number of the game.
+   * @param accessToken access
+   * @return Top action's response entity.
+   */
+  ResponseEntity<String> getPlayerAction(long sessionId, String accessToken);
+
 }

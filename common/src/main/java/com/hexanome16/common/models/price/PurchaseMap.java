@@ -4,9 +4,10 @@ import static java.util.Objects.hash;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hexanome16.common.deserializers.PurchaseMapDeserializer;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
@@ -42,7 +43,7 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
    *                    Integer.
    */
   public PurchaseMap(Map<Gem, Integer> purchaseMap) {
-    super();
+    this();
     if (purchaseMap == null) {
       throw new IllegalArgumentException("Price map cannot be null");
     }
@@ -64,6 +65,14 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
   public PurchaseMap(PriceMap priceMap, int goldAmount) {
     this(priceMap.priceMap);
     this.priceMap.put(Gem.GOLD, goldAmount);
+  }
+
+  /**
+   * Instantiates a new empty Purchase map.
+   */
+  public PurchaseMap() {
+    super();
+    this.priceMap.put(Gem.GOLD, 0);
   }
 
   /**
@@ -111,8 +120,6 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     priceMap.put(gem, priceMap.getOrDefault(gem, 0) - amount);
   }
 
-  // TODO: TEST CASE
-
   /**
    * Checks if implied argument can be used instead of the parameter to commit a purchase.
    *
@@ -136,6 +143,56 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     ) {
       return (otherPriceMap.getTotalNonJokers() - this.getTotalNonJokers())
           == this.getGemCost(Gem.GOLD);
+    }
+    return false;
+  }
+
+  /**
+   * Same as canBeUsedToBuy but one gold token equals to two gems of same color.
+   *
+   * @param otherPriceMap priceMap we want to compare to.
+   * @return true if the implied can be used to commit the purchase, false otherwise.
+   */
+  public boolean canBeUsedToBuyAlt(PriceInterface otherPriceMap) {
+    if (otherPriceMap == null) {
+      return false;
+    }
+    if (this == otherPriceMap) {
+      return true;
+    }
+
+    if (this.getTotalNonJokers() <= otherPriceMap.getTotalNonJokers()
+        && this.getGemCost(Gem.RUBY) <= otherPriceMap.getGemCost(Gem.RUBY)
+        && this.getGemCost(Gem.EMERALD) <= otherPriceMap.getGemCost(Gem.EMERALD)
+        && this.getGemCost(Gem.SAPPHIRE) <= otherPriceMap.getGemCost(Gem.SAPPHIRE)
+        && this.getGemCost(Gem.DIAMOND) <= otherPriceMap.getGemCost(Gem.DIAMOND)
+        && this.getGemCost(Gem.ONYX) <= otherPriceMap.getGemCost(Gem.ONYX)
+    ) {
+      if ((otherPriceMap.getTotalNonJokers() - this.getTotalNonJokers())
+          == this.getGemCost(Gem.GOLD)) {
+        return true;
+      } else {
+        int[] remaining = new int[5];
+        remaining[0] = otherPriceMap.getGemCost(Gem.RUBY) - this.getGemCost(Gem.RUBY);
+        remaining[1] = otherPriceMap.getGemCost(Gem.EMERALD) - this.getGemCost(Gem.EMERALD);
+        remaining[2] = otherPriceMap.getGemCost(Gem.SAPPHIRE) - this.getGemCost(Gem.SAPPHIRE);
+        remaining[3] = otherPriceMap.getGemCost(Gem.DIAMOND) - this.getGemCost(Gem.DIAMOND);
+        remaining[4] = otherPriceMap.getGemCost(Gem.ONYX) - this.getGemCost(Gem.ONYX);
+        int goldAmount = this.getGemCost(Gem.GOLD);
+        int costRemaining = 0;
+        for (int i = 0; i < 5; i++) {
+          while (goldAmount > 0 && remaining[i] > 0) {
+            goldAmount--;
+            if (remaining[i] == 1) {
+              remaining[i] = 0;
+            } else {
+              remaining[i] -= 2;
+            }
+          }
+          costRemaining += remaining[i];
+        }
+        return goldAmount == 0 && costRemaining == 0;
+      }
     }
     return false;
   }
@@ -165,5 +222,25 @@ public class PurchaseMap extends PriceMap implements PriceInterface {
     return hash(this.getGemCost(Gem.RUBY), this.getGemCost(Gem.EMERALD),
         this.getGemCost(Gem.SAPPHIRE), this.getGemCost(Gem.DIAMOND),
         this.getGemCost(Gem.ONYX), this.getGemCost(Gem.GOLD));
+  }
+
+  @Override
+  public PriceInterface subtract(PriceInterface priceInterface) {
+    Set<Gem> paramTypes = priceInterface.getTypesOfGems();
+    Set<Gem> thisTypes = this.getTypesOfGems();
+    if (!(thisTypes.containsAll(paramTypes) && paramTypes.containsAll(thisTypes))) {
+      throw new IllegalArgumentException("Maps must contains same set of gems");
+    }
+    var mapToRemoveFrom = this.priceMap;
+    PurchaseMap newPriceMap = new PurchaseMap();
+    for (var entry : mapToRemoveFrom.entrySet()) {
+      Gem key = entry.getKey();
+      int newValue = entry.getValue() - priceInterface.getGemCost(key);
+      if (newValue < 0) {
+        newValue = 0;
+      }
+      newPriceMap.addGems(key, newValue);
+    }
+    return newPriceMap;
   }
 }

@@ -10,6 +10,7 @@ import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
 import com.hexanome16.client.screens.game.GameScreen;
 import com.hexanome16.client.screens.game.UpdateGameInfo;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.utils.AuthUtils;
@@ -28,6 +29,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
+import kong.unirest.core.Headers;
 
 /**
  * A class responsible for populating Reserve card prompt.
@@ -108,7 +111,9 @@ public class ReserveCardPrompt implements PromptTypeInterface {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     // send request to server
-    PromptsRequests.reserveCard(promptSessionId, level, authToken);
+    Pair<Headers, String> serverResponse =
+        PromptsRequests.reserveCard(promptSessionId, level, authToken);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   @Override
@@ -124,6 +129,11 @@ public class ReserveCardPrompt implements PromptTypeInterface {
   @Override
   public boolean isCancelable() {
     return true;
+  }
+
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
   }
 
   /**

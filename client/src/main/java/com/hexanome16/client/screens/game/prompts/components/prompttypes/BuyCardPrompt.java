@@ -3,10 +3,10 @@ package com.hexanome16.client.screens.game.prompts.components.prompttypes;
 import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getEventBus;
+import static com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt.ButtonType.canBuy;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.texture.Texture;
 import com.hexanome16.client.Config;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
@@ -19,9 +19,10 @@ import com.hexanome16.client.screens.game.prompts.components.PromptComponent;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
 import com.hexanome16.client.screens.game.prompts.components.events.SplendorEvents;
 import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
 import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
-import com.hexanome16.common.util.CustomHttpResponses;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -115,15 +116,26 @@ public class BuyCardPrompt implements PromptTypeInterface {
   /**
    * The proposed offer.
    */
-  PurchaseMap atProposedOffer;
+  OrientPurchaseMap atProposedOffer;
+  /**
+   * The discounted price of the card.
+   */
+  PriceMap discountedPrice;
+  /**
+   * The default value of the proposed deal,
+   * how much is already put down from the get go.
+   * If discounted Price == card price then 0 for all gems per example.
+   */
+  PriceMap defaultProposal;
 
-  private static PurchaseMap getPurchaseMapOfCurrentInput() {
+  private static OrientPurchaseMap getOrientPurchaseMapOfCurrentInput() {
     int rubyAmount = 0;
     int emeraldAmount = 0;
     int sapphireAmount = 0;
     int diamondAmount = 0;
     int onyxAmount = 0;
     int goldAmount = 0;
+    int goldCardAmount = 0;
     int amountInBank;
     // go through every currently supported currency and modify the value of the
     // variable associated to it
@@ -137,12 +149,13 @@ public class BuyCardPrompt implements PromptTypeInterface {
         case WHITE_TOKENS -> diamondAmount = amountInBank;
         case BLACK_TOKENS -> onyxAmount = amountInBank;
         case GOLD_TOKENS -> goldAmount = amountInBank;
+        case BONUS_GOLD_CARDS -> goldCardAmount = amountInBank;
         default -> { /* do nothing */ }
       }
     }
     // Creates a Purchase map of the current amounts in the Transaction bank
-    return new PurchaseMap(rubyAmount, emeraldAmount,
-        sapphireAmount, diamondAmount, onyxAmount, goldAmount);
+    return new OrientPurchaseMap(rubyAmount, emeraldAmount,
+        sapphireAmount, diamondAmount, onyxAmount, goldAmount, goldCardAmount);
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -171,9 +184,10 @@ public class BuyCardPrompt implements PromptTypeInterface {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
     // send request to server
-    PromptsRequests.reserveCard(promptSessionId,
+    Pair<Headers, String> serverResponse = PromptsRequests.reserveCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
         authToken);
+    PromptUtils.actionResponseSpawner(serverResponse);
   }
 
   @Override
@@ -189,6 +203,11 @@ public class BuyCardPrompt implements PromptTypeInterface {
   @Override
   public boolean isCancelable() {
     return true;
+  }
+
+  @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return false;
   }
 
   /**
@@ -209,6 +228,19 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
     String playerName = AuthUtils.getPlayer().getName();
     UpdateGameInfo.fetchPlayerBank(GameScreen.getSessionId(), playerName, true);
+
+    discountedPrice = getDiscountedPrice();
+    defaultProposal = (PriceMap) atCardPriceMap.subtract(discountedPrice);
+
+    for (CurrencyType currencyType : CurrencyType.values()) {
+      if (currencyType == CurrencyType.BONUS_GOLD_CARDS
+          || currencyType == CurrencyType.GOLD_TOKENS) {
+        continue;
+      }
+      FXGL.getWorldProperties()
+          .setValue(BankType.GAME_BANK.toString() + "/" + currencyType,
+              defaultProposal.getGemCost(fromCurrencyType(currencyType)));
+    }
 
     // initiate playerBank
     VBox playerBank = new VBox();
@@ -254,6 +286,14 @@ public class BuyCardPrompt implements PromptTypeInterface {
     // adding to view
     myPrompt.getChildren().addAll(playerBank, cardImage, gameBank, reserveBuy);
     entity.getViewComponent().addChild(myPrompt);
+
+  }
+
+  private PriceMap getDiscountedPrice() {
+    long sessionId = GameScreen.getSessionId();
+    String auth = AuthUtils.getAuth().getAccessToken();
+    String cardHash = atCardEntity.getComponent(CardComponent.class).getCardHash();
+    return PromptsRequests.getDiscountedPrice(sessionId, auth, cardHash);
   }
 
   private Collection<StackPane> createBank(BankType banktype) {
@@ -317,6 +357,9 @@ public class BuyCardPrompt implements PromptTypeInterface {
       buttons.put(t, button);
       button.getChildren().setAll(createButton(t, buttonWidth, buttonHeight));
       t.setBehaviour(this, button);
+      if (canBuy(this)) {
+        button.setOpacity(1);
+      }
     }
 
     return buttons.values();
@@ -354,16 +397,35 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
     // initialize circle
     Circle tokensCircle = new Circle(atHeight / 20, tokenType.getColor());
-    if (tokensAmount.getText().equals("0")) {
+    // If player bank then all 0 or game bank is
+    if ((tokenOwner == BankType.PLAYER_BANK && tokensAmount.getText().equals("0"))
+        || (tokenOwner == BankType.GAME_BANK && (tokenType == CurrencyType.BONUS_GOLD_CARDS
+        || tokenType == CurrencyType.GOLD_TOKENS))) {
+      tokensCircle.setOpacity(0.5);
+    } else if (tokenOwner == BankType.GAME_BANK && tokensAmount.getText()
+        .equals(String.valueOf(defaultProposal.getGemCost(fromCurrencyType(tokenType))))) {
       tokensCircle.setOpacity(0.5);
     }
     tokensCircle.setStrokeWidth(atHeight / 120);
     tokensCircle.setStroke(tokenType.getStrokeColor());
-
-    tokensAmount.textProperty().addListener((observable, oldValue, newValue) ->
-        handleTextChange(oldValue, newValue, tokensCircle)
-    );
-
+    if ((tokenOwner == BankType.PLAYER_BANK)
+        || (tokenOwner == BankType.GAME_BANK && (tokenType == CurrencyType.BONUS_GOLD_CARDS
+        || tokenType == CurrencyType.GOLD_TOKENS))) {
+      tokensAmount.textProperty().addListener((observable, oldValue, newValue) ->
+          handleTextChange(oldValue, newValue, tokensCircle)
+      );
+    } else {
+      tokensAmount.textProperty().addListener(((observableValue, oldValue, newValue) -> {
+        String defaultVal = String.valueOf(defaultProposal.getGemCost(fromCurrencyType(tokenType)));
+        String defaultValPlusOne =
+            String.valueOf(defaultProposal.getGemCost(fromCurrencyType(tokenType)) + 1);
+        if (oldValue.equals(defaultValPlusOne) && newValue.equals(defaultVal)) {
+          tokensCircle.setOpacity(0.5);
+        } else if (oldValue.equals(defaultVal) && newValue.equals(defaultValPlusOne)) {
+          tokensCircle.setOpacity(1);
+        }
+      }));
+    }
     return new ArrayList<>(List.of(tokensCircle, tokensAmount));
   }
 
@@ -400,6 +462,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
   private void notifyServer() {
     long promptSessionId = GameScreen.getSessionId();
     String authToken = AuthUtils.getAuth().getAccessToken();
+    atProposedOffer = (OrientPurchaseMap) atProposedOffer.subtract(defaultProposal);
+    System.out.println(atProposedOffer);
     // sends a request to server telling it purchase information
     Pair<Headers, String> serverResponse = PromptsRequests.buyCard(promptSessionId,
         atCardEntity.getComponent(CardComponent.class).getCardHash(),
@@ -475,12 +539,16 @@ public class BuyCardPrompt implements PromptTypeInterface {
     BUY;
 
     // allows to check if card can be bought with current amount of tokens in trade bank
-    private static boolean canBuy(BuyCardPrompt buyCardPrompt) {
-      PurchaseMap amountInBankMap = getPurchaseMapOfCurrentInput();
+    static boolean canBuy(BuyCardPrompt buyCardPrompt) {
+      OrientPurchaseMap amountInBankMap = getOrientPurchaseMapOfCurrentInput();
       // Creates a purchase map of what the price map of the current card
       PurchaseMap priceToMeet = PurchaseMap.toPurchaseMap(buyCardPrompt.atCardPriceMap);
       // check if we can buy card with the gems we put down.
-      return amountInBankMap.canBeUsedToBuy(priceToMeet);
+      if (GameScreen.hasSapphireRoute()) {
+        return amountInBankMap.canBeUsedToBuyAlt(priceToMeet);
+      } else {
+        return amountInBankMap.canBeUsedToBuy(priceToMeet);
+      }
     }
 
     /**
@@ -494,8 +562,8 @@ public class BuyCardPrompt implements PromptTypeInterface {
         t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
           // add behaviour here
           closeBuyPrompt();
-          buyCardPrompt.cardReservation();
           buyCardPrompt.cardBought();
+          buyCardPrompt.cardReservation();
           e.consume();
         });
       } else if (this == BUY) {
@@ -511,7 +579,7 @@ public class BuyCardPrompt implements PromptTypeInterface {
 
         t.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
           if (t.getOpacity() == 1) {
-            buyCardPrompt.atProposedOffer = getPurchaseMapOfCurrentInput();
+            buyCardPrompt.atProposedOffer = getOrientPurchaseMapOfCurrentInput();
             closeBuyPrompt();
             buyCardPrompt.cardBought();
             buyCardPrompt.notifyServer();
@@ -522,5 +590,22 @@ public class BuyCardPrompt implements PromptTypeInterface {
     }
   }
 
+  /**
+   * Gets Gem associated with currency type.
+   *
+   * @param currencyType currency Type.
+   * @return gem, null if CARD CURRENCY TYPE.
+   */
+  private Gem fromCurrencyType(CurrencyType currencyType) {
+    return switch (currencyType) {
+      case RED_TOKENS -> Gem.RUBY;
+      case BLUE_TOKENS -> Gem.SAPPHIRE;
+      case GREEN_TOKENS -> Gem.EMERALD;
+      case BLACK_TOKENS -> Gem.ONYX;
+      case WHITE_TOKENS -> Gem.DIAMOND;
+      case GOLD_TOKENS -> Gem.GOLD;
+      default -> null;
+    };
+  }
 
 }

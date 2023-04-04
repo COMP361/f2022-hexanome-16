@@ -1,18 +1,47 @@
 package com.hexanome16.client.utils;
 
+import com.hexanome16.client.requests.lobbyservice.oauth.TokenRequest;
 import com.hexanome16.common.models.auth.TokensInfo;
 import com.hexanome16.common.models.sessions.User;
 import java.util.Base64;
+import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
+import javafx.util.Duration;
 
 /**
  * This class provides methods to create authorization headers for requests.
  */
 public class AuthUtils {
-  private static TokensInfo auth;
-  private static User player;
+  private static final AtomicReference<TokensInfo> auth = new AtomicReference<>();
+  private static final AtomicReference<User> player = new AtomicReference<>();
+  private static final AtomicReference<ScheduledService<Void>> refreshService
+      = new AtomicReference<>(createRefreshService());
 
   private AuthUtils() {
     super();
+  }
+
+  private static ScheduledService<Void> createRefreshService() {
+    ScheduledService<Void> service = new ScheduledService<>() {
+      @Override
+      protected Task<Void> createTask() {
+        return new Task<>() {
+          @Override
+          protected Void call() throws Exception {
+            TokenRequest.execute(auth.get().getRefreshToken());
+            return null;
+          }
+        };
+      }
+    };
+    service.setRestartOnFailure(false);
+    return service;
   }
 
   /**
@@ -32,7 +61,7 @@ public class AuthUtils {
    * @return The player authentication information.
    */
   public static TokensInfo getAuth() {
-    return auth;
+    return auth.get();
   }
 
   /**
@@ -41,7 +70,13 @@ public class AuthUtils {
    * @param auth The player authentication information.
    */
   public static void setAuth(TokensInfo auth) {
-    AuthUtils.auth = auth;
+    AuthUtils.auth.set(auth);
+    if (auth != null) {
+      refreshService.get().setDelay(Duration.seconds(Math.max(0, auth.getExpiresIn() - 30)));
+      refreshService.get().restart();
+    } else {
+      refreshService.get().cancel();
+    }
   }
 
   /**
@@ -50,7 +85,7 @@ public class AuthUtils {
    * @return The player information.
    */
   public static User getPlayer() {
-    return player;
+    return player.get();
   }
 
   /**
@@ -59,6 +94,6 @@ public class AuthUtils {
    * @param player The player information.
    */
   public static void setPlayer(User player) {
-    AuthUtils.player = player;
+    AuthUtils.player.set(player);
   }
 }

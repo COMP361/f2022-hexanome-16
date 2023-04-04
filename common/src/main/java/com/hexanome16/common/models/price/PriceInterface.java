@@ -1,6 +1,8 @@
 package com.hexanome16.common.models.price;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Price of a development card.
@@ -19,6 +21,7 @@ public interface PriceInterface {
    *
    * @return the total amount of gems
    */
+  @JsonIgnore
   int getTotalGems();
 
   /**
@@ -26,6 +29,7 @@ public interface PriceInterface {
    *
    * @return the total amount of gems, NON JOKERS
    */
+  @JsonIgnore
   int getTotalNonJokers();
 
   /**
@@ -64,5 +68,22 @@ public interface PriceInterface {
    * @param priceInterface the price interface
    * @return true if the given priceInterface has at least the same amount
    */
+  @JsonIgnore
   boolean hasAtLeastAmountOfGems(PriceInterface priceInterface);
+
+  /**
+   * Gets types of gems in price.
+   *
+   * @return the types of gems contained inside the price
+   */
+  @JsonIgnore
+  Set<Gem> getTypesOfGems();
+
+  /**
+   * Subtract price interface from the instance.
+   *
+   * @param priceInterface the price interface to subtract
+   * @return new price interface with reduced prices
+   */
+  PriceInterface subtract(PriceInterface priceInterface);
 }

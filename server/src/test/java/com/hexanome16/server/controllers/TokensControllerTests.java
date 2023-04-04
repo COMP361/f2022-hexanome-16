@@ -1,37 +1,24 @@
 package com.hexanome16.server.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.hexanome16.common.dto.SessionJson;
-import com.hexanome16.server.models.Game;
-import com.hexanome16.server.models.ServerPlayer;
-import com.hexanome16.server.models.winconditions.WinCondition;
-import com.hexanome16.server.services.DummyAuths;
-import com.hexanome16.server.services.game.GameManagerService;
-import com.hexanome16.server.services.game.GameManagerServiceInterface;
-import com.hexanome16.server.services.game.GameService;
 import com.hexanome16.server.services.token.TokenService;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Test of {@link TokensController}.
  */
 public class TokensControllerTests {
-  private final com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-      new ObjectMapper().registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-  private final SessionJson payload = new SessionJson();
-  private TokensController tokensController;
-  private String gameResponse;
+  private TokensController underTest;
+  @Mock
   private TokenService tokenService;
+  private AutoCloseable autoCloseable;
 
   /**
    * Sets .
@@ -39,53 +26,63 @@ public class TokensControllerTests {
    * @throws JsonProcessingException the json processing exception
    */
   @BeforeEach
-  void setup() throws JsonProcessingException {
-    DummyAuthService dummyAuthService = new DummyAuthService();
-    GameService gameService = Mockito.mock(GameService.class);
-    tokenService = Mockito.mock(TokenService.class);
-    tokensController =
-        new TokensController(tokenService);
-    payload.setPlayers(new ServerPlayer[] {
-        objectMapper.readValue(DummyAuths.validJsonList.get(0), ServerPlayer.class),
-        objectMapper.readValue(DummyAuths.validJsonList.get(1), ServerPlayer.class)});
-    payload.setCreator("tristan");
-    payload.setSavegame("");
-    payload.setGame(WinCondition.BASE.getGameServiceJson().getName());
-    Game game1 = Game.create(DummyAuths.validSessionIds.get(0), payload);
-    Game game2 = Game.create(DummyAuths.validSessionIds.get(1), payload);
-    GameManagerServiceInterface gameManagerMock = Mockito.mock(GameManagerService.class);
-    when(gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload)).thenReturn(
-        "success");
-    when(gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload)).thenReturn(
-        "success");
-    gameResponse = gameManagerMock.createGame(DummyAuths.validSessionIds.get(0), payload);
-    gameResponse = gameManagerMock.createGame(DummyAuths.validSessionIds.get(1), payload);
+  void setup() {
+    autoCloseable = MockitoAnnotations.openMocks(this);
+    underTest = new TokensController(tokenService);
+  }
+
+  @AfterEach
+  void tearDown() throws Exception {
+    autoCloseable.close();
   }
 
   /**
    * Test get on /games/{sessionId}/twoTokens;.
-   *
-   * @throws JsonProcessingException possible json processing error
    */
+  @SneakyThrows
   @Test
-  public void testGetTwoTokens() throws JsonProcessingException {
-    when(tokenService.availableTwoTokensType(DummyAuths.validSessionIds.get(0)))
-        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-    var response = tokensController.availableTwoTokensType(DummyAuths.validSessionIds.get(0));
-    assertTrue(response.getStatusCode().is2xxSuccessful());
+  public void testGetTwoTokens() {
+    // Arrange
+    long sessionId = 1L;
+
+    // Act
+    underTest.availableTwoTokensType(sessionId);
+
+    // Assert
+    verify(tokenService).availableTwoTokensType(sessionId);
   }
 
   /**
    * Test get on /games/{sessionId}/threeTokens;.
-   *
-   * @throws JsonProcessingException possible json processing error
+   */
+  @SneakyThrows
+  @Test
+  public void testGetThreeTokens() {
+    // Arrange
+    long sessionId = 1L;
+
+    // Act
+    underTest.availableThreeTokensType(sessionId);
+
+    // Assert
+    verify(tokenService).availableThreeTokensType(sessionId);
+  }
+
+  /**
+   * Test Put on /games/{sessionId}/twoTokens;.
    */
   @Test
-  public void testGetThreeTokens() throws JsonProcessingException {
-    when(tokenService.availableThreeTokensType(DummyAuths.validSessionIds.get(0)))
-        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-    var response = tokensController.availableThreeTokensType(DummyAuths.validSessionIds.get(0));
-    assertTrue(response.getStatusCode().is2xxSuccessful());
+  public void testPutOneTokens() {
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String type = "type";
+
+    // Act
+    underTest.takeOneToken(sessionId, access, type);
+
+    // Assert
+    verify(tokenService).takeOneToken(sessionId, access, type);
   }
 
   /**
@@ -93,12 +90,16 @@ public class TokensControllerTests {
    */
   @Test
   public void testPutTwoTokens() {
-    long validSessionId = DummyAuths.validSessionIds.get(0);
-    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    when(tokenService.takeTwoTokens(validSessionId, validAccessToken, "RED"))
-        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-    var response = tokensController.takeTwoTokens(validSessionId, validAccessToken, "RED");
-    assertTrue(response.getStatusCode().is2xxSuccessful());
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String type = "type";
+
+    // Act
+    underTest.takeTwoTokens(sessionId, access, type);
+
+    // Assert
+    verify(tokenService).takeTwoTokens(sessionId, access, type);
   }
 
   /**
@@ -106,13 +107,35 @@ public class TokensControllerTests {
    */
   @Test
   public void testPutThreeTokens() {
-    long validSessionId = DummyAuths.validSessionIds.get(0);
-    String validAccessToken = DummyAuths.validTokensInfos.get(0).getAccessToken();
-    when(tokenService.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN"))
-        .thenReturn(new ResponseEntity<>(HttpStatus.OK));
-    var response =
-        tokensController.takeThreeTokens(validSessionId, validAccessToken, "RED", "WHITE", "GREEN");
-    assertTrue(response.getStatusCode().is2xxSuccessful());
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String type1 = "type1";
+    String type2 = "type2";
+    String type3 = "type3";
+
+    // Act
+    underTest.takeThreeTokens(sessionId, access, type1, type2, type3);
+
+    // Assert
+    verify(tokenService).takeThreeTokens(sessionId, access, type1, type2, type3);
+  }
+
+  /**
+   * Test Delete on /games/{sessionId}/tokens;.
+   */
+  @Test
+  public void testDeleteToken() {
+    // Arrange
+    long sessionId = 1L;
+    String access = "access";
+    String type = "type";
+
+    // Act
+    underTest.discardToken(sessionId, access, type);
+
+    // Assert
+    verify(tokenService).discardToken(sessionId, access, type);
   }
 
 }

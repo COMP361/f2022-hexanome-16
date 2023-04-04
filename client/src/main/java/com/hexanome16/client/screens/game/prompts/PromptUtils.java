@@ -6,11 +6,15 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.hexanome16.client.screens.game.prompts.components.PromptTypeInterface;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseCity;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNoble;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.ChooseNobleReserve;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenAcquiringOne;
+import com.hexanome16.client.screens.game.prompts.components.prompttypes.otherchoiceprompts.TokenDiscard;
+import com.hexanome16.common.models.City;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.Noble;
 import com.hexanome16.common.util.CustomHttpResponses;
-import java.util.Arrays;
 import java.util.List;
 import javafx.util.Pair;
 import kong.unirest.core.Headers;
@@ -78,11 +82,44 @@ public class PromptUtils {
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_TWO));
       } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.LEVEL_ONE.getMessage())) {
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_LEVEL_ONE));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
           .equals(CustomHttpResponses.ActionType.NOBLE.getMessage())) {
         Noble[] nobles = objectMapper.readValue(serverResponse.getValue(), Noble[].class);
         ChooseNoble.setNobleList(nobles);
         FXGL.spawn("PromptBox",
             new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_NOBLES));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+              .equals(CustomHttpResponses.ActionType.NOBLE_RESERVE.getMessage())) {
+        Noble[] nobles = objectMapper.readValue(serverResponse.getValue(), Noble[].class);
+        ChooseNobleReserve.setNobleList(nobles);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType",
+                PromptTypeInterface.PromptType.CHOOSE_NOBLE_TO_RESERVE));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.CITY.getMessage())) {
+        City[] cities = objectMapper.readValue(serverResponse.getValue(), City[].class);
+        ChooseCity.setCityList(cities);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.CHOOSE_CITY));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.DISCARD.getMessage())) {
+        String[] tokens = objectMapper.readValue(serverResponse.getValue(), String[].class);
+        TokenDiscard.setPossibleBonuses(tokens);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_DISCARD));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.ASSOCIATE_BAG.getMessage())) {
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.ASSOCIATE_BAG_CARD));
+      } else if (headers.get(CustomHttpResponses.ActionType.ACTION_TYPE).get(0)
+          .equals(CustomHttpResponses.ActionType.TAKE.getMessage())) {
+        String bonus = serverResponse.getValue();
+        TokenAcquiringOne.setBonus(bonus);
+        FXGL.spawn("PromptBox",
+            new SpawnData().put("promptType", PromptTypeInterface.PromptType.TOKEN_ACQUIRING_ONE));
       }
     }
   }

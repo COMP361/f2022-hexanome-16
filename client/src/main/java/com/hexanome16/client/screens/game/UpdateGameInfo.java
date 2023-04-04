@@ -2,8 +2,10 @@ package com.hexanome16.client.screens.game;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.hexanome16.client.requests.backend.prompts.PromptsRequests;
+import com.hexanome16.client.screens.game.prompts.PromptUtils;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BuyCardPrompt;
 import com.hexanome16.common.dto.PlayerJson;
+import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.price.Gem;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.HashMap;
@@ -39,10 +41,22 @@ public class UpdateGameInfo {
 
     // get string bank from server
     PurchaseMap bankPriceMap = PromptsRequests.getPlayerBank(sessionId, playerName);
+    LevelCard[] cards = PromptsRequests.getCards(sessionId, playerName);
+    int counter = 0;
+    if (cards == null) {
+      cards = new LevelCard[0];
+    }
+    for (LevelCard card : cards) {
+      if (card.getBonusType() == LevelCard.BonusType.TWO_GOLD_TOKENS) {
+        counter++;
+      }
+    }
 
     if (withinPrompt) {
       // set player info in the prompt to be whatever the server says
-      setPlayerBankInfoPrompt(UpdateGameInfo.toGemAmountMap(bankPriceMap));
+      Map<CurrencyType, Integer> map = UpdateGameInfo.toGemAmountMap(bankPriceMap);
+      map.put(CurrencyType.BONUS_GOLD_CARDS, counter);
+      setPlayerBankInfoPrompt(map);
     } else {
       // set player info in the game to be whatever the server says.
       setPlayerBankInfoGlobal(playerName, UpdateGameInfo.toGemAmountMap(bankPriceMap));
@@ -72,11 +86,14 @@ public class UpdateGameInfo {
 
   // Only related to prompt pwease don't move :3
   private static void setPlayerBankInfoPrompt(Map<CurrencyType, Integer> toGemAmountMap) {
-    for (CurrencyType e : CurrencyType.values()) {
-      FXGL.getWorldProperties()
-          .setValue(BuyCardPrompt.BankType.PLAYER_BANK
-              + "/" + e.toString(), toGemAmountMap.get(e));
+    if (toGemAmountMap != null) {
+      for (CurrencyType e : CurrencyType.values()) {
+        FXGL.getWorldProperties()
+            .setValue(BuyCardPrompt.BankType.PLAYER_BANK
+                + "/" + e.toString(), toGemAmountMap.get(e));
+      }
     }
+
   }
 
 
@@ -90,16 +107,16 @@ public class UpdateGameInfo {
    */
   public static Map<CurrencyType, Integer> toGemAmountMap(PurchaseMap purchaseMap) {
     Map<CurrencyType, Integer> gemPlayerBank = new HashMap<>();
-
-    // put each gem type with its value in the string
-    gemPlayerBank.put(CurrencyType.RED_TOKENS, purchaseMap.getGemCost(Gem.RUBY));
-    gemPlayerBank.put(CurrencyType.GREEN_TOKENS, purchaseMap.getGemCost(Gem.EMERALD));
-    gemPlayerBank.put(CurrencyType.BLUE_TOKENS, purchaseMap.getGemCost(Gem.SAPPHIRE));
-    gemPlayerBank.put(CurrencyType.WHITE_TOKENS, purchaseMap.getGemCost(Gem.DIAMOND));
-    gemPlayerBank.put(CurrencyType.BLACK_TOKENS, purchaseMap.getGemCost(Gem.ONYX));
-    gemPlayerBank.put(CurrencyType.GOLD_TOKENS, purchaseMap.getGemCost(Gem.GOLD));
-    gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
-
+    if (purchaseMap != null) {
+      // put each gem type with its value in the string
+      gemPlayerBank.put(CurrencyType.RED_TOKENS, purchaseMap.getGemCost(Gem.RUBY));
+      gemPlayerBank.put(CurrencyType.GREEN_TOKENS, purchaseMap.getGemCost(Gem.EMERALD));
+      gemPlayerBank.put(CurrencyType.BLUE_TOKENS, purchaseMap.getGemCost(Gem.SAPPHIRE));
+      gemPlayerBank.put(CurrencyType.WHITE_TOKENS, purchaseMap.getGemCost(Gem.DIAMOND));
+      gemPlayerBank.put(CurrencyType.BLACK_TOKENS, purchaseMap.getGemCost(Gem.ONYX));
+      gemPlayerBank.put(CurrencyType.GOLD_TOKENS, purchaseMap.getGemCost(Gem.GOLD));
+      gemPlayerBank.put(CurrencyType.BONUS_GOLD_CARDS, 0);
+    }
     return gemPlayerBank;
   }
 
@@ -111,15 +128,20 @@ public class UpdateGameInfo {
    */
   public static void setPlayerBankInfoGlobal(String playerName,
                                              Map<CurrencyType, Integer> playerInfo) {
-    for (CurrencyType e : CurrencyType.values()) {
-      FXGL.getWorldProperties()
-          .setValue(playerName + "/" + e.toString(), playerInfo.get(e));
+    if (playerName != null && playerInfo != null && !playerInfo.isEmpty()) {
+      for (CurrencyType e : CurrencyType.values()) {
+        FXGL.getWorldProperties()
+            .setValue(playerName + "/" + e.toString(), playerInfo.get(e));
+      }
     }
   }
 
   private static void setGameBank(long sessionId, PurchaseMap gameBankMap) {
-    for (Map.Entry<Gem, Integer> gemEntry : gameBankMap.getPriceMap().entrySet()) {
-      FXGL.getWorldProperties().setValue(sessionId + gemEntry.getKey().name(), gemEntry.getValue());
+    if (gameBankMap != null) {
+      for (Map.Entry<Gem, Integer> gemEntry : gameBankMap.getPriceMap().entrySet()) {
+        FXGL.getWorldProperties().setValue(sessionId + gemEntry.getKey().name(),
+            gemEntry.getValue());
+      }
     }
   }
 
@@ -131,8 +153,10 @@ public class UpdateGameInfo {
    * @param usernames all players in the game.
    */
   public static void fetchAllPlayer(long sessionId, PlayerJson[] usernames) {
-    for (PlayerJson player : usernames) {
-      fetchPlayerBank(sessionId, player.getUsername());
+    if (usernames != null) {
+      for (PlayerJson player : usernames) {
+        fetchPlayerBank(sessionId, player.getUsername());
+      }
     }
   }
 

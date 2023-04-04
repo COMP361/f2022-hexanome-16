@@ -5,10 +5,15 @@ import com.hexanome16.client.requests.RequestClient;
 import com.hexanome16.client.requests.RequestDest;
 import com.hexanome16.client.requests.RequestMethod;
 import com.hexanome16.client.screens.game.prompts.components.prompttypes.BonusType;
+import com.hexanome16.client.utils.AuthUtils;
+import com.hexanome16.common.dto.WinJson;
 import com.hexanome16.common.dto.cards.DeckJson;
 import com.hexanome16.common.models.Level;
 import com.hexanome16.common.models.LevelCard;
 import com.hexanome16.common.models.Noble;
+import com.hexanome16.common.models.price.Gem;
+import com.hexanome16.common.models.price.OrientPurchaseMap;
+import com.hexanome16.common.models.price.PriceMap;
 import com.hexanome16.common.models.price.PurchaseMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +55,19 @@ public class PromptsRequests {
         LevelCard[].class));
   }
 
+
+  /**
+   * Gets the list of all the cards of level one on the board for game with session id.
+   *
+   * @param sessionId sessionId of game.
+   * @return Array of all level 1 cards on board.
+   */
+  public static LevelCard[] getLevelOneCardsOnBoard(long sessionId) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelOne", null,
+        LevelCard[].class));
+  }
+
   /**
    * Get nobles of the player with provided username and session id.
    *
@@ -80,6 +98,21 @@ public class PromptsRequests {
   }
 
   /**
+   * Get reserved cards of the player with provided username and session id.
+   *
+   * @param sessionId   Session ID.
+   * @param username    username of player.
+   * @param gem gem type.
+   * @return PurchaseMap representation of the player's funds as a String
+   * @author Peini
+   */
+  public static DeckJson getCardPrice(long sessionId, String username, Gem gem) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/inventory/cardPrice",
+        Map.of("username", username, "gem", gem), DeckJson.class));
+  }
+
+  /**
    * Get reserved nobles of the player with provided username and session id.
    *
    * @param sessionId Session ID.
@@ -105,10 +138,31 @@ public class PromptsRequests {
   public static Pair<Headers, String> buyCard(long sessionId,
                              String cardMd5,
                              String authToken,
-                             PurchaseMap proposedDeal) {
+                             OrientPurchaseMap proposedDeal) {
     return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
         RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5,
         Map.of("access_token", authToken), proposedDeal, String.class));
+  }
+
+  /**
+   * Sends a request to the server to buy a card.
+   *
+   * @param sessionId    id of the game request is sent from.
+   * @param cardMd5      Hash value of the card we're sending.
+   * @param authToken    username of player trying to buy card.
+   * @param firstMd5 first card to discard.
+   * @param secondMd5 second card to discard.
+   * @return Pair of the response from server, headers and string
+   */
+  public static Pair<Headers, String> buySacrificeCard(long sessionId,
+                                                      String cardMd5,
+                                                      String authToken,
+                                                      String firstMd5,
+                                                      String secondMd5) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER, "/api/games/" + sessionId + "/cards/" + cardMd5 + "/sacrifice",
+        Map.of("access_token", authToken, "firstMd5", firstMd5, "secondMd5", secondMd5),
+        String.class));
   }
 
   /**
@@ -117,11 +171,13 @@ public class PromptsRequests {
    * @param sessionId game session id
    * @param cardMd5   card hash
    * @param authToken user authentication token
+   * @return Server Response.
    */
-  public static void reserveCard(long sessionId,
-                                 String cardMd5,
-                                 String authToken) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+  public static Pair<Headers, String> reserveCard(long sessionId,
+                                                  String cardMd5,
+                                                  String authToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
         "/api/games/" + sessionId + "/cards/" + cardMd5 + "/reservation",
         Map.of("access_token", authToken), Void.class));
   }
@@ -132,11 +188,13 @@ public class PromptsRequests {
    * @param sessionId game session id
    * @param level     level of the face down card
    * @param authToken user authentication token
+   * @return Server Response
    */
-  public static void reserveCard(long sessionId,
-                                 Level level,
-                                 String authToken) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+  public static Pair<Headers, String> reserveCard(long sessionId,
+                                                  Level level,
+                                                  String authToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
         "/api/games/" + sessionId + "/deck/reservation",
         Map.of("access_token", authToken, "level", level.name()), Void.class));
   }
@@ -165,6 +223,19 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/gameBank", PurchaseMap.class));
   }
 
+  /**
+   * Retrieves the bonuses available to take two of from the server.
+   *
+   * @param sessionId session ID of the game whose tokens info we want to retrieve.
+   * @return An array List of the possible bonus types.
+   */
+  public static ArrayList<BonusType> getAvailableOneBonus(long sessionId) {
+    return Arrays.stream(
+            Objects.requireNonNull(RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/oneToken", String[].class))))
+        .filter(Objects::nonNull).map(BonusType::fromString)
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
 
   /**
    * Retrieves the bonuses available to take two of from the server.
@@ -196,38 +267,73 @@ public class PromptsRequests {
   }
 
   /**
-   * Sends a request to the server to buy a card.
+   * Retrieves the bonuses available to associate to a bag card for the player from the server.
+   *
+   * @param sessionId session id.
+   * @param auth auth of player whose available bonuses we are interested in.
+   * @return BonusType string representations in an array.
+   */
+  public static String[] getPossibleBonuses(long sessionId, String auth) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET,
+                RequestDest.SERVER, "/api/games/" + sessionId + "/cards/bonuses",
+        Map.of("access_token", auth),
+        String[].class));
+  }
+
+  /**
+   * Sends a request to the server to take one token.
    *
    * @param sessionId id of the game request is sent from.
    * @param authToken username of player trying to buy card.
    * @param bonusType Desired bonus Type.
+   * @return server response.
    */
   @SneakyThrows
-  public static void takeTwo(long sessionId,
+  public static Pair<Headers, String> takeOne(long sessionId,
+                                              String authToken,
+                                              BonusType bonusType) {
+    return RequestClient.sendRequestHeadersString(
+        new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+            "/api/games/" + sessionId + "/oneToken",
+            Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
+  }
+
+  /**
+   * Sends a request to the server to take two tokens.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param authToken username of player.
+   * @param bonusType Desired bonus Type.
+   * @return server response.
+   */
+  @SneakyThrows
+  public static Pair<Headers, String> takeTwo(long sessionId,
                              String authToken,
                              BonusType bonusType) {
-    RequestClient.sendRequestString(
+    return RequestClient.sendRequestHeadersString(
         new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/twoTokens",
         Map.of("access_token", authToken, "tokenType", bonusType.name()), Void.class));
   }
 
   /**
-   * Sends a request to the server to buy a card.
+   * Sends a request to the server to take three tokens.
    *
    * @param sessionId      id of the game request is sent from.
-   * @param authToken      username of player trying to buy card.
+   * @param authToken      username of player.
    * @param bonusTypeOne   First desired Bonus Type.
    * @param bonusTypeTwo   Second desired Bonus Type.
    * @param bonusTypeThree Third desired Bonus Type.
+   * @return server response.
    */
   @SneakyThrows
-  public static void takeThree(long sessionId,
+  public static Pair<Headers, String> takeThree(long sessionId,
                                String authToken,
                                BonusType bonusTypeOne,
                                BonusType bonusTypeTwo,
                                BonusType bonusTypeThree) {
-    RequestClient.sendRequest(new Request<>(RequestMethod.PUT, RequestDest.SERVER,
+    return RequestClient.sendRequestHeadersString(
+        new Request<>(RequestMethod.PUT, RequestDest.SERVER,
         "/api/games/" + sessionId + "/threeTokens",
         Map.of("access_token", authToken, "tokenTypeOne", bonusTypeOne.name(),
             "tokenTypeTwo", bonusTypeTwo.name(), "tokenTypeThree", bonusTypeThree.name()),
@@ -252,6 +358,23 @@ public class PromptsRequests {
   }
 
   /**
+   * Sends a request to take a level one card for free.
+   *
+   * @param sessionId id of the game request is sent from.
+   * @param accessToken access token to allow action.
+   * @param hash desired card's Hash.
+   * @return server response.
+   */
+  public static Pair<Headers, String> takeLevelOne(long sessionId,
+                                                   String accessToken, String hash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/board/cards/levelOne",
+        Map.of("access_token", accessToken, "chosenCard", hash),
+        Void.class));
+  }
+
+  /**
    * Sends a request to claim a noble.
    *
    * @param sessionId session id
@@ -266,5 +389,117 @@ public class PromptsRequests {
         "/api/games/" + sessionId + "/nobles/" + nobleId,
         Map.of("access_token", accessToken),
         String.class));
+  }
+
+  /**
+   * Sends a request to claim a city.
+   *
+   * @param sessionId session id
+   * @param accessToken access token
+   * @param cityId city id
+   * @return server response.
+   */
+  public static Pair<Headers, String> claimCity(long sessionId, String accessToken,
+                                                 String cityId) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cities/" + cityId,
+        Map.of("access_token", accessToken),
+        String.class));
+  }
+
+  /**
+   * Retrieves the action that needs to be performed.
+   *
+   * @param sessionId session Id.
+   * @param username username of the player whose action we're trying to retrieve
+   * @param accessToken access token.
+   * @return server Response.
+   */
+  public static Pair<Headers, String> getActionForPlayer(long sessionId,
+                                                         String username, String accessToken) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.GET,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/players/" + username + "/actions",
+        Map.of("access_token", accessToken), Void.class));
+  }
+
+  /**
+   * Makes Discard one action choice response to server.
+   *
+   * @param sessionId session id
+   * @param accessToken auth of player
+   * @param chosenBonus bonus type chosen.
+   * @return server response.
+   */
+  public static Pair<Headers, String> discardOne(long sessionId, String accessToken,
+                                                 BonusType chosenBonus) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.DELETE,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/tokens",
+        Map.of("access_token", accessToken, "tokenType",
+            chosenBonus.name()), Void.class));
+  }
+
+  /**
+   * Makes Associate bag action choice response to server.
+   *
+   * @param sessionId session id
+   * @param accessToken auth of player
+   * @param chosenBonus bonus type chosen.
+   * @return server response.
+   */
+  public static Pair<Headers, String> associateBag(long sessionId, String accessToken,
+                                                   BonusType chosenBonus) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.PUT,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cards/bagcards",
+        Map.of("access_token", accessToken, "tokenType",
+            chosenBonus.name()), Void.class));
+  }
+
+  /**
+   * Gets winners of the game.
+   *
+   * @param sessionId session id
+   * @param accessToken auth token of player
+   * @param hash hash of the response (used for long polling)
+   * @return server response.
+   */
+  public static Pair<String, WinJson> getWinners(long sessionId, String accessToken, String hash) {
+    return RequestClient.longPollWithHash(new Request<>(RequestMethod.GET,
+        RequestDest.SERVER,
+        "/api/games/" + sessionId + "/winners",
+        Map.of("access_token", accessToken, "hash", hash), WinJson.class));
+  }
+
+  /**
+   * Retrieves the discounted price for the card with hash cardHash.
+   *
+   * @param sessionId session identifier.
+   * @param accessToken access token of requesting player.
+   * @param cardHash hash of card we desire the discounted price of.
+   * @return Price map of the discounted price.
+   */
+  public static PriceMap getDiscountedPrice(long sessionId, String accessToken, String cardHash) {
+    return RequestClient.sendRequest(new Request<>(RequestMethod.GET, RequestDest.SERVER,
+        "/api/games/" + sessionId + "/cards/" + cardHash + "/discountedPrice",
+        Map.of("access_token", accessToken), PriceMap.class));
+  }
+
+  /**
+   * Allows to reserve a noble.
+   *
+   * @param sessionId session identifier of the game.
+   * @param authToken access token of the player.
+   * @param nobleHash hash of the noble card.
+   * @return server response.
+   */
+  public static Pair<Headers, String> reserveNoble(long sessionId, String authToken,
+                                                   String nobleHash) {
+    return RequestClient.sendRequestHeadersString(new Request<>(RequestMethod.POST,
+            RequestDest.SERVER,
+            "/api/games/" + sessionId + "/nobles/" + nobleHash,
+            Map.of("access_token", authToken), Void.class));
   }
 }

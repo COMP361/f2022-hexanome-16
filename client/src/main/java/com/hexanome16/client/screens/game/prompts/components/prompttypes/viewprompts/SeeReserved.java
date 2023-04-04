@@ -106,6 +106,11 @@ public class SeeReserved implements PromptTypeInterface {
   }
 
   @Override
+  public boolean canBeOpenedOutOfTurn() {
+    return true;
+  }
+
+  @Override
   public void populatePrompt(Entity entity) {
 
     Text myPromptMessage = new Text("Hand View");
@@ -152,7 +157,7 @@ public class SeeReserved implements PromptTypeInterface {
     Texture cardTexture = FXGL.texture(card.getValue().getCardInfo().texturePath() + ".png");
     if (myCards) {
       cardTexture.setOnMouseClicked(e -> PromptUtils.openPrompt(getCardEntity(card)));
-    } else if (card.getValue().isFaceDown()) {
+    } else if (card.getValue().getFaceDown()) {
       cardTexture =
           FXGL.texture("level_" + card.getValue().getLevel().name().toLowerCase() + ".png");
     }

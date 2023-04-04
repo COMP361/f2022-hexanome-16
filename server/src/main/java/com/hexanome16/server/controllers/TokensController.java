@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hexanome16.server.services.token.TokenServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -58,6 +59,24 @@ public class TokensController {
   }
 
   /**
+   * Allows to take 1 token of a given type (given by the trade route),
+   * This function checks if the action is valid.
+   *
+   * @param sessionId     the session's Identification number.
+   * @param accessToken   authentication token of the player who wants to take the tokens.
+   * @param tokenType     String representing the token type selected by the player, the
+   *                            acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *     HTTP BAD_REQUEST otherwise.</p>
+   */
+  @PutMapping(value = "/games/{sessionId}/oneToken")
+  public ResponseEntity<String> takeOneToken(@PathVariable long sessionId,
+                                              @RequestParam String accessToken,
+                                              @RequestParam String tokenType) {
+    return tokenService.takeOneToken(sessionId, accessToken, tokenType);
+  }
+
+  /**
    * Allows to take 2 tokens of a given type, This function checks if the action is valid.
    *
    * @param sessionId     the session's Identification number.
@@ -98,5 +117,22 @@ public class TokensController {
                                                 @RequestParam String tokenTypeThree) {
     return tokenService.takeThreeTokens(sessionId, accessToken,
         tokenTypeOne, tokenTypeTwo, tokenTypeThree);
+  }
+
+  /**
+   * Allows to discard Token.
+   *
+   * @param sessionId     the session's Identification number.
+   * @param accessToken   authentication token of the player who wants to take the tokens.
+   * @param tokenType     String representing the token type selected by the player, the
+   *                      acceptable strings are : "RED", "GREEN", "BLUE", "WHITE", "BLACK"
+   * @return <p>HTTP OK if it's the player's turn and the proposed offer is acceptable,
+   *         HTTP BAD_REQUEST otherwise.</p>
+   */
+  @DeleteMapping(value = "/games/{sessionId}/tokens")
+  public ResponseEntity<String> discardToken(@PathVariable long sessionId,
+                                             @RequestParam String accessToken,
+                                             @RequestParam String tokenType) {
+    return tokenService.discardToken(sessionId, accessToken, tokenType);
   }
 }
