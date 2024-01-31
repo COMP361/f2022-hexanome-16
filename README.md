@@ -2,7 +2,7 @@
 
 ## CLIENT CURRENTLY BROKEN DUE TO COPYRIGHT ISSUES
 
-We cannot make assets publicly available due to Splendor copyright which we weren't constrained by while creating the project.
+We cannot host the assets on Github so they are on a [dropbox here|https://www.dropbox.com/scl/fo/manpbhoyz0a5i0dminrlq/h?rlkey=sih0mgwp2hbuhzeyq8o31cwdj&dl=0]. The folder structure is the same as the client structure, to use them, just add back in all the files.
 
 We've nuked the commit history of all copyrighted assets.
 
