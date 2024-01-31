@@ -1,5 +1,11 @@
 # COMP 361 Project
 
+## CLIENT CURRENTLY BROKEN DUE TO COPYRIGHT ISSUES
+
+We cannot make assets publicly available due to Splendor copyright which we weren't constrained by while creating the project.
+
+We've nuked the commit history of all copyrighted assets.
+
 ## Branch Nomenclature and Releases
 Release versions and tags are updated every time a push is made to the ``master`` branch or a pull-request is made to 
 either ``master`` or ``staging``. Every dev branch must start with a prefix following this nomenclature:
